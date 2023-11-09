@@ -22,8 +22,12 @@
     "jsxImportSource": "@emotion/react",
     "types": ["vite/client", "vitest"]
   },
+  "types": [
+    "node"
+  ],
   "files": [],
-  "include": [],
+  "include": [
+  ],
   "references": [
     {
       "path": "./tsconfig.app.json"

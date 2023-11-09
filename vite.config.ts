@@ -2,6 +2,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+import { fileURLToPath, URL } from 'node:url';
 
 export default defineConfig({
   cacheDir: './node_modules/.vite/geoeco',
@@ -14,6 +15,12 @@ export default defineConfig({
   preview: {
     port: 4300,
     host: 'localhost',
+  },
+
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
   },
 
   plugins: [react(), nxViteTsPaths()],

@@ -5,7 +5,7 @@ import { chartConfig } from './ChartConfig';
 const topMargin = 32;
 const labelWidth = 48;
 const rightMargin = 32;
-const labelHeight = 95; // 24
+const labelHeight = 95;
 
 const backgroundColor = '#f5f5f5';
 
@@ -156,20 +156,28 @@ export const ChartCanvas = React.memo(
 
       const drawVerticalTicks = () => {
         for (let i = 0; i < config.ticks.length; i++) {
-          const { min, max, step } = config.ticks[i];
+          const { min, max, step, lineDash } = config.ticks[i];
+          ctx.lineWidth = 1;
+          ctx.setLineDash(lineDash);
+          ctx.strokeStyle = '#ddd';
+          // ctx.fillStyle = '#ddd';
           let numDrawn = 0;
           for (let value = min; value <= max; value += step) {
-            ctx.fillStyle = '#ddd';
             const y = canvas.height - labelHeight - convertY(value);
             if (0 <= y && y <= canvas.height - labelHeight) {
-              ctx.fillRect(labelWidth, y, w, 1);
+              ctx.beginPath();
+              ctx.moveTo(labelWidth, y);
+              ctx.lineTo(labelWidth + w, y);
+              ctx.stroke();
+              // ctx.fillRect(labelWidth, y, w, 1);
               numDrawn++;
             }
           }
-          if (numDrawn > 1) {
+          if (numDrawn > 3) {
             break;
           }
         }
+        ctx.setLineDash([]);
       };
 
       drawVerticalTicks();
@@ -294,13 +302,17 @@ export const ChartCanvas = React.memo(
           for (let value = min; value <= max; value += step) {
             //ctx.fillStyle = '#ddd';
             const y = canvas.height - labelHeight - convertY(value);
-            //if (topMargin <= y && y <= canvas.height - topMargin - labelHeight) {
-            ctx.fillStyle = '#888';
-            ctx.fillText(value.toFixed(config.toFixed), labelWidth - 6, y);
-            numLabelsDrawn++;
-            //}
+            if (
+              topMargin <= y &&
+              y <= canvas.height - topMargin - labelHeight
+            ) {
+              ctx.fillStyle = '#888';
+              const label = value.toFixed(config.toFixed);
+              ctx.fillText(label, labelWidth - 6, y);
+              numLabelsDrawn++;
+            }
           }
-          if (numLabelsDrawn > 1) {
+          if (numLabelsDrawn > 3) {
             break;
           }
         }

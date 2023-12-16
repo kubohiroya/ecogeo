@@ -15,6 +15,10 @@ export interface LabelSliderProps {
   max: number;
   value: number;
   onChange: (event: Event, newValue: number | number[]) => void;
+  onChangeCommitted: (
+    event: React.SyntheticEvent | Event,
+    newValue: number | number[]
+  ) => void;
 }
 
 const SliderWithLabel = styled.div`
@@ -63,6 +67,7 @@ export function LabelSlider(props: LabelSliderProps) {
         max={props.max}
         valueLabelDisplay="auto"
         onChange={props.onChange}
+        onChangeCommitted={props.onChangeCommitted}
       />
     </SliderWithLabel>
   );

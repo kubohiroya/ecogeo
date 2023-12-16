@@ -1,11 +1,15 @@
 import styled from "@emotion/styled";
-import React, { ForwardedRef, useState } from "react";
+import React, { ForwardedRef } from "react";
+import { isInfinity, round } from "../../app/util/mathUtil";
+import { Box, CircularProgress } from "@mui/material";
+import { City } from "../../app/model/City";
 
 /* eslint-disable-next-line */
 export interface MatrixProps {
-  id: string;
+  matrixId: string;
   title: string;
-  data: number[][];
+  locations: City[];
+  data: number[][] | null;
   maxRowColLength: number;
   fractionDigits?: number;
   rgb: {
@@ -13,9 +17,24 @@ export interface MatrixProps {
     g: number;
     b: number;
   };
-  onMouseEnter: (id: string, rowIndex: number, columnIndex: number) => void;
-  onMouseLeave: (id: string, rowIndex: number, columnIndex: number) => void;
-  onMouseDown: (id: string, rowIndex: number, columnIndex: number) => void;
+  focused: boolean;
+  focusedIndices: number[];
+  selectedIndices: number[];
+  onMouseEnter: (
+    matrixId: string,
+    rowIndex: number,
+    columnIndex: number
+  ) => void;
+  onMouseLeave: (
+    matrixId: string,
+    rowIndex: number,
+    columnIndex: number
+  ) => void;
+  onMouseDown: (
+    matrixId: string,
+    rowIndex: number,
+    columnIndex: number
+  ) => void;
   tableRef: ForwardedRef<HTMLTableElement>;
 }
 
@@ -32,15 +51,24 @@ const HeaderWithIcon = styled.h3`
   margin-top: 0;
   margin-bottom: 10px;
 `;
+
+const TableContainer = styled.div`
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: auto;
+`;
+
 const StyledTable = styled.table`
   border-collapse: collapse;
-  border: 1px solid black;
+  border: 0 solid black;
   text-align: center;
-  width: 100%;
+  box-shadow: 1px 1px 1px 3px #ccc inset;
 
   th,
   td {
-    border: 1px solid white;
+    border: 0 solid white;
     cursor: pointer;
   }
 
@@ -54,7 +82,7 @@ const StyledTable = styled.table`
 
   th.selected,
   td.selected {
-    border: 1px solid #e0e0e0 !important;
+    border: 0 solid #e0e0e0 !important;
   }
 
   .selected.focused {
@@ -63,7 +91,7 @@ const StyledTable = styled.table`
 
   tr:first-of-type > th.selected,
   tr > th:first-of-type.selected {
-    border: 1px solid yellow !important;
+    border: 0 solid yellow !important;
     background-color: #dd1 !important;
   }
 
@@ -78,11 +106,13 @@ const StyledTable = styled.table`
   }
 `;
 
-function valueToString(value: number, fractionDigits = 2) {
-  return value == Number.POSITIVE_INFINITY
-    ? '♾️'
-    : value.toFixed(fractionDigits).toString();
-}
+const StyledBox = styled(Box)`
+  flex: 1;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 function valueToStyle(
   rgb: {
@@ -90,219 +120,326 @@ function valueToStyle(
     g: number;
     b: number;
   },
-  a: number
+  value: number,
+  max: number,
+  focused: boolean,
+  selected: boolean
 ) {
-  const backgroundColor = {
-    backgroundColor: `rgba(${rgb.r},${rgb.g},${rgb.b},${
-      a == Number.POSITIVE_INFINITY ? 0 : a
-    })`,
-  };
-  return a == Number.POSITIVE_INFINITY
-    ? {}
-    : a < 0.5
-    ? { style: { ...backgroundColor } }
-    : { style: { ...backgroundColor, color: '#ddd' } };
+  if (isInfinity(value)) {
+    if (selected) {
+      if (focused) {
+        return {
+          style: {
+            backgroundColor: `#eee`,
+            color: '#ff3333',
+          },
+          valueString: '♾️️',
+        };
+      } else {
+        return {
+          style: {
+            backgroundColor: `#ccc`,
+            color: '#ff3333',
+          },
+          valueString: '♾️️',
+        };
+      }
+    } else {
+      return {
+        style: {
+          backgroundColor: '#bbb',
+          color: '#ccc',
+        },
+        valueString: '♾️',
+      };
+    }
+  } else if (value == 0.0) {
+    if (selected) {
+      return {
+        style: {
+          backgroundColor: `#ddd`,
+          color: '#833',
+        },
+        valueString: round(value, 0.01),
+      };
+    } else {
+      return {
+        style: {
+          backgroundColor: '#888',
+          color: '#ccc',
+        },
+        valueString: round(value, 0.01),
+      };
+    }
+  } else {
+    if (selected) {
+      return {
+        style: {
+          backgroundColor: `rgba(${rgb.r},${rgb.g},${rgb.b},${value / max})`,
+          color: '#f33',
+        },
+        valueString: round(value, 0.01),
+      };
+    } else {
+      return {
+        style: {
+          backgroundColor: `rgba(${rgb.r * 0.9},${rgb.g * 0.9},${rgb.b * 0.9},${
+            value / max
+          })`,
+          color: '#ccc',
+        },
+        valueString: round(value, 0.01),
+      };
+    }
+  }
 }
 
 const onMouseEnter = (
-  id: string,
+  matrixId: string,
   maxLength: number,
   rowIndex: number,
   columnIndex: number,
   onMouseEnterCallback: (
-    id: string,
+    matrixId: string,
     rowIndex: number,
     columnIndex: number
   ) => void
 ) => {
   if (columnIndex - 1 == maxLength || rowIndex - 1 == maxLength) return;
-  onMouseEnterCallback(id, rowIndex, columnIndex);
+  onMouseEnterCallback(matrixId, rowIndex, columnIndex);
 };
 
 const onMouseLeave = (
-  id: string,
+  matrixId: string,
   maxLength: number,
   rowIndex: number,
   columnIndex: number,
   onMouseLeaveCallback: (
-    id: string,
+    matrixId: string,
     rowIndex: number,
     columnIndex: number
   ) => void
 ) => {
   if (columnIndex - 1 == maxLength || rowIndex - 1 == maxLength) return;
-  onMouseLeaveCallback(id, rowIndex, columnIndex);
+  onMouseLeaveCallback(matrixId, rowIndex, columnIndex);
 };
 
 const onMouseDown = (
-  id: string,
+  matrixId: string,
   maxLength: number,
   rowIndex: number,
   columnIndex: number,
   onMouseDownCallback: (
-    id: string,
+    matrixId: string,
     rowIndex: number,
     columnIndex: number
   ) => void
 ) => {
   if (columnIndex - 1 == maxLength || rowIndex - 1 == maxLength) return;
-  onMouseDownCallback(id, rowIndex, columnIndex);
+  onMouseDownCallback(matrixId, rowIndex, columnIndex);
 };
 
 export const DiagonalMatrix = (props: MatrixProps) => {
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  const valueMax: number = props.data.reduce(
-    (prev, curr) =>
-      Math.max(
-        prev,
-        ...curr.filter((value) => value != Number.POSITIVE_INFINITY)
-      ),
-    0
-  );
+  const valueMax: number =
+    (props.data &&
+      props.data.reduce(
+        (prev, curr) =>
+          Math.max(prev, ...curr.filter((value) => !isInfinity(value))),
+        0
+      )) ||
+    0;
+
+  function getClassName(indices: number[]) {
+    return [
+      indices.some((index) => props.focusedIndices.includes(index))
+        ? 'focused'
+        : '',
+      indices.some((index) => props.selectedIndices.includes(index))
+        ? 'selected'
+        : '',
+    ]
+      .filter((value) => value != '')
+      .join(' ');
+  }
 
   return (
     <MatrixContainer>
       <HeaderWithIcon>{props.title}</HeaderWithIcon>
-      <StyledTable id={props.id} ref={props.tableRef}>
-        <thead>
-          <tr>
-            <th></th>
-            {props.data
-              .filter((values, rowIndex) => rowIndex <= props.maxRowColLength)
-              .map((values, index) => (
-                <th
-                  key={index + 1}
-                  title={`${index}`}
-                  onMouseEnter={() =>
-                    onMouseEnter(
-                      props.id,
-                      props.maxRowColLength,
-                      0,
-                      index + 1,
-                      props.onMouseEnter
-                    )
-                  }
-                  onMouseLeave={() =>
-                    onMouseLeave(
-                      props.id,
-                      props.maxRowColLength,
-                      0,
-                      index + 1,
-                      props.onMouseLeave
-                    )
-                  }
-                  onMouseDown={() =>
-                    onMouseDown(
-                      props.id,
-                      props.maxRowColLength,
-                      0,
-                      index + 1,
-                      props.onMouseDown
-                    )
-                  }
-                  className={selectedIds.includes(index) ? 'selected' : ''}
-                >
-                  {index == props.maxRowColLength ? '...' : index}
-                </th>
-              ))}
-          </tr>
-        </thead>
-        <tbody>
-          {props.data
-            .filter((value, index) => index <= props.maxRowColLength)
-            .map((values, rowIndex) => (
-              <tr title={`${rowIndex}`} key={rowIndex + 1}>
-                <th
-                  onMouseEnter={() =>
-                    onMouseEnter(
-                      props.id,
-                      props.maxRowColLength,
-                      rowIndex + 1,
-                      0,
-                      props.onMouseEnter
-                    )
-                  }
-                  onMouseLeave={() =>
-                    onMouseLeave(
-                      props.id,
-                      props.maxRowColLength,
-                      rowIndex + 1,
-                      0,
-                      props.onMouseLeave
-                    )
-                  }
-                  onMouseDown={() =>
-                    onMouseLeave(
-                      props.id,
-                      props.maxRowColLength,
-                      rowIndex + 1,
-                      0,
-                      props.onMouseDown
-                    )
-                  }
-                  className={selectedIds.includes(rowIndex) ? 'selected' : ''}
-                >
-                  {rowIndex == props.maxRowColLength ? '...' : rowIndex}
-                </th>
-                {values
-                  .filter((value, index) => index <= props.maxRowColLength)
-                  .map((value, columnIndex) => {
-                    const v =
-                      rowIndex == props.maxRowColLength ||
-                      columnIndex == props.maxRowColLength
-                        ? '...'
-                        : valueToString(value, props.fractionDigits);
-                    return (
-                      <td
-                        key={columnIndex + 1}
-                        title={`(${columnIndex}, ${rowIndex}) = ${v}`}
-                        onMouseEnter={() =>
-                          onMouseEnter(
-                            props.id,
-                            props.maxRowColLength,
-                            rowIndex + 1,
-                            columnIndex + 1,
-                            props.onMouseEnter
-                          )
-                        }
-                        onMouseLeave={() =>
-                          onMouseLeave(
-                            props.id,
-                            props.maxRowColLength,
-                            rowIndex + 1,
-                            columnIndex + 1,
-                            props.onMouseLeave
-                          )
-                        }
-                        onMouseDown={() =>
-                          onMouseDown(
-                            props.id,
-                            props.maxRowColLength,
-                            rowIndex + 1,
-                            columnIndex + 1,
-                            props.onMouseDown
-                          )
-                        }
-                        {...(rowIndex == props.maxRowColLength ||
-                        columnIndex == props.maxRowColLength
-                          ? {}
-                          : valueToStyle(props.rgb, value / valueMax))}
-                        className={
-                          rowIndex < props.maxRowColLength - 1 &&
-                          (selectedIds.includes(rowIndex) ||
-                            selectedIds.includes(columnIndex))
-                            ? 'selected'
-                            : ''
-                        }
-                      >
-                        {v}
-                      </td>
-                    );
-                  })}
+      {props.data == null ? (
+        <StyledBox>
+          <CircularProgress />
+        </StyledBox>
+      ) : (
+        <TableContainer>
+          <Box className="fog-added">
+            <StyledTable
+              id={props.matrixId}
+              className={props.focused ?"focused"' :""'}
+              ref={props.tableRef}
+            >
+              <thead>
+              <tr>
+                <th></th>
+                {props.data
+                  .filter(
+                    (values, rowIndex) => rowIndex <= props.maxRowColLength
+                  )
+                  .map(
+                    (values, index) =>
+                      props.locations[index] && (
+                        <th
+                          key={index}
+                          title={props.locations[index].label}
+                          onMouseEnter={() =>
+                            onMouseEnter(
+                              props.matrixId,
+                              props.maxRowColLength,
+                              0,
+                              index + 1,
+                              props.onMouseEnter
+                            )
+                          }
+                          onMouseLeave={() =>
+                            onMouseLeave(
+                              props.matrixId,
+                              props.maxRowColLength,
+                              0,
+                              index + 1,
+                              props.onMouseLeave
+                            )
+                          }
+                          onMouseDown={() =>
+                            onMouseDown(
+                              props.matrixId,
+                              props.maxRowColLength,
+                              0,
+                              index + 1,
+                              props.onMouseDown
+                            )
+                          }
+                          className={getClassName([index])}
+                        >
+                          {index == props.maxRowColLength ?"..."' : index}
+                        </th>
+                      )
+                  )}
               </tr>
-            ))}
-        </tbody>
-      </StyledTable>
+              </thead>
+              <tbody>
+              {props.data
+                .filter((value, index) => index <= props.maxRowColLength)
+                .map(
+                  (values, rowIndex) =>
+                    props.locations[rowIndex] && (
+                      <tr
+                        title={props.locations[rowIndex].label}
+                        key={rowIndex}
+                      >
+                        <th
+                          onMouseEnter={() =>
+                            onMouseEnter(
+                              props.matrixId,
+                              props.maxRowColLength,
+                              rowIndex + 1,
+                              0,
+                              props.onMouseEnter
+                            )
+                          }
+                          onMouseLeave={() =>
+                            onMouseLeave(
+                              props.matrixId,
+                              props.maxRowColLength,
+                              rowIndex + 1,
+                              0,
+                              props.onMouseLeave
+                            )
+                          }
+                          onMouseDown={() =>
+                            onMouseLeave(
+                              props.matrixId,
+                              props.maxRowColLength,
+                              rowIndex + 1,
+                              0,
+                              props.onMouseDown
+                            )
+                          }
+                          className={getClassName([rowIndex])}
+                        >
+                          {rowIndex == props.maxRowColLength
+                            ?"..."'
+                            : rowIndex}
+                        </th>
+                        {values
+                          .filter(
+                            (value, index) => index <= props.maxRowColLength
+                          )
+                          .map((value, columnIndex) => {
+                            const { style, valueString } =
+                              rowIndex == props.maxRowColLength ||
+                              columnIndex == props.maxRowColLength
+                                ? { style: {}, valueString:"..."' }
+                                : valueToStyle(
+                                  props.rgb,
+                                  value,
+                                  valueMax,
+                                  [columnIndex, rowIndex].some((index) =>
+                                    props.focusedIndices.includes(index)
+                                  ),
+                                  [columnIndex, rowIndex].some((index) =>
+                                    props.selectedIndices.includes(index)
+                                  )
+                                );
+
+                            return (
+                              <td
+                                key={columnIndex + 1}
+                                title={`(${columnIndex}, ${rowIndex}) = ${valueString}`}
+                                onMouseEnter={() =>
+                                  onMouseEnter(
+                                    props.matrixId,
+                                    props.maxRowColLength,
+                                    rowIndex + 1,
+                                    columnIndex + 1,
+                                    props.onMouseEnter
+                                  )
+                                }
+                                onMouseLeave={() =>
+                                  onMouseLeave(
+                                    props.matrixId,
+                                    props.maxRowColLength,
+                                    rowIndex + 1,
+                                    columnIndex + 1,
+                                    props.onMouseLeave
+                                  )
+                                }
+                                onMouseDown={() =>
+                                  onMouseDown(
+                                    props.matrixId,
+                                    props.maxRowColLength,
+                                    rowIndex + 1,
+                                    columnIndex + 1,
+                                    props.onMouseDown
+                                  )
+                                }
+                                className={
+                                  rowIndex < props.maxRowColLength
+                                    ? getClassName([rowIndex, columnIndex])
+                                    :""'
+                                }
+                                style={style}
+                              >
+                                {valueString}
+                              </td>
+                            )
+                          })}
+                      </tr>
+                    )
+                )}
+              </tbody>
+            </StyledTable>
+          </Box>
+        </TableContainer>
+      )}
     </MatrixContainer>
   );
 };

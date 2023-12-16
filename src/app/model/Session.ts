@@ -1,50 +1,16 @@
-import { Country } from './Country';
+import { UIState } from './UIState';
+import { AppTimer } from './AppTimer';
+import { AppMatrices } from './AppMatrices';
 
-export interface Session {
-  // timer: Timer,
+export type Session = {
+  sessionId: string;
 
-  country: Country;
+  matrices: AppMatrices;
 
-  adjacencyMatrix: number[][];
-  distanceMatrix: number[][];
-  predecessorMatrix: number[][];
-  transportationCostMatrix: number[][];
+  timers: {
+    autoGraphLayoutTimer: AppTimer;
+    simulationTimer: AppTimer;
+  };
 
-  maxRowColLength: number;
-
-  chartScale: number;
-  focusedIds: number[];
-  selectedIds: number[];
-}
-
-// [[0, 1, 2, 3], [3, 4, 5, 6], [6, 7, 8, 9], [9, 10, 11, 12]];
-// [[0, 1, 2, 3], [3, 4, 5, 6], [6, 7, 8, 9], [9, 10, 11, 12]];
-// [[0, 1, 2, 3], [3, 4, 5, 6], [6, 7, 8, 9], [9, 10, 11, 12]]
-/*
-const matrixData = {
-  maxRowColLength: 2,
-  adjacencyData: [
-    [0, 1, 2, 3],
-    [3, 4, 5, 6],
-    [6, 7, 8, 9],
-    [9, 10, 11, 12],
-  ],
-  distanceData: [
-    [0, 1, 2, 3],
-    [3, 4, 5, 6],
-    [6, 7, 8, 9],
-    [9, 10, 11, 12],
-  ],
-  transportCostData: [
-    [0, 1, 2, 3],
-    [3, 4, 5, 6],
-    [6, 7, 8, 9],
-    [9, 10, 11, 12],
-  ],
+  uiState: UIState;
 };
-
-const locations = [
-  new GeoLocation(0, '0', 0.5, 0.5),
-  new GeoLocation(1, '1', 0.5, 0.5),
-];
- */

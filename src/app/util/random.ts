@@ -15,12 +15,10 @@ export class SeedRandom {
   }
 }
 
-const seed = new URLSearchParams(location.search).get('seed') || Math.random();
-let seedRandom: SeedRandom | null = null;
+export const SEED =
+  new URLSearchParams(location.search).get('seed') || Math.random();
+export const SEED_RANDOM: SeedRandom = new SeedRandom(SEED);
 
 export function random() {
-  if (!seedRandom) {
-    seedRandom = new SeedRandom(seed);
-  }
-  return seedRandom.random();
+  return SEED_RANDOM.random();
 }

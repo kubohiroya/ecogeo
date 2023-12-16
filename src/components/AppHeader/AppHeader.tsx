@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
-import React from "react";
-import { Typography } from "@mui/material";
+import styled from '@emotion/styled';
+import React from 'react';
+import { Typography } from '@mui/material';
 
 /* eslint-disable-next-line */
 export interface AppHeaderProps {
@@ -9,6 +9,8 @@ export interface AppHeaderProps {
 }
 
 const StyledAppHeader = styled.div`
+  padding-top: 8px;
+  padding-bottom: 4px;
   align-self: center;
   justify-content: center;
   align-items: center;

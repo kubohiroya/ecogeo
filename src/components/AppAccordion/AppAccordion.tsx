@@ -1,7 +1,7 @@
-import styled from "@emotion/styled";
-import React, { createContext, ReactElement } from "react";
-import { ExpandMore } from "@mui/icons-material";
-import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
+import styled from '@emotion/styled';
+import React, { createContext, ReactElement } from 'react';
+import { ExpandMore } from '@mui/icons-material';
+import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 
 /* eslint-disable-next-line */
 export interface AppAccordionProps {
@@ -50,7 +50,6 @@ export function AppAccordion(props: AppAccordionProps) {
           } else {
             setDelayedExpanded(expanded);
           }
-          // setExpanded(expanded);
         }}
       >
         <StyledAccordionSummary

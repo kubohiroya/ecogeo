@@ -1,3 +1,34 @@
+export const create2DArray = (
+  numVertices: number,
+  createValue?: (i: number, j: number) => number
+): number[][] => {
+  const matrix2d: number[][] = [];
+  for (let i = 0; i < numVertices; i++) {
+    const row: number[] = [];
+    for (let j = 0; j < numVertices; j++) {
+      row.push(createValue ? createValue(i, j) : 0);
+    }
+    matrix2d.push(row);
+  }
+  return matrix2d;
+};
+
+export function createDiagonalMatrix(n: number, defaultValues?: number[][]) {
+  const ret = new Array<Array<number>>(n);
+  for (let i = 0; i < n; i++) {
+    ret[i] = new Array<number>(n);
+    ret[i].fill(Number.POSITIVE_INFINITY);
+    if (defaultValues && defaultValues[i]) {
+      for (let j = 0; j < n; j++) {
+        if (defaultValues[i][j]) {
+          ret[i][j] = defaultValues[i][j];
+        }
+      }
+    }
+  }
+  return ret;
+}
+
 export function arrayIntersection(arr1: number[], arr2: number[]): number[] {
   const set2 = new Set(arr2);
   return arr1.filter((item) => set2.has(item));
@@ -22,13 +53,66 @@ export const loop = (start: number, end?: number) => {
   return result;
 };
 
-/*
-const array1 = [1, 2, 3];
-const array2 = [2, 3, 4];
-const result = arrayXOR(array1, array2);
-console.log(result); // [1, 4]
-const array1 = [0, 2];
-const array2 = [1];
-const result = arrayXOR(array1, array2);
-console.log(result); // [1, 4]
- */
+export function convertIdToIndex<T extends { id: number }>(
+  arr: T[],
+  id: number
+): number {
+  let left = 0;
+  let right = arr.length - 1;
+
+  while (left <= right) {
+    let mid = Math.floor((left + right) / 2);
+
+    if (arr[mid].id === id) {
+      // 探索対象の数値が見つかった場合、
+      // 最初に現れる位置を見つけるために左側を探索
+      while (mid > 0 && arr[mid - 1].id === id) {
+        mid--;
+      }
+      return mid;
+    } else if (arr[mid].id < id) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+
+  // 探索する数値が配列に存在しない場合は-1を返す
+  return -1;
+}
+
+export function getById<
+  T extends {
+    id: number;
+  }
+>(arr: T[], id: number): T | null {
+  let left = 0;
+  let right = arr.length - 1;
+
+  while (left <= right) {
+    let mid = Math.floor((left + right) / 2);
+
+    if (arr[mid].id === id) {
+      // 探索対象の数値が見つかった場合、
+      // 最初に現れる位置を見つけるために左側を探索
+      while (mid > 0 && arr[mid - 1].id === id) {
+        mid--;
+      }
+      return arr[mid];
+    } else if (arr[mid].id < id) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+  // 探索する数値が配列に存在しない場合はnullを返す
+  return null;
+}
+
+export function shuffleArray<T>(array: T[]) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array; // for chaining
+}

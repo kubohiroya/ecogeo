@@ -1,17 +1,23 @@
 import styled from "@emotion/styled";
 import { Box, Divider, IconButton, ListItemIcon, Menu, MenuItem, Tab, Typography } from "@mui/material";
 import TabPanel from "@mui/lab/TabPanel";
-
-import React, { ReactElement, useCallback, useEffect, useState } from "react";
-import { TabContext, TabList } from "@mui/lab";
-import { Add, Close, Edit, FileDownload, FileUpload, MoreVert, RestartAlt } from "@mui/icons-material";
-
 import { enablePatches } from "immer";
 import { PrimitiveAtom, useAtomValue } from "jotai";
 import { SessionPanel } from "./SessionPanel";
 import { useImmerAtom } from "jotai-immer";
 import { rootAtom, UndoRedoSessionState } from "../../model/Root";
 import { Session, sessionState } from "../../model/Session";
+import React, { ReactElement, useCallback, useEffect, useState } from"react"';
+import { TabContext, TabList } from"@mui/lab"';
+import {
+  Add,
+  Close,
+  Edit,
+  FileDownload,
+  FileUpload,
+  MoreVert,
+  RestartAl,
+} from"@mui/icons-material"';
 
 enablePatches();
 
@@ -107,7 +113,7 @@ const TabMenu = (props: TabMenuProps) => {
       title: 'Revert parameters to the case default values',
       icon: <RestartAlt />,
       onClick: onRevert,
-      disabled: tru,
+      disabled: true
     },
     null,
     {
@@ -118,7 +124,7 @@ const TabMenu = (props: TabMenuProps) => {
       disabled: true,
     },
     {
-      label:"Import ..."',
+      label: "Import ...",
       title: 'Import graph structure data from a local file',
       icon: <FileUpload />,
       onClick: onImport,

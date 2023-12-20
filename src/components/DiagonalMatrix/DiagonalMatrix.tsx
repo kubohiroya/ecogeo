@@ -147,10 +147,10 @@ function valueToStyle(
     } else {
       return {
         style: {
-          backgroundColor:"#bbb"',
-          color:"#ccc",
+          backgroundColor: '#bbb',
+          color: '#ccc',
         },
-        valueString: "♾️"
+        valueString: '♾️',
       };
     }
   } else if (value == 0.0) {
@@ -158,9 +158,9 @@ function valueToStyle(
       return {
         style: {
           backgroundColor: `#ddd`,
-          color: "#833"
+          color: '#833',
         },
-        valueString: round(value, 0.01)
+        valueString: round(value, 0.01,
       };
     } else {
       return {

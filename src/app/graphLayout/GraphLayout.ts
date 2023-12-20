@@ -1,6 +1,6 @@
-import { City } from "../model/City";
-import { Edge, Vertex } from "../model/Graph";
-import { isInfinity } from "../util/mathUtil";
+import { City } from '../model/City';
+import { Edge, Vertex } from '../model/Graph';
+import { isInfinity } from '../util/mathUtil';
 
 export abstract class GraphLayout {
   abstract calculateRepulsion(
@@ -43,7 +43,7 @@ export abstract class GraphLayout {
     const newLocations = locations.map((city) => {
       return {
         x: city.x,
-        y: city.,
+        y: city.y,
       };
     });
 
@@ -99,7 +99,7 @@ export abstract class GraphLayout {
 
     return {
       locations: newLocations,
-      maximumVelocity: maximumVelocity
+      maximumVelocity: maximumVelocit,
     };
   }
 }

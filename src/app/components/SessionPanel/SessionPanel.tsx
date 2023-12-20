@@ -34,7 +34,7 @@ import useIntervalExpScale from "../../hooks/useIntervalExpScape";
 import { startSimulation, tickSimulator } from "../../model/Simulator";
 import { GraphLayoutTickResult } from "../../graphLayout/GraphLayout";
 import { SessionRenameDialog } from "./SessionRenameDialog";
-import { getMatrixEngine } from"../../apsp/MatrixEngineService"';
+import { getMatrixEngine } from "../../apsp/MatrixEngineService";
 
 type SessionPanelProps = {
   sessionId: string;
@@ -58,7 +58,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     redoSessionState,
     history,
     future,
-    staging
+    stagig,
   } = useSessionStateUndoRedo(sessionId);
 
   const autoGraphLayoutEngine: SpringGraphLayout = new SpringGraphLayout();
@@ -108,7 +108,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         });
       },
       graphLayoutTickResult.maximumVelocity < 1.0,
-      "autoLayout"
+      'autoLayout'
     );
 
     return graphLayoutTickResult;
@@ -118,14 +118,12 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     sessionState.locations,
     sessionState.edges,
     uiState.selectedIndices,
-    uiState.draggingIndex
+    uiState.draggingIndex,
   ]);
 
   const autoGraphLayoutTimer = useIntervalExpScale<GraphLayoutTickResult>({
-    onStarted: () => {
-    },
-    onReset: () => {
-    },
+    onStarted: () => {},
+    onReset: () => {},
     tick: tickAutoGraphLayout,
     isFinished: (result: GraphLayoutTickResult) => {
       return result.maximumVelocity < 0.1;
@@ -135,7 +133,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     },
     minInterval: 5,
     maxInterval: 300,
-    initialIntervalScale: 0
+    initialIntervalScale: 0,
   });
 
   const simulation = useIntervalExpScale<boolean>({
@@ -146,8 +144,8 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
             startSimulation(draft);
           },
           true,
-          "simulationStart"
-        );
+         "simulationStart"'
+        )
       });
     },
     onReset: () => {
@@ -181,8 +179,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     },
     onFinished: (result: boolean) => {
       requestAnimationFrame(() => {
-        setSessionState((draft) => {
-        }, false, "simulationFinished");
+        setSessionState((draft) => {}, false, "simulationFinished");
       });
     },
     minInterval: 10,
@@ -449,7 +446,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
           paddingMarginRatio:
             uiState.viewportWindow && uiState.viewportWindow!.scale < 1.7
               ? PADDING_MARGIN_RATIO
-              : 0.5
+              : 0.5,
         });
       }
       return uiState.viewportWindow;

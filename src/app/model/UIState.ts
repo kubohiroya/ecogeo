@@ -16,5 +16,8 @@ export type UIState = {
 
   chartScale: number;
   chartType: string;
+
+  autoLayoutFinished: boolean;
+
   layer: AppLayer;
 };

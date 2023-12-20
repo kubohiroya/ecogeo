@@ -42,14 +42,14 @@ export type SessionLayoutPanelProps = {
 };
 
 const horizontalMargin = 10;
-const defaultContainerHeight = 500;
+export const DEFAULT_MAIN_CONTAINER_HEIGHT = 500;
 
 export const SessionLayoutPanel = React.memo(
   (props: SessionLayoutPanelProps) => {
     const containerRef = useRef<null | HTMLDivElement>(null);
 
     const [prevSplitPaneHeight, setPrevSplitPaneHeight] = useState<number>(
-      defaultContainerHeight
+      DEFAULT_MAIN_CONTAINER_HEIGHT
     );
 
     useEffect(() => {
@@ -62,10 +62,10 @@ export const SessionLayoutPanel = React.memo(
       if (containerRef.current) {
         const initialChartWidth = Math.min(
           containerRef.current.clientWidth - horizontalMargin,
-          defaultContainerHeight
+          DEFAULT_MAIN_CONTAINER_HEIGHT
         );
         const initialChartHeight =
-          uiState.splitPanelHeight || defaultContainerHeight;
+          uiState.splitPanelHeight || DEFAULT_MAIN_CONTAINER_HEIGHT;
 
         setUIState((draft: UIState) => {
           if (containerRef.current) {

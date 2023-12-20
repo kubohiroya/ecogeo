@@ -1,8 +1,6 @@
-import { City } from '../model/City';
-import { Edge, Vertex } from '../model/Graph';
-import { calculateDistanceByIds } from '../core/calculateDistanceByLocations';
-
-const MINIMUM_VELOCITY_THRESHOLD = 0.01;
+import { City } from "../model/City";
+import { Edge, Vertex } from "../model/Graph";
+import { isInfinity } from "../util/mathUtil";
 
 export abstract class GraphLayout {
   abstract calculateRepulsion(
@@ -32,12 +30,22 @@ export abstract class GraphLayout {
     adjacencyMatrix: number[][] | null,
     selectedIds: number[],
     draggingId: number | null
-  ): boolean {
+  ): GraphLayoutTickResult {
+    let maximumVelocity = Number.POSITIVE_INFINITY;
+
     if (adjacencyMatrix == null) {
-      return true;
+      return {
+        locations,
+        maximumVelocity: maximumVelocity,
+      };
     }
 
-    let minimumVelocity = Number.POSITIVE_INFINITY;
+    const newLocations = locations.map((city) => {
+      return {
+        x: city.x,
+        y: city.,
+      };
+    });
 
     // 各ノードについて、他のノードとの斥力と引力を計算
     for (let i = 0; i < locations.length; i++) {
@@ -49,7 +57,7 @@ export abstract class GraphLayout {
       let totalDisplacementY = 0;
 
       for (let j = 0; j < locations.length; j++) {
-        if (i !== j) {
+        if (i !== j && isInfinity(adjacencyMatrix[i][j])) {
           const repulsionForce = this.calculateRepulsion(
             locations[i],
             locations[j]
@@ -61,12 +69,10 @@ export abstract class GraphLayout {
 
       for (let j = 0; j < locations.length; j++) {
         if (
-          adjacencyMatrix[i] &&
-          0 < adjacencyMatrix[i].length &&
-          0 < adjacencyMatrix[i][j] &&
-          adjacencyMatrix[i][j] < Number.POSITIVE_INFINITY
+          i < adjacencyMatrix.length &&
+          j < adjacencyMatrix[i].length &&
+          !isInfinity(adjacencyMatrix[i][j])
         ) {
-          adjacencyMatrix[i][j] = calculateDistanceByIds(locations, i, j);
           const attractionForce = this.calculateAttraction(
             locations[i],
             locations[j]
@@ -83,22 +89,25 @@ export abstract class GraphLayout {
       totalDisplacementX += ff.dx;
       totalDisplacementY += ff.dy;
 
-      locations[i].x += totalDisplacementX;
-      locations[i].y += totalDisplacementY;
-      minimumVelocity = Math.min(
+      newLocations[i].x += totalDisplacementX;
+      newLocations[i].y += totalDisplacementY;
+      maximumVelocity = Math.max(
         Math.max(Math.abs(totalDisplacementX), Math.abs(totalDisplacementY)),
-        minimumVelocity
+        maximumVelocity
       );
     }
 
-    edges.forEach((edge) => {
-      edge.distance = calculateDistanceByIds(
-        locations,
-        edge.source,
-        edge.target
-      );
-    });
-
-    return minimumVelocity < MINIMUM_VELOCITY_THRESHOLD;
+    return {
+      locations: newLocations,
+      maximumVelocity: maximumVelocity
+    };
   }
 }
+
+export type GraphLayoutTickResult = {
+  locations: {
+    x: number;
+    y: number;
+  }[];
+  maximumVelocity: number;
+};

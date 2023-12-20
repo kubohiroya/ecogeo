@@ -42,7 +42,7 @@ export const CountryConfigPanel = React.memo(
           (c) => country.countryId == c.countryId
         );
         props.setNumLocations(countryDefault!.numLocations);
-        props.setShareManufacturing(countryDefault!.shareManufacturing);
+        props.setShareManufacturing(countryDefault!.manufactureShare);
         props.setTransportationCost(countryDefault!.transportationCost);
         props.setElasticitySubstitution(countryDefault!.elasticitySubstitution);
       },
@@ -136,7 +136,7 @@ export const CountryConfigPanel = React.memo(
             { value: 0.8, label: '0.8' },
             { value: 1.0, label: '1.0' },
           ]}
-          value={country.shareManufacturing}
+          value={country.manufactureShare}
           onChange={onShareManufacturingChange}
           onChangeCommitted={onShareManufacturingChangeCommitted}
           min={0}
@@ -161,7 +161,7 @@ export const CountryConfigPanel = React.memo(
           min={1}
           max={10}
         />
-        ;
+
         <LabelSlider
           title={
             'σ: The elasticity of substitution among manufactured goods. A value of 1 represents a strong love of variety, while a value of 20 represents a limited love of variety.'
@@ -182,7 +182,6 @@ export const CountryConfigPanel = React.memo(
           min={1}
           max={20}
         />
-        ;
       </StyledCountryConfigPanel>
     );
   })

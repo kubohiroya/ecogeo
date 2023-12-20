@@ -1,9 +1,8 @@
 import styled from '@emotion/styled';
-import { IconButton } from '@mui/material';
+import { Icon, IconButton, SvgIcon } from '@mui/material';
 import {
   AddRoad,
   DomainAdd,
-  DomainDisabled,
   FitScreen,
   Redo,
   RemoveRoad,
@@ -22,6 +21,8 @@ export interface GraphPanelButtonsProps {
   onRemoveLocation: () => void;
   onAddEdge: () => void;
   onRemoveEdge: () => void;
+  onToggleAutoGraphLayout: () => void;
+  autoGraphLayoutStarted: boolean;
   autoLayoutSpeed: number;
   setAutoLayoutSpeed: (autoLayoutSpeed: number) => void;
   mapLayer: boolean;
@@ -71,6 +72,15 @@ const StyledRedoButton = styled(ControlButton)`
 
 const StyledGraphButtons = styled.div``;
 
+const DomainDel = styled(Icon)`
+  width: 24px;
+  height: 24px;
+  margin: 3px;
+  // background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiBox-root css-1szh1ks" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="DomainAddIcon"><path d="M12 7V3H2v18h14v-2h-4v-2h2v-2h-2v-2h2v-2h-2V9h8v6h2V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm14 12v2h-2h2v2h2zm-6-8h-2v2h2v-2zm0 4h-2v2h2v-2z"></path></svg>');
+  //  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiBox-root css-1szh1ks" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="RemoveRoadIcon"><path d="M18 4h2v9h-2zM4 4h2v16H4zm7 0h2v4h-2zm0 6h2v4h-2zm0 6h2v4h-2zm11.5.41L21.09 15 19 17.09 16.91 15l-1.41 1.41 2.09 2.09-2.09 2.09L16.91 22 19 19.91 21.09 22l1.41-1.41-2.09-2.09z"></path></svg>');
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiBox-root css-1szh1ks" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="DomainRemoveIcon"><path d="m18 11h-2v2h2z"/> <path d="m12 7v-4h-10v18h14v-2h-4v-2h2v-2h-2v-2h2v-2h-2v-2h8v6h2v-8zm-6 12h-2v-2h2zm0-4h-2v-2h2zm0-4h-2v-2h2zm0-4h-2v-2h2zm4 12h-2v-2h2zm0-4h-2v-2h2zm0-4h-2v-2h2zm0-4h-2v-2h2z"/> <g transform="rotate(45 21.129 19.875)"> <rect x="15.988" y="19.011" width="6.8875" height="1.9946"/> <rect transform="rotate(90)" x="16.658" y="-20.289" width="6.8875" height="1.9946"/></g></svg>');
+`;
+
 export const GraphPanelButtons = React.memo((props: GraphPanelButtonsProps) => {
   return props.show ? (
     <StyledGraphButtons>
@@ -101,7 +111,11 @@ export const GraphPanelButtons = React.memo((props: GraphPanelButtonsProps) => {
           title="Remove selected location(s)"
           onClick={props.onRemoveLocation}
         >
-          <DomainDisabled />
+          <SvgIcon>
+            <path d="M18 11h-2v2h2z" />
+            <path d="M12 7V3H2v18h14v-2h-4v-2h2v-2h-2v-2h2v-2h-2V9h8v6h2V7zM6 19H4v-2h2zm0-4H4v-2h2zm0-4H4V9h2zm0-4H4V5h2zm4 12H8v-2h2zm0-4H8v-2h2zm0-4H8V9h2zm0-4H8V5h2z" />
+            <path d="m21.398 15.596-1.662 1.664-1.63-1.631-1.413 1.41 1.631 1.63-1.795 1.798 1.41 1.41 1.795-1.795 1.83 1.828 1.41-1.412-1.828-1.828 1.665-1.664-1.413-1.41z" />
+          </SvgIcon>
         </RemoveNodeButton>
 
         <AddEdgeButton
@@ -125,6 +139,8 @@ export const GraphPanelButtons = React.memo((props: GraphPanelButtonsProps) => {
         </RemoveEdgeButton>
 
         <StyledAutoLayoutButton
+          onToggleAutoGraphLayout={props.onToggleAutoGraphLayout}
+          autoLayoutStarted={props.autoGraphLayoutStarted}
           speed={props.autoLayoutSpeed}
           onChangeSpeed={props.setAutoLayoutSpeed}
         />

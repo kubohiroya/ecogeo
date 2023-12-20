@@ -3,9 +3,7 @@ import React, { createContext, ReactElement } from 'react';
 import { ExpandMore } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 
-/* eslint-disable-next-line */
 export interface AppAccordionProps {
-  // defaultOpen?: boolean;
   lock?: boolean;
   expanded: boolean;
   onClickSummary: () => void;

@@ -1,39 +1,17 @@
-import styled from '@emotion/styled';
-import {
-  Box,
-  Divider,
-  IconButton,
-  ListItemIcon,
-  Menu,
-  MenuItem,
-  Tab,
-  Typography,
-} from '@mui/material';
-import TabPanel from '@mui/lab/TabPanel';
+import styled from "@emotion/styled";
+import { Box, Divider, IconButton, ListItemIcon, Menu, MenuItem, Tab, Typography } from "@mui/material";
+import TabPanel from "@mui/lab/TabPanel";
 
-import React, { ReactElement, useCallback, useEffect, useState } from 'react';
-import { TabContext, TabList } from '@mui/lab';
-import {
-  Add,
-  Close,
-  FileDownload,
-  FileUpload,
-  MoreVert,
-  RestartAlt,
-} from '@mui/icons-material';
+import React, { ReactElement, useCallback, useEffect, useState } from "react";
+import { TabContext, TabList } from "@mui/lab";
+import { Add, Close, Edit, FileDownload, FileUpload, MoreVert, RestartAlt } from "@mui/icons-material";
 
-import { enablePatches } from 'immer';
-import { atom, PrimitiveAtom, useAtom, useAtomValue } from 'jotai';
-// import { sessionAtomsAtom, sessionStateAtomsAtom } from '../../model/Sessions';
-import { SessionPanel } from './SessionPanel';
-import {
-  createSession,
-  rootAtom,
-  UndoRedoSessionState,
-} from '../../model/Sessions';
-import { INITIAL_COUNTRY_ARRAY } from '../../model/initialCountryArray';
-import { useImmerAtom } from 'jotai-immer';
-import { Session } from '../../model/Session';
+import { enablePatches } from "immer";
+import { PrimitiveAtom, useAtomValue } from "jotai";
+import { SessionPanel } from "./SessionPanel";
+import { useImmerAtom } from "jotai-immer";
+import { rootAtom, UndoRedoSessionState } from "../../model/Root";
+import { Session, sessionState } from "../../model/Session";
 
 enablePatches();
 
@@ -80,21 +58,33 @@ function a11yProps(id: string) {
   };
 }
 
-export interface SessionSelectorPanelProps {}
+export interface TabMenuProps {
+  sessionId: string;
+  sessionTitle: string;
+  openRenameDialog: () => void;
+}
 
-const TabMenu = () => {
+const TabMenu = (props: TabMenuProps) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = useCallback((event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  }, []);
-  const handleClose = useCallback(() => {
+  const openMenu = Boolean(anchorEl);
+  const handleOpenMenuButton = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      setAnchorEl(event.currentTarget);
+    },
+    []
+  );
+  const handleCloseMenuButton = useCallback(() => {
     setAnchorEl(null);
   }, []);
+
+  const onRenameDialogOpen = () => {
+    props.openRenameDialog();
+  };
 
   const onRevert = () => {
     alert('Reverting to default parameters...');
   };
+
   const onCreate = () => {};
   const onImport = () => {};
   const onExport = () => {};
@@ -104,12 +94,20 @@ const TabMenu = () => {
     icon: ReactElement;
     title: string;
     onClick: () => void;
+    disabled?: boolean;
   }> = [
+    {
+      label: 'Rename ...',
+      title: 'Rename the case',
+      icon: <Edit />,
+      onClick: onRenameDialogOpen,
+    },
     {
       label: 'Revert',
       title: 'Revert parameters to the case default values',
       icon: <RestartAlt />,
       onClick: onRevert,
+      disabled: tru,
     },
     null,
     {
@@ -117,18 +115,21 @@ const TabMenu = () => {
       title: 'Create new case',
       icon: <Add />,
       onClick: onCreate,
+      disabled: true,
     },
     {
-      label: 'Import',
+      label:"Import ..."',
       title: 'Import graph structure data from a local file',
       icon: <FileUpload />,
       onClick: onImport,
+      disabled: true
     },
     {
-      label: 'Export',
+      label: "Export ...",
       title: 'Export graph structure data as a local file',
       icon: <FileDownload />,
       onClick: onExport,
+      disabled: true
     },
   ];
 
@@ -138,10 +139,10 @@ const TabMenu = () => {
         sx={{ marginLeft: 'auto' }}
         aria-label="more"
         id="long-button"
-        aria-controls={open ? 'long-menu' : undefined}
-        aria-expanded={open ? 'true' : undefined}
+        aria-controls={openMenu ? "long-menu" : undefined}
+        aria-expanded={openMenu ? "true" : undefined}
         aria-haspopup="true"
-        onClick={handleClick}
+        onClick={handleOpenMenuButton}
       >
         <MoreVert />
       </IconButton>
@@ -151,15 +152,19 @@ const TabMenu = () => {
           'aria-labelledby': 'long-button',
         }}
         anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
+        open={openMenu}
+        onClose={handleCloseMenuButton}
       >
         {options.map((option, index) =>
           option != null ? (
             <MenuItem
               key={option.label}
-              onClick={option.onClick}
+              onClick={() => {
+                setAnchorEl(null);
+                option.onClick();
+              }}
               title={option.title}
+              disabled={option.disabled}
             >
               <ListItemIcon>{option.icon}</ListItemIcon>
               {option.label}
@@ -173,64 +178,58 @@ const TabMenu = () => {
   );
 };
 
-export function SessionSelectorPanel(props: SessionSelectorPanelProps) {
-  const [sessionId, setSessionId] = useState<string | null>(null);
-  const [root, setRoot] = useImmerAtom(rootAtom);
-  const sessionStateMap = useAtomValue(root.sessionStateAtoms);
-  const [sessionTitleArray, setSessionTitleArray] = useState<string[]>([]);
-  useEffect(() => {
-    const initialSessionStateArray = INITIAL_COUNTRY_ARRAY.map((country) =>
-      createSession(country)
-    );
-    const newSessionAtoms: Record<string, PrimitiveAtom<Session>> = {};
-    const newSessionStateAtoms: Record<
-      string,
-      PrimitiveAtom<UndoRedoSessionState>
-    > = {};
-
-    setSessionTitleArray(
-      initialSessionStateArray.map((s) => s.sessionState.current.country.title)
-    );
-    initialSessionStateArray.forEach(({ session, sessionState }) => {
-      newSessionAtoms[session.sessionId] = atom(session);
-      newSessionStateAtoms[session.sessionId] = atom(sessionState);
-    });
-
-    //setSessionIds(initialSessionStateArray.map((s) => s.session.sessionId));
-    setRoot((draft) => {
-      draft.sessionAtoms = atom(newSessionAtoms);
-      draft.sessionStateAtoms = atom(newSessionStateAtoms);
-    });
-    setSessionId(
-      initialSessionStateArray[initialSessionStateArray.length - 1].session
-        .sessionId
-    );
-  }, []);
-
-  const onSelectTab = useCallback(
-    (sessionId: string) => {
-      return (event: React.SyntheticEvent) => {
-        setSessionId(sessionId);
-      };
-    },
-    [setSessionId]
+export function SessionSelectorPanel(props: {
+  initialSelectedSessionId: string;
+  sessionAtoms: Record<string, PrimitiveAtom<Session>>;
+  sessionStateAtoms: Record<string, PrimitiveAtom<UndoRedoSessionState>>;
+}) {
+  const [sessionId, setSessionId] = useState<string | null>(
+    props.initialSelectedSessionId
   );
+  const [root, setRoot] = useImmerAtom(rootAtom);
+  const sessionIds = useAtomValue(root.sessionIdsAtom);
+  const sessionTitles = useAtomValue(root.sessionTitlesAtom);
+
+  const [isRenameDialogOpen, setRenameDialogOpen] = useState<boolean>(false);
+
+  const onSelectTab = useCallback((sessionId: string, index: number) => {
+    return (event: React.SyntheticEvent) => {
+      setSessionId(sessionId);
+    };
+  }, []);
 
   const onClose = useCallback(
     (sessionId: any) => {
-      setRoot((draft) => {
-        delete useAtom(draft.sessionAtoms)[sessionId];
-        delete useAtom(draft.sessionStateAtoms)[sessionId];
+      const index = sessionIds.indexOf(sessionId);
+      const newIndex =
+        sessionIds.length == 1
+          ? null
+          : index == sessionIds.length - 1
+            ? index - 1
+            : index + 1;
+      const newSessionId = newIndex == null ? null : sessionIds[newIndex];
+      requestAnimationFrame(() => {
+        setSessionId(newSessionId);
+        setRoot((draft) => {
+          delete draft.sessionAtoms[sessionId];
+          delete draft.sessionStateAtoms[sessionId];
+        });
       });
     },
-    [root.sessionAtoms, root.sessionStateAtoms]
+    [sessionIds, setSessionId, setRoot]
   );
 
-  const sessionIds = [...Object.keys(sessionStateMap)];
+  useEffect(() => {
+    setRoot((draft) => {
+      draft.sessionAtoms = props.sessionAtoms;
+      draft.sessionStateAtoms = props.sessionStateAtoms;
+    });
+    setSessionId(sessionId);
+  });
 
   return (
     <StyledParameterBox>
-      {sessionId == null ? (
+      {sessionIds == null || sessionIds.length == 0 || sessionId == null ? (
         <Box
           style={{
             height: '500px',
@@ -247,12 +246,12 @@ export function SessionSelectorPanel(props: SessionSelectorPanelProps) {
             <StyledTabList aria-label="Case selector" scrollButtons={true}>
               {sessionIds.map((_sessionId: string, index: number) => (
                 <StyledTab
-                  key={sessionIds[index]}
-                  value={sessionIds[index]}
+                  key={_sessionId}
+                  value={_sessionId}
                   label={
                     <span style={{ display: 'flex', alignItems: 'center' }}>
                       <Typography fontSize={'small'}>
-                        {sessionTitleArray[index]}
+                        {sessionTitles.get(_sessionId) || "Untitled"}
                       </Typography>
                       <IconButton
                         size="small"
@@ -265,18 +264,24 @@ export function SessionSelectorPanel(props: SessionSelectorPanelProps) {
                     </span>
                   }
                   {...a11yProps(_sessionId)}
-                  onClick={onSelectTab(_sessionId)}
+                  onClick={onSelectTab(_sessionId, index)}
                 />
               ))}
 
-              <TabMenu />
+              <TabMenu
+                sessionId={sessionId}
+                sessionTitle={sessionState.current.country.title}
+                openRenameDialog={() => setRenameDialogOpen(true)}
+              />
             </StyledTabList>
 
             {sessionIds.map((_sessionId, index) => (
               <StyledTabPanel key={_sessionId} value={_sessionId}>
-                {_sessionId === sessionId && (
-                  <SessionPanel sessionId={_sessionId} />
-                )}
+                <SessionPanel
+                  sessionId={_sessionId}
+                  openRenameDialog={isRenameDialogOpen}
+                  closeRenameDialog={() => setRenameDialogOpen(false)}
+                />
               </StyledTabPanel>
             ))}
           </TabContext>

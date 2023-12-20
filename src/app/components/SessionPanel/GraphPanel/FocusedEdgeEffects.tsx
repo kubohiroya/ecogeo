@@ -49,6 +49,7 @@ export const FocusedEdgeEffects = (props: EdgesProps) => {
     const nextIndex = props.predecessorMatrix[prevIndex][targetIndex];
     if (nextIndex == -1) break;
     const nextLocation = props.locations[nextIndex];
+    if (!nextLocation) continue;
 
     path.push(nextLocation);
 
@@ -74,7 +75,9 @@ export const FocusedEdgeEffects = (props: EdgesProps) => {
       prevLocation &&
       props.distanceMatrix &&
       props.predecessorMatrix &&
-      props.predecessorMatrix[sourceIndex][targetIndex] != -1
+      props.predecessorMatrix[sourceIndex][targetIndex] != -1 &&
+      sourceIndex < props.locations.length &&
+      targetIndex < props.locations.length
     ) {
       g.lineStyle({
         width: 2,
@@ -91,7 +94,7 @@ export const FocusedEdgeEffects = (props: EdgesProps) => {
       const dash = new DashLine(g, {
         dash: [1, 15],
         width: 10,
-        color: props.color || 0xffaa00,
+        color: props.color || 0xff0000,
         alpha: 0.25,
         alignment: 0.5,
         cap: PIXI.LINE_CAP.ROUND,
@@ -132,30 +135,33 @@ export const FocusedEdgeEffects = (props: EdgesProps) => {
             })}
           />
         ))}
-        {!isInfinity(distance) && distance > 0 && (
-          <Text
-            text={props.distanceMatrix[sourceIndex][targetIndex].toFixed(2)}
-            position={{
-              x:
-                (props.locations[sourceIndex].x +
-                  props.locations[targetIndex].x) /
-                2,
-              y:
-                (props.locations[sourceIndex].y +
-                  props.locations[targetIndex].y) /
-                2,
-            }}
-            anchor={{ x: 0.5, y: 0.5 }}
-            style={fontStyle({
-              fontSize: 15,
-              fill: 0xff0000,
-              dropShadow: false,
-              dropShadowAlpha: 0.1,
-              dropShadowBlur: 1,
-              dropShadowColor: 0x000000,
-            })}
-          />
-        )}
+        {!isInfinity(distance) &&
+          distance > 0 &&
+          sourceIndex < props.locations.length &&
+          targetIndex < props.locations.length && (
+            <Text
+              text={props.distanceMatrix[sourceIndex][targetIndex].toFixed(2)}
+              position={{
+                x:
+                  (props.locations[sourceIndex].x +
+                    props.locations[targetIndex].x) /
+                  2,
+                y:
+                  (props.locations[sourceIndex].y +
+                    props.locations[targetIndex].y) /
+                  2,
+              }}
+              anchor={{ x: 0.5, y: 0.5 }}
+              style={fontStyle({
+                fontSize: 15,
+                fill: 0xff0000,
+                dropShadow: false,
+                dropShadowAlpha: 0.1,
+                dropShadowBlur: 1,
+                dropShadowColor: 0x000000,
+              })}
+            />
+          )}
       </Container>
     </Container>
   );

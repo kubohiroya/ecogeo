@@ -1,13 +1,13 @@
-import { City } from './City';
+import { City } from '../../../model/City';
 import * as uuid from 'uuid';
-import { SEED_RANDOM, SeedRandom } from '../util/random';
-import { Edge } from './Graph';
+import { SEED_RANDOM, SeedRandom } from '../../../util/random';
+import { Edge } from '../../../model/Graph';
 import {
   calculateDistanceByLocations,
   DISTANCE_SCALE_FACTOR,
-} from '../core/calculateDistanceByLocations';
-import { loop, shuffleArray } from '../util/arrayUtil';
-import { SessionState } from './SessionState';
+} from '../../../apsp/calculateDistanceByLocations';
+import { loop, shuffleArray } from '../../../util/arrayUtil';
+import { SessionState } from '../../../model/SessionState';
 
 const RANDOM_FACTOR = 0.05;
 const randomizedOf = (seedRandom: SeedRandom, value: number) =>
@@ -40,8 +40,8 @@ const createCity = ({
 
     dx: 0,
     dy: 0,
-    manufacturingShare,
-    manufacturingShare0: 0,
+    manufactureShare: manufacturingShare,
+    manufactureShare0: 0,
     agricultureShare,
     priceIndex: 0,
     priceIndex0: 0,
@@ -50,7 +50,6 @@ const createCity = ({
     realWage: 0,
     income: 0,
     income0: 0,
-    deltaManufacturingShare: 0,
   };
 };
 
@@ -60,6 +59,7 @@ function updateRaceTrackSubGraph(
 ) {
   const ratio = sessionState.locations.length / numLocations;
   let locationSerialNumber = sessionState.locationSerialNumber;
+
   const newLocations = loop(numLocations).map((index) => {
     const radius =
       1 / DISTANCE_SCALE_FACTOR / (2 * Math.sin(Math.PI / numLocations));
@@ -82,7 +82,7 @@ function updateRaceTrackSubGraph(
         ...city,
         x,
         y,
-        manufacturingShare: ratio * city.manufacturingShare,
+        manufacturingShare: ratio * city.manufactureShare,
         agricultureShare: ratio * city.agricultureShare,
       };
     } else {
@@ -116,12 +116,22 @@ function updateRaceTrackSubGraph(
     locations: newLocations,
     edges,
     locationSerialNumber,
+    addedIndices:
+      numLocations > sessionState.locations.length
+        ? loop(numLocations - sessionState.locations.length).map(
+            (index) => index + sessionState.locations.length
+          )
+        : ([] as number[]),
   };
 }
 
-function addEdges(locations: City[], edges: Edge[], selectedIndices: number[]) {
+function createEdges(
+  locations: City[],
+  edges: Edge[],
+  selectedIndices: number[]
+) {
   const newLocation = locations[locations.length - 1];
-  const newEdges = selectedIndices.map((selectedIndex) => ({
+  return selectedIndices.map((selectedIndex) => ({
     source: locations[selectedIndex].id,
     target: newLocation.id,
     distance: calculateDistanceByLocations(
@@ -129,8 +139,6 @@ function addEdges(locations: City[], edges: Edge[], selectedIndices: number[]) {
       newLocation
     ),
   }));
-
-  return edges.concat(newEdges);
 }
 
 const maxDensity = 0.5;
@@ -227,7 +235,8 @@ function createRandomEdges(locations: City[], edges: Edge[]) {
   return edges.concat(newEdges).concat(supportedEdges);
 }
 
-function addRandomSubGraph(
+export function updateRandomSubGraph(
+  sessionId: string,
   sessionState: SessionState,
   selectedIndices: number[],
   _numLocations?: number
@@ -236,21 +245,22 @@ function addRandomSubGraph(
     _numLocations != undefined
       ? _numLocations
       : sessionState.locations.length + 1;
+  const seedRandom = new SeedRandom(sessionId + sessionState.locations.length);
   const ratio = sessionState.locations.length / numLocations;
   const cities = sessionState.locations.map((city) => ({
     ...city,
-    manufacturingShare: city.manufacturingShare * ratio,
+    manufacturingShare: city.manufactureShare * ratio,
     agricultureShare: city.agricultureShare * ratio,
   }));
 
-  let direction = SEED_RANDOM.random() * 2 * Math.PI;
+  let direction = seedRandom.random() * 2 * Math.PI;
   let acceleration = 0;
   let velocity = 1 / DISTANCE_SCALE_FACTOR;
   const addingCities: City[] = [];
   let locationSerialNumber = sessionState.locationSerialNumber;
   for (let i = sessionState.locations.length; i < numLocations; i++) {
-    acceleration = 2 * SEED_RANDOM.random() - 0.5;
-    direction += (2 * Math.PI * (SEED_RANDOM.random() - 0.5)) / 2;
+    acceleration = 2 * seedRandom.random() - 0.5;
+    direction += (2 * Math.PI * (seedRandom.random() - 0.5)) / 2;
     velocity = Math.min(50, Math.max(400, velocity + acceleration));
     const { x, y } =
       sessionState.locations.length == 0 && i == 0
@@ -270,8 +280,12 @@ function addRandomSubGraph(
               velocity * Math.sin(direction),
           }
         : {
-            x: addingCities[i - 1].x + velocity * Math.cos(direction),
-            y: addingCities[i - 1].y + velocity * Math.sin(direction),
+            x:
+              addingCities[i - sessionState.locations.length - 1].x +
+              velocity * Math.cos(direction),
+            y:
+              addingCities[i - sessionState.locations.length - 1].y +
+              velocity * Math.sin(direction),
           };
 
     const newLocation = createCity({
@@ -287,34 +301,41 @@ function addRandomSubGraph(
 
   const newLocations = [...cities, ...addingCities];
 
-  const newEdges =
+  const addingEdges =
     _numLocations == undefined
-      ? addEdges(newLocations, sessionState.edges, selectedIndices)
+      ? createEdges(newLocations, sessionState.edges, selectedIndices)
       : createRandomEdges(newLocations, sessionState.edges);
+
+  const newEdges = [...sessionState.edges, ...addingEdges];
 
   return {
     locations: newLocations,
     edges: newEdges,
     locationSerialNumber,
+    addedIndices: loop(addingCities.length).map(
+      (index) => index + cities.length
+    ),
   };
 }
 
-export const addSubGraph = (
+export const updateAddedSubGraph = (
+  sessionId: string,
   sessionState: SessionState,
   selectedIndices: number[],
-  numLocations?: number
+  numLocations: number
 ) => {
-  if (numLocations != undefined) {
-    switch (sessionState.country.type) {
-      case 'RaceTrack':
-        return updateRaceTrackSubGraph(sessionState, numLocations);
-      case 'Graph':
-        return addRandomSubGraph(sessionState, selectedIndices, numLocations);
-      default:
-        throw new Error();
-    }
-  } else {
-    return addRandomSubGraph(sessionState, selectedIndices);
+  switch (sessionState.country.type) {
+    case 'RaceTrack':
+      return updateRaceTrackSubGraph(sessionState, numLocations);
+    case 'Graph':
+      return updateRandomSubGraph(
+        sessionId,
+        sessionState,
+        selectedIndices,
+        numLocations
+      );
+    default:
+      throw new Error();
   }
 };
 
@@ -333,7 +354,7 @@ export function removeRandomSubGraph(
     .filter((location, index) => index < numLocations)
     .map((location) => ({
       ...location,
-      manufacturingShare: location.manufacturingShare * ratio,
+      manufacturingShare: location.manufactureShare * ratio,
       agricultureShare: location.agricultureShare * ratio,
     }));
 

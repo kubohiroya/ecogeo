@@ -16,6 +16,8 @@ export interface GraphPanelProps {
   onRemoveEdge: () => void;
   onUndo: () => void;
   onRedo: () => void;
+  onToggleAutoGraphLayout: () => void;
+  autoGraphLayoutStarted: boolean;
   autoGraphLayoutSpeed: number;
   setAutoGraphLayoutSpeed: (autoLayoutSpeed: number) => void;
   mapLayer: boolean;
@@ -62,6 +64,8 @@ export const GraphPanel = React.memo((props: GraphPanelProps) => {
         onRemoveEdge={props.onRemoveEdge}
         onUndo={props.onUndo}
         onRedo={props.onRedo}
+        onToggleAutoGraphLayout={props.onToggleAutoGraphLayout}
+        autoGraphLayoutStarted={props.autoGraphLayoutStarted}
         autoLayoutSpeed={props.autoGraphLayoutSpeed}
         setAutoLayoutSpeed={props.setAutoGraphLayoutSpeed}
         mapLayer={props.mapLayer}

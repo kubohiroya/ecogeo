@@ -8,6 +8,11 @@ import GithubCorner from 'react-github-corner';
 import ReferenceSection from './components/ReferenceSection/ReferenceSection';
 import SessionSelectorPanel from './components/SessionPanel/SessionSelectorPanel';
 import { CircularProgress } from '@mui/material';
+import {
+  initialSelectedSessionId,
+  sessionAtoms,
+  sessionStateAtoms,
+} from './model/Session';
 
 const StyledApp = styled.div``;
 
@@ -25,7 +30,11 @@ export function App() {
 
       <Provider>
         <Suspense fallback={<CircularProgress />}>
-          <SessionSelectorPanel />
+          <SessionSelectorPanel
+            initialSelectedSessionId={initialSelectedSessionId}
+            sessionAtoms={sessionAtoms}
+            sessionStateAtoms={sessionStateAtoms}
+          />
         </Suspense>
       </Provider>
 

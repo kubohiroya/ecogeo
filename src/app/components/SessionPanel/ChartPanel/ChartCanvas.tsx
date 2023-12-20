@@ -393,7 +393,6 @@ export const ChartCanvas = React.memo(
         const canvas = canvasRef.current!;
         const selectedIndex = getIndex({ x: event.offsetX, y: event.offsetY });
         if (selectedIndex != null) {
-          console.log('onMouseUp', selectedIndices);
           if (selectedIndices.includes(selectedIndex)) {
             onUnselect(selectedIndices, [selectedIndex]);
           } else {

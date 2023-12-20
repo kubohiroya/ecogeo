@@ -1,8 +1,8 @@
 import { Backdrop, FormControlLabel, IconButton, Switch } from '@mui/material';
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
-import { Public } from '@mui/icons-material';
 import { BACKDROP_TIMEOUT_MILLI_SEC } from './Constatns';
+import { Layers } from '@mui/icons-material';
 
 interface LayerSwitchButtonProps {
   mapLayer: boolean;
@@ -45,7 +45,7 @@ export const LayerSwitchButton = (props: LayerSwitchButtonProps) => {
         title={'Show background layer of world map'}
         onClick={() => setSubMenuShown(!subMenuShown)}
       >
-        <Public />
+        <Layers />
       </LayerSwitchOpenButton>
       <Backdrop
         open={subMenuShown}
@@ -68,6 +68,7 @@ export const LayerSwitchButton = (props: LayerSwitchButtonProps) => {
                 onChange={(event) => {
                   props.onChangeMapLayer(event.target.checked);
                 }}
+                disabled={true}
               />
             }
             label={'World map'}

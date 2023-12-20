@@ -8,7 +8,7 @@ export interface Country {
   numLocations: number;
 
   /*  ratio of workers */
-  shareManufacturing: number;
+  manufactureShare: number;
 
   /* maximum transport cost between ach pair of cities */
   transportationCost: number;

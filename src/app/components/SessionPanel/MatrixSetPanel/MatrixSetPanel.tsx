@@ -69,8 +69,8 @@ export const MatrixSetPanel = forwardRef<
     if (tableRef && tableRef.rows) {
       indices.forEach((index) => {
         if (index <= maxLength) {
-          tableRef.rows[0].cells[index + 1].classList.add('selected');
-          tableRef.rows[index + 1].cells[0].classList.add('selected');
+          tableRef.rows[0].cells[index + 1]?.classList.add('selected');
+          tableRef.rows[index + 1]?.cells[0]?.classList.add('selected');
         }
       });
     }
@@ -84,8 +84,8 @@ export const MatrixSetPanel = forwardRef<
     if (tableRef && tableRef.rows) {
       indices.forEach((index) => {
         if (index <= maxLength) {
-          tableRef.rows[0].cells[index + 1].classList.remove('selected');
-          tableRef.rows[index + 1].cells[0].classList.remove('selected');
+          tableRef.rows[0].cells[index + 1]?.classList.remove('selected');
+          tableRef.rows[index + 1]?.cells[0]?.classList.remove('selected');
         }
       });
     }

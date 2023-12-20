@@ -1,50 +1,45 @@
-import 'split-pane-react/esm/themes/default.css';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { preferencesAtom } from '../../atoms/atoms';
-import { useAtomValue } from 'jotai';
-import { useSessionStateUndoRedo } from './UseSessionStateUndoRedo';
-import useHotkeys from '@reecelucas/react-use-hotkeys';
-import {
-  DiagonalMatrixSetPanelHandle,
-  MatrixSetPanel,
-} from './MatrixSetPanel/MatrixSetPanel';
-import { SpringGraphLayout } from '../../graphLayout/SpringGraphLayout';
-import { GraphPanelButtonsState } from './GraphPanel/GraphPanelButtonsState';
-import { arrayXOR, convertIdToIndex } from '../../util/arrayUtil';
-import { calculateDistanceByLocations } from '../../core/calculateDistanceByLocations';
-import { City } from '../../model/City';
-import { calcBoundingRect } from './GraphPanel/calcBoundingRect';
-import { createViewportWindow } from './GraphPanel/CreateViewportWindow';
-import { PADDING_MARGIN_RATIO } from './GraphPanel/Constatns';
-import { addSubGraph, removeSubGraph } from '../../model/GraphHandlers';
-import { Edge } from '../../model/Graph';
-import { isInfinity } from '../../util/mathUtil';
-import { getMatrixEngine } from '../../core/MatrixEngineService';
-import {
-  AppTimer,
-  isTimerStarted,
-  resetTimer,
-  startTimer,
-  stopTimer,
-  updateSpeed,
-} from '../../model/AppTimer';
-import { ViewportWindow } from '../../model/ViewportWindow';
-import { Box, LinearProgress, Typography } from '@mui/material';
-import { SessionLayoutPanel } from './SessionLayoutPanel';
-import AppAccordion from '../../../components/AppAccordion/AppAccordion';
-import { GridOn, LinearScale } from '@mui/icons-material';
-import { SessionSelectorAccordionSummaryTitle } from './SessionSelectorAccordionSummaryTitle';
-import CountryConfigPanel from './CountryConfigPanel/CountryConfigPanel';
-import { MatrixSetAccordionSummaryTitle } from './MatrixSetPanel/MatrixSetAccordionSummaryTitle';
-import TimeControlPanel from './TimeControPanel/TimeControlPanel';
-import GraphPanel from './GraphPanel/GraphPanel';
-import { GraphCanvas } from './GraphPanel/GraphCanvas';
-import { ChartCanvas } from './ChartPanel/ChartCanvas';
-import { ChartPanel } from './ChartPanel/ChartPanel';
-import { UIState } from '../../model/UIState';
+import "split-pane-react/esm/themes/default.css";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { preferencesAtom } from "../../model/AppPreference";
+import { useAtomValue } from "jotai";
+import { useSessionStateUndoRedo } from "./UseSessionStateUndoRedo";
+import useHotkeys from "@reecelucas/react-use-hotkeys";
+import { DiagonalMatrixSetPanelHandle, MatrixSetPanel } from "./MatrixSetPanel/MatrixSetPanel";
+import { SpringGraphLayout } from "../../graphLayout/SpringGraphLayout";
+import { GraphPanelButtonsState } from "./GraphPanel/GraphPanelButtonsState";
+import { arrayXOR, convertIdToIndex } from "../../util/arrayUtil";
+import { calculateDistanceByLocations } from "../../apsp/calculateDistanceByLocations";
+import { City, resetCity } from "../../model/City";
+import { calcBoundingRect } from "./GraphPanel/calcBoundingRect";
+import { createViewportWindow } from "./GraphPanel/CreateViewportWindow";
+import { PADDING_MARGIN_RATIO } from "./GraphPanel/Constatns";
+import { removeSubGraph, updateAddedSubGraph, updateRandomSubGraph } from "./GraphPanel/GraphHandlers";
+import { Edge } from "../../model/Graph";
+import { isInfinity } from "../../util/mathUtil";
+import { ViewportWindow } from "../../model/ViewportWindow";
+import { Box, LinearProgress, Snackbar, Typography } from "@mui/material";
+import { SessionLayoutPanel } from "./SessionLayoutPanel";
+import AppAccordion from "../../../components/AppAccordion/AppAccordion";
+import { GridOn, LinearScale } from "@mui/icons-material";
+import { SessionSelectorAccordionSummaryTitle } from "./SessionSelectorAccordionSummaryTitle";
+import CountryConfigPanel from "./CountryConfigPanel/CountryConfigPanel";
+import { MatrixSetAccordionSummaryTitle } from "./MatrixSetPanel/MatrixSetAccordionSummaryTitle";
+import TimeControlPanel from "./TimeControPanel/TimeControlPanel";
+import GraphPanel from "./GraphPanel/GraphPanel";
+import { GraphCanvas } from "./GraphPanel/GraphCanvas";
+import { ChartCanvas } from "./ChartPanel/ChartCanvas";
+import { ChartPanel } from "./ChartPanel/ChartPanel";
+import { UIState } from "../../model/UIState";
+import useIntervalExpScale from "../../hooks/useIntervalExpScape";
+import { startSimulation, tickSimulator } from "../../model/Simulator";
+import { GraphLayoutTickResult } from "../../graphLayout/GraphLayout";
+import { SessionRenameDialog } from "./SessionRenameDialog";
+import { getMatrixEngine } from"../../apsp/MatrixEngineService"';
 
 type SessionPanelProps = {
   sessionId: string;
+  openRenameDialog: boolean;
+  closeRenameDialog: () => void;
 };
 
 export const SessionPanel = React.memo((props: SessionPanelProps) => {
@@ -63,22 +58,183 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     redoSessionState,
     history,
     future,
-    timers,
-    setTimers,
+    staging
   } = useSessionStateUndoRedo(sessionId);
 
+  const autoGraphLayoutEngine: SpringGraphLayout = new SpringGraphLayout();
+
+  const updateAndSetMatrices = (locations: City[], edges: Edge[]) => {
+    updateMatrices(
+      sessionId,
+      locations,
+      edges,
+      sessionState.country.transportationCost
+    ).then((newMatrices) => {
+      setMatrices((draft) => {
+        draft.adjacencyMatrix = newMatrices.adjacencyMatrix;
+        draft.distanceMatrix = newMatrices.distanceMatrix;
+        draft.predecessorMatrix = newMatrices.predecessorMatrix;
+        draft.transportationCostMatrix = newMatrices.transportationCostMatrix;
+      });
+    });
+  };
+
+  const tickAutoGraphLayout = useCallback((): GraphLayoutTickResult => {
+    //const tickAutoGraphLayout = (): GraphLayoutTickResult => {
+    const graphLayoutTickResult = autoGraphLayoutEngine.tick(
+      sessionState.locations,
+      sessionState.edges,
+      matrices.adjacencyMatrix,
+      uiState.selectedIndices,
+      uiState.draggingIndex
+    );
+
+    setSessionState(
+      (draft) => {
+        graphLayoutTickResult.locations.forEach((city, index) => {
+          draft.locations[index].x = city.x;
+          draft.locations[index].y = city.y;
+        });
+        const idToIndexMap = new Map<number, number>(
+          draft.locations.map((city, index) => [city.id, index])
+        );
+        draft.edges.forEach((edge, index) => {
+          const source = draft.locations[idToIndexMap.get(edge.source)!];
+          const target = draft.locations[idToIndexMap.get(edge.target)!];
+          draft.edges[index].distance = calculateDistanceByLocations(
+            source,
+            target
+          );
+        });
+      },
+      graphLayoutTickResult.maximumVelocity < 1.0,
+      "autoLayout"
+    );
+
+    return graphLayoutTickResult;
+  }, [
+    setSessionState,
+    sessionState,
+    sessionState.locations,
+    sessionState.edges,
+    uiState.selectedIndices,
+    uiState.draggingIndex
+  ]);
+
+  const autoGraphLayoutTimer = useIntervalExpScale<GraphLayoutTickResult>({
+    onStarted: () => {
+    },
+    onReset: () => {
+    },
+    tick: tickAutoGraphLayout,
+    isFinished: (result: GraphLayoutTickResult) => {
+      return result.maximumVelocity < 0.1;
+    },
+    onFinished: (result: GraphLayoutTickResult) => {
+      updateAndSetMatrices(sessionState.locations, sessionState.edges);
+    },
+    minInterval: 5,
+    maxInterval: 300,
+    initialIntervalScale: 0
+  });
+
+  const simulation = useIntervalExpScale<boolean>({
+    onStarted: () => {
+      requestAnimationFrame(() => {
+        setSessionState(
+          (draft) => {
+            startSimulation(draft);
+          },
+          true,
+          "simulationStart"
+        );
+      });
+    },
+    onReset: () => {
+      requestAnimationFrame(() => {
+        console.log("reset");
+        setSessionState(
+          (draft) => {
+            draft.locations.forEach((location) =>
+              resetCity(location, draft.locations.length)
+            );
+          },
+          true,
+          "simulationReset"
+        );
+      });
+    },
+    tick: () => {
+      requestAnimationFrame(() => {
+        setSessionState(
+          (draft) => {
+            tickSimulator(draft, matrices.transportationCostMatrix!);
+          },
+          false,
+          "simulationTick"
+        );
+      });
+      return true;
+    },
+    isFinished: (result: boolean): boolean => {
+      return false;
+    },
+    onFinished: (result: boolean) => {
+      requestAnimationFrame(() => {
+        setSessionState((draft) => {
+        }, false, "simulationFinished");
+      });
+    },
+    minInterval: 10,
+    maxInterval: 3000,
+    initialIntervalScale: 0.5
+  });
+
   const undo = useCallback(() => {
-    requestAnimationFrame(() => undoSessionState());
-  }, [undoSessionState]);
+    requestAnimationFrame(() => {
+      setUIState((draft) => {
+        draft.focusedIndices = [];
+        draft.selectedIndices = [];
+      });
+      undoSessionState();
+    });
+  }, [undoSessionState, setUIState]);
   const redo = useCallback(() => {
-    requestAnimationFrame(() => redoSessionState());
-  }, [redoSessionState]);
+    requestAnimationFrame(() => {
+      setUIState((draft) => {
+        draft.focusedIndices = [];
+        draft.selectedIndices = [];
+      });
+      redoSessionState();
+    });
+  }, [redoSessionState, setUIState]);
 
   useHotkeys(['Meta+z', 'Control+z'], () => {
+    if (history.length == 0) {
+      openSnackBar("No more undo!");
+      return;
+    }
     undo();
   });
   useHotkeys(['Shift+Meta+z', 'Shift+Control+z'], () => {
+    if (future.length == 0) {
+      openSnackBar("No more redo!");
+      return;
+    }
     redo();
+  });
+
+  useHotkeys(["h"], () => {
+    console.log({
+      numLocations: sessionState.locations.length,
+      locations: sessionState.locations,
+      selectedIndices: uiState.selectedIndices
+    });
+    console.log({ history, staging, future });
+    //console.log({ uiState });
+  });
+  useHotkeys(["e"], () => {
+    console.log(JSON.stringify(sessionState.edges, null, " "));
   });
 
   const diagonalMatrixSetPanelRef = useRef<DiagonalMatrixSetPanelHandle>(null);
@@ -86,7 +242,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     x: number;
     y: number;
   } | null>(null);
-  const autoGraphLayout: SpringGraphLayout = new SpringGraphLayout();
+
   const [graphPanelButtonState, setGraphPanelButtonState] =
     useState<GraphPanelButtonsState>({
       addLocation: false,
@@ -99,7 +255,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       redo: false,
     });
 
-  const onUpdateNumLocations = useCallback(
+  const setNumLocations = useCallback(
     async (numLocations: number, commit?: boolean) => {
       if (numLocations < sessionState.locations.length) {
         onRemoveBulkLocations(numLocations, commit);
@@ -122,37 +278,32 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
 
   const onDragEnd = useCallback(
     async (x: number, y: number, index: number) => {
-      setUIState((draft) => {
-        draft.draggingIndex = null;
-        draft.focusedIndices = [];
-      });
       if (
         dragStartPosition == null ||
-        (dragStartPosition.x == x && dragStartPosition.y == y)
+        (Math.abs(dragStartPosition.x - x) <= 1.0 &&
+          Math.abs(dragStartPosition.y - y) <= 1.0)
       ) {
         return;
       }
-      setDragStartPosition(null);
       requestAnimationFrame(async () => {
+        setUIState((draft) => {
+          draft.draggingIndex = null;
+          draft.focusedIndices = [];
+        });
+        setDragStartPosition(null);
         setSessionState((draft) => {
-          draft.locations = sessionState.locations;
-          draft.edges = sessionState.edges;
-        });
-        const newMatrices = await updateMatrices(
-          sessionId,
-          sessionState.locations,
-          sessionState.edges,
-          sessionState.country.transportationCost
-        );
-        setMatrices((draft) => {
-          draft.adjacencyMatrix = newMatrices.adjacencyMatrix;
-          draft.distanceMatrix = newMatrices.distanceMatrix;
-          draft.predecessorMatrix = newMatrices.predecessorMatrix;
-          draft.transportationCostMatrix = newMatrices.transportationCostMatrix;
-        });
+        }, true, "dragEnd");
+        updateAndSetMatrices(sessionState.locations, sessionState.edges);
       });
     },
-    [sessionState, setUIState, setMatrices]
+    [
+      sessionState,
+      setSessionState,
+      setUIState,
+      setMatrices,
+      setDragStartPosition,
+      updateAndSetMatrices
+    ]
   );
 
   const onDrag = useCallback(
@@ -163,35 +314,40 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
           const targetIndices = uiState.selectedIndices.includes(index)
             ? uiState.selectedIndices
             : [...uiState.selectedIndices, index];
-          setSessionState((draft) => {
-            targetIndices.forEach((targetIndex) => {
-              const targetId = draft.locations[targetIndex].id;
-              const targetCity = draft.locations[targetIndex];
+          //console.log('drag', targetIndices);
+          setSessionState(
+            (draft) => {
+              targetIndices.forEach((targetIndex) => {
+                const targetId = draft.locations[targetIndex].id;
+                const targetCity = draft.locations[targetIndex];
 
-              targetCity.x += diffX; // modify
-              targetCity.y += diffY; // modify
+                targetCity.x += diffX; // modify
+                targetCity.y += diffY; // modify
 
-              if (matrices.adjacencyMatrix) {
-                draft.edges
-                  .filter(
-                    (edge) =>
-                      edge.source === targetId || edge.target === targetId
-                  )
-                  .forEach((edge) => {
-                    const sourceId =
-                      edge.source === targetId ? edge.target : edge.source;
-                    const sourceIndex = convertIdToIndex(
-                      sessionState.locations,
-                      sourceId
-                    );
-                    edge.distance = calculateDistanceByLocations(
-                      targetCity,
-                      sessionState.locations[sourceIndex]
-                    );
-                  });
-              }
-            });
-          }, false);
+                if (matrices.adjacencyMatrix) {
+                  draft.edges
+                    .filter(
+                      (edge) =>
+                        edge.source === targetId || edge.target === targetId
+                    )
+                    .forEach((edge) => {
+                      const sourceId =
+                        edge.source === targetId ? edge.target : edge.source;
+                      const sourceIndex = convertIdToIndex(
+                        sessionState.locations,
+                        sourceId
+                      );
+                      edge.distance = calculateDistanceByLocations(
+                        targetCity,
+                        sessionState.locations[sourceIndex]
+                      );
+                    });
+                }
+              });
+            },
+            false,
+            "drag"
+          );
         });
       }
     },
@@ -227,7 +383,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
 
   const onSelect = useCallback(
     (prevSelectedIndices: number[], selectedIndices: number[]) => {
-      requestAnimationFrame(() => {
+      setUIState((draft) => {
         const newSelectedIndices = arrayXOR(
           prevSelectedIndices,
           selectedIndices
@@ -236,35 +392,34 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
           prevSelectedIndices,
           newSelectedIndices
         );
-        setUIState((draft) => {
-          draft.selectedIndices = newSelectedIndices;
-          draft.draggingIndex = null;
-        });
-        // uiState.selectedIndices = newSelectedIndices;
+        draft.selectedIndices = newSelectedIndices;
+        draft.draggingIndex = null;
       });
+      // uiState.selectedIndices = newSelectedIndices;
     },
-    [uiState.selectedIndices, setUIState, uiState]
+    [diagonalMatrixSetPanelRef.current, setUIState]
   );
 
   const onUnselect = useCallback(
     (prevSelectedIndices: number[], unselectedIndices: number[]) => {
-      const newSelectedIndices = prevSelectedIndices.filter(
-        (unselectedIndex) => !unselectedIndices.includes(unselectedIndex)
-      );
-      diagonalMatrixSetPanelRef.current?.onUnselect(unselectedIndices);
       setUIState((draft) => {
+        const newSelectedIndices = prevSelectedIndices.filter(
+          (unselectedIndex) => !unselectedIndices.includes(unselectedIndex)
+        );
+        diagonalMatrixSetPanelRef.current?.onUnselect(unselectedIndices);
         draft.selectedIndices = newSelectedIndices;
         draft.draggingIndex = null;
       });
     },
-    [uiState.selectedIndices, setUIState, uiState]
+    [diagonalMatrixSetPanelRef.current, setUIState]
   );
 
   const onPointerUp = useCallback(
     (x: number, y: number, index: number) => {
       if (
-        dragStartPosition == null ||
-        (dragStartPosition.x == x && dragStartPosition.y == y)
+        index >= 0 &&
+        (dragStartPosition == null ||
+          (dragStartPosition.x == x && dragStartPosition.y == y))
       ) {
         if (uiState.selectedIndices.includes(index)) {
           onUnselect(uiState.selectedIndices, [index]);
@@ -280,24 +435,27 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     onUnselect(uiState.selectedIndices, uiState.selectedIndices);
   }, [uiState.selectedIndices]);
 
-  const fit = useCallback((uiState: UIState, locations: City[]) => {
-    if (locations.length > 1) {
-      const boundingRect = calcBoundingRect(locations);
-      return createViewportWindow({
-        left: boundingRect.left,
-        top: boundingRect.top,
-        right: boundingRect.right,
-        bottom: boundingRect.bottom,
-        screenWidth: uiState.splitPanelSizes[0],
-        screenHeight: uiState.splitPanelHeight,
-        paddingMarginRatio:
-          uiState.viewportWindow && uiState.viewportWindow!.scale < 1.7
-            ? PADDING_MARGIN_RATIO
-            : 0.5,
-      });
-    }
-    return uiState.viewportWindow;
-  }, []);
+  const fit = useCallback(
+    (uiState: UIState, locations: City[]) => {
+      if (locations.length > 1) {
+        const boundingRect = calcBoundingRect(locations);
+        return createViewportWindow({
+          left: boundingRect.left,
+          top: boundingRect.top,
+          right: boundingRect.right,
+          bottom: boundingRect.bottom,
+          screenWidth: uiState.splitPanelSizes[0],
+          screenHeight: uiState.splitPanelHeight,
+          paddingMarginRatio:
+            uiState.viewportWindow && uiState.viewportWindow!.scale < 1.7
+              ? PADDING_MARGIN_RATIO
+              : 0.5
+        });
+      }
+      return uiState.viewportWindow;
+    },
+    [uiState.viewportWindow, uiState.splitPanelSizes, uiState.splitPanelHeight]
+  );
 
   const onFit = useCallback(() => {
     setUIState((draft) => {
@@ -312,29 +470,19 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
           numLocations,
           sessionState
         );
-        setSessionState((draft) => {
-          draft.locations = locations;
-          draft.edges = edges;
-          draft.country.numLocations = numLocations;
-          draft.locationSerialNumber = locationSerialNumber;
-        }, commit);
-
-        const newMatrices = await updateMatrices(
-          sessionId,
-          locations,
-          edges,
-          sessionState.country.transportationCost
+        setSessionState(
+          (draft) => {
+            draft.locations = locations;
+            draft.edges = edges;
+            draft.country.numLocations = numLocations;
+            draft.locationSerialNumber = locationSerialNumber;
+          },
+          commit,
+          "removeBulkLocations"
         );
-        setMatrices((draft) => {
-          draft.adjacencyMatrix = newMatrices.adjacencyMatrix;
-          draft.distanceMatrix = newMatrices.distanceMatrix;
-          draft.predecessorMatrix = newMatrices.predecessorMatrix;
-          draft.transportationCostMatrix = newMatrices.transportationCostMatrix;
-        });
-
+        updateAndSetMatrices(locations, edges);
         setUIState((draft) => {
           draft.selectedIndices = [];
-          // draft.viewportWindow = fit(draft, locations);
         });
       });
     },
@@ -349,100 +497,98 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
   );
 
   const onAddLocation = useCallback(async () => {
-    const { locations, edges, locationSerialNumber } = addSubGraph(
-      sessionState,
-      uiState.selectedIndices
-    );
-    console.log('onAddLocation');
-    setSessionState((draft) => {
-      draft.locations = locations;
-      draft.edges = edges;
-      draft.country.numLocations = draft.country.numLocations + 1;
-      draft.locationSerialNumber = locationSerialNumber;
-    });
+    requestAnimationFrame(async () => {
+      const { locations, edges, locationSerialNumber, addedIndices } =
+        updateRandomSubGraph(sessionId, sessionState, uiState.selectedIndices);
 
-    setUIState((draft) => {
-      draft.selectedIndices = [];
+      setSessionState(
+        (draft) => {
+          draft.locations = locations;
+          draft.edges = edges;
+          draft.country.numLocations = draft.country.numLocations + 1;
+          draft.locationSerialNumber = locationSerialNumber;
+        },
+        true,
+        "addLocation"
+      );
+      updateAndSetMatrices(locations, edges);
+      setUIState((draft) => {
+        draft.focusedIndices = [...uiState.selectedIndices];
+        draft.selectedIndices = [...addedIndices];
+      });
     });
-    const newMatrices = await updateMatrices(
-      sessionId,
-      locations,
-      edges,
-      sessionState.country.transportationCost
-    );
-    setMatrices((draft) => {
-      draft.adjacencyMatrix = newMatrices.adjacencyMatrix;
-      draft.distanceMatrix = newMatrices.distanceMatrix;
-      draft.predecessorMatrix = newMatrices.predecessorMatrix;
-      draft.transportationCostMatrix = newMatrices.transportationCostMatrix;
-    });
-  }, [uiState.selectedIndices, sessionState]);
+  }, [
+    uiState.selectedIndices,
+    sessionState.locations,
+    sessionState.edges,
+    sessionState.locationSerialNumber,
+    setUIState
+  ]);
 
   const onAddBulkLocations = useCallback(
     (numLocations: number, commit?: boolean) => {
       requestAnimationFrame(async () => {
-        const { locations, edges, locationSerialNumber } = addSubGraph(
-          sessionState,
-          uiState.selectedIndices,
-          numLocations
+        setSessionState(
+          (draft) => {
+            const { locations, edges, locationSerialNumber, addedIndices } =
+              updateAddedSubGraph(
+                sessionId,
+                sessionState,
+                uiState.selectedIndices,
+                numLocations
+              );
+            draft.locations = locations;
+            draft.edges = edges;
+            draft.country.numLocations = numLocations;
+            draft.locationSerialNumber = locationSerialNumber;
+            updateAndSetMatrices(locations, edges);
+            setUIState((draft) => {
+              // draft.viewportWindow = fit(draft, locations);
+              draft.selectedIndices = [];
+              draft.focusedIndices = addedIndices;
+            });
+          },
+          commit,
+          "addBulkLocations"
         );
-        setSessionState((draft) => {
-          draft.locations = locations;
-          draft.edges = edges;
-          draft.country.numLocations = numLocations;
-          draft.locationSerialNumber = locationSerialNumber;
-        }, commit);
-        const newMatrices = await updateMatrices(
-          sessionId,
-          locations,
-          edges,
-          sessionState.country.transportationCost
-        );
-        setMatrices((draft) => {
-          draft.adjacencyMatrix = newMatrices.adjacencyMatrix;
-          draft.distanceMatrix = newMatrices.distanceMatrix;
-          draft.predecessorMatrix = newMatrices.predecessorMatrix;
-          draft.transportationCostMatrix = newMatrices.transportationCostMatrix;
-        });
-        setUIState((draft) => {
-          // draft.viewportWindow = fit(draft, locations);
-          draft.selectedIndices = [];
-        });
       });
     },
-    [uiState.selectedIndices, sessionState, setMatrices, setUIState]
+    [
+      uiState.selectedIndices,
+      sessionState,
+      sessionState.locations,
+      sessionState.edges,
+      setMatrices,
+      setUIState,
+      setSessionState
+    ]
   );
 
-  const removeEdges = useCallback(
+  const updateRemovedEdges = useCallback(
     (
       selectedIndices: number[],
       edges: Edge[],
       predecessorMatrix: number[][] | null
     ) => {
       if (!predecessorMatrix) {
-        return;
+        return [];
       }
 
       const selectedIdSet = new Set<number>(
         selectedIndices.map(
-          (selectedIndex) => sessionState.locations[selectedIndex].id
+          (selectedIndex) => sessionState.locations[selectedIndex]?.id
         )
       );
 
-      const newEdges = edges.filter(
+      return edges.filter(
         (edge) =>
           !selectedIdSet.has(edge.source) && !selectedIdSet.has(edge.target)
       );
-
-      setSessionState((draft) => {
-        draft.edges = newEdges;
-      });
-      return newEdges;
     },
-    [sessionState]
+    [sessionState.locations]
   );
 
-  const removePath = useCallback(
+  const updateRemovedPath = useCallback(
     (
       sourceIndex: number,
       targetIndex: number,
@@ -450,7 +596,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       predecessorMatrix: number[][] | null
     ) => {
       if (!predecessorMatrix) {
-        return null;
+        return [];
       }
       const removingEdgeSet = new Set<string>();
 
@@ -476,214 +622,134 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         sourceIndex = nextIndex;
       }
 
-      const newEdges = edges.filter(
+      return edges.filter(
         (edge, index) => !removingEdgeSet.has(getKey(edge.source, edge.target))
       );
-
-      setSessionState((draft) => {
-        draft.edges = newEdges;
-      });
     },
     [sessionState]
   );
 
   const onAddEdge = useCallback(async () => {
-    const newEdges = [] as Edge[];
+    requestAnimationFrame(async () => {
+      setSessionState(
+        (draft) => {
+          const newEdges = [] as Edge[];
+          for (let i = 0; i < uiState.selectedIndices.length; i++) {
+            for (let j = i + 1; j < uiState.selectedIndices.length; j++) {
+              const sourceIndex = uiState.selectedIndices[i];
+              const source = sessionState.locations[sourceIndex];
+              const targetIndex = uiState.selectedIndices[j];
+              const target = sessionState.locations[targetIndex];
+              if (
+                isInfinity(matrices.adjacencyMatrix![sourceIndex][targetIndex])
+              ) {
+                const distance = calculateDistanceByLocations(source, target);
+                const edge = {
+                  source: source.id,
+                  target: target.id,
+                  distance
+                };
+                newEdges.push(edge);
+              }
+            }
+          }
+          draft.edges = [...draft.edges, ...newEdges];
+          updateAndSetMatrices(sessionState.locations, sessionState.edges);
+        },
+        true,
+        "addEdge"
+      );
 
-    if (!matrices.adjacencyMatrix) {
-      return;
-    }
-
-    for (let i = 0; i < uiState.selectedIndices.length; i++) {
-      for (let j = i + 1; j < uiState.selectedIndices.length; j++) {
-        const sourceIndex = uiState.selectedIndices[i];
-        const source = sessionState.locations[sourceIndex];
-        const targetIndex = uiState.selectedIndices[j];
-        const target = sessionState.locations[targetIndex];
-        if (isInfinity(matrices.adjacencyMatrix![sourceIndex][targetIndex])) {
-          const distance = calculateDistanceByLocations(source, target);
-          const edge = {
-            source: source.id,
-            target: target.id,
-            distance,
-          };
-          newEdges.push(edge);
-        }
-      }
-    }
-    console.log('onAddEdge');
-
-    setSessionState((draft) => {
-      draft.edges = sessionState.edges.concat(newEdges);
+      /*
+      setUIState((draft) => {
+        draft.selectedIndices = [];
+      });
+       */
     });
-    const newMatrices = await updateMatrices(
-      sessionId,
-      sessionState.locations,
-      sessionState.edges,
-      sessionState.country.transportationCost
-    );
-    setMatrices((draft) => {
-      draft.adjacencyMatrix = newMatrices.adjacencyMatrix;
-      draft.distanceMatrix = newMatrices.distanceMatrix;
-      draft.predecessorMatrix = newMatrices.predecessorMatrix;
-      draft.transportationCostMatrix = newMatrices.transportationCostMatrix;
-    });
-
-    setUIState((draft) => {
-      draft.selectedIndices = [];
-    });
-  }, [uiState.selectedIndices, sessionState]);
+  }, [
+    uiState.selectedIndices,
+    sessionState.locations,
+    sessionState.edges,
+    sessionState.country.transportationCost,
+    setSessionState,
+    matrices.adjacencyMatrix,
+    setMatrices,
+    setUIState
+  ]);
 
   const onRemoveEdge = useCallback(() => {
     if (uiState.selectedIndices.length == 2) {
-      removePath(
+      const newEdges = updateRemovedPath(
         uiState.selectedIndices[0],
         uiState.selectedIndices[1],
         sessionState.edges,
         matrices.predecessorMatrix
       );
+      setSessionState(
+        (draft) => {
+          draft.edges = newEdges;
+        },
+        true,
+        "removePath"
+      );
     } else {
-      removeEdges(
+      const newEdges = updateRemovedEdges(
         uiState.selectedIndices,
         sessionState.edges,
         matrices.predecessorMatrix
+      );
+      setSessionState(
+        (draft) => {
+          draft.edges = newEdges || [];
+        },
+        true,
+        "removeEdge"
       );
     }
   }, [uiState.selectedIndices, sessionState.edges, matrices.predecessorMatrix]);
 
   const onRemoveLocation = useCallback(async () => {
-    const newEdges =
-      removeEdges(
-        uiState.selectedIndices,
-        sessionState.edges,
-        matrices.predecessorMatrix
-      ) || [];
+    requestAnimationFrame(async () => {
+      const newEdges =
+        updateRemovedEdges(
+          uiState.selectedIndices,
+          sessionState.edges,
+          matrices.predecessorMatrix
+        ) || [];
 
-    const ratio =
-      (sessionState.locations.length + uiState.selectedIndices.length) /
-      sessionState.locations.length;
+      const ratio =
+        (sessionState.locations.length + uiState.selectedIndices.length) /
+        sessionState.locations.length;
 
-    const newLocations = sessionState.locations
-      .filter((city, index) => !uiState.selectedIndices.includes(index))
-      .map((city) => ({
-        ...city,
-        manufacturingShare: city.manufacturingShare * ratio,
-        agricultureShare: city.agricultureShare * ratio,
-      }));
+      const newLocations = sessionState.locations
+        .filter((city, index) => !uiState.selectedIndices.includes(index))
+        .map((city) => ({
+          ...city,
+          manufacturingShare: city.manufactureShare * ratio,
+          agricultureShare: city.agricultureShare * ratio
+        }));
 
-    console.log('onRemoveLocation');
-    setSessionState((draft) => {
-      draft.locations = newLocations;
-      draft.edges = newEdges;
-      draft.country.numLocations = newLocations.length;
-    });
-    const newMatrices = await updateMatrices(
-      sessionId,
-      newLocations,
-      newEdges,
-      sessionState.country.transportationCost
-    );
-    setMatrices((draft) => {
-      draft.adjacencyMatrix = newMatrices.adjacencyMatrix;
-      draft.distanceMatrix = newMatrices.distanceMatrix;
-      draft.predecessorMatrix = newMatrices.predecessorMatrix;
-      draft.transportationCostMatrix = newMatrices.transportationCostMatrix;
-    });
-
-    setUIState((draft) => {
-      draft.selectedIndices = [];
+      setSessionState(
+        (draft) => {
+          draft.locations = newLocations;
+          draft.edges = newEdges;
+          draft.country.numLocations = newLocations.length;
+        },
+        true,
+        "removeLocation"
+      );
+      updateAndSetMatrices(newLocations, newEdges);
+      setUIState((draft) => {
+        draft.selectedIndices = [];
+      });
     });
   }, [
     uiState.selectedIndices,
     sessionState.locations,
     sessionState.edges,
     matrices.predecessorMatrix,
+    setSessionState
   ]);
-
-  const setAutoLayoutSpeedAndStartStop = useCallback(
-    async (speed: number) => {
-      if (speed == 0) {
-        setUIState((draft) => {
-          draft.draggingIndex = null;
-        });
-
-        const newMatrices = await updateMatrices(
-          sessionId,
-          sessionState.locations,
-          sessionState.edges,
-          sessionState.country.transportationCost
-        );
-        setMatrices((draft) => {
-          draft.adjacencyMatrix = newMatrices.adjacencyMatrix;
-          draft.distanceMatrix = newMatrices.distanceMatrix;
-          draft.predecessorMatrix = newMatrices.predecessorMatrix;
-          draft.transportationCostMatrix = newMatrices.transportationCostMatrix;
-        });
-
-        setTimers((draft) => {
-          draft.autoGraphLayoutTimer = stopTimer(draft.autoGraphLayoutTimer);
-        });
-      } else {
-        setUIState((draft) => {
-          draft.draggingIndex = null;
-        });
-        setTimers((draft) => {
-          draft.autoGraphLayoutTimer = startTimer(
-            draft.autoGraphLayoutTimer,
-            speed,
-            autoGraphLayoutTicker,
-            async () => {
-              const matrices = await updateMatrices(
-                sessionId,
-                sessionState.locations,
-                sessionState.edges,
-                sessionState.country.transportationCost
-              );
-              setTimers((draft) => {
-                draft.autoGraphLayoutTimer = stopTimer(
-                  draft.autoGraphLayoutTimer,
-                  -1
-                );
-              });
-              setMatrices((draft) => {
-                draft.adjacencyMatrix = matrices.adjacencyMatrix;
-                draft.distanceMatrix = matrices.distanceMatrix;
-                draft.predecessorMatrix = matrices.predecessorMatrix;
-                draft.transportationCostMatrix =
-                  matrices.transportationCostMatrix;
-              });
-            }
-          );
-        });
-      }
-    },
-    [sessionState]
-  );
-
-  function simulationTicker() {
-    setSessionSimulationTimer({
-      ...timers.simulationTimer,
-      counter: timers.simulationTimer.counter + 1,
-    });
-    return false; // FIXME: return true if the simulation reaches termination condition
-  }
-
-  function autoGraphLayoutTicker() {
-    const isStable = autoGraphLayout.tick(
-      sessionState.locations,
-      sessionState.edges,
-      matrices.adjacencyMatrix,
-      uiState.selectedIndices,
-      uiState.draggingIndex
-    );
-
-    setAutoGraphLayoutTimer({
-      ...timers.autoGraphLayoutTimer,
-      counter: timers.autoGraphLayoutTimer.counter + 1,
-    });
-
-    return isStable;
-  }
 
   async function updateMatrices(
     sessionId: string,
@@ -703,41 +769,6 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       transportationCost
     );
   }
-
-  const setAutoGraphLayoutTimer = (appTimer: AppTimer) => {
-    setTimers((draft) => {
-      draft.autoGraphLayoutTimer = appTimer;
-    });
-  };
-
-  const setSessionSimulationTimer = (appTimer: AppTimer) => {
-    setTimers((draft) => {
-      draft.simulationTimer = appTimer;
-    });
-  };
-
-  /*
-  const updateMatricesInBackground = () => {
-    const currentSequence = ++latestSequence.current;
-    const onIdle: IdleRequestCallback = async (deadline) => {
-      if (currentSequence === latestSequence.current) {
-        set(
-          produce(session, (draft) => {
-            updateMatrices(
-              currentSequence,
-              draft,
-              draft.locations,
-              draft.edges,
-              draft.country.transportationCost
-            );
-          })
-        );
-      }
-    };
-    // Schedule the background update in an idle callback
-    window.requestIdleCallback(onIdle, { timeout: 1000 });
-  };
-   */
 
   const setMapLayer = useCallback(
     (enableMapLayer: boolean) => {
@@ -803,20 +834,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
   );
 
   useEffect(() => {
-    (async () => {
-      const newMatrices = await updateMatrices(
-        sessionId,
-        sessionState.locations,
-        sessionState.edges,
-        sessionState.country.transportationCost
-      );
-      setMatrices((draft) => {
-        draft.adjacencyMatrix = newMatrices.adjacencyMatrix;
-        draft.distanceMatrix = newMatrices.distanceMatrix;
-        draft.predecessorMatrix = newMatrices.predecessorMatrix;
-        draft.transportationCostMatrix = newMatrices.transportationCostMatrix;
-      });
-    })();
+    updateAndSetMatrices(sessionState.locations, sessionState.edges);
   }, [
     sessionState.locations,
     sessionState.edges,
@@ -824,14 +842,15 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     setMatrices,
   ]);
 
-  const isSimulationStarted = isTimerStarted(timers.simulationTimer);
-  const isAutoGraphLayoutStarted = isTimerStarted(timers.autoGraphLayoutTimer);
-
   const setShareManufacturing = useCallback(
     (shareManufacturing: number, commit?: boolean) => {
-      setSessionState((draft) => {
-        draft.country.shareManufacturing = shareManufacturing;
-      }, commit);
+      setSessionState(
+        (draft) => {
+          draft.country.manufactureShare = shareManufacturing;
+        },
+        commit,
+        "updateCountry"
+      );
     },
     [
       sessionState.locations,
@@ -842,9 +861,13 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
   );
   const setTransportationCost = useCallback(
     (transportationCost: number, commit?: boolean) => {
-      setSessionState((draft) => {
-        draft.country.transportationCost = transportationCost;
-      }, commit);
+      setSessionState(
+        (draft) => {
+          draft.country.transportationCost = transportationCost;
+        },
+        commit,
+        "updateCountry"
+      );
     },
     [
       sessionState.locations,
@@ -855,9 +878,13 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
   );
   const setElasticitySubstitution = useCallback(
     (elasticitySubstitution: number, commit?: boolean) => {
-      setSessionState((draft) => {
-        draft.country.elasticitySubstitution = elasticitySubstitution;
-      }, commit);
+      setSessionState(
+        (draft) => {
+          draft.country.elasticitySubstitution = elasticitySubstitution;
+        },
+        commit,
+        "updateCountry"
+      );
     },
     [
       sessionState.locations,
@@ -869,22 +896,66 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
 
   useEffect(() => {
     setGraphPanelButtonState({
-      addLocation: !isSimulationStarted,
+      addLocation: !simulation.isStarted,
       removeLocation:
-        !isSimulationStarted && uiState.selectedIndices.length > 0,
-      addEdge: !isSimulationStarted && uiState.selectedIndices.length >= 2,
-      removeEdge: !isSimulationStarted && uiState.selectedIndices.length >= 2,
-      autoGraphLayout: !isSimulationStarted,
+        !simulation.isStarted && uiState.selectedIndices.length > 0,
+      addEdge: !simulation.isStarted && uiState.selectedIndices.length >= 2,
+      removeEdge: !simulation.isStarted && uiState.selectedIndices.length >= 2,
+      autoGraphLayout: !autoGraphLayoutTimer.isStarted,
       mapLayer: true,
       undo: history.length > 0,
       redo: future.length > 0,
     });
   }, [
-    timers.simulationTimer,
+    autoGraphLayoutTimer.isStarted,
+    simulation.isStarted,
     uiState.selectedIndices,
     history.length,
     future.length,
   ]);
+
+  const [snackBarState, setSnackBarState] = useState<{
+    open: boolean;
+    vertical: "top" | "bottom";
+    horizontal: "left" | "center" | "right";
+    message: string;
+  }>({
+    open: false,
+    vertical: "top",
+    horizontal: "center",
+    message: ""
+  });
+
+  const openSnackBar = useCallback(
+    (message: string) => {
+      setSnackBarState({ ...snackBarState, open: true, message });
+    },
+    [snackBarState, setSnackBarState]
+  );
+
+  const closeSnackBar = useCallback(() => {
+    setSnackBarState({ ...snackBarState, open: false });
+  }, [snackBarState, setSnackBarState]);
+
+  const onToggleAutoGraphLayout = useCallback(() => {
+    if (autoGraphLayoutTimer.isStarted) {
+      autoGraphLayoutTimer.stop();
+    } else if (autoGraphLayoutTimer.intervalScale > 0) {
+      autoGraphLayoutTimer.start();
+    }
+  }, [autoGraphLayoutTimer.isStarted, autoGraphLayoutTimer.intervalScale]);
+
+  const setAutoGraphLayoutIntervalScale = useCallback(
+    (intervalScale: number) => {
+      autoGraphLayoutTimer.changeIntervalScale(intervalScale);
+      if (autoGraphLayoutTimer.intervalScale == 0) {
+        autoGraphLayoutTimer.stop();
+      } else if (0 < intervalScale) {
+        autoGraphLayoutTimer.start();
+      }
+    },
+    [autoGraphLayoutTimer.isStarted, autoGraphLayoutTimer.intervalScale]
+  );
 
   useEffect(() => {
     document.title = `GEO-ECO: ${sessionState.country.title} - Geological Economics Modeling Simulator`;
@@ -892,20 +963,45 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
 
   return (
     <>
-      {isSimulationStarted ? (
+      {simulation.isStarted ? (
         <LinearProgress color="primary" />
-      ) : isAutoGraphLayoutStarted ? (
+      ) : autoGraphLayoutTimer.isStarted ? (
         <LinearProgress color="warning" />
       ) : (
         <Box sx={{ height: '4px' }} />
       )}
-
+      <SessionRenameDialog
+        open={props.openRenameDialog}
+        onClose={props.closeRenameDialog}
+        onRename={(newName: string) => {
+          requestAnimationFrame(() => {
+            setSessionState(
+              (draft) => {
+                draft.country.title = newName;
+              },
+              true,
+              "renameSession"
+            );
+            props.closeRenameDialog();
+          });
+        }}
+        name={sessionState.country.title}
+      />
+      <Snackbar
+        anchorOrigin={{
+          vertical: snackBarState.vertical,
+          horizontal: snackBarState.horizontal
+        }}
+        open={snackBarState.open}
+        onClose={closeSnackBar}
+        message={snackBarState.message}
+      />
       <SessionLayoutPanel
         uiState={uiState}
         setUIState={setUIState}
         left={
           <GraphPanel
-            hideGraphEditButtons={isSimulationStarted}
+            hideGraphEditButtons={simulation.isStarted}
             state={graphPanelButtonState}
             onFit={onFit}
             onAddLocation={onAddLocation}
@@ -914,8 +1010,10 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
             onRemoveEdge={onRemoveEdge}
             onUndo={undo}
             onRedo={redo}
-            autoGraphLayoutSpeed={timers.autoGraphLayoutTimer.speed}
-            setAutoGraphLayoutSpeed={setAutoLayoutSpeedAndStartStop}
+            onToggleAutoGraphLayout={onToggleAutoGraphLayout}
+            autoGraphLayoutStarted={autoGraphLayoutTimer.isStarted}
+            autoGraphLayoutSpeed={autoGraphLayoutTimer.intervalScale}
+            setAutoGraphLayoutSpeed={setAutoGraphLayoutIntervalScale}
             mapLayer={uiState.layer.map}
             setMapLayer={setMapLayer}
           >
@@ -984,7 +1082,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
           <Typography>{sessionState.country.description}</Typography>
           <CountryConfigPanel
             country={sessionState.country}
-            setNumLocations={onUpdateNumLocations}
+            setNumLocations={setNumLocations}
             setShareManufacturing={setShareManufacturing}
             setTransportationCost={setTransportationCost}
             setElasticitySubstitution={setElasticitySubstitution}
@@ -1030,42 +1128,13 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         </AppAccordion>
 
         <TimeControlPanel
-          timer={timers.simulationTimer}
-          isStarted={isSimulationStarted}
-          onStart={() => {
-            setSessionSimulationTimer(
-              startTimer(
-                timers.simulationTimer,
-                timers.simulationTimer.speed,
-                simulationTicker,
-                () => {}
-              )
-            );
-          }}
-          onStop={() => {
-            setSessionSimulationTimer(stopTimer(timers.simulationTimer));
-          }}
-          onReset={() => {
-            setSessionSimulationTimer(resetTimer(timers.simulationTimer));
-          }}
-          setCounter={(counter: number) => {
-            setSessionSimulationTimer({
-              ...timers.simulationTimer,
-              counter,
-            });
-          }}
-          setSpeed={(speed: number) => {
-            setSessionSimulationTimer(
-              updateSpeed(
-                speed,
-                timers.simulationTimer,
-                simulationTicker,
-                () => {
-                  console.log('terminate simulation');
-                }
-              )
-            );
-          }}
+          counter={simulation.counter}
+          isStarted={simulation.isStarted}
+          onStart={simulation.start}
+          onStop={simulation.stop}
+          onReset={simulation.reset}
+          intervalScale={simulation.intervalScale}
+          changeIntervalScale={simulation.changeIntervalScale}
         />
       </Box>
     </>

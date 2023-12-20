@@ -10,3 +10,10 @@ export function isInfinity(value: number) {
     value == Number.NaN
   );
 }
+
+export const expScale = (min: number, max: number, value: number): number => {
+  const minLog = Math.log(min); // 10 msec / tick
+  const maxLog = Math.log(max); // 3000 msec / tick
+  const scale = minLog + (1 - value) * (maxLog - minLog);
+  return Math.exp(scale);
+};

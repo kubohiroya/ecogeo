@@ -1,5 +1,7 @@
+import { Country } from './Country';
+import { isInfinity } from '../util/mathUtil';
+
 export interface City {
-  // index: number;
   id: number;
   label: string;
   x: number;
@@ -8,8 +10,8 @@ export interface City {
   dx: number;
   dy: number;
 
-  manufacturingShare: number;
-  manufacturingShare0: number;
+  manufactureShare: number;
+  manufactureShare0: number;
   agricultureShare: number;
   priceIndex: number;
   priceIndex0: number;
@@ -18,119 +20,100 @@ export interface City {
   realWage: number;
   income: number;
   income0: number;
-  deltaManufacturingShare: number;
 }
 
-/*
-  constructor(
-    index: number,
-    name: string,
-    manufacturingShare: number,
-    agricultureShare: number
-  ) {
-    city.index = index;
-    city.name = name;
-    city.x = 0;
-    city.y = 0;
-    city.dx = 0;
-    city.dy = 0;
-    city.manufacturingShare = manufacturingShare;
-    city.manufacturingShare0 = manufacturingShare;
-    city.agricultureShare = agricultureShare;
+export function resetCity(target: City, numLocations?: number) {
+  target.priceIndex = 1.0;
+  target.priceIndex0 = 1.0;
+  target.nominalWage = 1.0;
+  target.nominalWage0 = 1.0;
+  target.realWage = 1.0;
+  target.income = 1.0;
+  target.income0 = 1.0;
+  if (numLocations && 0 < numLocations) {
+    target.manufactureShare =
+      (1.0 / numLocations) * (1 - 0.05 * (Math.random() - 0.5));
+    target.agricultureShare = 1.0 / numLocations;
   }
- */
-/*
-function reset(city: City) {
-  city.priceIndex = 1.0;
-  city.priceIndex0 = 1.0;
-  city.nominalWage = 1.0;
-  city.nominalWage0 = 1.0;
-  city.realWage = 1.0;
-  city.income = 1.0;
-  city.income0 = 1.0;
-  city.deltaManufacturingShare = 0.0;
+  return target;
 }
 
-function setManufacturingShare(d: number, city: City): void {
-  city.manufacturingShare = d;
+export function backupPreviousValues(target: City): void {
+  target.income0 = target.income;
+  target.nominalWage0 = target.nominalWage;
+  target.priceIndex0 = target.priceIndex;
+  target.manufactureShare0 = target.manufactureShare;
 }
 
-function setAgricultureShare(d: number, city: City): void {
-  city.agricultureShare = d;
+export function calcIncome(country: Country, target: City): number {
+  return (
+    country.manufactureShare * target.manufactureShare * target.nominalWage +
+    (1 - country.manufactureShare) * target.agricultureShare
+  );
 }
 
-function changeManufacturingShare(d: number, city: City): void {
-  city.deltaManufacturingShare = d;
-  city.manufacturingShare += city.deltaManufacturingShare;
+export function calcPriceIndex(
+  locations: City[],
+  country: Country,
+  transportationCostMatrix: number[][],
+  target: City,
+  targetLocationIndex: number
+): number {
+  const priceIndex = locations
+    .map((location: City, index) => {
+      const transportationCost =
+        transportationCostMatrix[targetLocationIndex][index];
+      return isInfinity(transportationCost)
+        ? 0
+        : location.manufactureShare *
+            Math.pow(
+              location.nominalWage0 * transportationCost,
+              1 - country.elasticitySubstitution
+            );
+    })
+    .reduce((a, b) => a + b, 0.0);
+  return Math.pow(priceIndex, 1 / (1 - country.elasticitySubstitution));
 }
 
-function backupPreviousValues(city: City): void {
-  city.income0 = city.income;
-  city.nominalWage0 = city.nominalWage;
-  city.priceIndex0 = city.priceIndex;
-  city.manufacturingShare0 = city.manufacturingShare;
+export function calcNominalWage(
+  locations: City[],
+  country: Country,
+  transportationCostMatrix: number[][],
+  targetLocationIndex: number
+): number {
+  const nominalWage = locations
+    .map((location: City, index: number) => {
+      const transportationCost =
+        transportationCostMatrix[targetLocationIndex][index];
+      return isInfinity(transportationCost)
+        ? 0
+        : location.income0 *
+            Math.pow(transportationCost, 1 - country.elasticitySubstitution) *
+            Math.pow(location.priceIndex0, country.elasticitySubstitution - 1);
+    })
+    .reduce((a, b) => a + b, 0.0);
+  return Math.pow(nominalWage, 1 / country.elasticitySubstitution);
 }
 
-function calcIncome(city: City, country: Country): void {
-  city.income =
-    country.pi * city.manufacturingShare * city.nominalWage +
-    (1 - country.pi) * city.agricultureShare;
+export function calcRealWage(country: Country, target: City): number {
+  return (
+    target.nominalWage * Math.pow(target.priceIndex, -country.manufactureShare)
+  );
 }
 
-function calcPriceIndex(session: Session, city: City, country: Country): void {
-  let priceIndex = 0;
-  session.locations.forEach((location: City) => {
-    if (
-      session.transportationCostMatrix &&
-      session.transportationCostMatrix[city.index]
-    ) {
-      priceIndex +=
-        location.manufacturingShare *
-        Math.pow(
-          location.nominalWage0 *
-            session.transportationCostMatrix[city.index][location.index],
-          1 - country.sigma
-        );
-    }
-  });
-  city.priceIndex = Math.pow(priceIndex, 1 / (1 - country.sigma));
-}
-
-function calcRealWage(country: Country, city: City): void {
-  city.realWage = city.nominalWage * Math.pow(city.priceIndex, -country.pi);
-}
-
-function calcNominalWage(session: Session, country: Country, city: City): void {
-  let nominalWage = 0;
-  session.locations.forEach((location: City) => {
-    if (
-      session.transportationCostMatrix &&
-      session.transportationCostMatrix[city.index]
-    ) {
-      nominalWage +=
-        location.income0 *
-        Math.pow(
-          session.transportationCostMatrix[city.index][location.index],
-          1 - city.sigma
-        ) *
-        Math.pow(location.priceIndex0, city.sigma - 1);
-    }
-  });
-  city.nominalWage = Math.pow(nominalWage, 1 / city.sigma);
-}
-
-function calcDynamics(country: Country, city: City): void {
-  city.deltaManufacturingShare =
-    city.gamma *
-    (city.realWage - country.avgRealWage) *
-    city.manufacturingShare;
-}
-
-function applyDynamics(session: Session, city: City): void {
-  if (city.manufacturingShare > 1.0 / session.locations.length / 10.0) {
-    city.manufacturingShare += city.deltaManufacturingShare;
+export function calcDynamics(
+  country: Country,
+  avgRealWage: number,
+  target: City
+): number {
+  if (target.manufactureShare > 1.0 / country.numLocations / 10.0) {
+    //return target.manufacturingShare + target.deltaManufacturingShare;
+    return (
+      country.elasticitySubstitution *
+      (target.realWage - avgRealWage) *
+      target.manufactureShare
+    );
   } else {
-    city.manufacturingShare = 1.0 / session.locations.length / 10.0;
+    return 1.0 / country.numLocations / 10.0;
   }
 }
-*/

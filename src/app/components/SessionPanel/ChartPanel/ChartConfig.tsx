@@ -26,7 +26,7 @@ export const chartConfig: Record<
       { min: 0, max: 0.2, step: 0.05, lineDash: [5, 5] },
       { min: 0, max: 0.1, step: 0.01, lineDash: [3, 3] },
     ],
-    bar: (location: City) => location.manufacturingShare,
+    bar: (location: City) => location.manufactureShare,
     toFixed: 2,
   },
   'Share of Agriculture': {

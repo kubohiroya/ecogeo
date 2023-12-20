@@ -215,8 +215,12 @@ export const GraphCanvas = React.memo((props: GraphCanvasProps) => {
             height={props.height}
           />
           {focusedIndices.length == 2 &&
+            props.matrices.distanceMatrix &&
+            focusedIndices[0] < props.matrices.distanceMatrix.length &&
+            focusedIndices[1] <
+              props.matrices.distanceMatrix[focusedIndices[0]].length &&
             !isInfinity(
-              props.matrices.distanceMatrix![focusedIndices[0]][
+              props.matrices.distanceMatrix[focusedIndices[0]][
                 focusedIndices[1]
               ]
             ) && (

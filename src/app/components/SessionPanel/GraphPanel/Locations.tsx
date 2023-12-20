@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { Container, Sprite, Text } from '@pixi/react';
+import { Container, Graphics, Sprite, Text } from '@pixi/react';
 import { FederatedPointerEvent, Resource, Texture } from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
 import { StyleSize14, StyleSize14Focused } from './FontStyles';
@@ -67,7 +67,7 @@ const Location = (props: { index: number } & LocationsProps) => {
       props.onPointerUp(event, props.index);
       props.onDragEnd(event.clientX, event.clientY, props.index);
     },
-    [props.onPointerUp, props.onDragEnd, props.index]
+    [props.onPointerUp, props.onDragEnd, props.index, focusingIndex]
   );
 
   const onPointerEnter = useCallback(
@@ -110,6 +110,19 @@ const Location = (props: { index: number } & LocationsProps) => {
         onpointerleave={onPointerLeave}
         onglobalpointermove={onPointerMove}
       />
+      <Graphics
+        draw={(g) => {
+          g.clear();
+          g.lineStyle(1, 0x000000, 0.1);
+          g.beginFill(0x1976d2, 0.25);
+          g.drawCircle(
+            0,
+            0,
+            100 * props.locations[props.index].manufactureShare
+          );
+          g.endFill();
+        }}
+      ></Graphics>
       <Text
         text={`#${props.index}`}
         position={{ x: 0, y: 20 }}

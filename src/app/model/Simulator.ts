@@ -1,67 +1,87 @@
-/*
+import { SessionState } from './SessionState';
+import {
+  backupPreviousValues,
+  calcDynamics,
+  calcIncome,
+  calcNominalWage,
+  calcPriceIndex,
+  calcRealWage,
+  resetCity,
+} from './City';
 
-function tickSimulator(session: Session) {
-  backupPreviousValues(session);
-  calcIncome(session);
-  calcPriceIndex(session);
-  calcNominalWage(session);
-  calcRealWage(session);
-  calcAvgRealWage(session);
-  calcDynamics(session);
-  applyDynamics(session);
-}
-
-
-function backupPreviousValues(session: Session): void {
-  session.locations.forEach((Location) => {
-    Location.backupPreviousValues();
+export function startSimulation(sessionState: SessionState) {
+  sessionState.locations.map((target) => {
+    const city = resetCity(target);
   });
 }
 
-function calcIncome(session: Session): void {
-  session.locations.forEach((Location) => {
-    Location.calcIncome(session);
+export function makeCoherent(sessionState: SessionState) {
+  const sum = sessionState.locations
+    .map((target) => {
+      return [target.manufactureShare, target.agricultureShare];
+    })
+    .reduce(
+      (a, b) => {
+        return [a[0] + b[0], a[1] + b[1]];
+      },
+      [0, 0]
+    );
+  sessionState.locations.forEach((target) => {
+    target.manufactureShare = target.manufactureShare / sum[0];
+    target.agricultureShare = target.agricultureShare / sum[1];
   });
 }
 
-function calcPriceIndex(session: Session): void {
-  session.locations.forEach((Location) => {
-    Location.calcPriceIndex(session);
+export function tickSimulator(
+  sessionState: SessionState,
+  transportationCostMatrix: number[][]
+) {
+  sessionState.locations.forEach((location, index) => {
+    backupPreviousValues(location);
   });
-}
-
-function calcNominalWage(session: Session): void {
-  session.locations.forEach((Location) => {
-    Location.calcNominalWage(session);
+  sessionState.locations.forEach((location, index) => {
+    location.income = calcIncome(sessionState.country, location);
   });
-}
-
-function calcRealWage(session: Session): void {
-  session.locations.forEach((Location) => {
-    Location.calcRealWage(session);
+  sessionState.locations.forEach((location, index) => {
+    location.priceIndex = calcPriceIndex(
+      sessionState.locations,
+      sessionState.country,
+      transportationCostMatrix,
+      location,
+      index
+    );
   });
-}
 
-function calcAvgRealWage(session: Session): void {
-  let avgRealWage = 0;
-  session.locations.forEach((Location) => {
-    avgRealWage += location.realWage * location.manufacturingShare;
+  sessionState.locations.forEach((location, index) => {
+    location.nominalWage = calcNominalWage(
+      sessionState.locations,
+      sessionState.country,
+      transportationCostMatrix,
+      index
+    );
   });
-  session.avgRealWage = avgRealWage;
-}
 
-function calcDynamics(session: Session): void {
-  session.locations.forEach((location) => {
-    location.calcDynamics(session);
+  sessionState.locations.forEach((location, index) => {
+    location.realWage = calcRealWage(sessionState.country, location);
   });
-}
 
-function applyDynamics(session: Session): void {
-  session.locations.forEach((location) => {
-    location.applyDynamics(session);
+  const avgRealWage = sessionState.locations
+    .map((location) => location.realWage * location.manufactureShare)
+    .reduce((a, b) => a + b, 0);
+  /*
+    console.log(
+      { avgRealWage },
+      sessionState.locations.map((location) => location.manufacturingShare),
+      sessionState.locations.map((location) => location.realWage)
+    );
+  */
+  sessionState.locations.forEach((location, index) => {
+    location.manufactureShare += calcDynamics(
+      sessionState.country,
+      avgRealWage,
+      location
+    );
   });
-  rescale(session);
-}
 
-function rescale(session: Session): void {}
-*/
+  makeCoherent(sessionState);
+}

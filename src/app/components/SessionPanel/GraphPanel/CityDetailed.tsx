@@ -64,7 +64,7 @@ export const CityDetailed = (props: CityDetailedProps) => {
         y={60}
         anchor={{ x: 0.5, y: 0.5 }}
         style={fontStyle({ fontSize: 11, fill: 0x000088 })}
-        text={`share of manufacturing = ${props.city.manufacturingShare.toFixed(
+        text={`share of manufacturing = ${props.city.manufactureShare.toFixed(
           2
         )} `}
       />

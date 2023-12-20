@@ -1,7 +1,7 @@
 import {
   Backdrop,
+  Box,
   CircularProgress,
-  FormControlLabel,
   IconButton,
   Slider,
   Typography,
@@ -12,8 +12,10 @@ import { Animation } from '@mui/icons-material';
 import { BACKDROP_TIMEOUT_MILLI_SEC } from './Constatns';
 
 interface AutoLayoutButtonProps {
+  autoLayoutStarted: boolean;
   speed: number;
   onChangeSpeed: (speed: number) => void;
+  onToggleAutoGraphLayout: () => void;
 }
 
 const ControlButton = styled(IconButton)`
@@ -26,14 +28,19 @@ const ControlButton = styled(IconButton)`
   border-radius: 20px;
   border: 1px solid gray;
 `;
+const FormLabel = styled(Box)`
+  margin-left: 8px;
+  padding-left: 8px;
+`;
 const SpeedButton = styled(ControlButton)`
   bottom: 65px;
 `;
 const SpeedSlider = styled(Slider)`
-  width: 120px;
-  padding: 18px;
+  width: 170px;
+  padding-top: 18px;
+  padding-bottom: 18px;
   margin-right: 5px;
-  margin-left: 20px;
+  margin-left: 35px;
 `;
 const SpeedSliderContainer = styled.div`
   position: absolute;
@@ -44,7 +51,6 @@ const SpeedSliderContainer = styled.div`
   background-color: white;
   border-radius: 20px;
   padding-top: 5px;
-  padding-left: 5px;
   border: 1px solid gray;
   box-shadow: 0 0 1px gray;
 `;
@@ -58,7 +64,7 @@ export const AutoLayoutButton = (props: AutoLayoutButtonProps) => {
         title={'Change speed of auto graph layout'}
         onClick={() => setSumMenuShown(!sumMenuShown)}
       >
-        {props.speed > 0 && (
+        {props.autoLayoutStarted && (
           <CircularProgress
             style={{
               position: 'absolute',
@@ -81,51 +87,41 @@ export const AutoLayoutButton = (props: AutoLayoutButtonProps) => {
       </SpeedButton>
       <Backdrop
         open={sumMenuShown}
-        onClick={() =>
+        onClick={() => {
           setTimeout(
             () => setSumMenuShown(false),
             BACKDROP_TIMEOUT_MILLI_SEC * 2
-          )
-        }
+          );
+          props.onToggleAutoGraphLayout();
+        }}
         sx={{
           backgroundColor: '#00000030',
           zIndex: (theme) => theme.zIndex.drawer + 1,
         }}
       >
         <SpeedSliderContainer>
-          <FormControlLabel
-            control={
-              <SpeedSlider
-                aria-label="Change speed of auto graph layout"
-                color={props.speed <= 0 ? 'info' : 'warning'}
-                value={props.speed}
-                min={-1}
-                max={13}
-                step={1}
-                marks={[
-                  {
-                    value: -1,
-                    label: <Typography>off</Typography>,
-                  },
-                  { value: 1, label: '1' },
-                  { value: 3, label: '3' },
-                  { value: 5, label: '5' },
-                  { value: 8, label: '8' },
-                  { value: 13, label: '13' },
-                ]}
-                onChange={(e: Event, value: number | number[]) =>
-                  props.onChangeSpeed(value as number)
-                }
-              />
+          <FormLabel fontSize="small">
+            Auto graph layout:
+            {props.speed > 0 ? ' speed=' + props.speed * 100 + '%' : ' off'}
+          </FormLabel>
+          <SpeedSlider
+            aria-label="Change speed of auto graph layout"
+            color={props.autoLayoutStarted ? 'warning' : 'info'}
+            value={props.speed}
+            min={0}
+            max={1}
+            step={0.25}
+            marks={[
+              { value: 0, label: <Typography>off</Typography> },
+              { value: 0.25, label: '25%' },
+              { value: 0.5, label: '50%' },
+              { value: 0.75, label: '75%' },
+              { value: 1, label: '100%' },
+            ]}
+            onChange={(e: Event, value: number | number[]) =>
+              props.onChangeSpeed(value as number)
             }
-            label={
-              <Typography fontSize="small">
-                Auto graph layout:
-                {props.speed > 0 ? 'speed=' + props.speed : 'off'}
-              </Typography>
-            }
-            labelPlacement={'top'}
-          ></FormControlLabel>
+          />
         </SpeedSliderContainer>
       </Backdrop>
       <></>

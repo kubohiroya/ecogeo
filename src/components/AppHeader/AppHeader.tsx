@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import React from 'react';
 import { Typography } from '@mui/material';
 
-/* eslint-disable-next-line */
 export interface AppHeaderProps {
   children: string;
   startIcon?: React.ReactNode;

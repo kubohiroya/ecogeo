@@ -1,13 +1,7 @@
-import styled from '@emotion/styled';
-import {
-  AccessTime,
-  PauseCircle,
-  PlayCircle,
-  RestartAlt,
-} from '@mui/icons-material';
-import { Button, ButtonGroup, Slider, Tooltip } from '@mui/material';
-import React from 'react';
-import { AppTimer } from '../../../model/AppTimer';
+import styled from "@emotion/styled";
+import { AccessTime, PauseCircle, PlayCircle, RestartAlt } from "@mui/icons-material";
+import { Button, ButtonGroup, Slider, Tooltip } from "@mui/material";
+import React from "react";
 
 const StyledTimeControlPanel = styled.div`
   display: flex;
@@ -54,10 +48,10 @@ const TimeSliderContainer = styled.div`
 
 /* eslint-disable-next-line */
 export interface TimeControlPanelProps {
-  timer: AppTimer;
   isStarted: boolean;
-  setCounter: (newValue: number) => void;
-  setSpeed: (newValue: number) => void;
+  counter: number;
+  intervalScale: number;
+  changeIntervalScale: (newValue: number) => void;
   onStart: () => void;
   onReset: () => void;
   onStop: () => void;
@@ -93,7 +87,7 @@ export function TimeControlPanel(props: TimeControlPanelProps) {
             onClick={props.onStop}
             disabled={!props.isStarted}
             sx={{
-              ...(props.isStarted ? buttonAnimation(props.timer.speed) : {}),
+              ...(props.isStarted ? buttonAnimation(props.intervalScale) : {}),
             }}
             startIcon={<PauseCircle />}
           >
@@ -106,7 +100,7 @@ export function TimeControlPanel(props: TimeControlPanelProps) {
           variant="contained"
           color="primary"
           sx={{
-            ...(props.isStarted ? buttonAnimation(props.timer.speed) : {}),
+            ...(props.isStarted ? buttonAnimation(props.intervalScale) : {},
           }}
           startIcon={<RestartAlt />}
         >
@@ -116,7 +110,7 @@ export function TimeControlPanel(props: TimeControlPanelProps) {
       <Tooltip title={'Elapsed time'}>
         <TimeCounter>
           <AccessTime />
-          <input type="text" value={props.timer.counter} size={6} disabled />
+          <input type="text" value={props.counter} size={6} disabled />
         </TimeCounter>
       </Tooltip>
 
@@ -124,7 +118,7 @@ export function TimeControlPanel(props: TimeControlPanelProps) {
         <Tooltip title={'Simulation Speed'}>
           <SpeedSlider
             aria-label={'Simulation speed'}
-            value={props.timer.speed}
+            value={props.intervalScale}
             step={0.01}
             marks={[
               { value: 0, label: '🐢' },
@@ -135,7 +129,7 @@ export function TimeControlPanel(props: TimeControlPanelProps) {
               { value: 1, label: '🐇' },
             ]}
             onChange={(event: Event, newValue: number | number[]) => {
-              props.setSpeed(newValue as number);
+              props.changeIntervalScale(newValue as number);
             }}
             min={0}
             max={1}

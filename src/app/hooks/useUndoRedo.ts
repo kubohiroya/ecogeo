@@ -10,6 +10,7 @@ import {
 type PatchPair = {
   patch: Patch[];
   inversePatch: Patch[];
+  label?: string;
 };
 
 export interface UndoRedoState<T extends Objectish> {
@@ -24,31 +25,13 @@ export const createInitialState = <T extends Objectish>(
 ): UndoRedoState<T> => {
   return {
     current: initialState,
-    history: [
-      /*
-      {
-        patch: [
-          {
-            op: 'replace',
-            path: [],
-            value: initialState,
-          },
-        ],
-        inversePatch: [
-          {
-            op: 'replace',
-            path: [],
-            value: {},
-          },
-        ],
-      },*/
-    ],
+    history: [],
     future: [],
     staging: [],
   };
 };
 
-function removeRedundantPatches(src: PatchPair[]): PatchPair {
+function removeRedundantPatches(src: PatchPair[]): PatchPair | null {
   const paths = new Set<string>();
   const inversePaths = new Set<string>();
 
@@ -62,11 +45,9 @@ function removeRedundantPatches(src: PatchPair[]): PatchPair {
       const path = JSON.stringify(patch.path);
 
       if (patch.op === 'replace' && paths.has(path)) {
-        // このパスに対するreplace操作は既に見つけているので、このパッチはスキップ
         continue;
       }
       paths.add(path);
-      // このパッチは必要なので、セットにパスを追加し、フィルタリングされたパッチ配列に追加
       filteredPatch.push(patch);
     }
   }
@@ -87,6 +68,10 @@ function removeRedundantPatches(src: PatchPair[]): PatchPair {
     }
   }
 
+  if (filteredPatch.length == 0 && inverseFilteredPatch.length == 0) {
+    return null;
+  }
+
   // 後ろから走査しているので、元の順序に戻す
   return {
     patch: filteredPatch.reverse(),
@@ -103,26 +88,36 @@ export const useUndoRedo = <T extends Objectish>(
 
   const set = (
     updateFunction: (draft: Draft<T>) => void,
-    commit: boolean = true
+    commit: boolean = true,
+    label?: string
   ) => {
     const [nextState, patches, inversePatches] = produceWithPatches(
       current,
       updateFunction
     );
 
-    const newPathPairItem = { patch: patches, inversePatch: inversePatches };
+    const newPathPairItem = {
+      patch: patches,
+      inversePatch: inversePatches,
+      label,
+    };
 
     if (commit) {
       const newPatchPair = removeRedundantPatches(
         staging.length > 0 ? staging : [newPathPairItem]
       );
 
+      if (newPatchPair == null) {
+        return;
+      }
+
+      // console.log('commit', label, newPatchPair.patch);
+
       setUndoRedo((prev) => {
         const newHistory =
           prev.history.length >= maxHistoryLength
             ? [...prev.history.slice(1), newPatchPair]
             : [...prev.history, newPatchPair];
-        // console.log('history', prev.history, newPatchPair);
         return {
           current: nextState,
           history: newHistory,
@@ -132,7 +127,6 @@ export const useUndoRedo = <T extends Objectish>(
       });
     } else {
       const newStaging = [...staging, newPathPairItem];
-      // console.log('staging', newStaging);
       setUndoRedo((prev) => ({
         ...prev,
         current: nextState,
@@ -142,10 +136,10 @@ export const useUndoRedo = <T extends Objectish>(
   };
 
   const undo = () => {
-    if (history.length === 0) return;
-
     setUndoRedo((prev) => {
+      if (history.length === 0 || prev.history.length === 0) return prev;
       const lastPatchPair = history[prev.history.length - 1];
+      if (!lastPatchPair) return prev;
       const newCurrent = applyPatches(prev.current, lastPatchPair.inversePatch);
       return {
         history: prev.history.slice(0, -1),
@@ -157,9 +151,10 @@ export const useUndoRedo = <T extends Objectish>(
   };
 
   const redo = () => {
-    if (future.length === 0) return;
     setUndoRedo((prev) => {
+      if (future.length === 0 || prev.future.length === 0) return prev;
       const nextPatchPair = prev.future[0];
+      if (!nextPatchPair) return prev;
       const newCurrent = applyPatches(prev.current, nextPatchPair.patch);
       return {
         history: [...prev.history, nextPatchPair],
@@ -170,5 +165,5 @@ export const useUndoRedo = <T extends Objectish>(
     });
   };
 
-  return { set, undo, redo, history, future, current };
+  return { set, undo, redo, history, future, staging, current };
 };

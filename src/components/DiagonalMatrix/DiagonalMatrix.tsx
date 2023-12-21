@@ -165,10 +165,10 @@ function valueToStyle(
     } else {
       return {
         style: {
-          backgroundColor:"#888"',
-          color:"#ccc",
+          backgroundColor: '#888',
+          color: '#ccc',
         },
-        valueString: round(value, 0.01)
+        valueString: round(value, 0.01,
       };
     }
   } else {

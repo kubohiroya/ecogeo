@@ -209,30 +209,30 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
 
   useHotkeys(['Meta+z', 'Control+z'], () => {
     if (history.length == 0) {
-      openSnackBar"No more undo!"');
+      openSnackBar('No more undo!');
       return;
     }
     undo();
   });
   useHotkeys(['Shift+Meta+z', 'Shift+Control+z'], () => {
     if (future.length == 0) {
-      openSnackBar("No more redo!");
+      openSnackBar('No more redo!');
       return;
     }
     redo();
   });
 
-  useHotkeys(["h"], () => {
+  useHotkeys(['h'], () => {
     console.log({
       numLocations: sessionState.locations.length,
       locations: sessionState.locations,
-      selectedIndices: uiState.selectedIndices
+      selectedIndices: uiState.selectedIndices,
     });
     console.log({ history, staging, future });
     //console.log({ uiState });
   });
-  useHotkeys(["e"], () => {
-    console.log(JSON.stringify(sessionState.edges, null, " "));
+  useHotkeys("e"'], () => {
+    console.log(JSON.stringify(sessionState.edges, null," "'));
   });
 
   const diagonalMatrixSetPanelRef = useRef<DiagonalMatrixSetPanelHandle>(null);
@@ -1138,4 +1138,4 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       </Box>
     </>
   );
-});
+})

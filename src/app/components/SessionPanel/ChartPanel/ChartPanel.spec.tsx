@@ -7,7 +7,7 @@ describe('ChartPanel', () => {
   it('should render successfully', () => {
     const { baseElement } = render(
       <ChartPanel
-        chartType={ChartType.ShareOfManufacturing}
+        chartType={ChartType.ManufactureShare}
         onChangeChartType={() => {}}
         onChangeScale={() => {}}
         scale={1}

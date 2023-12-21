@@ -13,8 +13,8 @@ import { Country } from '../../../model/Country';
 /* eslint-disable-next-line */
 export interface CountryConfigPanelProps {
   country: Country;
-  setNumLocations: (numLocations: number, commit?: boolean) => void;
-  setShareManufacturing: (shareManufacturing: number, commit?: boolean) => void;
+  setNumLocations: (numLocations: number, commit: boolean) => void;
+  setManufactureShare: (manufactureShare: number, commit?: boolean) => void;
   setTransportationCost: (transportationCost: number, commit?: boolean) => void;
   setElasticitySubstitution: (
     elasticitySubstitution: number,
@@ -41,8 +41,8 @@ export const CountryConfigPanel = React.memo(
         const countryDefault = INITIAL_COUNTRY_ARRAY.find(
           (c) => country.countryId == c.countryId
         );
-        props.setNumLocations(countryDefault!.numLocations);
-        props.setShareManufacturing(countryDefault!.manufactureShare);
+        props.setNumLocations(countryDefault!.numLocations, true);
+        props.setManufactureShare(countryDefault!.manufactureShare);
         props.setTransportationCost(countryDefault!.transportationCost);
         props.setElasticitySubstitution(countryDefault!.elasticitySubstitution);
       },
@@ -61,17 +61,17 @@ export const CountryConfigPanel = React.memo(
       [props.setNumLocations]
     );
 
-    const onShareManufacturingChange = useCallback(
+    const onManufactureShareChanged = useCallback(
       (event: Event | SyntheticEvent, value: number | number[]) => {
-        props.setShareManufacturing(value as number, false);
+        props.setManufactureShare(value as number, false);
       },
-      [props.setShareManufacturing]
+      [props.setManufactureShare]
     );
-    const onShareManufacturingChangeCommitted = useCallback(
+    const onManufactureShareChangeCommitted = useCallback(
       (event: Event | SyntheticEvent, value: number | number[]) => {
-        props.setShareManufacturing(value as number, true);
+        props.setManufactureShare(value as number, true);
       },
-      [props.setShareManufacturing]
+      [props.setManufactureShare]
     );
 
     const onTransportationCostChange = useCallback(
@@ -137,8 +137,8 @@ export const CountryConfigPanel = React.memo(
             { value: 1.0, label: '1.0' },
           ]}
           value={country.manufactureShare}
-          onChange={onShareManufacturingChange}
-          onChangeCommitted={onShareManufacturingChangeCommitted}
+          onChange={onManufactureShareChanged}
+          onChangeCommitted={onManufactureShareChangeCommitted}
           min={0}
           max={1.0}
         />

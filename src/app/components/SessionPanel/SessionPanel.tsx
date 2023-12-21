@@ -35,6 +35,7 @@ import { startSimulation, tickSimulator } from "../../model/Simulator";
 import { GraphLayoutTickResult } from "../../graphLayout/GraphLayout";
 import { SessionRenameDialog } from "./SessionRenameDialog";
 import { getMatrixEngine } from "../../apsp/MatrixEngineService";
+import { AppMatrices } from "../../model/AppMatrices";
 
 type SessionPanelProps = {
   sessionId: string;
@@ -144,13 +145,13 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
             startSimulation(draft);
           },
           true,
-         "simulationStart"'
-        )
+          'simulationStart'
+        );
       });
     },
     onReset: () => {
       requestAnimationFrame(() => {
-        console.log("reset");
+        console.log('reset');
         setSessionState(
           (draft) => {
             draft.locations.forEach((location) =>
@@ -158,7 +159,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
             );
           },
           true,
-          "simulationReset"
+          'simulationReset'
         );
       });
     },
@@ -169,7 +170,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
             tickSimulator(draft, matrices.transportationCostMatrix!);
           },
           false,
-          "simulationTick"
+          'simulationTick'
         );
       });
       return true;
@@ -179,12 +180,12 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     },
     onFinished: (result: boolean) => {
       requestAnimationFrame(() => {
-        setSessionState((draft) => {}, false, "simulationFinished");
+        setSessionState((draft) => {}, false, 'simulationFinished');
       });
     },
     minInterval: 10,
     maxInterval: 3000,
-    initialIntervalScale: 0.5
+    initialIntervalScale: 0.5,
   });
 
   const undo = useCallback(() => {
@@ -208,7 +209,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
 
   useHotkeys(['Meta+z', 'Control+z'], () => {
     if (history.length == 0) {
-      openSnackBar("No more undo!");
+      openSnackBar"No more undo!"');
       return;
     }
     undo();
@@ -253,11 +254,12 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     });
 
   const setNumLocations = useCallback(
-    async (numLocations: number, commit?: boolean) => {
+    (numLocations: number, commit: boolean) => {
       if (numLocations < sessionState.locations.length) {
         onRemoveBulkLocations(numLocations, commit);
       } else if (sessionState.locations.length < numLocations) {
         onAddBulkLocations(numLocations, commit);
+      } else {
       }
     },
     []
@@ -274,7 +276,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
   );
 
   const onDragEnd = useCallback(
-    async (x: number, y: number, index: number) => {
+    (x: number, y: number, index: number) => {
       if (
         dragStartPosition == null ||
         (Math.abs(dragStartPosition.x - x) <= 1.0 &&
@@ -282,7 +284,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       ) {
         return;
       }
-      requestAnimationFrame(async () => {
+      requestAnimationFrame(() => {
         setUIState((draft) => {
           draft.draggingIndex = null;
           draft.focusedIndices = [];
@@ -462,7 +464,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
 
   const onRemoveBulkLocations = useCallback(
     (numLocations: number, commit?: boolean) => {
-      requestAnimationFrame(async () => {
+      requestAnimationFrame(() => {
         const { locations, edges, locationSerialNumber } = removeSubGraph(
           numLocations,
           sessionState
@@ -493,8 +495,8 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     ]
   );
 
-  const onAddLocation = useCallback(async () => {
-    requestAnimationFrame(async () => {
+  const onAddLocation = useCallback(() => {
+    requestAnimationFrame(() => {
       const { locations, edges, locationSerialNumber, addedIndices } =
         updateRandomSubGraph(sessionId, sessionState, uiState.selectedIndices);
 
@@ -524,7 +526,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
 
   const onAddBulkLocations = useCallback(
     (numLocations: number, commit?: boolean) => {
-      requestAnimationFrame(async () => {
+      requestAnimationFrame(() => {
         setSessionState(
           (draft) => {
             const { locations, edges, locationSerialNumber, addedIndices } =
@@ -626,8 +628,8 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     [sessionState]
   );
 
-  const onAddEdge = useCallback(async () => {
-    requestAnimationFrame(async () => {
+  const onAddEdge = useCallback(() => {
+    requestAnimationFrame(() => {
       setSessionState(
         (draft) => {
           const newEdges = [] as Edge[];
@@ -705,8 +707,8 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     }
   }, [uiState.selectedIndices, sessionState.edges, matrices.predecessorMatrix]);
 
-  const onRemoveLocation = useCallback(async () => {
-    requestAnimationFrame(async () => {
+  const onRemoveLocation = useCallback(() => {
+    requestAnimationFrame(() => {
       const newEdges =
         updateRemovedEdges(
           uiState.selectedIndices,
@@ -722,7 +724,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         .filter((city, index) => !uiState.selectedIndices.includes(index))
         .map((city) => ({
           ...city,
-          manufacturingShare: city.manufactureShare * ratio,
+          manufactureShare: city.manufactureShare * ratio,
           agricultureShare: city.agricultureShare * ratio
         }));
 
@@ -748,24 +750,24 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     setSessionState
   ]);
 
-  async function updateMatrices(
+  const updateMatrices = (
     sessionId: string,
     locations: City[],
     edges: Edge[],
     transportationCost: number
-  ) {
+  ): Promise<AppMatrices> => {
     const matrixEngine = getMatrixEngine(
       sessionId,
       locations.length,
       edges.length
     );
 
-    return await matrixEngine.updateAdjacencyMatrix(
+    return matrixEngine.updateAdjacencyMatrix(
       locations,
       edges,
       transportationCost
     );
-  }
+  };
 
   const setMapLayer = useCallback(
     (enableMapLayer: boolean) => {
@@ -839,11 +841,11 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     setMatrices,
   ]);
 
-  const setShareManufacturing = useCallback(
-    (shareManufacturing: number, commit?: boolean) => {
+  const setManufactureShare = useCallback(
+    (manufactureShare: number, commit?: boolean) => {
       setSessionState(
         (draft) => {
-          draft.country.manufactureShare = shareManufacturing;
+          draft.country.manufactureShare = manufactureShare;
         },
         commit,
         "updateCountry"
@@ -1080,7 +1082,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
           <CountryConfigPanel
             country={sessionState.country}
             setNumLocations={setNumLocations}
-            setShareManufacturing={setShareManufacturing}
+            setManufactureShare={setManufactureShare}
             setTransportationCost={setTransportationCost}
             setElasticitySubstitution={setElasticitySubstitution}
           />

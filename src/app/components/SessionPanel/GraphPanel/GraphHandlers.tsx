@@ -28,19 +28,16 @@ const createCity = ({
   share: number;
   randomize: boolean;
 }): City => {
-  const manufacturingShare = randomize
-    ? randomizedOf(SEED_RANDOM, share)
-    : share;
+  const manufactureShare = randomize ? randomizedOf(SEED_RANDOM, share) : share;
   const agricultureShare = randomize ? randomizedOf(SEED_RANDOM, share) : share;
   return {
     id,
     label,
     x,
     y,
-
     dx: 0,
     dy: 0,
-    manufactureShare: manufacturingShare,
+    manufactureShare,
     manufactureShare0: 0,
     agricultureShare,
     priceIndex: 0,
@@ -73,7 +70,7 @@ function updateRaceTrackSubGraph(
         ...city,
         x: 0,
         y: 0,
-        manufacturingShare: 1,
+        manufactureShare: 1,
         agricultureShare: 1,
       };
     } else if (index < sessionState.locations.length) {
@@ -82,7 +79,7 @@ function updateRaceTrackSubGraph(
         ...city,
         x,
         y,
-        manufacturingShare: ratio * city.manufactureShare,
+        manufactureShare: ratio * city.manufactureShare,
         agricultureShare: ratio * city.agricultureShare,
       };
     } else {
@@ -249,7 +246,7 @@ export function updateRandomSubGraph(
   const ratio = sessionState.locations.length / numLocations;
   const cities = sessionState.locations.map((city) => ({
     ...city,
-    manufacturingShare: city.manufactureShare * ratio,
+    manufactureShare: city.manufactureShare * ratio,
     agricultureShare: city.agricultureShare * ratio,
   }));
 
@@ -354,7 +351,7 @@ export function removeRandomSubGraph(
     .filter((location, index) => index < numLocations)
     .map((location) => ({
       ...location,
-      manufacturingShare: location.manufactureShare * ratio,
+      manufactureShare: location.manufactureShare * ratio,
       agricultureShare: location.agricultureShare * ratio,
     }));
 

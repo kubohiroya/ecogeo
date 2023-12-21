@@ -66,7 +66,7 @@ export function createSession(country: Country): {
         matrixSetPanelAccordion: false,
         lockMatrixSetPanelAccordion: false,
         chartScale: 1,
-        chartType: ChartType.ShareOfManufacturing,
+        chartType: ChartType.ManufactureShare,
         autoLayoutFinished: true,
         layer: {
           map: false,

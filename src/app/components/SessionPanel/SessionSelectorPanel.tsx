@@ -7,8 +7,8 @@ import { SessionPanel } from "./SessionPanel";
 import { useImmerAtom } from "jotai-immer";
 import { rootAtom, UndoRedoSessionState } from "../../model/Root";
 import { Session, sessionState } from "../../model/Session";
-import React, { ReactElement, useCallback, useEffect, useState } from"react"';
-import { TabContext, TabList } from"@mui/lab"';
+import React, { ReactElement, useCallback, useEffect, useState } from "react";
+import { TabContext, TabList } from "@mui/lab";
 import {
   Add,
   Close,

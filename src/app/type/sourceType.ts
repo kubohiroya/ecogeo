@@ -1,5 +1,5 @@
 export enum SourceType {
-  manufacturingShare,
+  manufactureShare,
   priceIndex,
   nominalWage,
   realWage,

@@ -95,6 +95,20 @@ const Location = (props: { index: number } & LocationsProps) => {
       interactive={true}
       eventMode={'static'}
     >
+      <Graphics
+        draw={(g) => {
+          const city = props.locations[props.index];
+          g.clear();
+          if (city.manufactureShare0 < city.manufactureShare) {
+            g.lineStyle(1, 0x0000ff, 0.5);
+          } else {
+            g.lineStyle(1, 0x000000, 0.1);
+          }
+          g.beginFill(0x1976d2, 0.25);
+          g.drawCircle(0, 0, 100 * city.manufactureShare);
+          g.endFill();
+        }}
+      ></Graphics>
       <Sprite
         texture={props.cityTexture}
         width={20}
@@ -110,19 +124,6 @@ const Location = (props: { index: number } & LocationsProps) => {
         onpointerleave={onPointerLeave}
         onglobalpointermove={onPointerMove}
       />
-      <Graphics
-        draw={(g) => {
-          g.clear();
-          g.lineStyle(1, 0x000000, 0.1);
-          g.beginFill(0x1976d2, 0.25);
-          g.drawCircle(
-            0,
-            0,
-            100 * props.locations[props.index].manufactureShare
-          );
-          g.endFill();
-        }}
-      ></Graphics>
       <Text
         text={`#${props.index}`}
         position={{ x: 0, y: 20 }}

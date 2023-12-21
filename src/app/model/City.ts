@@ -30,9 +30,10 @@ export function resetCity(target: City, numLocations?: number) {
   target.realWage = 1.0;
   target.income = 1.0;
   target.income0 = 1.0;
+
   if (numLocations && 0 < numLocations) {
     target.manufactureShare =
-      (1.0 / numLocations) * (1 - 0.05 * (Math.random() - 0.5));
+      (1.0 / numLocations) * (1 + 0.1 * (Math.random() - 0.5));
     target.agricultureShare = 1.0 / numLocations;
   }
   return target;

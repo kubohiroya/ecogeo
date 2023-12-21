@@ -68,13 +68,7 @@ export function tickSimulator(
   const avgRealWage = sessionState.locations
     .map((location) => location.realWage * location.manufactureShare)
     .reduce((a, b) => a + b, 0);
-  /*
-    console.log(
-      { avgRealWage },
-      sessionState.locations.map((location) => location.manufacturingShare),
-      sessionState.locations.map((location) => location.realWage)
-    );
-  */
+
   sessionState.locations.forEach((location, index) => {
     location.manufactureShare += calcDynamics(
       sessionState.country,

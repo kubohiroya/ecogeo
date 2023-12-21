@@ -56,8 +56,8 @@ const ChartCaptionBox = styled(Box)`
 `;
 
 const chartItemIcons: Record<string, ReactElement> = {
-  [ChartType.ShareOfManufacturing]: <Factory />,
-  [ChartType.ShareOfAgriculture]: <Agriculture />,
+  [ChartType.ManufactureShare]: <Factory />,
+  [ChartType.AgricultureShare]: <Agriculture />,
   [ChartType.PriceIndex]: <PriceChange />,
   [ChartType.NominalWage]: <RequestQuoteRounded />,
   [ChartType.RealWage]: <AttachMoneyRounded />,

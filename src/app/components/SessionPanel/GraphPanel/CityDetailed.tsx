@@ -21,7 +21,7 @@ export const CityDetailed = (props: CityDetailedProps) => {
     g.clear();
     g.beginFill(BACKGROUND_COLOR, 0.7);
     g.lineStyle(2, 0x0000aa, 1);
-    g.drawRoundedRect(-80, -50, 160, 195, 20);
+    g.drawRoundedRect(-90, -50, 170, 195, 20);
     g.endFill();
   };
   return (
@@ -65,7 +65,7 @@ export const CityDetailed = (props: CityDetailedProps) => {
         anchor={{ x: 0.5, y: 0.5 }}
         style={fontStyle({ fontSize: 11, fill: 0x000088 })}
         text={`share of manufacturing = ${props.city.manufactureShare.toFixed(
-          2
+          3
         )} `}
       />
       <Text
@@ -74,7 +74,7 @@ export const CityDetailed = (props: CityDetailedProps) => {
         anchor={{ x: 0.5, y: 0.5 }}
         style={fontStyle({ fontSize: 11, fill: 0x000088 })}
         text={`      share of agriculture = ${props.city.agricultureShare.toFixed(
-          2
+          3
         )} `}
       />
       <Text
@@ -82,28 +82,28 @@ export const CityDetailed = (props: CityDetailedProps) => {
         y={90}
         anchor={{ x: 0.5, y: 0.5 }}
         style={fontStyle({ fontSize: 11, fill: 0x000088 })}
-        text={`        price index = ${props.city.priceIndex.toFixed(2)} `}
+        text={`        price index = ${props.city.priceIndex.toFixed(3)} `}
       />
       <Text
         x={0}
         y={105}
         anchor={{ x: 0.5, y: 0.5 }}
         style={fontStyle({ fontSize: 11, fill: 0x000088 })}
-        text={`    nominal wage = ${props.city.nominalWage.toFixed(2)} `}
+        text={`    nominal wage = ${props.city.nominalWage.toFixed(3)} `}
       />
       <Text
         x={0}
         y={120}
         anchor={{ x: 0.5, y: 0.5 }}
         style={fontStyle({ fontSize: 11, fill: 0x000088 })}
-        text={`          real wage = ${props.city.realWage.toFixed(2)} `}
+        text={`          real wage = ${props.city.realWage.toFixed(3)} `}
       />
       <Text
         x={0}
         y={135}
         anchor={{ x: 0.5, y: 0.5 }}
         style={fontStyle({ fontSize: 11, fill: 0x000088 })}
-        text={`    GDP = ${props.city.priceIndex.toFixed(2)} `}
+        text={`    GDP = ${props.city.priceIndex.toFixed(3)} `}
       />
     </Container>
   );

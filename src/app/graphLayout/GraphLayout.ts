@@ -99,7 +99,7 @@ export abstract class GraphLayout {
 
     return {
       locations: newLocations,
-      maximumVelocity: maximumVelocit,
+      maximumVelocity: maximumVelocity,
     };
   }
 }

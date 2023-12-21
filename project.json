@@ -1,15 +1,17 @@
 {
-  "name": "geoeco",
+  "name": "ecogeo",
   "$schema": "node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "./src",
   "projectType": "application",
   "targets": {
     "build": {
       "executor": "@nx/vite:build",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/geoeco"
+        "outputPath": "dist/ecogeo"
       },
       "configurations": {
         "development": {
@@ -24,15 +26,15 @@
       "executor": "@nx/vite:dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "geoeco:build"
+        "buildTarget": "ecogeo:build"
       },
       "configurations": {
         "development": {
-          "buildTarget": "geoeco:build:development",
+          "buildTarget": "ecogeo:build:development",
           "hmr": true
         },
         "production": {
-          "buildTarget": "geoeco:build:production",
+          "buildTarget": "ecogeo:build:production",
           "hmr": false
         }
       }
@@ -41,36 +43,42 @@
       "executor": "@nx/vite:preview-server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "geoeco:build"
+        "buildTarget": "ecogeo:build"
       },
       "configurations": {
         "development": {
-          "buildTarget": "geoeco:build:development"
+          "buildTarget": "ecogeo:build:development"
         },
         "production": {
-          "buildTarget": "geoeco:build:production"
+          "buildTarget": "ecogeo:build:production"
         }
       }
     },
     "test": {
       "executor": "@nx/vite:test",
-      "outputs": ["{options.reportsDirectory}"],
+      "outputs": [
+        "{options.reportsDirectory}"
+      ],
       "options": {
         "passWithNoTests": true,
-        "reportsDirectory": "coverage/geoeco"
+        "reportsDirectory": "coverage/ecogeo"
       }
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["./src/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": [
+          "./src/**/*.{ts,tsx,js,jsx}"
+        ]
       }
     },
     "serve-static": {
       "executor": "@nx/web:file-server",
       "options": {
-        "buildTarget": "geoeco:build"
+        "buildTarget": "ecogeo:build"
       }
     }
   },

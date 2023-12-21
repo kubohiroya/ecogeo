@@ -59,7 +59,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     redoSessionState,
     history,
     future,
-    stagig,
+    staging
   } = useSessionStateUndoRedo(sessionId);
 
   const autoGraphLayoutEngine: SpringGraphLayout = new SpringGraphLayout();
@@ -109,7 +109,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         });
       },
       graphLayoutTickResult.maximumVelocity < 1.0,
-      'autoLayout'
+      "autoLayout"
     );
 
     return graphLayoutTickResult;
@@ -119,12 +119,14 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     sessionState.locations,
     sessionState.edges,
     uiState.selectedIndices,
-    uiState.draggingIndex,
+    uiState.draggingIndex
   ]);
 
   const autoGraphLayoutTimer = useIntervalExpScale<GraphLayoutTickResult>({
-    onStarted: () => {},
-    onReset: () => {},
+    onStarted: () => {
+    },
+    onReset: () => {
+    },
     tick: tickAutoGraphLayout,
     isFinished: (result: GraphLayoutTickResult) => {
       return result.maximumVelocity < 0.1;
@@ -134,7 +136,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     },
     minInterval: 5,
     maxInterval: 300,
-    initialIntervalScale: 0,
+    initialIntervalScale: 0
   });
 
   const simulation = useIntervalExpScale<boolean>({
@@ -145,13 +147,13 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
             startSimulation(draft);
           },
           true,
-          'simulationStart'
+          "simulationStart"
         );
       });
     },
     onReset: () => {
       requestAnimationFrame(() => {
-        console.log('reset');
+        console.log("reset");
         setSessionState(
           (draft) => {
             draft.locations.forEach((location) =>
@@ -159,7 +161,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
             );
           },
           true,
-          'simulationReset'
+          "simulationReset"
         );
       });
     },
@@ -170,7 +172,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
             tickSimulator(draft, matrices.transportationCostMatrix!);
           },
           false,
-          'simulationTick'
+          "simulationTick"
         );
       });
       return true;
@@ -180,12 +182,13 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     },
     onFinished: (result: boolean) => {
       requestAnimationFrame(() => {
-        setSessionState((draft) => {}, false, 'simulationFinished');
+        setSessionState((draft) => {
+        }, false, "simulationFinished");
       });
     },
     minInterval: 10,
     maxInterval: 3000,
-    initialIntervalScale: 0.5,
+    initialIntervalScale: 0.5
   });
 
   const undo = useCallback(() => {
@@ -207,32 +210,32 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     });
   }, [redoSessionState, setUIState]);
 
-  useHotkeys(['Meta+z', 'Control+z'], () => {
+  useHotkeys(["Meta+z", "Control+z"], () => {
     if (history.length == 0) {
-      openSnackBar('No more undo!');
+      openSnackBar("No more undo!");
       return;
     }
     undo();
   });
-  useHotkeys(['Shift+Meta+z', 'Shift+Control+z'], () => {
+  useHotkeys(["Shift+Meta+z", "Shift+Control+z"], () => {
     if (future.length == 0) {
-      openSnackBar('No more redo!');
+      openSnackBar("No more redo!");
       return;
     }
     redo();
   });
 
-  useHotkeys(['h'], () => {
+  useHotkeys(["h"], () => {
     console.log({
       numLocations: sessionState.locations.length,
       locations: sessionState.locations,
-      selectedIndices: uiState.selectedIndices,
+      selectedIndices: uiState.selectedIndices
     });
     console.log({ history, staging, future });
     //console.log({ uiState });
   });
-  useHotkeys("e"'], () => {
-    console.log(JSON.stringify(sessionState.edges, null," "'));
+  useHotkeys(["e"], () => {
+    console.log(JSON.stringify(sessionState.edges, null, " "));
   });
 
   const diagonalMatrixSetPanelRef = useRef<DiagonalMatrixSetPanelHandle>(null);
@@ -250,7 +253,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       autoGraphLayout: true,
       mapLayer: true,
       undo: false,
-      redo: false,
+      redo: false
     });
 
   const setNumLocations = useCallback(
@@ -354,7 +357,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       uiState.selectedIndices,
       matrices.adjacencyMatrix,
       sessionState,
-      dragStartPosition,
+      dragStartPosition
     ]
   );
 
@@ -448,7 +451,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
           paddingMarginRatio:
             uiState.viewportWindow && uiState.viewportWindow!.scale < 1.7
               ? PADDING_MARGIN_RATIO
-              : 0.5,
+              : 0.5
         });
       }
       return uiState.viewportWindow;
@@ -491,7 +494,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       sessionState.edges,
       sessionState.country.transportationCost,
       setMatrices,
-      setUIState,
+      setUIState
     ]
   );
 
@@ -838,7 +841,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     sessionState.locations,
     sessionState.edges,
     sessionState.country.transportationCost,
-    setMatrices,
+    setMatrices
   ]);
 
   const setManufactureShare = useCallback(
@@ -855,7 +858,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       sessionState.locations,
       sessionState.edges,
       sessionState.country,
-      setSessionState,
+      setSessionState
     ]
   );
   const setTransportationCost = useCallback(
@@ -872,7 +875,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       sessionState.locations,
       sessionState.edges,
       sessionState.country,
-      setSessionState,
+      setSessionState
     ]
   );
   const setElasticitySubstitution = useCallback(
@@ -889,7 +892,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       sessionState.locations,
       sessionState.edges,
       sessionState.country,
-      setSessionState,
+      setSessionState
     ]
   );
 
@@ -903,14 +906,14 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       autoGraphLayout: !autoGraphLayoutTimer.isStarted,
       mapLayer: true,
       undo: history.length > 0,
-      redo: future.length > 0,
+      redo: future.length > 0
     });
   }, [
     autoGraphLayoutTimer.isStarted,
     simulation.isStarted,
     uiState.selectedIndices,
     history.length,
-    future.length,
+    future.length
   ]);
 
   const [snackBarState, setSnackBarState] = useState<{
@@ -967,7 +970,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       ) : autoGraphLayoutTimer.isStarted ? (
         <LinearProgress color="warning" />
       ) : (
-        <Box sx={{ height: '4px' }} />
+        <Box sx={{ height: "4px" }} />
       )}
       <SessionRenameDialog
         open={props.openRenameDialog}
@@ -1021,7 +1024,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
               height={uiState.splitPanelHeight}
               boundingBox={{
                 ...calcBoundingRect(sessionState.locations),
-                paddingMarginRatio: PADDING_MARGIN_RATIO,
+                paddingMarginRatio: PADDING_MARGIN_RATIO
               }}
               setViewportWindow={setSessionViewportWindow}
               onDragStart={onDragStart}
@@ -1064,7 +1067,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         }
       />
 
-      <Box sx={{ margin: '0 2px 0 2px' }}>
+      <Box sx={{ margin: "0 2px 0 2px" }}>
         <AppAccordion
           expanded={uiState.countryConfigPanelAccordion}
           onClickSummary={() =>
@@ -1138,4 +1141,4 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       </Box>
     </>
   );
-})
+});

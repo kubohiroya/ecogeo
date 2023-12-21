@@ -39,79 +39,79 @@ export interface MatrixProps {
 }
 
 const MatrixContainer = styled.div`
-  color: black;
-  width: 33%;
+    color: black;
+    width: 33%;
 `;
 
 const HeaderWithIcon = styled.h3`
-  display: flex;
-  gap: 10px;
-  align-content: center;
-  align-items: center;
-  margin-top: 0;
-  margin-bottom: 10px;
+    display: flex;
+    gap: 10px;
+    align-content: center;
+    align-items: center;
+    margin-top: 0;
+    margin-bottom: 10px;
 `;
 
 const TableContainer = styled.div`
-  display: block;
-  width: 100%;
-  height: 100%;
-  position: relative;
-  overflow: auto;
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: auto;
 `;
 
 const StyledTable = styled.table`
-  border-collapse: collapse;
-  border: 0 solid black;
-  text-align: center;
-  box-shadow: 1px 1px 1px 3px #ccc inset;
+    border-collapse: collapse;
+    border: 0 solid black;
+    text-align: center;
+    box-shadow: 1px 1px 1px 3px #ccc inset;
 
-  th,
-  td {
-    border: 0 solid white;
-    cursor: pointer;
-  }
+    th,
+    td {
+        border: 0 solid white;
+        cursor: pointer;
+    }
 
-  th {
-    background-color: #e0e0e0;
-  }
+    th {
+        background-color: #e0e0e0;
+    }
 
-  th.focused,
-  td.focused {
-  }
+    th.focused,
+    td.focused {
+    }
 
-  th.selected,
-  td.selected {
-    border: 0 solid #e0e0e0 !important;
-  }
+    th.selected,
+    td.selected {
+        border: 0 solid #e0e0e0 !important;
+    }
 
-  .selected.focused {
-    color: red;
-  }
+    .selected.focused {
+        color: red;
+    }
 
-  tr:first-of-type > th.selected,
-  tr > th:first-of-type.selected {
-    border: 0 solid yellow !important;
-    background-color: #dd1 !important;
-  }
+    tr:first-of-type > th.selected,
+    tr > th:first-of-type.selected {
+        border: 0 solid yellow !important;
+        background-color: #dd1 !important;
+    }
 
-  tr:first-of-type > th.focused,
-  tr > th:first-of-type.focused {
-    background-color: rgb(255, 255, 0, 0.3) !important;
-  }
+    tr:first-of-type > th.focused,
+    tr > th:first-of-type.focused {
+        background-color: rgb(255, 255, 0, 0.3) !important;
+    }
 
-  tr:first-of-type > th.focused.selected,
-  tr > th:first-of-type.focused.selected {
-    background-color: #ff0 !important;
-  }
+    tr:first-of-type > th.focused.selected,
+    tr > th:first-of-type.focused.selected {
+        background-color: #ff0 !important;
+    }
 `;
 
 const StyledBox = styled(Box)`
-  flex: 1;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    flex: 1;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `;
 
 function valueToStyle(
@@ -131,26 +131,26 @@ function valueToStyle(
         return {
           style: {
             backgroundColor: `#eee`,
-            color: '#ff3333',
+            color: "#ff3333"
           },
-          valueString: '♾️️',
+          valueString: "♾️️"
         };
       } else {
         return {
           style: {
             backgroundColor: `#ccc`,
-            color: '#ff3333',
+            color: "#ff3333"
           },
-          valueString: '♾️️',
+          valueString: "♾️️"
         };
       }
     } else {
       return {
         style: {
-          backgroundColor: '#bbb',
-          color: '#ccc',
+          backgroundColor: "#bbb",
+          color: "#ccc"
         },
-        valueString: '♾️',
+        valueString: "♾️"
       };
     }
   } else if (value == 0.0) {
@@ -158,17 +158,17 @@ function valueToStyle(
       return {
         style: {
           backgroundColor: `#ddd`,
-          color: '#833',
+          color: "#833"
         },
-        valueString: round(value, 0.01),
+        valueString: round(value, 0.01)
       };
     } else {
       return {
         style: {
-          backgroundColor: '#888',
-          color: '#ccc',
+          backgroundColor: "#888",
+          color: "#ccc"
         },
-        valueString: round(value, 0.01,
+        valueString: round(value, 0.01)
       };
     }
   } else {
@@ -256,7 +256,7 @@ export const DiagonalMatrix = (props: MatrixProps) => {
         : "",
       indices.some((index) => props.selectedIndices.includes(index))
         ? "selected"
-        : "",
+        : ""
     ]
       .filter((value) => value != "")
       .join(" ");

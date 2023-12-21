@@ -9,58 +9,50 @@ import { rootAtom, UndoRedoSessionState } from "../../model/Root";
 import { Session, sessionState } from "../../model/Session";
 import React, { ReactElement, useCallback, useEffect, useState } from "react";
 import { TabContext, TabList } from "@mui/lab";
-import {
-  Add,
-  Close,
-  Edit,
-  FileDownload,
-  FileUpload,
-  MoreVert,
-  RestartAl,
-} from"@mui/icons-material"';
+import { Add, Close, Edit, FileDownload, FileUpload, MoreVert, RestartAlt } from "@mui/icons-material";
 
 enablePatches();
 
 const StyledTabList = styled(TabList)`
-  border-radius: 10px 10px 0 0;
-  background-color: #ccc;
-  width: 100%;
-  display: flex;
+    border-radius: 10px 10px 0 0;
+    background-color: #ccc;
+    width: 100%;
+    display: flex;
 `;
 const StyledTab = styled(Tab)`
-  text-transform: none;
-  background-color: #eee;
-  box-shadow: 3px 2px 3px #aaa;
-  border-bottom: 1px solid #aaa;
+    text-transform: none;
+    background-color: #eee;
+    box-shadow: 3px 2px 3px #aaa;
+    border-bottom: 1px solid #aaa;
 
-  padding: 0 5px 0 15px;
+    padding: 0 5px 0 15px;
 
-  &.Mui-selected {
-    background-color: #fff;
-    border-right: 0 none;
-    border-radius: 5px 5px 0 0;
-    outline-color: white;
-  }
+    &.Mui-selected {
+        background-color: #fff;
+        border-right: 0 none;
+        border-radius: 5px 5px 0 0;
+        outline-color: white;
+    }
 
-  *[aria-selected='false'] {
-    background-color: #ccc;
-  }
+    *[aria-selected='false'] {
+        background-color: #ccc;
+    }
 `;
 
 const StyledTabPanel = styled(TabPanel)`
-  padding: 0;
+    padding: 0;
 `;
 
 const StyledParameterBox = styled.div`
-  border-style: solid;
-  border-radius: 10px;
-  border-width: 1px;
+    border-style: solid;
+    border-radius: 10px;
+    border-width: 1px;
 `;
 
 function a11yProps(id: string) {
   return {
     id: `tab-${id}`,
-    'aria-controls': `tabpanel-${id}`,
+    "aria-controls": `tabpanel-${id}`
   };
 }
 
@@ -88,12 +80,15 @@ const TabMenu = (props: TabMenuProps) => {
   };
 
   const onRevert = () => {
-    alert('Reverting to default parameters...');
+    alert("Reverting to default parameters...");
   };
 
-  const onCreate = () => {};
-  const onImport = () => {};
-  const onExport = () => {};
+  const onCreate = () => {
+  };
+  const onImport = () => {
+  };
+  const onExport = () => {
+  };
 
   const options: Array<null | {
     label: string;
@@ -103,46 +98,46 @@ const TabMenu = (props: TabMenuProps) => {
     disabled?: boolean;
   }> = [
     {
-      label: 'Rename ...',
-      title: 'Rename the case',
+      label: "Rename ...",
+      title: "Rename the case",
       icon: <Edit />,
-      onClick: onRenameDialogOpen,
+      onClick: onRenameDialogOpen
     },
     {
-      label: 'Revert',
-      title: 'Revert parameters to the case default values',
+      label: "Revert",
+      title: "Revert parameters to the case default values",
       icon: <RestartAlt />,
       onClick: onRevert,
       disabled: true
     },
     null,
     {
-      label: 'Create',
-      title: 'Create new case',
+      label: "Create",
+      title: "Create new case",
       icon: <Add />,
       onClick: onCreate,
-      disabled: true,
+      disabled: true
     },
     {
       label: "Import ...",
-      title: 'Import graph structure data from a local file',
+      title: "Import graph structure data from a local file",
       icon: <FileUpload />,
       onClick: onImport,
       disabled: true
     },
     {
       label: "Export ...",
-      title: 'Export graph structure data as a local file',
+      title: "Export graph structure data as a local file",
       icon: <FileDownload />,
       onClick: onExport,
       disabled: true
-    },
+    }
   ];
 
   return (
     <>
       <IconButton
-        sx={{ marginLeft: 'auto' }}
+        sx={{ marginLeft: "auto" }}
         aria-label="more"
         id="long-button"
         aria-controls={openMenu ? "long-menu" : undefined}
@@ -155,7 +150,7 @@ const TabMenu = (props: TabMenuProps) => {
       <Menu
         id="long-menu"
         MenuListProps={{
-          'aria-labelledby': 'long-button',
+          "aria-labelledby": "long-button"
         }}
         anchorEl={anchorEl}
         open={openMenu}
@@ -238,10 +233,10 @@ export function SessionSelectorPanel(props: {
       {sessionIds == null || sessionIds.length == 0 || sessionId == null ? (
         <Box
           style={{
-            height: '500px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            height: "500px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
           }}
         >
           Drag and drop your data file into here!
@@ -255,17 +250,17 @@ export function SessionSelectorPanel(props: {
                   key={_sessionId}
                   value={_sessionId}
                   label={
-                    <span style={{ display: 'flex', alignItems: 'center' }}>
-                      <Typography fontSize={'small'}>
+                    <span style={{ display: "flex", alignItems: "center" }}>
+                      <Typography fontSize={"small"}>
                         {sessionTitles.get(_sessionId) || "Untitled"}
                       </Typography>
                       <IconButton
                         size="small"
                         component="span"
                         onClick={() => onClose(_sessionId)}
-                        sx={{ marginLeft: '8px' }}
+                        sx={{ marginLeft: "8px" }}
                       >
-                        <Close fontSize={'small'} />
+                        <Close fontSize={"small"} />
                       </IconButton>
                     </span>
                   }

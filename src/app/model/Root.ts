@@ -1,9 +1,12 @@
-import { Atom } from 'jotai/vanilla/atom';
-import { Session } from './Session';
-import { PrimitiveAtom } from 'jotai';
-import { atom } from 'jotai/index';
-import { UndoRedoState } from '../hooks/useUndoRedo';
-import { SessionState } from './SessionState';
+import { Atom } from "jotai/vanilla/atom";
+import { Session } from "./Session";
+import { PrimitiveAtom } from "jotai";
+import { atom } from "jotai/index";
+import { UndoRedoState } from "../hooks/useUndoRedo";
+import { SessionState } from "./SessionState";
+import { enablePatches } from "immer";
+
+enablePatches();
 
 export type UndoRedoSessionState = UndoRedoState<SessionState>;
 
@@ -33,7 +36,7 @@ const sessionTitlesAtom = atom(
     new Map(
       get(sessionIdsAtom).map((sessionId) => [
         sessionId,
-        get(get(rootAtom).sessionStateAtoms[sessionId]).current.country.title,
+        get(get(rootAtom).sessionStateAtoms[sessionId]).current.country.title
       ])
     )
 );
@@ -42,7 +45,7 @@ const root: Root = {
   sessionAtoms,
   sessionStateAtoms,
   sessionIdsAtom,
-  sessionTitlesAtom,
+  sessionTitlesAtom
 };
 
 export const rootAtom = atom(root);

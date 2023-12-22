@@ -1,5 +1,5 @@
 import "split-pane-react/esm/themes/default.css";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { preferencesAtom } from "../../model/AppPreference";
 import { useAtomValue } from "jotai";
 import { useSessionStateUndoRedo } from "./UseSessionStateUndoRedo";
@@ -11,12 +11,12 @@ import { arrayXOR, convertIdToIndex } from "../../util/arrayUtil";
 import { calculateDistanceByLocations } from "../../apsp/calculateDistanceByLocations";
 import { City, resetCity } from "../../model/City";
 import { calcBoundingRect } from "./GraphPanel/calcBoundingRect";
-import { createViewportWindow } from "./GraphPanel/CreateViewportWindow";
+import { createViewportCenter } from "./GraphPanel/CreateViewportCenter";
 import { PADDING_MARGIN_RATIO } from "./GraphPanel/Constatns";
 import { removeSubGraph, updateAddedSubGraph, updateRandomSubGraph } from "./GraphPanel/GraphHandlers";
 import { Edge } from "../../model/Graph";
 import { isInfinity } from "../../util/mathUtil";
-import { ViewportWindow } from "../../model/ViewportWindow";
+import { ViewportCenter } from "../../model/ViewportCenter";
 import { Box, LinearProgress, Snackbar, Typography } from "@mui/material";
 import { SessionLayoutPanel } from "./SessionLayoutPanel";
 import AppAccordion from "../../../components/AppAccordion/AppAccordion";
@@ -36,6 +36,7 @@ import { GraphLayoutTickResult } from "../../graphLayout/GraphLayout";
 import { SessionRenameDialog } from "./SessionRenameDialog";
 import { getMatrixEngine } from "../../apsp/MatrixEngineService";
 import { AppMatrices } from "../../model/AppMatrices";
+import { SessionState } from "../../model/SessionState";
 
 type SessionPanelProps = {
   sessionId: string;
@@ -146,7 +147,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
           (draft) => {
             startSimulation(draft);
           },
-          true,
+          false,
           "simulationStart"
         );
       });
@@ -156,12 +157,18 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         console.log("reset");
         setSessionState(
           (draft) => {
+          },
+          true,
+          "simulationReset0"
+        );
+        setSessionState(
+          (draft) => {
             draft.locations.forEach((location) =>
               resetCity(location, draft.locations.length)
             );
           },
           true,
-          "simulationReset"
+          "simulationReset1"
         );
       });
     },
@@ -183,7 +190,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     onFinished: (result: boolean) => {
       requestAnimationFrame(() => {
         setSessionState((draft) => {
-        }, false, "simulationFinished");
+        }, true, "simulationFinished");
       });
     },
     minInterval: 10,
@@ -437,31 +444,32 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     onUnselect(uiState.selectedIndices, uiState.selectedIndices);
   }, [uiState.selectedIndices]);
 
-  const fit = useCallback(
-    (uiState: UIState, locations: City[]) => {
-      if (locations.length > 1) {
-        const boundingRect = calcBoundingRect(locations);
-        return createViewportWindow({
-          left: boundingRect.left,
-          top: boundingRect.top,
-          right: boundingRect.right,
-          bottom: boundingRect.bottom,
-          screenWidth: uiState.splitPanelSizes[0],
-          screenHeight: uiState.splitPanelHeight,
-          paddingMarginRatio:
-            uiState.viewportWindow && uiState.viewportWindow!.scale < 1.7
-              ? PADDING_MARGIN_RATIO
-              : 0.5
-        });
-      }
-      return uiState.viewportWindow;
-    },
-    [uiState.viewportWindow, uiState.splitPanelSizes, uiState.splitPanelHeight]
-  );
+  const doCreateViewportCenter = (uiState: UIState, locations: City[]) => {
+    if (locations.length > 1) {
+      const boundingRect = calcBoundingRect(locations);
+      // console.log(boundingRect, uiState.splitPanelSizes[0]);
+      return createViewportCenter({
+        left: boundingRect.left,
+        top: boundingRect.top,
+        right: boundingRect.right,
+        bottom: boundingRect.bottom,
+        width: uiState.splitPanelSizes[0],
+        height: uiState.splitPanelHeight,
+        paddingMarginRatio:
+          uiState.viewportCenter && uiState.viewportCenter!.scale < 1.7
+            ? PADDING_MARGIN_RATIO
+            : 0.5
+      });
+    }
+    return uiState.viewportCenter;
+  };
 
   const onFit = useCallback(() => {
-    setUIState((draft) => {
-      draft.viewportWindow = fit(draft, sessionState.locations);
+    const locations = sessionState.locations;
+    requestAnimationFrame(() => {
+      setUIState((draft) => {
+        draft.viewportCenter = doCreateViewportCenter(draft, locations);
+      });
     });
   }, [sessionState.locations, setUIState]);
 
@@ -499,6 +507,15 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
   );
 
   const onAddLocation = useCallback(() => {
+    doAddLocation(sessionId, sessionState, uiState);
+  }, [
+    uiState.selectedIndices,
+    sessionState.locations,
+    sessionState.edges,
+    sessionState.locationSerialNumber
+  ]);
+
+  const doAddLocation = useCallback((sessionId: string, sessionState: SessionState, uiState: UIState) => {
     requestAnimationFrame(() => {
       const { locations, edges, locationSerialNumber, addedIndices } =
         updateRandomSubGraph(sessionId, sessionState, uiState.selectedIndices);
@@ -520,10 +537,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       });
     });
   }, [
-    uiState.selectedIndices,
-    sessionState.locations,
-    sessionState.edges,
-    sessionState.locationSerialNumber,
+    updateAndSetMatrices,
     setUIState
   ]);
 
@@ -545,7 +559,6 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
             draft.locationSerialNumber = locationSerialNumber;
             updateAndSetMatrices(locations, edges);
             setUIState((draft) => {
-              // draft.viewportWindow = fit(draft, locations);
               draft.selectedIndices = [];
               draft.focusedIndices = addedIndices;
             });
@@ -799,10 +812,10 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     [setUIState]
   );
 
-  const setSessionViewportWindow = useCallback(
-    (viewportWindow: ViewportWindow) => {
+  const setSessionViewportCenter = useCallback(
+    (viewportCenter: ViewportCenter) => {
       setUIState((draft) => {
-        draft.viewportWindow = viewportWindow;
+        draft.viewportCenter = viewportCenter;
       });
     },
     [setUIState]
@@ -963,6 +976,12 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     document.title = `GEO-ECO: ${sessionState.country.title} - Geological Economics Modeling Simulator`;
   }, [sessionState.country.title]);
 
+  useLayoutEffect(() => {
+    if (uiState.viewportCenter == null) {
+      onFit();
+    }
+  }, []);
+
   return (
     <>
       {simulation.isStarted ? (
@@ -1026,7 +1045,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
                 ...calcBoundingRect(sessionState.locations),
                 paddingMarginRatio: PADDING_MARGIN_RATIO
               }}
-              setViewportWindow={setSessionViewportWindow}
+              setViewportCenter={setSessionViewportCenter}
               onDragStart={onDragStart}
               onDragEnd={onDragEnd}
               onDrag={onDrag}
@@ -1036,7 +1055,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
               onClearSelection={onClearSelection}
               draggingIndex={uiState.draggingIndex}
               sessionState={sessionState}
-              viewportWindow={uiState.viewportWindow}
+              viewportCenter={uiState.viewportCenter}
               selectedIndices={uiState.selectedIndices}
               focusedIndices={uiState.focusedIndices}
               matrices={matrices}

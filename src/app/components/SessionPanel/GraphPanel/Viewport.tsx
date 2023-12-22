@@ -1,18 +1,18 @@
-import React, { useEffect } from 'react';
-import { PixiComponent, useApp } from '@pixi/react';
-import { Viewport as PixiViewport } from 'pixi-viewport';
-import * as PIXI from 'pixi.js';
-import { Container } from 'pixi.js';
-import { ViewportWindow } from '../../../model/ViewportWindow';
-import { createViewportWindow } from './CreateViewportWindow';
-import { BoundingBox } from '../../../type/BoundingBox';
-import { ZoomedEvent } from 'pixi-viewport/dist/types';
+import React, { useEffect, useLayoutEffect } from "react";
+import { PixiComponent, useApp } from "@pixi/react";
+import { Viewport as PixiViewport } from "pixi-viewport";
+import * as PIXI from "pixi.js";
+import { Container } from "pixi.js";
+import { ViewportCenter } from "../../../model/ViewportCenter";
+import { createViewportCenter } from "./CreateViewportCenter";
+import { BoundingBox } from "../../../type/BoundingBox";
+import { ZoomedEvent } from "pixi-viewport/dist/types";
 
 export interface ViewportBaseProps {
   pause: boolean;
   boundingBox: BoundingBox;
-  viewportWindow: ViewportWindow | null;
-  onSetViewportWindow: (viewportWindow: ViewportWindow) => void;
+  viewportCenter: ViewportCenter | null;
+  onSetViewportCenter: (viewportWindow: ViewportCenter) => void;
   screenWidth: number;
   screenHeight: number;
   children?: React.ReactNode;
@@ -38,45 +38,44 @@ const createPixiViewport = (props: ViewportAppProps) => {
     passiveWheel: false,
     events: props.app.renderer.events,
     stopPropagation: true,
-    //ticker: props.app.ticker,
-    screenWidth: props.screenWidth, //window.innerWidth,
-    screenHeight: props.screenHeight, //window.innerHeight,
+    screenWidth: props.screenWidth,
+    screenHeight: props.screenHeight,
 
     worldWidth: 1000,
-    worldHeight: 1000,
+    worldHeight: 1000
   });
 
   viewport.moveCenter(
-    props.viewportWindow?.centerX || 0,
-    props.viewportWindow?.centerY || 0
+    props.viewportCenter?.centerX || 0,
+    props.viewportCenter?.centerY || 0
   );
-  viewport.setZoom(props.viewportWindow?.scale || 1, true);
+  viewport.setZoom(props.viewportCenter?.scale || 1, true);
 
   viewport
     .drag({
-      wheel: false,
+      wheel: false
     })
     .wheel({
-      wheelZoom: true,
+      wheelZoom: true
     })
     .pinch()
     .clampZoom({
       maxScale: 5,
-      minScale: 0.1,
+      minScale: 0.1
     });
 
-  props.onDragStart && viewport.on('drag-start', props.onDragStart);
-  props.onDragEnd && viewport.on('drag-end', props.onDragEnd);
-  props.onPinchStart && viewport.on('pinch-start', props.onPinchStart);
-  props.onPinchEnd && viewport.on('pinch-end', props.onPinchEnd);
-  props.onSnapStart && viewport.on('snap-start', props.onSnapStart);
-  props.onSnapEnd && viewport.on('snap-end', props.onSnapEnd);
+  props.onDragStart && viewport.on("drag-start", props.onDragStart);
+  props.onDragEnd && viewport.on("drag-end", props.onDragEnd);
+  props.onPinchStart && viewport.on("pinch-start", props.onPinchStart);
+  props.onPinchEnd && viewport.on("pinch-end", props.onPinchEnd);
+  props.onSnapStart && viewport.on("snap-start", props.onSnapStart);
+  props.onSnapEnd && viewport.on("snap-end", props.onSnapEnd);
   props.onSnapZoomStart &&
-    viewport.on('snap-zoom-start', props.onSnapZoomStart);
-  props.onSnapZoomEnd && viewport.on('snap-zoom-end', props.onSnapZoomEnd);
-  props.onZoomed && viewport.on('zoomed', props.onZoomed);
-  props.onZoomedEnd && viewport.on('zoomed-end', props.onZoomedEnd);
-  props.onMouseUp && viewport.on('mouseup', props.onMouseUp);
+  viewport.on("snap-zoom-start", props.onSnapZoomStart);
+  props.onSnapZoomEnd && viewport.on("snap-zoom-end", props.onSnapZoomEnd);
+  props.onZoomed && viewport.on("zoomed", props.onZoomed);
+  props.onZoomedEnd && viewport.on("zoomed-end", props.onZoomedEnd);
+  props.onMouseUp && viewport.on("mouseup", props.onMouseUp);
 
   return viewport;
 };
@@ -85,57 +84,72 @@ export const Viewport = (props: ViewportBaseProps) => {
   const app = useApp();
 
   const fit = ({
-    left,
-    top,
-    right,
-    bottom,
-    paddingMarginRatio,
-  }: BoundingBox) => {
+                 left,
+                 top,
+                 right,
+                 bottom,
+                 paddingMarginRatio
+               }: BoundingBox) => {
+
+    if (props.screenWidth == 0) return;
+
     const viewport = app.stage.getChildAt(0) as PixiViewport;
 
-    const viewportWindow = createViewportWindow({
+    const viewportCenter = createViewportCenter({
       left,
       top,
       right,
       bottom,
-      screenWidth: props.screenWidth,
-      screenHeight: props.screenHeight,
-      paddingMarginRatio,
+      width: props.screenWidth,
+      height: props.screenHeight,
+      paddingMarginRatio
     });
 
-    viewport.moveCenter(viewportWindow.centerX, viewportWindow.centerY);
-    viewport.setZoom(viewportWindow.scale, true);
+    // console.log(props.screenWidth, props.screenHeight, viewportCenter.scale);
+    viewport.moveCenter(viewportCenter.centerX, viewportCenter.centerY);
+    viewport.setZoom(viewportCenter.scale, true);
 
-    props.onSetViewportWindow(viewportWindow);
+    requestAnimationFrame(() => {
+      props.onSetViewportCenter(viewportCenter);
+    });
+
   };
 
   useEffect(() => {
-    const viewport = app.stage.getChildAt(0) as PixiViewport;
-    if (props.screenWidth > 0 && props.screenHeight > 0) {
-      if (props.viewportWindow) {
-        viewport.moveCenter(
-          props.viewportWindow.centerX,
-          props.viewportWindow.centerY
-        );
-        viewport.setZoom(props.viewportWindow.scale, true);
-      } else {
-        fit(props.boundingBox);
+    requestAnimationFrame(() => {
+      const viewport = app.stage.getChildAt(0) as PixiViewport;
+      if (props.screenWidth > 0 && props.screenHeight > 0) {
+        if (props.viewportCenter) {
+          viewport.moveCenter(
+            props.viewportCenter.centerX,
+            props.viewportCenter.centerY
+          );
+          viewport.setZoom(props.viewportCenter.scale, true);
+          // console.log("*", props.screenWidth, props.screenHeight, props.viewportCenter.centerX, props.viewportCenter.centerY, props.viewportCenter.scale);
+        } else {
+          fit(props.boundingBox);
+        }
       }
-    }
-  }, [props.screenWidth, props.screenHeight, props.viewportWindow]);
+    });
+  }, [props.screenWidth, props.screenHeight, props.viewportCenter, props.viewportCenter?.centerX, props.viewportCenter?.centerY, props.viewportCenter?.scale]);
 
-  useEffect(() => {
-    const viewport = app.stage.getChildAt(0) as PixiViewport;
-    viewport.pause = props.pause;
+
+  useLayoutEffect(() => {
+    requestAnimationFrame(() => {
+      const viewport = app.stage.getChildAt(0) as PixiViewport;
+      viewport.pause = props.pause;
+    });
   }, [props.pause]);
 
-  const PixiComponentViewport = PixiComponent('Viewport', {
+  const PixiComponentViewport = PixiComponent("Viewport", {
     create: (props: ViewportAppProps) => {
       const viewport = createPixiViewport(props);
       viewport.options.events.domElement = props.app.renderer.view as any;
       return viewport;
     },
-    didMount(viewport: PixiViewport, parent: Container) {},
+    didMount(viewport: PixiViewport, parent: Container) {
+      fit(props.boundingBox);
+    },
     willUnmount: (viewport: PixiViewport) => {
       /*
       props.onSetViewportWindow({
@@ -146,7 +160,7 @@ export const Viewport = (props: ViewportBaseProps) => {
        */
       //viewport.options.noTicker = true;
       viewport.destroy({ children: true });
-    },
+    }
   });
 
   return <PixiComponentViewport app={app} {...props} />;

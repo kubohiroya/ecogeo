@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
 import { Box, Divider, IconButton, ListItemIcon, Menu, MenuItem, Tab, Typography } from "@mui/material";
 import TabPanel from "@mui/lab/TabPanel";
-import { enablePatches } from "immer";
 import { PrimitiveAtom, useAtomValue } from "jotai";
 import { SessionPanel } from "./SessionPanel";
 import { useImmerAtom } from "jotai-immer";
@@ -10,8 +9,6 @@ import { Session, sessionState } from "../../model/Session";
 import React, { ReactElement, useCallback, useEffect, useState } from "react";
 import { TabContext, TabList } from "@mui/lab";
 import { Add, Close, Edit, FileDownload, FileUpload, MoreVert, RestartAlt } from "@mui/icons-material";
-
-enablePatches();
 
 const StyledTabList = styled(TabList)`
     border-radius: 10px 10px 0 0;

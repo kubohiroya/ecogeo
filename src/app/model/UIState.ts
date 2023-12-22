@@ -1,8 +1,8 @@
-import { ViewportWindow } from './ViewportWindow';
-import { AppLayer } from './AppLayer';
+import { ViewportCenter } from "./ViewportCenter";
+import { AppLayer } from "./AppLayer";
 
 export type UIState = {
-  viewportWindow: ViewportWindow | null;
+  viewportCenter: ViewportCenter | null;
   splitPanelSizes: number[];
   splitPanelHeight: number;
 

@@ -1,54 +1,11 @@
-import { City } from '../../../model/City';
-import * as uuid from 'uuid';
-import { SEED_RANDOM, SeedRandom } from '../../../util/random';
-import { Edge } from '../../../model/Graph';
-import {
-  calculateDistanceByLocations,
-  DISTANCE_SCALE_FACTOR,
-} from '../../../apsp/calculateDistanceByLocations';
-import { loop, shuffleArray } from '../../../util/arrayUtil';
-import { SessionState } from '../../../model/SessionState';
+import { City, createCity } from "../../../model/City";
+import * as uuid from "uuid";
+import { SeedRandom } from "../../../util/random";
+import { Edge } from "../../../model/Graph";
+import { calculateDistanceByLocations, DISTANCE_SCALE_FACTOR } from "../../../apsp/calculateDistanceByLocations";
+import { loop, shuffleArray } from "../../../util/arrayUtil";
+import { SessionState } from "../../../model/SessionState";
 
-const RANDOM_FACTOR = 0.05;
-const randomizedOf = (seedRandom: SeedRandom, value: number) =>
-  value * (1 + (seedRandom.random() - 0.5) * RANDOM_FACTOR);
-
-const createCity = ({
-  id,
-  label,
-  x,
-  y,
-  share,
-  randomize,
-}: {
-  id: number;
-  label: string;
-  x: number;
-  y: number;
-  share: number;
-  randomize: boolean;
-}): City => {
-  const manufactureShare = randomize ? randomizedOf(SEED_RANDOM, share) : share;
-  const agricultureShare = randomize ? randomizedOf(SEED_RANDOM, share) : share;
-  return {
-    id,
-    label,
-    x,
-    y,
-    dx: 0,
-    dy: 0,
-    manufactureShare,
-    manufactureShare0: 0,
-    agricultureShare,
-    priceIndex: 0,
-    priceIndex0: 0,
-    nominalWage: 0,
-    nominalWage0: 0,
-    realWage: 0,
-    income: 0,
-    income0: 0,
-  };
-};
 
 function updateRaceTrackSubGraph(
   sessionState: SessionState,
@@ -71,7 +28,7 @@ function updateRaceTrackSubGraph(
         x: 0,
         y: 0,
         manufactureShare: 1,
-        agricultureShare: 1,
+        agricultureShare: 1
       };
     } else if (index < sessionState.locations.length) {
       const city = sessionState.locations[index];
@@ -80,7 +37,7 @@ function updateRaceTrackSubGraph(
         x,
         y,
         manufactureShare: ratio * city.manufactureShare,
-        agricultureShare: ratio * city.agricultureShare,
+        agricultureShare: ratio * city.agricultureShare
       };
     } else {
       return createCity({
@@ -89,7 +46,7 @@ function updateRaceTrackSubGraph(
         x,
         y,
         share: 1 / numLocations,
-        randomize: true,
+        randomize: true
       });
     }
   });
@@ -98,16 +55,16 @@ function updateRaceTrackSubGraph(
     numLocations == 1
       ? []
       : loop(numLocations).map((index) => {
-          const [source, target] =
-            index != numLocations - 1
-              ? [newLocations[index], newLocations[index + 1]]
-              : [newLocations[0], newLocations[numLocations - 1]];
-          return {
-            source: source.id,
-            target: target.id,
-            distance: calculateDistanceByLocations(source, target),
-          };
-        });
+        const [source, target] =
+          index != numLocations - 1
+            ? [newLocations[index], newLocations[index + 1]]
+            : [newLocations[0], newLocations[numLocations - 1]];
+        return {
+          source: source.id,
+          target: target.id,
+          distance: calculateDistanceByLocations(source, target)
+        };
+      });
 
   return {
     locations: newLocations,
@@ -116,9 +73,9 @@ function updateRaceTrackSubGraph(
     addedIndices:
       numLocations > sessionState.locations.length
         ? loop(numLocations - sessionState.locations.length).map(
-            (index) => index + sessionState.locations.length
-          )
-        : ([] as number[]),
+          (index) => index + sessionState.locations.length
+        )
+        : ([] as number[])
   };
 }
 
@@ -134,14 +91,14 @@ function createEdges(
     distance: calculateDistanceByLocations(
       locations[selectedIndex],
       newLocation
-    ),
+    )
   }));
 }
 
 const maxDensity = 0.5;
 
 function createRandomEdges(locations: City[], edges: Edge[]) {
-  const SEPARATOR = '_';
+  const SEPARATOR = "_";
   const set = new Set(
     edges.map((edge) => `${edge.source}${SEPARATOR}${edge.target}`)
   );
@@ -173,7 +130,7 @@ function createRandomEdges(locations: City[], edges: Edge[]) {
       return {
         source: locations[source].id,
         target: locations[target].id,
-        distance,
+        distance
       };
     });
 
@@ -192,7 +149,7 @@ function createRandomEdges(locations: City[], edges: Edge[]) {
         .filter((location) => location.id != id)
         .map((location) => ({
           location,
-          distance: calculateDistanceByLocations(location, locations[id]),
+          distance: calculateDistanceByLocations(location, locations[id])
         }))
         .reduce(
           (
@@ -213,14 +170,14 @@ function createRandomEdges(locations: City[], edges: Edge[]) {
             source: id,
             target: nearest?.location.id,
             id,
-            distance: nearest?.distance,
+            distance: nearest?.distance
           };
         } else {
           return {
             source: nearest?.location.id,
             id,
             target: id,
-            distance: nearest?.distance,
+            distance: nearest?.distance
           };
         }
       } else {
@@ -247,7 +204,7 @@ export function updateRandomSubGraph(
   const cities = sessionState.locations.map((city) => ({
     ...city,
     manufactureShare: city.manufactureShare * ratio,
-    agricultureShare: city.agricultureShare * ratio,
+    agricultureShare: city.agricultureShare * ratio
   }));
 
   let direction = seedRandom.random() * 2 * Math.PI;
@@ -263,27 +220,27 @@ export function updateRandomSubGraph(
       sessionState.locations.length == 0 && i == 0
         ? { x: 0, y: 0 }
         : i < sessionState.locations.length
-        ? {
+          ? {
             x: sessionState.locations[i].x,
-            y: sessionState.locations[i].y,
+            y: sessionState.locations[i].y
           }
-        : i == sessionState.locations.length
-        ? {
-            x:
-              sessionState.locations[sessionState.locations.length - 1].x +
-              velocity * Math.cos(direction),
-            y:
-              sessionState.locations[sessionState.locations.length - 1].y +
-              velocity * Math.sin(direction),
-          }
-        : {
-            x:
-              addingCities[i - sessionState.locations.length - 1].x +
-              velocity * Math.cos(direction),
-            y:
-              addingCities[i - sessionState.locations.length - 1].y +
-              velocity * Math.sin(direction),
-          };
+          : i == sessionState.locations.length
+            ? {
+              x:
+                sessionState.locations[sessionState.locations.length - 1].x +
+                velocity * Math.cos(direction),
+              y:
+                sessionState.locations[sessionState.locations.length - 1].y +
+                velocity * Math.sin(direction)
+            }
+            : {
+              x:
+                addingCities[i - sessionState.locations.length - 1].x +
+                velocity * Math.cos(direction),
+              y:
+                addingCities[i - sessionState.locations.length - 1].y +
+                velocity * Math.sin(direction)
+            };
 
     const newLocation = createCity({
       id: locationSerialNumber++,
@@ -291,7 +248,7 @@ export function updateRandomSubGraph(
       x,
       y,
       share: 1 / numLocations,
-      randomize: true,
+      randomize: true
     });
     addingCities.push(newLocation);
   }
@@ -311,7 +268,7 @@ export function updateRandomSubGraph(
     locationSerialNumber,
     addedIndices: loop(addingCities.length).map(
       (index) => index + cities.length
-    ),
+    )
   };
 }
 
@@ -322,9 +279,9 @@ export const updateAddedSubGraph = (
   numLocations: number
 ) => {
   switch (sessionState.country.type) {
-    case 'RaceTrack':
+    case "RaceTrack":
       return updateRaceTrackSubGraph(sessionState, numLocations);
-    case 'Graph':
+    case "Graph":
       return updateRandomSubGraph(
         sessionId,
         sessionState,
@@ -352,7 +309,7 @@ export function removeRandomSubGraph(
     .map((location) => ({
       ...location,
       manufactureShare: location.manufactureShare * ratio,
-      agricultureShare: location.agricultureShare * ratio,
+      agricultureShare: location.agricultureShare * ratio
     }));
 
   const newEdges = sessionState.edges.filter(
@@ -361,7 +318,7 @@ export function removeRandomSubGraph(
   return {
     locations: newLocations,
     edges: newEdges,
-    locationSerialNumber: sessionState.locationSerialNumber,
+    locationSerialNumber: sessionState.locationSerialNumber
   };
 }
 
@@ -370,9 +327,9 @@ export const removeSubGraph = (
   sessionState: SessionState
 ) => {
   switch (sessionState.country.type) {
-    case 'RaceTrack':
+    case "RaceTrack":
       return updateRaceTrackSubGraph(sessionState, numLocations);
-    case 'Graph':
+    case "Graph":
       return removeRandomSubGraph(numLocations, sessionState);
     default:
       throw new Error();

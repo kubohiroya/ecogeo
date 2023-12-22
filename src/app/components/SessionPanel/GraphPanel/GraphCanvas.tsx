@@ -1,25 +1,25 @@
-import React, { useCallback, useRef, useState } from 'react';
-import { City } from '../../../model/City';
-import { Stage } from '@pixi/react';
-import { Viewport } from './Viewport';
-import { Edge } from '../../../model/Graph';
-import { CityDetailed } from './CityDetailed';
-import * as PIXI from 'pixi.js';
-import { FederatedPointerEvent } from 'pixi.js';
-import { CITY_SVGDATA_URL } from './CitySvgUrl';
-import { FocusedLocationEffects } from './FocusedLocationEffects';
-import { SelectedLocationEffects } from './SelectedLocationEffects';
-import { Edges } from './Edges';
-import { Locations } from './Locations';
-import { FocusedEdgeEffects } from './FocusedEdgeEffects';
-import { Background } from './Background';
-import { ViewportWindow } from '../../../model/ViewportWindow';
-import { BACKGROUND_COLOR } from './Constatns';
-import { getById } from '../../../util/arrayUtil';
-import { SessionState } from '../../../model/SessionState';
-import { AppMatrices } from '../../../model/AppMatrices';
-import { isInfinity } from '../../../util/mathUtil';
-import { ZoomedEvent } from 'pixi-viewport/dist/types';
+import React, { useCallback, useRef, useState } from "react";
+import { City } from "../../../model/City";
+import { Stage } from "@pixi/react";
+import { Viewport } from "./Viewport";
+import { Edge } from "../../../model/Graph";
+import { CityDetailed } from "./CityDetailed";
+import * as PIXI from "pixi.js";
+import { FederatedPointerEvent } from "pixi.js";
+import { CITY_SVGDATA_URL } from "./CitySvgUrl";
+import { FocusedLocationEffects } from "./FocusedLocationEffects";
+import { SelectedLocationEffects } from "./SelectedLocationEffects";
+import { Edges } from "./Edges";
+import { Locations } from "./Locations";
+import { FocusedEdgeEffects } from "./FocusedEdgeEffects";
+import { Background } from "./Background";
+import { ViewportCenter } from "../../../model/ViewportCenter";
+import { BACKGROUND_COLOR } from "./Constatns";
+import { getById } from "../../../util/arrayUtil";
+import { SessionState } from "../../../model/SessionState";
+import { AppMatrices } from "../../../model/AppMatrices";
+import { isInfinity } from "../../../util/mathUtil";
+import { ZoomedEvent } from "pixi-viewport/dist/types";
 
 const cityTexture = PIXI.Texture.from(CITY_SVGDATA_URL);
 
@@ -33,7 +33,7 @@ export type GraphCanvasProps = {
     bottom: number;
     paddingMarginRatio: number;
   };
-  setViewportWindow: (viewportWindow: ViewportWindow) => void;
+  setViewportCenter: (viewportCenter: ViewportCenter) => void;
   onDragStart: (x: number, y: number, index: number) => void;
   onDragEnd: (x: number, y: number, index: number) => void;
   onDrag: (diffX: number, diffY: number, index: number) => void;
@@ -45,7 +45,7 @@ export type GraphCanvasProps = {
   sessionState: SessionState;
   focusedIndices: number[];
   selectedIndices: number[];
-  viewportWindow: ViewportWindow | null;
+  viewportCenter: ViewportCenter | null;
   matrices: AppMatrices;
 };
 
@@ -88,18 +88,18 @@ export const GraphCanvas = React.memo((props: GraphCanvasProps) => {
       event.stopPropagation();
     }
 
-    element.addEventListener('wheel', cancelEvent, { passive: false }); // passive: false を指定することで、preventDefault()が機能します
-    element.addEventListener('touchmove', cancelEvent, { passive: false });
+    element.addEventListener("wheel", cancelEvent, { passive: false }); // passive: false を指定することで、preventDefault()が機能します
+    element.addEventListener("touchmove", cancelEvent, { passive: false });
 
     return () => {
-      element.removeEventListener('wheel', cancelEvent);
-      element.removeEventListener('touchmove', cancelEvent);
+      element.removeEventListener("wheel", cancelEvent);
+      element.removeEventListener("touchmove", cancelEvent);
     };
   }
 
   const onPointerEnter = useCallback(
     (event: PIXI.FederatedPointerEvent, index: number) => {
-      divRef.current!.style.cursor = 'pointer';
+      divRef.current!.style.cursor = "pointer";
       if (!draggingLocation) {
         props.onFocus([index]);
       }
@@ -109,7 +109,7 @@ export const GraphCanvas = React.memo((props: GraphCanvasProps) => {
 
   const onPointerLeave = useCallback(
     (event: PIXI.FederatedPointerEvent, index: number) => {
-      divRef.current!.style.cursor = 'default';
+      divRef.current!.style.cursor = "default";
       if (!draggingLocation) {
         props.onUnfocus([index]);
       }
@@ -118,21 +118,23 @@ export const GraphCanvas = React.memo((props: GraphCanvasProps) => {
   );
 
   const onPointerDown = useCallback(
-    (event: FederatedPointerEvent, index: number) => {},
+    (event: FederatedPointerEvent, index: number) => {
+    },
     []
   );
 
   const onPointerUp = useCallback(
     (event: PIXI.FederatedPointerEvent, index: number) => {
       event.preventDefault();
-      divRef.current!.style.cursor = 'default';
+      divRef.current!.style.cursor = "default";
       props.onPointerUp(event.clientX, event.clientY, index);
     },
     [props.onPointerUp]
   );
 
-  const onPointerMove = useCallback((event: PIXI.FederatedPointerEvent) => {},
-  []);
+  const onPointerMove = useCallback((event: PIXI.FederatedPointerEvent) => {
+    },
+    []);
 
   const clearSelection = useCallback(() => {
     props.onClearSelection();
@@ -144,27 +146,27 @@ export const GraphCanvas = React.memo((props: GraphCanvasProps) => {
     focusedIndices.length > 0
       ? focusedIndices[0]
       : props.draggingIndex && props.draggingIndex >= 0
-      ? props.draggingIndex
-      : selectedIndices.length > 0
-      ? selectedIndices[0]
-      : -1;
+        ? props.draggingIndex
+        : selectedIndices.length > 0
+          ? selectedIndices[0]
+          : -1;
 
-  const onSetViewportWindow = useCallback((viewportWindow: ViewportWindow) => {
-    props.setViewportWindow(viewportWindow);
+  const onSetViewportCenter = useCallback((viewporCenter: ViewportCenter) => {
+    props.setViewportCenter(viewporCenter);
   }, []);
 
   const onDragStart = useCallback(() => {
     setBackgroundEnabled();
-    divRef.current!.style.cursor = 'grabbing';
+    divRef.current!.style.cursor = "grabbing";
   }, []);
 
   const onDragEnd = useCallback(() => {
     setBackgroundDisabled();
-    divRef.current!.style.cursor = 'default';
+    divRef.current!.style.cursor = "default";
   }, []);
 
   const setDefaultCursor = useCallback(() => {
-    divRef.current!.style.cursor = 'default';
+    divRef.current!.style.cursor = "default";
   }, []);
 
   const onZoomed = useCallback((event: ZoomedEvent) => {
@@ -183,8 +185,8 @@ export const GraphCanvas = React.memo((props: GraphCanvasProps) => {
           boundingBox={props.boundingBox}
           screenWidth={props.width}
           screenHeight={props.height}
-          viewportWindow={props.viewportWindow}
-          onSetViewportWindow={onSetViewportWindow}
+          viewportCenter={props.viewportCenter}
+          onSetViewportCenter={onSetViewportCenter}
           onDragStart={onDragStart}
           onDragEnd={onDragEnd}
           onPinchStart={setBackgroundEnabled}
@@ -218,11 +220,11 @@ export const GraphCanvas = React.memo((props: GraphCanvasProps) => {
             props.matrices.distanceMatrix &&
             focusedIndices[0] < props.matrices.distanceMatrix.length &&
             focusedIndices[1] <
-              props.matrices.distanceMatrix[focusedIndices[0]].length &&
+            props.matrices.distanceMatrix[focusedIndices[0]].length &&
             !isInfinity(
               props.matrices.distanceMatrix[focusedIndices[0]][
                 focusedIndices[1]
-              ]
+                ]
             ) && (
               <FocusedEdgeEffects
                 edges={edges}
@@ -239,7 +241,7 @@ export const GraphCanvas = React.memo((props: GraphCanvasProps) => {
             !isInfinity(
               props.matrices.distanceMatrix![selectedIndices[0]][
                 selectedIndices[1]
-              ]
+                ]
             ) && (
               <FocusedEdgeEffects
                 edges={edges}

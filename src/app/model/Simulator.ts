@@ -1,4 +1,4 @@
-import { SessionState } from './SessionState';
+import { SessionState } from "./SessionState";
 import {
   backupPreviousValues,
   calcDynamics,
@@ -6,8 +6,10 @@ import {
   calcNominalWage,
   calcPriceIndex,
   calcRealWage,
-  resetCity,
-} from './City';
+  City,
+  resetCity
+} from "./City";
+import { loop } from "../util/arrayUtil";
 
 export function startSimulation(sessionState: SessionState) {
   sessionState.locations.map((target) => {
@@ -15,20 +17,17 @@ export function startSimulation(sessionState: SessionState) {
   });
 }
 
-export function makeCoherent(sessionState: SessionState) {
-  const sum = sessionState.locations
-    .map((target) => {
-      return [target.manufactureShare, target.agricultureShare];
-    })
+export function equalize(locations: City[]) {
+  const sum = locations
+    .map((target) => target.manufactureShare)
     .reduce(
       (a, b) => {
-        return [a[0] + b[0], a[1] + b[1]];
+        return a + b;
       },
-      [0, 0]
+      0
     );
-  sessionState.locations.forEach((target) => {
-    target.manufactureShare = target.manufactureShare / sum[0];
-    target.agricultureShare = target.agricultureShare / sum[1];
+  locations.forEach((target) => {
+    target.manufactureShare = target.manufactureShare / sum;
   });
 }
 
@@ -36,33 +35,37 @@ export function tickSimulator(
   sessionState: SessionState,
   transportationCostMatrix: number[][]
 ) {
-  sessionState.locations.forEach((location, index) => {
-    backupPreviousValues(location);
-  });
-  sessionState.locations.forEach((location, index) => {
-    location.income = calcIncome(sessionState.country, location);
-  });
-  sessionState.locations.forEach((location, index) => {
-    location.priceIndex = calcPriceIndex(
-      sessionState.locations,
-      sessionState.country,
-      transportationCostMatrix,
-      location,
-      index
-    );
-  });
 
-  sessionState.locations.forEach((location, index) => {
-    location.nominalWage = calcNominalWage(
-      sessionState.locations,
-      sessionState.country,
-      transportationCostMatrix,
-      index
-    );
-  });
+  loop(50).forEach(() => {
+    sessionState.locations.forEach((location, index) => {
+      backupPreviousValues(location);
+    });
+    sessionState.locations.forEach((location, index) => {
+      location.income = calcIncome(sessionState.country.manufactureShare, location);
+    });
+    sessionState.locations.forEach((location, index) => {
+      location.priceIndex = calcPriceIndex(
+        sessionState.locations,
+        sessionState.country.elasticitySubstitution,
+        transportationCostMatrix,
+        location,
+        index
+      );
+    });
 
-  sessionState.locations.forEach((location, index) => {
-    location.realWage = calcRealWage(sessionState.country, location);
+    sessionState.locations.forEach((location, index) => {
+      location.nominalWage = calcNominalWage(
+        sessionState.locations,
+        sessionState.country.elasticitySubstitution,
+        transportationCostMatrix,
+        index
+      );
+    });
+
+    sessionState.locations.forEach((location, index) => {
+      location.realWage = calcRealWage(sessionState.country.manufactureShare, location);
+    });
+
   });
 
   const avgRealWage = sessionState.locations
@@ -71,11 +74,12 @@ export function tickSimulator(
 
   sessionState.locations.forEach((location, index) => {
     location.manufactureShare += calcDynamics(
-      sessionState.country,
+      sessionState.country.numLocations,
+      sessionState.country.elasticitySubstitution,
       avgRealWage,
       location
     );
   });
 
-  makeCoherent(sessionState);
+  equalize(sessionState.locations);
 }

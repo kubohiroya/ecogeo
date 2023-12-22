@@ -1,5 +1,5 @@
-import { Country } from './Country';
-import { isInfinity } from '../util/mathUtil';
+import { isInfinity } from "../util/mathUtil";
+import { SEED_RANDOM, SeedRandom } from "../util/random";
 
 export interface City {
   id: number;
@@ -22,6 +22,47 @@ export interface City {
   income0: number;
 }
 
+const RANDOM_FACTOR = 0.05;
+const randomizedOf = (seedRandom: SeedRandom, value: number) =>
+  value * (1 + (seedRandom.random() - 0.5) * RANDOM_FACTOR);
+
+export const createCity = ({
+                             id,
+                             label,
+                             x,
+                             y,
+                             share,
+                             randomize
+                           }: {
+  id: number;
+  label: string;
+  x: number;
+  y: number;
+  share: number;
+  randomize: boolean;
+}): City => {
+  const manufactureShare = randomize ? randomizedOf(SEED_RANDOM, share) : share;
+  const agricultureShare = randomize ? randomizedOf(SEED_RANDOM, share) : share;
+  return {
+    id,
+    label,
+    x,
+    y,
+    dx: 0,
+    dy: 0,
+    manufactureShare,
+    manufactureShare0: manufactureShare,
+    agricultureShare,
+    priceIndex: 1.0,
+    priceIndex0: 1.0,
+    nominalWage: 1.0,
+    nominalWage0: 1.0,
+    realWage: 1.0,
+    income: 1.0,
+    income0: 1.0
+  };
+};
+
 export function resetCity(target: City, numLocations?: number) {
   target.priceIndex = 1.0;
   target.priceIndex0 = 1.0;
@@ -32,9 +73,9 @@ export function resetCity(target: City, numLocations?: number) {
   target.income0 = 1.0;
 
   if (numLocations && 0 < numLocations) {
-    target.manufactureShare =
-      (1.0 / numLocations) * (1 + 0.1 * (Math.random() - 0.5));
-    target.agricultureShare = 1.0 / numLocations;
+    target.manufactureShare = randomizedOf(SEED_RANDOM, 1.0 / numLocations);
+    target.agricultureShare = randomizedOf(SEED_RANDOM, 1.0 / numLocations);
+    target.manufactureShare0 = target.manufactureShare;
   }
   return target;
 }
@@ -46,16 +87,16 @@ export function backupPreviousValues(target: City): void {
   target.manufactureShare0 = target.manufactureShare;
 }
 
-export function calcIncome(country: Country, target: City): number {
+export function calcIncome(manufactureShare: number, target: City): number {
   return (
-    country.manufactureShare * target.manufactureShare * target.nominalWage +
-    (1 - country.manufactureShare) * target.agricultureShare
+    manufactureShare * target.manufactureShare * target.nominalWage +
+    (1 - manufactureShare) * target.agricultureShare
   );
 }
 
 export function calcPriceIndex(
   locations: City[],
-  country: Country,
+  elasticitySubstitution: number,
   transportationCostMatrix: number[][],
   target: City,
   targetLocationIndex: number
@@ -67,18 +108,18 @@ export function calcPriceIndex(
       return isInfinity(transportationCost)
         ? 0
         : location.manufactureShare *
-            Math.pow(
-              location.nominalWage0 * transportationCost,
-              1 - country.elasticitySubstitution
-            );
+        Math.pow(
+          location.nominalWage0 * transportationCost,
+          1 - elasticitySubstitution
+        );
     })
     .reduce((a, b) => a + b, 0.0);
-  return Math.pow(priceIndex, 1 / (1 - country.elasticitySubstitution));
+  return Math.pow(priceIndex, 1 / (1 - elasticitySubstitution));
 }
 
 export function calcNominalWage(
   locations: City[],
-  country: Country,
+  elasticitySubstitution: number,
   transportationCostMatrix: number[][],
   targetLocationIndex: number
 ): number {
@@ -89,32 +130,33 @@ export function calcNominalWage(
       return isInfinity(transportationCost)
         ? 0
         : location.income0 *
-            Math.pow(transportationCost, 1 - country.elasticitySubstitution) *
-            Math.pow(location.priceIndex0, country.elasticitySubstitution - 1);
+        Math.pow(transportationCost, 1 - elasticitySubstitution) *
+        Math.pow(location.priceIndex0, elasticitySubstitution - 1);
     })
     .reduce((a, b) => a + b, 0.0);
-  return Math.pow(nominalWage, 1 / country.elasticitySubstitution);
+  return Math.pow(nominalWage, 1 / elasticitySubstitution);
 }
 
-export function calcRealWage(country: Country, target: City): number {
+export function calcRealWage(manufactureShare: number, target: City): number {
   return (
-    target.nominalWage * Math.pow(target.priceIndex, -country.manufactureShare)
+    target.nominalWage * Math.pow(target.priceIndex, -1.0 * manufactureShare)
   );
 }
 
 export function calcDynamics(
-  country: Country,
+  numLocations: number,
+  elasticitySubstitution: number,
   avgRealWage: number,
   target: City
 ): number {
-  if (target.manufactureShare > 1.0 / country.numLocations / 10.0) {
+  if (target.manufactureShare > 1.0 / numLocations / 10.0) {
     //return target.manufacturingShare + target.deltaManufacturingShare;
     return (
-      country.elasticitySubstitution *
+      elasticitySubstitution *
       (target.realWage - avgRealWage) *
       target.manufactureShare
     );
   } else {
-    return 1.0 / country.numLocations / 10.0;
+    return 1.0 / numLocations / 10.0;
   }
 }

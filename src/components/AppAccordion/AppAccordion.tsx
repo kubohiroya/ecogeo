@@ -1,7 +1,7 @@
-import styled from '@emotion/styled';
-import React, { createContext, ReactElement } from 'react';
-import { ExpandMore } from '@mui/icons-material';
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
+import styled from "@emotion/styled";
+import React, { createContext, ReactElement } from "react";
+import { ExpandMore } from "@mui/icons-material";
+import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 
 export interface AppAccordionProps {
   lock?: boolean;
@@ -14,20 +14,20 @@ export interface AppAccordionProps {
 }
 
 const StyledAccordion = styled(Accordion)`
-  padding: 0 16px 0 16px;
-  box-shadow: 1px 1px 2px 1px rgb(0, 0, 0, 0.3);
+    padding: 0 8px 0 8px;
+    box-shadow: 1px 1px 2px 1px rgb(0, 0, 0, 0.3);
 `;
 
 const StyledAccordionSummary = styled(AccordionSummary)`
-  padding-bottom: 0;
+    padding-bottom: 0;
 `;
 const StyledAccordionDetails = styled(AccordionDetails)`
-  margin-top: 0;
-  padding-top: 0;
+    margin-top: 0;
+    padding-top: 0;
 `;
 
 const StyledAppAccordion = styled.div`
-  color: pink;
+    color: pink;
 `;
 
 export const AppAccordionExpandContext = createContext<boolean>(false);

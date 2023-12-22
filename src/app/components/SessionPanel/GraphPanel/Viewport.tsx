@@ -125,13 +125,13 @@ export const Viewport = (props: ViewportBaseProps) => {
             props.viewportCenter.centerY
           );
           viewport.setZoom(props.viewportCenter.scale, true);
-          // console.log("*", props.screenWidth, props.screenHeight, props.viewportCenter.centerX, props.viewportCenter.centerY, props.viewportCenter.scale);
+          console.log("*", props.screenWidth, props.screenHeight, props.viewportCenter.centerX, props.viewportCenter.centerY, props.viewportCenter.scale);
         } else {
           fit(props.boundingBox);
         }
       }
     });
-  }, [props.screenWidth, props.screenHeight, props.viewportCenter, props.viewportCenter?.centerX, props.viewportCenter?.centerY, props.viewportCenter?.scale]);
+  }, [props.viewportCenter]);
 
 
   useLayoutEffect(() => {

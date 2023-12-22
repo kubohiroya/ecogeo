@@ -1,6 +1,6 @@
-import styled from '@emotion/styled';
-import React from 'react';
-import { Slider, Tooltip, Typography } from '@mui/material';
+import styled from "@emotion/styled";
+import React from "react";
+import { Slider, Tooltip, Typography } from "@mui/material";
 
 export interface LabelSliderProps {
   title: string;
@@ -22,27 +22,27 @@ export interface LabelSliderProps {
 }
 
 const SliderWithLabel = styled.div`
-  display: flex;
-  gap: 10px;
-  align-content: center;
-  align-items: center;
+    display: flex;
+    gap: 10px;
+    align-content: center;
+    align-items: center;
 `;
 
 const KeyValuePair = styled.div`
-  display: flex;
-  gap: 4px;
-  margin-top: -5px;
-  vertical-align: top;
+    display: flex;
+    gap: 4px;
+    margin-top: -5px;
+    vertical-align: top;
 `;
 
 const SliderLabel = styled.div`
-  padding-top: 15px;
-  text-align: center;
-  width: 65px;
+    padding-top: 5px;
+    text-align: center;
+    width: 65px;
 `;
 
 const StyledSlider = styled(Slider)`
-  margin-top: 10px;
+    margin-top: 2px;
 `;
 
 export function LabelSlider(props: LabelSliderProps) {

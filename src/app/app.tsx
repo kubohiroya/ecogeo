@@ -6,8 +6,8 @@ import AppHeader from '../components/AppHeader/AppHeader';
 import { Share } from '@mui/icons-material';
 import GithubCorner from 'react-github-corner';
 import ReferenceSection from './components/ReferenceSection/ReferenceSection';
-import SessionSelectorPanel from './components/SessionPanel/SessionSelectorPanel';
 import { CircularProgress } from '@mui/material';
+import SessionSelectorPanel from './components/SessionPanel/SessionSelectorPanel';
 import {
   initialSelectedSessionId,
   sessionAtoms,
@@ -27,7 +27,6 @@ export function App() {
         href="https://github.com/kubohiroya/racetrack-economy-model"
         size={64}
       />
-
       <Provider>
         <Suspense fallback={<CircularProgress />}>
           <SessionSelectorPanel

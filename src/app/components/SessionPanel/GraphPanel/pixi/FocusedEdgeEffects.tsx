@@ -2,10 +2,10 @@ import React from 'react';
 import { Container, Graphics, Text } from '@pixi/react';
 import { fontStyle } from './FontStyles';
 import * as PIXI from 'pixi.js';
-import { Edge, Vertex } from '../../../model/Graph';
-import { getById } from '../../../util/arrayUtil';
+import { Edge, Vertex } from '../../../../model/Graph';
+import { getById } from '../../../../util/arrayUtil';
 import { DashLine } from 'pixi-dashed-line';
-import { isInfinity } from '../../../util/mathUtil';
+import { isInfinity } from '../../../../util/mathUtil';
 
 type EdgesProps = {
   edges: Edge[];

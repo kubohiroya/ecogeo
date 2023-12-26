@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import React, { ReactElement, useCallback, useState } from 'react';
 import GraphPanelButtons from './GraphPanelButtons';
-import { hasFeatureDetectingHoverEvent } from '../../../util/browserUtil';
 import { GraphPanelButtonsState } from './GraphPanelButtonsState';
+import { hasFeatureDetectingHoverEvent } from '../../../util/browserUtil';
 
 /* eslint-disable-next-line */
 export interface GraphPanelProps {
@@ -36,8 +36,8 @@ const StyledGraphPanel = styled.div`
   position: relative;
   margin: 0;
   border: 0;
+  opacity: 1;
   border-radius: 8px;
-  // background-color: aquamarine;
   overflow: hidden;
 `;
 
@@ -71,7 +71,6 @@ export const GraphPanel = React.memo((props: GraphPanelProps) => {
         mapLayer={props.mapLayer}
         setMapLLayer={props.setMapLayer}
       />
-
       {props.children}
     </StyledGraphPanel>
   );

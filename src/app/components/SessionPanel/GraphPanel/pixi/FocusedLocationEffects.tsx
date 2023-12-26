@@ -1,5 +1,5 @@
 import { Container, Graphics } from '@pixi/react';
-import { Vertex } from '../../../model/Graph';
+import { Vertex } from '../../../../model/Graph';
 
 type FocusedLocationEffectsProps = {
   focusedIndices: number[];

@@ -2,7 +2,6 @@ import {
   Backdrop,
   Box,
   CircularProgress,
-  IconButton,
   Slider,
   Typography,
 } from '@mui/material';
@@ -10,6 +9,7 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { Animation } from '@mui/icons-material';
 import { BACKDROP_TIMEOUT_MILLI_SEC } from './Constatns';
+import { OverlayControlButton } from './OverlayControlButton';
 
 interface AutoLayoutButtonProps {
   autoLayoutStarted: boolean;
@@ -18,22 +18,12 @@ interface AutoLayoutButtonProps {
   onToggleAutoGraphLayout: () => void;
 }
 
-const ControlButton = styled(IconButton)`
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  margin: 0;
-  padding: 0;
-  left: 10px;
-  border-radius: 20px;
-  border: 1px solid gray;
-`;
 const FormLabel = styled(Box)`
   margin-left: 8px;
   padding-left: 8px;
 `;
-const SpeedButton = styled(ControlButton)`
-  bottom: 65px;
+const SpeedButton = styled(OverlayControlButton)`
+  top: 145px;
 `;
 const SpeedSlider = styled(Slider)`
   width: 170px;
@@ -46,8 +36,8 @@ const SpeedSliderContainer = styled.div`
   position: absolute;
   width: 230px;
   height: 75px;
-  bottom: 35px;
-  left: 55px;
+  top: 145px;
+  left: 110px;
   background-color: white;
   border-radius: 20px;
   padding-top: 5px;

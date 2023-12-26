@@ -1,8 +1,8 @@
 import React from 'react';
 import { Container, Graphics, Text } from '@pixi/react';
 import { StyleSize11 } from './FontStyles';
-import { Edge, Vertex } from '../../../model/Graph';
-import { convertIdToIndex } from '../../../util/arrayUtil';
+import { Edge, Vertex } from '../../../../model/Graph';
+import { convertIdToIndex } from '../../../../util/arrayUtil';
 
 type EdgesProps = {
   edges: Edge[];

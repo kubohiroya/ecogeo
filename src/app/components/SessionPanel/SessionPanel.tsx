@@ -1,42 +1,57 @@
-import "split-pane-react/esm/themes/default.css";
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { preferencesAtom } from "../../model/AppPreference";
-import { useAtomValue } from "jotai";
-import { useSessionStateUndoRedo } from "./UseSessionStateUndoRedo";
-import useHotkeys from "@reecelucas/react-use-hotkeys";
-import { DiagonalMatrixSetPanelHandle, MatrixSetPanel } from "./MatrixSetPanel/MatrixSetPanel";
-import { SpringGraphLayout } from "../../graphLayout/SpringGraphLayout";
-import { GraphPanelButtonsState } from "./GraphPanel/GraphPanelButtonsState";
-import { arrayXOR, convertIdToIndex } from "../../util/arrayUtil";
-import { calculateDistanceByLocations } from "../../apsp/calculateDistanceByLocations";
-import { City, resetCity } from "../../model/City";
-import { calcBoundingRect } from "./GraphPanel/calcBoundingRect";
-import { createViewportCenter } from "./GraphPanel/CreateViewportCenter";
-import { PADDING_MARGIN_RATIO } from "./GraphPanel/Constatns";
-import { removeSubGraph, updateAddedSubGraph, updateRandomSubGraph } from "./GraphPanel/GraphHandlers";
-import { Edge } from "../../model/Graph";
-import { isInfinity } from "../../util/mathUtil";
-import { ViewportCenter } from "../../model/ViewportCenter";
-import { Box, LinearProgress, Snackbar, Typography } from "@mui/material";
-import { SessionLayoutPanel } from "./SessionLayoutPanel";
-import AppAccordion from "../../../components/AppAccordion/AppAccordion";
-import { GridOn, LinearScale } from "@mui/icons-material";
-import { SessionSelectorAccordionSummaryTitle } from "./SessionSelectorAccordionSummaryTitle";
-import CountryConfigPanel from "./CountryConfigPanel/CountryConfigPanel";
-import { MatrixSetAccordionSummaryTitle } from "./MatrixSetPanel/MatrixSetAccordionSummaryTitle";
-import TimeControlPanel from "./TimeControPanel/TimeControlPanel";
-import GraphPanel from "./GraphPanel/GraphPanel";
-import { GraphCanvas } from "./GraphPanel/GraphCanvas";
-import { ChartCanvas } from "./ChartPanel/ChartCanvas";
-import { ChartPanel } from "./ChartPanel/ChartPanel";
-import { UIState } from "../../model/UIState";
-import useIntervalExpScale from "../../hooks/useIntervalExpScape";
-import { startSimulation, tickSimulator } from "../../model/Simulator";
-import { GraphLayoutTickResult } from "../../graphLayout/GraphLayout";
-import { SessionRenameDialog } from "./SessionRenameDialog";
-import { getMatrixEngine } from "../../apsp/MatrixEngineService";
-import { AppMatrices } from "../../model/AppMatrices";
-import { SessionState } from "../../model/SessionState";
+import 'split-pane-react/esm/themes/default.css';
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
+import { preferencesAtom } from '../../model/AppPreference';
+import { useAtomValue } from 'jotai';
+import { useSessionStateUndoRedo } from './UseSessionStateUndoRedo';
+import useHotkeys from '@reecelucas/react-use-hotkeys';
+import {
+  DiagonalMatrixSetPanelHandle,
+  MatrixSetPanel,
+} from './MatrixSetPanel/MatrixSetPanel';
+import { SpringGraphLayout } from '../../graphLayout/SpringGraphLayout';
+import { GraphPanelButtonsState } from './GraphPanel/GraphPanelButtonsState';
+import { arrayXOR, convertIdToIndex } from '../../util/arrayUtil';
+import { calculateDistanceByLocations } from '../../apsp/calculateDistanceByLocations';
+import { City, resetCity } from '../../model/City';
+import { calcBoundingRect } from './GraphPanel/calcBoundingRect';
+import { createViewportCenter } from './GraphPanel/CreateViewportCenter';
+import { PADDING_MARGIN_RATIO } from './GraphPanel/Constatns';
+import {
+  removeSubGraph,
+  updateAddedSubGraph,
+  updateRandomSubGraph,
+} from './GraphPanel/GraphHandlers';
+import { Edge } from '../../model/Graph';
+import { isInfinity } from '../../util/mathUtil';
+import { ViewportCenter } from '../../model/ViewportCenter';
+import { Box, LinearProgress, Snackbar, Typography } from '@mui/material';
+import { SessionLayoutPanel } from './SessionLayoutPanel';
+import AppAccordion from '../../../components/AppAccordion/AppAccordion';
+import { GridOn, LinearScale } from '@mui/icons-material';
+import { SessionSelectorAccordionSummaryTitle } from './SessionSelectorAccordionSummaryTitle';
+import CountryConfigPanel from './CountryConfigPanel/CountryConfigPanel';
+import { MatrixSetAccordionSummaryTitle } from './MatrixSetPanel/MatrixSetAccordionSummaryTitle';
+import TimeControlPanel from './TimeControPanel/TimeControlPanel';
+import GraphPanel from './GraphPanel/GraphPanel';
+import { ChartCanvas } from './ChartPanel/ChartCanvas';
+import { ChartPanel } from './ChartPanel/ChartPanel';
+import { UIState } from '../../model/UIState';
+import useIntervalExpScale from '../../hooks/useIntervalExpScape';
+import { startSimulation, tickSimulator } from '../../model/Simulator';
+import { GraphLayoutTickResult } from '../../graphLayout/GraphLayout';
+import { SessionRenameDialog } from './SessionRenameDialog';
+import { getMatrixEngine } from '../../apsp/MatrixEngineService';
+import { AppMatrices } from '../../model/AppMatrices';
+import { SessionState } from '../../model/SessionState';
+import { MapTilerMap } from './GraphPanel/deckgl/MapTilerMap';
+import { GraphCanvas } from './GraphPanel/pixi/GraphCanvas';
+import { convertToXYZ } from '../../util/mapUtil';
 
 type SessionPanelProps = {
   sessionId: string;
@@ -60,7 +75,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     redoSessionState,
     history,
     future,
-    staging
+    staging,
   } = useSessionStateUndoRedo(sessionId);
 
   const autoGraphLayoutEngine: SpringGraphLayout = new SpringGraphLayout();
@@ -110,7 +125,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         });
       },
       graphLayoutTickResult.maximumVelocity < 1.0,
-      "autoLayout"
+      'autoLayout'
     );
 
     return graphLayoutTickResult;
@@ -120,14 +135,12 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     sessionState.locations,
     sessionState.edges,
     uiState.selectedIndices,
-    uiState.draggingIndex
+    uiState.draggingIndex,
   ]);
 
   const autoGraphLayoutTimer = useIntervalExpScale<GraphLayoutTickResult>({
-    onStarted: () => {
-    },
-    onReset: () => {
-    },
+    onStarted: () => {},
+    onReset: () => {},
     tick: tickAutoGraphLayout,
     isFinished: (result: GraphLayoutTickResult) => {
       return result.maximumVelocity < 0.1;
@@ -137,7 +150,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     },
     minInterval: 5,
     maxInterval: 300,
-    initialIntervalScale: 0
+    initialIntervalScale: 0,
   });
 
   const simulation = useIntervalExpScale<boolean>({
@@ -148,19 +161,14 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
             startSimulation(draft);
           },
           false,
-          "simulationStart"
+          'simulationStart'
         );
       });
     },
     onReset: () => {
       requestAnimationFrame(() => {
-        console.log("reset");
-        setSessionState(
-          (draft) => {
-          },
-          true,
-          "simulationReset0"
-        );
+        console.log('reset');
+        setSessionState((draft) => {}, true, 'simulationReset0');
         setSessionState(
           (draft) => {
             draft.locations.forEach((location) =>
@@ -168,7 +176,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
             );
           },
           true,
-          "simulationReset1"
+          'simulationReset1'
         );
       });
     },
@@ -179,7 +187,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
             tickSimulator(draft, matrices.transportationCostMatrix!);
           },
           false,
-          "simulationTick"
+          'simulationTick'
         );
       });
       return true;
@@ -189,13 +197,12 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     },
     onFinished: (result: boolean) => {
       requestAnimationFrame(() => {
-        setSessionState((draft) => {
-        }, true, "simulationFinished");
+        setSessionState((draft) => {}, true, 'simulationFinished');
       });
     },
     minInterval: 10,
     maxInterval: 3000,
-    initialIntervalScale: 0.5
+    initialIntervalScale: 0.5,
   });
 
   const undo = useCallback(() => {
@@ -217,32 +224,32 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     });
   }, [redoSessionState, setUIState]);
 
-  useHotkeys(["Meta+z", "Control+z"], () => {
+  useHotkeys(['Meta+z', 'Control+z'], () => {
     if (history.length == 0) {
-      openSnackBar("No more undo!");
+      openSnackBar('No more undo!');
       return;
     }
     undo();
   });
-  useHotkeys(["Shift+Meta+z", "Shift+Control+z"], () => {
+  useHotkeys(['Shift+Meta+z', 'Shift+Control+z'], () => {
     if (future.length == 0) {
-      openSnackBar("No more redo!");
+      openSnackBar('No more redo!');
       return;
     }
     redo();
   });
 
-  useHotkeys(["h"], () => {
+  useHotkeys(['h'], () => {
     console.log({
       numLocations: sessionState.locations.length,
       locations: sessionState.locations,
-      selectedIndices: uiState.selectedIndices
+      selectedIndices: uiState.selectedIndices,
     });
     console.log({ history, staging, future });
     //console.log({ uiState });
   });
-  useHotkeys(["e"], () => {
-    console.log(JSON.stringify(sessionState.edges, null, " "));
+  useHotkeys(['e'], () => {
+    console.log(JSON.stringify(sessionState.edges, null, ' '));
   });
 
   const diagonalMatrixSetPanelRef = useRef<DiagonalMatrixSetPanelHandle>(null);
@@ -260,7 +267,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       autoGraphLayout: true,
       mapLayer: true,
       undo: false,
-      redo: false
+      redo: false,
     });
 
   const setNumLocations = useCallback(
@@ -300,8 +307,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
           draft.focusedIndices = [];
         });
         setDragStartPosition(null);
-        setSessionState((draft) => {
-        }, true, "dragEnd");
+        setSessionState((draft) => {}, true, 'dragEnd');
         updateAndSetMatrices(sessionState.locations, sessionState.edges);
       });
     },
@@ -311,7 +317,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       setUIState,
       setMatrices,
       setDragStartPosition,
-      updateAndSetMatrices
+      updateAndSetMatrices,
     ]
   );
 
@@ -355,7 +361,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
               });
             },
             false,
-            "drag"
+            'drag'
           );
         });
       }
@@ -364,7 +370,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       uiState.selectedIndices,
       matrices.adjacencyMatrix,
       sessionState,
-      dragStartPosition
+      dragStartPosition,
     ]
   );
 
@@ -444,6 +450,41 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     onUnselect(uiState.selectedIndices, uiState.selectedIndices);
   }, [uiState.selectedIndices]);
 
+  const [XYZ, setXYZ] = useState<{ X: number; Y: number; Z: number }>({
+    X: 0,
+    Y: 0,
+    Z: 10,
+  });
+  const onMoved = useCallback(
+    (centerX: number, centerY: number, zoom: number) => {
+      const xyz = convertToXYZ({
+        x: centerX,
+        y: centerY,
+        zoom,
+      });
+      setXYZ(xyz);
+
+      /*
+    console.log("onMoved->", centerX, centerY, zoom);
+    const viewportCenter = {
+      centerX,
+      centerY,
+      scale: zoom
+    };
+    setUIState((draft) => {
+      if (!draft.viewportCenter) {
+        draft.viewportCenter = viewportCenter;
+      } else {
+        draft.viewportCenter.centerX = centerX;
+        draft.viewportCenter.centerY = centerY;
+        draft.viewportCenter.scale = zoom;
+      }
+    });
+     */
+    },
+    []
+  );
+
   const doCreateViewportCenter = (uiState: UIState, locations: City[]) => {
     if (locations.length > 1) {
       const boundingRect = calcBoundingRect(locations);
@@ -458,7 +499,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         paddingMarginRatio:
           uiState.viewportCenter && uiState.viewportCenter!.scale < 1.7
             ? PADDING_MARGIN_RATIO
-            : 0.5
+            : 0.5,
       });
     }
     return uiState.viewportCenter;
@@ -488,7 +529,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
             draft.locationSerialNumber = locationSerialNumber;
           },
           commit,
-          "removeBulkLocations"
+          'removeBulkLocations'
         );
         updateAndSetMatrices(locations, edges);
         setUIState((draft) => {
@@ -502,7 +543,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       sessionState.edges,
       sessionState.country.transportationCost,
       setMatrices,
-      setUIState
+      setUIState,
     ]
   );
 
@@ -512,34 +553,38 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     uiState.selectedIndices,
     sessionState.locations,
     sessionState.edges,
-    sessionState.locationSerialNumber
+    sessionState.locationSerialNumber,
   ]);
 
-  const doAddLocation = useCallback((sessionId: string, sessionState: SessionState, uiState: UIState) => {
-    requestAnimationFrame(() => {
-      const { locations, edges, locationSerialNumber, addedIndices } =
-        updateRandomSubGraph(sessionId, sessionState, uiState.selectedIndices);
+  const doAddLocation = useCallback(
+    (sessionId: string, sessionState: SessionState, uiState: UIState) => {
+      requestAnimationFrame(() => {
+        const { locations, edges, locationSerialNumber, addedIndices } =
+          updateRandomSubGraph(
+            sessionId,
+            sessionState,
+            uiState.selectedIndices
+          );
 
-      setSessionState(
-        (draft) => {
-          draft.locations = locations;
-          draft.edges = edges;
-          draft.country.numLocations = draft.country.numLocations + 1;
-          draft.locationSerialNumber = locationSerialNumber;
-        },
-        true,
-        "addLocation"
-      );
-      updateAndSetMatrices(locations, edges);
-      setUIState((draft) => {
-        draft.focusedIndices = [...uiState.selectedIndices];
-        draft.selectedIndices = [...addedIndices];
+        setSessionState(
+          (draft) => {
+            draft.locations = locations;
+            draft.edges = edges;
+            draft.country.numLocations = draft.country.numLocations + 1;
+            draft.locationSerialNumber = locationSerialNumber;
+          },
+          true,
+          'addLocation'
+        );
+        updateAndSetMatrices(locations, edges);
+        setUIState((draft) => {
+          draft.focusedIndices = [...uiState.selectedIndices];
+          draft.selectedIndices = [...addedIndices];
+        });
       });
-    });
-  }, [
-    updateAndSetMatrices,
-    setUIState
-  ]);
+    },
+    [updateAndSetMatrices, setUIState]
+  );
 
   const onAddBulkLocations = useCallback(
     (numLocations: number, commit?: boolean) => {
@@ -564,7 +609,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
             });
           },
           commit,
-          "addBulkLocations"
+          'addBulkLocations'
         );
       });
     },
@@ -575,7 +620,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       sessionState.edges,
       setMatrices,
       setUIState,
-      setSessionState
+      setSessionState,
     ]
   );
 
@@ -662,7 +707,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
                 const edge = {
                   source: source.id,
                   target: target.id,
-                  distance
+                  distance,
                 };
                 newEdges.push(edge);
               }
@@ -672,7 +717,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
           updateAndSetMatrices(sessionState.locations, sessionState.edges);
         },
         true,
-        "addEdge"
+        'addEdge'
       );
 
       /*
@@ -689,7 +734,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     setSessionState,
     matrices.adjacencyMatrix,
     setMatrices,
-    setUIState
+    setUIState,
   ]);
 
   const onRemoveEdge = useCallback(() => {
@@ -705,7 +750,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
           draft.edges = newEdges;
         },
         true,
-        "removePath"
+        'removePath'
       );
     } else {
       const newEdges = updateRemovedEdges(
@@ -718,7 +763,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
           draft.edges = newEdges || [];
         },
         true,
-        "removeEdge"
+        'removeEdge'
       );
     }
   }, [uiState.selectedIndices, sessionState.edges, matrices.predecessorMatrix]);
@@ -741,7 +786,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         .map((city) => ({
           ...city,
           manufactureShare: city.manufactureShare * ratio,
-          agricultureShare: city.agricultureShare * ratio
+          agricultureShare: city.agricultureShare * ratio,
         }));
 
       setSessionState(
@@ -751,7 +796,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
           draft.country.numLocations = newLocations.length;
         },
         true,
-        "removeLocation"
+        'removeLocation'
       );
       updateAndSetMatrices(newLocations, newEdges);
       setUIState((draft) => {
@@ -763,7 +808,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     sessionState.locations,
     sessionState.edges,
     matrices.predecessorMatrix,
-    setSessionState
+    setSessionState,
   ]);
 
   const updateMatrices = (
@@ -814,6 +859,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
 
   const setSessionViewportCenter = useCallback(
     (viewportCenter: ViewportCenter) => {
+      console.log('setSessionViewportCenter', viewportCenter);
       setUIState((draft) => {
         draft.viewportCenter = viewportCenter;
       });
@@ -854,7 +900,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     sessionState.locations,
     sessionState.edges,
     sessionState.country.transportationCost,
-    setMatrices
+    setMatrices,
   ]);
 
   const setManufactureShare = useCallback(
@@ -864,14 +910,14 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
           draft.country.manufactureShare = manufactureShare;
         },
         commit,
-        "updateCountry"
+        'updateCountry'
       );
     },
     [
       sessionState.locations,
       sessionState.edges,
       sessionState.country,
-      setSessionState
+      setSessionState,
     ]
   );
   const setTransportationCost = useCallback(
@@ -881,14 +927,14 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
           draft.country.transportationCost = transportationCost;
         },
         commit,
-        "updateCountry"
+        'updateCountry'
       );
     },
     [
       sessionState.locations,
       sessionState.edges,
       sessionState.country,
-      setSessionState
+      setSessionState,
     ]
   );
   const setElasticitySubstitution = useCallback(
@@ -898,14 +944,14 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
           draft.country.elasticitySubstitution = elasticitySubstitution;
         },
         commit,
-        "updateCountry"
+        'updateCountry'
       );
     },
     [
       sessionState.locations,
       sessionState.edges,
       sessionState.country,
-      setSessionState
+      setSessionState,
     ]
   );
 
@@ -919,26 +965,26 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       autoGraphLayout: !autoGraphLayoutTimer.isStarted,
       mapLayer: true,
       undo: history.length > 0,
-      redo: future.length > 0
+      redo: future.length > 0,
     });
   }, [
     autoGraphLayoutTimer.isStarted,
     simulation.isStarted,
     uiState.selectedIndices,
     history.length,
-    future.length
+    future.length,
   ]);
 
   const [snackBarState, setSnackBarState] = useState<{
     open: boolean;
-    vertical: "top" | "bottom";
-    horizontal: "left" | "center" | "right";
+    vertical: 'top' | 'bottom';
+    horizontal: 'left' | 'center' | 'right';
     message: string;
   }>({
     open: false,
-    vertical: "top",
-    horizontal: "center",
-    message: ""
+    vertical: 'top',
+    horizontal: 'center',
+    message: '',
   });
 
   const openSnackBar = useCallback(
@@ -982,6 +1028,18 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     }
   }, []);
 
+  //useEffect(() => {
+  //console.log(xyz);
+  //}, [uiState.viewportCenter?.centerX, uiState.viewportCenter?.centerY, uiState.viewportCenter?.scale]);
+  /*
+  const { X, Y, Z } = convertToXYZ({
+    x: uiState.viewportCenter?.centerX ?? 0,
+    y: uiState.viewportCenter?.centerY ?? 0,
+    scale: uiState.viewportCenter?.scale ?? 1
+  });
+  console.log({ X, Y, Z });
+   */
+
   return (
     <>
       {simulation.isStarted ? (
@@ -989,7 +1047,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       ) : autoGraphLayoutTimer.isStarted ? (
         <LinearProgress color="warning" />
       ) : (
-        <Box sx={{ height: "4px" }} />
+        <Box sx={{ height: '4px' }} />
       )}
       <SessionRenameDialog
         open={props.openRenameDialog}
@@ -1001,7 +1059,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
                 draft.country.title = newName;
               },
               true,
-              "renameSession"
+              'renameSession'
             );
             props.closeRenameDialog();
           });
@@ -1011,7 +1069,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       <Snackbar
         anchorOrigin={{
           vertical: snackBarState.vertical,
-          horizontal: snackBarState.horizontal
+          horizontal: snackBarState.horizontal,
         }}
         open={snackBarState.open}
         onClose={closeSnackBar}
@@ -1038,28 +1096,55 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
             mapLayer={uiState.layer.map}
             setMapLayer={setMapLayer}
           >
-            <GraphCanvas
-              width={uiState.splitPanelSizes[0]}
-              height={uiState.splitPanelHeight}
-              boundingBox={{
-                ...calcBoundingRect(sessionState.locations),
-                paddingMarginRatio: PADDING_MARGIN_RATIO
-              }}
-              setViewportCenter={setSessionViewportCenter}
-              onDragStart={onDragStart}
-              onDragEnd={onDragEnd}
-              onDrag={onDrag}
-              onFocus={onFocus}
-              onUnfocus={onUnfocus}
-              onPointerUp={onPointerUp}
-              onClearSelection={onClearSelection}
-              draggingIndex={uiState.draggingIndex}
-              sessionState={sessionState}
-              viewportCenter={uiState.viewportCenter}
-              selectedIndices={uiState.selectedIndices}
-              focusedIndices={uiState.focusedIndices}
-              matrices={matrices}
-            />
+            <>
+              {uiState.layer.map && (
+                <>
+                  <div
+                    style={{
+                      width: uiState.splitPanelSizes[0] + 'px',
+                      height: uiState.splitPanelHeight + 'px',
+                      zIndex: -10,
+                    }}
+                  ></div>
+                  <MapTilerMap
+                    latitude={XYZ.X}
+                    longitude={XYZ.Y}
+                    zoom={XYZ.Z}
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: uiState.splitPanelSizes[0],
+                      height: uiState.splitPanelHeight,
+                      zIndex: 1,
+                    }}
+                  />
+                </>
+              )}
+              <GraphCanvas
+                width={uiState.splitPanelSizes[0]}
+                height={uiState.splitPanelHeight}
+                boundingBox={{
+                  ...calcBoundingRect(sessionState.locations),
+                  paddingMarginRatio: PADDING_MARGIN_RATIO,
+                }}
+                setViewportCenter={setSessionViewportCenter}
+                onDragStart={onDragStart}
+                onDragEnd={onDragEnd}
+                onDrag={onDrag}
+                onFocus={onFocus}
+                onUnfocus={onUnfocus}
+                onPointerUp={onPointerUp}
+                onClearSelection={onClearSelection}
+                onMoved={onMoved}
+                draggingIndex={uiState.draggingIndex}
+                sessionState={sessionState}
+                viewportCenter={uiState.viewportCenter}
+                selectedIndices={uiState.selectedIndices}
+                focusedIndices={uiState.focusedIndices}
+                matrices={matrices}
+              />
+            </>
           </GraphPanel>
         }
         right={
@@ -1086,7 +1171,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         }
       />
 
-      <Box sx={{ margin: "0 2px 0 2px" }}>
+      <Box sx={{ margin: '0 2px 0 2px' }}>
         <AppAccordion
           expanded={uiState.countryConfigPanelAccordion}
           onClickSummary={() =>

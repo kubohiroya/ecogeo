@@ -1,9 +1,9 @@
-import React, { useCallback } from "react";
-import { Container, Graphics, Sprite, Text } from "@pixi/react";
-import { FederatedPointerEvent, Resource, Texture } from "pixi.js";
-import { Viewport } from "pixi-viewport";
-import { StyleSize14, StyleSize14Focused } from "./FontStyles";
-import { City } from "../../../model/City";
+import React, { useCallback } from 'react';
+import { Container, Graphics, Sprite, Text } from '@pixi/react';
+import { FederatedPointerEvent, Resource, Texture } from 'pixi.js';
+import { Viewport } from 'pixi-viewport';
+import { StyleSize14, StyleSize14Focused } from './FontStyles';
+import { City } from '../../../../model/City';
 
 type LocationsProps = {
   locations: City[];
@@ -48,7 +48,7 @@ const Location = (props: { index: number } & LocationsProps) => {
     (event: FederatedPointerEvent) => {
       event.preventDefault();
       if (props.draggingIndex == props.index) {
-        event.currentTarget.cursor = "grabbing";
+        event.currentTarget.cursor = 'grabbing';
         const viewport = event.currentTarget.parent!.parent as Viewport;
         const localPosition = event.getLocalPosition(viewport);
         const city = props.locations[props.index];
@@ -63,7 +63,7 @@ const Location = (props: { index: number } & LocationsProps) => {
   const onPointerUp = useCallback(
     (event: FederatedPointerEvent) => {
       event.preventDefault();
-      event.currentTarget.cursor = "pointer";
+      event.currentTarget.cursor = 'pointer';
       props.onPointerUp(event, props.index);
       props.onDragEnd(event.clientX, event.clientY, props.index);
     },
@@ -93,7 +93,7 @@ const Location = (props: { index: number } & LocationsProps) => {
       key={props.index}
       position={{ x: location.x, y: location.y }}
       interactive={true}
-      eventMode={"static"}
+      eventMode={'static'}
     >
       <Graphics
         draw={(g) => {
@@ -116,7 +116,7 @@ const Location = (props: { index: number } & LocationsProps) => {
         anchor={{ x: 0.5, y: 0.5 }}
         alpha={props.draggingIndex == props.index ? 0.3 : 1.0}
         interactive={true}
-        eventMode={"static"}
+        eventMode={'static'}
         onpointerdown={onDragStart}
         onpointerupoutside={onPointerUp}
         onmouseup={onPointerUp}

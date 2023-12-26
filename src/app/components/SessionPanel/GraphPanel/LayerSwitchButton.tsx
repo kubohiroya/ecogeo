@@ -1,34 +1,27 @@
-import { Backdrop, FormControlLabel, IconButton, Switch } from '@mui/material';
+import { Backdrop, FormControlLabel, Switch } from '@mui/material';
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { BACKDROP_TIMEOUT_MILLI_SEC } from './Constatns';
 import { Layers } from '@mui/icons-material';
+import { OverlayControlButton } from './OverlayControlButton';
 
 interface LayerSwitchButtonProps {
   mapLayer: boolean;
   onChangeMapLayer: (mapLayer: boolean) => void;
 }
 
-const ControlButton = styled(IconButton)`
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  margin: 0;
-  padding: 0;
+const LayerSwitchOpenButton = styled(OverlayControlButton)`
+  //bottom: 20px;
+  top: 10px;
   left: 10px;
-  border-radius: 20px;
-  border: 1px solid gray;
-`;
-const LayerSwitchOpenButton = styled(ControlButton)`
-  bottom: 20px;
 `;
 const StyledSwitch = styled(Switch)``;
 const LayerSwitchContainer = styled.div`
   position: absolute;
+  top: 10px;
+  left: 110px;
   width: 120px;
   height: 60px;
-  bottom: 10px;
-  left: 55px;
   background-color: white;
   border-radius: 20px;
   padding-left: 5px;
@@ -68,7 +61,6 @@ export const LayerSwitchButton = (props: LayerSwitchButtonProps) => {
                 onChange={(event) => {
                   props.onChangeMapLayer(event.target.checked);
                 }}
-                disabled={true}
               />
             }
             label={'World map'}

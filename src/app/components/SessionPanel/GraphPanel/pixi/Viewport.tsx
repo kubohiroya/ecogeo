@@ -1,12 +1,14 @@
-import React, { useEffect, useLayoutEffect } from "react";
-import { PixiComponent, useApp } from "@pixi/react";
-import { Viewport as PixiViewport } from "pixi-viewport";
-import * as PIXI from "pixi.js";
-import { Container } from "pixi.js";
-import { ViewportCenter } from "../../../model/ViewportCenter";
-import { createViewportCenter } from "./CreateViewportCenter";
-import { BoundingBox } from "../../../type/BoundingBox";
-import { ZoomedEvent } from "pixi-viewport/dist/types";
+import React, { useEffect, useLayoutEffect } from 'react';
+import { PixiComponent, useApp } from '@pixi/react';
+import { Viewport as PixiViewport } from 'pixi-viewport';
+import * as PIXI from 'pixi.js';
+import { Container } from 'pixi.js';
+import { ViewportCenter } from '../../../../model/ViewportCenter';
+import { createViewportCenter } from '../CreateViewportCenter';
+import { BoundingBox } from '../../../../type/BoundingBox';
+import { ZoomedEvent } from 'pixi-viewport/dist/types';
+import PixiViewportDragEvent = GlobalMixins.PixiVieportDragEvent;
+import PixiViewportMovedEvent = GlobalMixins.PixiVieportMovedEvent;
 
 export interface ViewportBaseProps {
   pause: boolean;
@@ -17,7 +19,7 @@ export interface ViewportBaseProps {
   screenHeight: number;
   children?: React.ReactNode;
   onDragStart?: () => void;
-  onDragEnd?: () => void;
+  onDragEnd?: (ev: PixiViewportDragEvent) => void;
   onPinchStart?: () => void;
   onPinchEnd?: () => void;
   onSnapStart?: () => void;
@@ -27,6 +29,8 @@ export interface ViewportBaseProps {
   onZoomed?: (event: ZoomedEvent) => void;
   onZoomedEnd?: () => void;
   onMouseUp: () => void;
+
+  onMoved?: (ev: PixiViewportMovedEvent) => void;
 }
 
 export interface ViewportAppProps extends ViewportBaseProps {
@@ -42,7 +46,7 @@ const createPixiViewport = (props: ViewportAppProps) => {
     screenHeight: props.screenHeight,
 
     worldWidth: 1000,
-    worldHeight: 1000
+    worldHeight: 1000,
   });
 
   viewport.moveCenter(
@@ -53,29 +57,31 @@ const createPixiViewport = (props: ViewportAppProps) => {
 
   viewport
     .drag({
-      wheel: false
+      wheel: false,
     })
     .wheel({
-      wheelZoom: true
+      wheelZoom: true,
     })
     .pinch()
     .clampZoom({
       maxScale: 5,
-      minScale: 0.1
+      minScale: 0.1,
     });
 
-  props.onDragStart && viewport.on("drag-start", props.onDragStart);
-  props.onDragEnd && viewport.on("drag-end", props.onDragEnd);
-  props.onPinchStart && viewport.on("pinch-start", props.onPinchStart);
-  props.onPinchEnd && viewport.on("pinch-end", props.onPinchEnd);
-  props.onSnapStart && viewport.on("snap-start", props.onSnapStart);
-  props.onSnapEnd && viewport.on("snap-end", props.onSnapEnd);
+  props.onDragStart && viewport.on('drag-start', props.onDragStart);
+  props.onDragEnd && viewport.on('drag-end', props.onDragEnd);
+  props.onPinchStart && viewport.on('pinch-start', props.onPinchStart);
+  props.onPinchEnd && viewport.on('pinch-end', props.onPinchEnd);
+  props.onSnapStart && viewport.on('snap-start', props.onSnapStart);
+  props.onSnapEnd && viewport.on('snap-end', props.onSnapEnd);
   props.onSnapZoomStart &&
-  viewport.on("snap-zoom-start", props.onSnapZoomStart);
-  props.onSnapZoomEnd && viewport.on("snap-zoom-end", props.onSnapZoomEnd);
-  props.onZoomed && viewport.on("zoomed", props.onZoomed);
-  props.onZoomedEnd && viewport.on("zoomed-end", props.onZoomedEnd);
-  props.onMouseUp && viewport.on("mouseup", props.onMouseUp);
+    viewport.on('snap-zoom-start', props.onSnapZoomStart);
+  props.onSnapZoomEnd && viewport.on('snap-zoom-end', props.onSnapZoomEnd);
+  props.onZoomed && viewport.on('zoomed', props.onZoomed);
+  props.onZoomedEnd && viewport.on('zoomed-end', props.onZoomedEnd);
+  props.onMouseUp && viewport.on('mouseup', props.onMouseUp);
+
+  props.onMoved && viewport.on('moved', props.onMoved);
 
   return viewport;
 };
@@ -84,13 +90,12 @@ export const Viewport = (props: ViewportBaseProps) => {
   const app = useApp();
 
   const fit = ({
-                 left,
-                 top,
-                 right,
-                 bottom,
-                 paddingMarginRatio
-               }: BoundingBox) => {
-
+    left,
+    top,
+    right,
+    bottom,
+    paddingMarginRatio,
+  }: BoundingBox) => {
     if (props.screenWidth == 0) return;
 
     const viewport = app.stage.getChildAt(0) as PixiViewport;
@@ -102,17 +107,15 @@ export const Viewport = (props: ViewportBaseProps) => {
       bottom,
       width: props.screenWidth,
       height: props.screenHeight,
-      paddingMarginRatio
+      paddingMarginRatio,
     });
 
-    // console.log(props.screenWidth, props.screenHeight, viewportCenter.scale);
     viewport.moveCenter(viewportCenter.centerX, viewportCenter.centerY);
     viewport.setZoom(viewportCenter.scale, true);
 
     requestAnimationFrame(() => {
       props.onSetViewportCenter(viewportCenter);
     });
-
   };
 
   useEffect(() => {
@@ -125,14 +128,12 @@ export const Viewport = (props: ViewportBaseProps) => {
             props.viewportCenter.centerY
           );
           viewport.setZoom(props.viewportCenter.scale, true);
-          console.log("*", props.screenWidth, props.screenHeight, props.viewportCenter.centerX, props.viewportCenter.centerY, props.viewportCenter.scale);
         } else {
           fit(props.boundingBox);
         }
       }
     });
   }, [props.viewportCenter]);
-
 
   useLayoutEffect(() => {
     requestAnimationFrame(() => {
@@ -141,7 +142,7 @@ export const Viewport = (props: ViewportBaseProps) => {
     });
   }, [props.pause]);
 
-  const PixiComponentViewport = PixiComponent("Viewport", {
+  const PixiComponentViewport = PixiComponent('Viewport', {
     create: (props: ViewportAppProps) => {
       const viewport = createPixiViewport(props);
       viewport.options.events.domElement = props.app.renderer.view as any;
@@ -160,7 +161,7 @@ export const Viewport = (props: ViewportBaseProps) => {
        */
       //viewport.options.noTicker = true;
       viewport.destroy({ children: true });
-    }
+    },
   });
 
   return <PixiComponentViewport app={app} {...props} />;

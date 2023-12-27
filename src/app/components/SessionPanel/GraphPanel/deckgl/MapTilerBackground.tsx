@@ -11,7 +11,7 @@ export interface MapProps {
 
 const MAP_TILER_API_KEY = import.meta.env.VITE_MAP_TILER_API_KEY;
 
-export const MapTilerMap = (props: MapProps) => {
+export const MapTilerBackground = (props: MapProps) => {
   return (
     <Map
       longitude={props.latitude}

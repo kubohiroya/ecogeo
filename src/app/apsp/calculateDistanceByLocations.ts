@@ -1,17 +1,23 @@
 import { City } from '../model/City';
 import { getById } from '../util/arrayUtil';
+import { distance } from '@turf/turf';
 
 export const DISTANCE_SCALE_FACTOR = 0.01;
 
 export function calculateDistanceByLocations(
-  loc0: { x: number; y: number } | null,
-  loc1: { x: number; y: number } | null
+  loc0: [number, number] | undefined,
+  loc1: [number, number] | undefined,
+  spherical: boolean
 ) {
   if (loc0 && loc1) {
-    return Math.sqrt(
-      ((loc0.x - loc1.x) * DISTANCE_SCALE_FACTOR) ** 2 +
-        ((loc0.y - loc1.y) * DISTANCE_SCALE_FACTOR) ** 2
-    );
+    if (spherical) {
+      return distance(loc0, loc1, { units: 'kilometers' });
+    } else {
+      return Math.sqrt(
+        ((loc0[0] - loc1[0]) * DISTANCE_SCALE_FACTOR) ** 2 +
+          ((loc0[1] - loc1[1]) * DISTANCE_SCALE_FACTOR) ** 2
+      );
+    }
   } else {
     return Number.NaN;
   }
@@ -24,5 +30,9 @@ export function calculateDistanceByIds(
 ) {
   const location0 = getById(locations, sourceId);
   const location1 = getById(locations, targetId);
-  return calculateDistanceByLocations(location0, location1);
+  return calculateDistanceByLocations(
+    location0?.point,
+    location1?.point,
+    false
+  );
 }

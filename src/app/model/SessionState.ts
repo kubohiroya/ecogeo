@@ -7,4 +7,5 @@ export type SessionState = {
   country: Country;
   locations: City[];
   edges: Edge[];
+  units: 'kilometers' | 'degrees';
 };

@@ -7,7 +7,7 @@ type BackgroundProps = {
   clearSelection: () => void;
 };
 
-export const Background = (props: BackgroundProps) => {
+export const CheckerBackground = (props: BackgroundProps) => {
   const [mouseDownPosition, setMouseDownPosition] = useState<number[] | null>(
     null
   );

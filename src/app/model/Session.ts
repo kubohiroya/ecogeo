@@ -1,16 +1,16 @@
-import { UIState } from "./UIState";
-import { AppMatrices } from "./AppMatrices";
-import { Country } from "./Country";
-import { ChartType } from "../type/ChartType";
-import * as uuid from "uuid";
-import { updateAddedSubGraph } from "../components/SessionPanel/GraphPanel/GraphHandlers";
-import { SessionState } from "./SessionState";
-import { createInitialState } from "../hooks/useUndoRedo";
-import { DEFAULT_MAIN_CONTAINER_HEIGHT } from "../components/SessionPanel/SessionLayoutPanel";
-import { UndoRedoSessionState } from "./Root";
-import { PrimitiveAtom } from "jotai";
-import { INITIAL_COUNTRY_ARRAY } from "./initialCountryArray";
-import { atom } from "jotai/index";
+import { UIState } from './UIState';
+import { AppMatrices } from './AppMatrices';
+import { Country } from './Country';
+import { ChartType } from '../type/ChartType';
+import * as uuid from 'uuid';
+import { updateAddedSubGraph } from '../components/SessionPanel/GraphPanel/GraphHandlers';
+import { SessionState } from './SessionState';
+import { createInitialState } from '../hooks/useUndoRedo';
+import { DEFAULT_MAIN_CONTAINER_HEIGHT } from '../components/SessionPanel/SessionLayoutPanel';
+import { UndoRedoSessionState } from './Root';
+import { PrimitiveAtom } from 'jotai';
+import { INITIAL_COUNTRY_ARRAY } from './initialCountryArray';
+import { atom } from 'jotai/index';
 
 export type Session = {
   sessionId: string;
@@ -26,7 +26,13 @@ export function createSessionState(
 ): UndoRedoSessionState {
   const graph = updateAddedSubGraph(
     sessionId,
-    { country, locations: [], edges: [], locationSerialNumber: 0 },
+    {
+      country,
+      locations: [],
+      edges: [],
+      locationSerialNumber: 0,
+      units: country.units,
+    },
     [],
     country.numLocations
   );
@@ -35,7 +41,8 @@ export function createSessionState(
     country,
     locations: graph.locations,
     edges: graph.edges,
-    locationSerialNumber: graph.locationSerialNumber
+    locationSerialNumber: graph.locationSerialNumber,
+    units: country.units,
   };
 
   return createInitialState<SessionState>(current);
@@ -53,7 +60,7 @@ export function createSession(country: Country): {
         adjacencyMatrix: null,
         distanceMatrix: null,
         predecessorMatrix: null,
-        transportationCostMatrix: null
+        transportationCostMatrix: null,
       },
       uiState: {
         viewportCenter: null,
@@ -69,11 +76,11 @@ export function createSession(country: Country): {
         chartType: ChartType.ManufactureShare,
         autoLayoutFinished: true,
         layer: {
-          map: false
-        }
-      }
+          map: false,
+        },
+      },
     },
-    sessionState: createSessionState(sessionId, country)
+    sessionState: createSessionState(sessionId, country),
   };
 }
 

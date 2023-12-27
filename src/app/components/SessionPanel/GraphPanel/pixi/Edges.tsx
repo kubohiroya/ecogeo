@@ -30,8 +30,8 @@ const EdgeItem = (props: EdgesProps & { edge: Edge; index: number }) => {
     return;
   }
   const { x: midx, y: midy } = {
-    x: (source.x + target.x) / 2,
-    y: (source.y + target.y) / 2,
+    x: (source.point[0] + target.point[0]) / 2,
+    y: (source.point[1] + target.point[1]) / 2,
   };
 
   const draw = React.useCallback(
@@ -43,10 +43,10 @@ const EdgeItem = (props: EdgesProps & { edge: Edge; index: number }) => {
         alpha: 0.1,
         alignment: 0.5,
       });
-      g.moveTo(source.x, source.y);
-      g.lineTo(target.x, target.y);
+      g.moveTo(source.point[0], source.point[1]);
+      g.lineTo(target.point[0], target.point[1]);
     },
-    [source.x, target.x, source.y, target.y]
+    [source.point[0], target.point[0], source.point[1], target.point[1]]
   );
 
   return (

@@ -3,21 +3,9 @@ import { Edge, Vertex } from '../model/Graph';
 import { isInfinity } from '../util/mathUtil';
 
 export abstract class GraphLayout {
-  abstract calculateRepulsion(
-    node1: Vertex,
-    node2: Vertex
-  ): {
-    dx: number;
-    dy: number;
-  };
+  abstract calculateRepulsion(node1: Vertex, node2: Vertex): number[];
 
-  abstract calculateAttraction(
-    node1: Vertex,
-    node2: Vertex
-  ): {
-    dx: number;
-    dy: number;
-  };
+  abstract calculateAttraction(node1: Vertex, node2: Vertex): number[];
 
   calculateFrictionalForce(node: { x: number; y: number }) {
     const m = 0.1; // 比例定数 < 1
@@ -35,16 +23,16 @@ export abstract class GraphLayout {
 
     if (adjacencyMatrix == null) {
       return {
-        locations,
+        points: locations.map((location) => [
+          location.point[0],
+          location.point[1],
+        ]),
         maximumVelocity: maximumVelocity,
       };
     }
 
     const newLocations = locations.map((city) => {
-      return {
-        x: city.x,
-        y: city.y,
-      };
+      return [city.point[0], city.point[1]];
     });
 
     // 各ノードについて、他のノードとの斥力と引力を計算
@@ -62,8 +50,8 @@ export abstract class GraphLayout {
             locations[i],
             locations[j]
           );
-          totalDisplacementX += repulsionForce.dx;
-          totalDisplacementY += repulsionForce.dy;
+          totalDisplacementX += repulsionForce[0];
+          totalDisplacementY += repulsionForce[1];
         }
       }
 
@@ -77,8 +65,8 @@ export abstract class GraphLayout {
             locations[i],
             locations[j]
           );
-          totalDisplacementX += attractionForce.dx;
-          totalDisplacementY += attractionForce.dy;
+          totalDisplacementX += attractionForce[0];
+          totalDisplacementY += attractionForce[1];
         }
       }
 
@@ -89,8 +77,8 @@ export abstract class GraphLayout {
       totalDisplacementX += ff.dx;
       totalDisplacementY += ff.dy;
 
-      newLocations[i].x += totalDisplacementX;
-      newLocations[i].y += totalDisplacementY;
+      newLocations[i][0] += totalDisplacementX;
+      newLocations[i][1] += totalDisplacementY;
       maximumVelocity = Math.max(
         Math.max(Math.abs(totalDisplacementX), Math.abs(totalDisplacementY)),
         maximumVelocity
@@ -98,16 +86,13 @@ export abstract class GraphLayout {
     }
 
     return {
-      locations: newLocations,
+      points: newLocations,
       maximumVelocity: maximumVelocity,
     };
   }
 }
 
 export type GraphLayoutTickResult = {
-  locations: {
-    x: number;
-    y: number;
-  }[];
+  points: number[][];
   maximumVelocity: number;
 };

@@ -3,6 +3,7 @@ import React, { ReactElement, useCallback, useState } from 'react';
 import GraphPanelButtons from './GraphPanelButtons';
 import { GraphPanelButtonsState } from './GraphPanelButtonsState';
 import { hasFeatureDetectingHoverEvent } from '../../../util/browserUtil';
+import { Country } from '../../../model/Country';
 
 /* eslint-disable-next-line */
 export interface GraphPanelProps {
@@ -22,6 +23,7 @@ export interface GraphPanelProps {
   setAutoGraphLayoutSpeed: (autoLayoutSpeed: number) => void;
   mapLayer: boolean;
   setMapLayer: (layer: boolean) => void;
+  country: Country;
 }
 
 const StyledGraphPanel = styled.div`
@@ -55,6 +57,7 @@ export const GraphPanel = React.memo((props: GraphPanelProps) => {
       onMouseLeave={setHoverDisabled}
     >
       <GraphPanelButtons
+        country={props.country}
         show={hover || !hasFeatureDetectingHoverEvent()}
         state={props.state}
         onFit={props.onFit}

@@ -17,6 +17,7 @@ export const INITIAL_COUNTRY_ARRAY: Country[] = [
     manufactureShare: 0.2,
     transportationCost: 2,
     elasticitySubstitution: 4,
+    units: 'kilometers',
   },
   {
     countryId: '1111',
@@ -28,6 +29,7 @@ export const INITIAL_COUNTRY_ARRAY: Country[] = [
     manufactureShare: 0.2,
     transportationCost: 2,
     elasticitySubstitution: 2,
+    units: 'kilometers',
   },
   {
     countryId: '2222',
@@ -39,6 +41,7 @@ export const INITIAL_COUNTRY_ARRAY: Country[] = [
     manufactureShare: 0.4,
     transportationCost: 2,
     elasticitySubstitution: 4,
+    units: 'kilometers',
   },
   {
     countryId: '3333',
@@ -50,6 +53,7 @@ export const INITIAL_COUNTRY_ARRAY: Country[] = [
     manufactureShare: 0.2,
     transportationCost: 1,
     elasticitySubstitution: 4,
+    units: 'kilometers',
   },
   {
     countryId: '',
@@ -60,6 +64,7 @@ export const INITIAL_COUNTRY_ARRAY: Country[] = [
     manufactureShare: pi,
     transportationCost: tau,
     elasticitySubstitution: sigma,
+    units: 'degrees',
   },
   {
     countryId: '999',
@@ -71,5 +76,6 @@ export const INITIAL_COUNTRY_ARRAY: Country[] = [
     manufactureShare: 0.2,
     transportationCost: 2,
     elasticitySubstitution: 4,
+    units: 'kilometers',
   },
 ];

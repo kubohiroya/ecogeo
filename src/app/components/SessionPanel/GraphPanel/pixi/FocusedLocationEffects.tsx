@@ -17,7 +17,7 @@ export const FocusedLocationEffects = (props: FocusedLocationEffectsProps) => {
             const location = props.locations[focusedIndex];
             if (location) {
               g.beginFill(0xffff00, 0.2);
-              g.drawCircle(location.x, location.y, 35);
+              g.drawCircle(location.point[0], location.point[1], 35);
               g.endFill();
             }
           });

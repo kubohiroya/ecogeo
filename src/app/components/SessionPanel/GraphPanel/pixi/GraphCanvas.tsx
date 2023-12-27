@@ -19,7 +19,7 @@ import { SessionState } from '../../../../model/SessionState';
 import { AppMatrices } from '../../../../model/AppMatrices';
 import { isInfinity } from '../../../../util/mathUtil';
 import { ZoomedEvent } from 'pixi-viewport/dist/types';
-import { Background } from './Background';
+import { CheckerBackground } from './CheckerBackground';
 
 const cityTexture = PIXI.Texture.from(CITY_SVGDATA_URL);
 
@@ -210,7 +210,7 @@ export const GraphCanvas = React.memo((props: GraphCanvasProps) => {
           onMouseUp={setDefaultCursor}
           onMoved={onMoved}
         >
-          <Background
+          <CheckerBackground
             backgroundAlpha={backgroundAlpha}
             clearSelection={clearSelection}
           />

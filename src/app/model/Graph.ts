@@ -1,7 +1,6 @@
 export type Vertex = {
   id: number;
-  x: number;
-  y: number;
+  point: [number, number];
 };
 export type Edge = {
   source: number;
@@ -11,4 +10,5 @@ export type Edge = {
 export type Graph = {
   vertices: Vertex[];
   edges: Edge[];
+  spherical: boolean;
 };

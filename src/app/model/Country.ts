@@ -15,4 +15,6 @@ export interface Country {
 
   /* elasticity of substitution */
   elasticitySubstitution: number;
+
+  units: 'kilometers' | 'degrees';
 }

@@ -56,8 +56,8 @@ export const FocusedEdgeEffects = (props: EdgesProps) => {
     if (!isInfinity(props.distanceMatrix[sourceIndex][targetIndex])) {
       textEffects.push({
         text: props.adjacencyMatrix[prevIndex][nextIndex].toFixed(2),
-        x: (prevLocation.x + nextLocation.x) / 2,
-        y: (prevLocation.y + nextLocation.y) / 2,
+        x: (prevLocation.point[0] + nextLocation.point[0]) / 2,
+        y: (prevLocation.point[1] + nextLocation.point[1]) / 2,
       });
     }
 
@@ -88,8 +88,8 @@ export const FocusedEdgeEffects = (props: EdgesProps) => {
         join: PIXI.LINE_JOIN.ROUND,
       });
 
-      g.moveTo(prevLocation.x, prevLocation.y);
-      path.forEach((vertex) => g.lineTo(vertex.x, vertex.y));
+      g.moveTo(prevLocation.point[0], prevLocation.point[1]);
+      path.forEach((vertex) => g.lineTo(vertex.point[0], vertex.point[1]));
 
       const dash = new DashLine(g, {
         dash: [1, 15],
@@ -101,12 +101,12 @@ export const FocusedEdgeEffects = (props: EdgesProps) => {
         join: PIXI.LINE_JOIN.ROUND,
       });
       dash.moveTo(
-        props.locations[sourceIndex].x,
-        props.locations[sourceIndex].y
+        props.locations[sourceIndex].point[0],
+        props.locations[sourceIndex].point[1]
       );
       dash.lineTo(
-        props.locations[targetIndex].x,
-        props.locations[targetIndex].y
+        props.locations[targetIndex].point[0],
+        props.locations[targetIndex].point[1]
       );
     }
   };
@@ -143,12 +143,12 @@ export const FocusedEdgeEffects = (props: EdgesProps) => {
               text={props.distanceMatrix[sourceIndex][targetIndex].toFixed(2)}
               position={{
                 x:
-                  (props.locations[sourceIndex].x +
-                    props.locations[targetIndex].x) /
+                  (props.locations[sourceIndex].point[0] +
+                    props.locations[targetIndex].point[0]) /
                   2,
                 y:
-                  (props.locations[sourceIndex].y +
-                    props.locations[targetIndex].y) /
+                  (props.locations[sourceIndex].point[1] +
+                    props.locations[targetIndex].point[1]) /
                   2,
               }}
               anchor={{ x: 0.5, y: 0.5 }}

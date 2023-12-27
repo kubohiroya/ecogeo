@@ -23,6 +23,7 @@
     "@pixi/react": "^7.1.1",
     "@reecelucas/react-use-hotkeys": "^2.0.0",
     "@swc/helpers": "~0.5.3",
+    "@turf/turf": "^6.5.0",
     "@types/seedrandom": "^3.0.8",
     "@types/uuid": "^9.0.7",
     "@webgpu/types": "^0.1.40",

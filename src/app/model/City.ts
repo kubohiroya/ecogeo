@@ -1,15 +1,11 @@
-import { isInfinity } from "../util/mathUtil";
-import { SEED_RANDOM, SeedRandom } from "../util/random";
+import { isInfinity } from '../util/mathUtil';
+import { SEED_RANDOM, SeedRandom } from '../util/random';
 
 export interface City {
   id: number;
   label: string;
-  x: number;
-  y: number;
-
-  dx: number;
-  dy: number;
-
+  point: [number, number];
+  velocity?: [number, number];
   manufactureShare: number;
   manufactureShare0: number;
   agricultureShare: number;
@@ -27,17 +23,15 @@ const randomizedOf = (seedRandom: SeedRandom, value: number) =>
   value * (1 + (seedRandom.random() - 0.5) * RANDOM_FACTOR);
 
 export const createCity = ({
-                             id,
-                             label,
-                             x,
-                             y,
-                             share,
-                             randomize
-                           }: {
+  id,
+  label,
+  point,
+  share,
+  randomize,
+}: {
   id: number;
   label: string;
-  x: number;
-  y: number;
+  point: [number, number];
   share: number;
   randomize: boolean;
 }): City => {
@@ -46,10 +40,8 @@ export const createCity = ({
   return {
     id,
     label,
-    x,
-    y,
-    dx: 0,
-    dy: 0,
+    point,
+    velocity: [0, 0],
     manufactureShare,
     manufactureShare0: manufactureShare,
     agricultureShare,
@@ -59,7 +51,7 @@ export const createCity = ({
     nominalWage0: 1.0,
     realWage: 1.0,
     income: 1.0,
-    income0: 1.0
+    income0: 1.0,
   };
 };
 
@@ -108,10 +100,10 @@ export function calcPriceIndex(
       return isInfinity(transportationCost)
         ? 0
         : location.manufactureShare *
-        Math.pow(
-          location.nominalWage0 * transportationCost,
-          1 - elasticitySubstitution
-        );
+            Math.pow(
+              location.nominalWage0 * transportationCost,
+              1 - elasticitySubstitution
+            );
     })
     .reduce((a, b) => a + b, 0.0);
   return Math.pow(priceIndex, 1 / (1 - elasticitySubstitution));
@@ -130,8 +122,8 @@ export function calcNominalWage(
       return isInfinity(transportationCost)
         ? 0
         : location.income0 *
-        Math.pow(transportationCost, 1 - elasticitySubstitution) *
-        Math.pow(location.priceIndex0, elasticitySubstitution - 1);
+            Math.pow(transportationCost, 1 - elasticitySubstitution) *
+            Math.pow(location.priceIndex0, elasticitySubstitution - 1);
     })
     .reduce((a, b) => a + b, 0.0);
   return Math.pow(nominalWage, 1 / elasticitySubstitution);

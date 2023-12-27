@@ -7,6 +7,7 @@ import { OverlayControlButton } from './OverlayControlButton';
 
 interface LayerSwitchButtonProps {
   mapLayer: boolean;
+  disabled: boolean;
   onChangeMapLayer: (mapLayer: boolean) => void;
 }
 
@@ -37,6 +38,7 @@ export const LayerSwitchButton = (props: LayerSwitchButtonProps) => {
         color={'primary'}
         title={'Show background layer of world map'}
         onClick={() => setSubMenuShown(!subMenuShown)}
+        disabled={props.disabled}
       >
         <Layers />
       </LayerSwitchOpenButton>

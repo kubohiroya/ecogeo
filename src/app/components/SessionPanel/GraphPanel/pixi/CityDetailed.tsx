@@ -32,7 +32,9 @@ export const CityDetailed = (props: CityDetailedProps) => {
         y={-30}
         anchor={{ x: 0.5, y: 0.5 }}
         style={fontStyle({ fontSize: 14, fill: 0x0000aa })}
-        text={`(${props.city.x.toFixed(2)}, ${props.city.y.toFixed(2)})`}
+        text={`(${props.city.point[0].toFixed(
+          2
+        )}, ${props.city.point[1].toFixed(2)})`}
       />
       <Sprite
         image={CITY_SVGDATA_URL}

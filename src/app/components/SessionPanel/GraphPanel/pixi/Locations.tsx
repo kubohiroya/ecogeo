@@ -52,8 +52,8 @@ const Location = (props: { index: number } & LocationsProps) => {
         const viewport = event.currentTarget.parent!.parent as Viewport;
         const localPosition = event.getLocalPosition(viewport);
         const city = props.locations[props.index];
-        const diffX = localPosition.x - city.x;
-        const diffY = localPosition.y - city.y;
+        const diffX = localPosition.x - city.point[0];
+        const diffY = localPosition.y - city.point[1];
         props.onDrag(diffX, diffY, props.index);
       }
     },
@@ -91,7 +91,7 @@ const Location = (props: { index: number } & LocationsProps) => {
   return (
     <Container
       key={props.index}
-      position={{ x: location.x, y: location.y }}
+      position={{ x: location.point[0], y: location.point[1] }}
       interactive={true}
       eventMode={'static'}
     >

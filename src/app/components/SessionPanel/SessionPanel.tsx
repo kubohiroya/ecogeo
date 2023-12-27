@@ -49,7 +49,7 @@ import { SessionRenameDialog } from './SessionRenameDialog';
 import { getMatrixEngine } from '../../apsp/MatrixEngineService';
 import { AppMatrices } from '../../model/AppMatrices';
 import { SessionState } from '../../model/SessionState';
-import { MapTilerMap } from './GraphPanel/deckgl/MapTilerMap';
+import { MapTilerBackground } from './GraphPanel/deckgl/MapTilerBackground';
 import { GraphCanvas } from './GraphPanel/pixi/GraphCanvas';
 import { convertToXYZ } from '../../util/mapUtil';
 
@@ -77,6 +77,8 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     future,
     staging,
   } = useSessionStateUndoRedo(sessionId);
+
+  const spherical: boolean = sessionState.units == 'degrees';
 
   const autoGraphLayoutEngine: SpringGraphLayout = new SpringGraphLayout();
 
@@ -108,9 +110,9 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
 
     setSessionState(
       (draft) => {
-        graphLayoutTickResult.locations.forEach((city, index) => {
-          draft.locations[index].x = city.x;
-          draft.locations[index].y = city.y;
+        graphLayoutTickResult.points.forEach((city, index) => {
+          draft.locations[index].point[0] = city[0];
+          draft.locations[index].point[1] = city[1];
         });
         const idToIndexMap = new Map<number, number>(
           draft.locations.map((city, index) => [city.id, index])
@@ -119,8 +121,9 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
           const source = draft.locations[idToIndexMap.get(edge.source)!];
           const target = draft.locations[idToIndexMap.get(edge.target)!];
           draft.edges[index].distance = calculateDistanceByLocations(
-            source,
-            target
+            source.point,
+            target.point,
+            spherical
           );
         });
       },
@@ -336,8 +339,8 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
                 const targetId = draft.locations[targetIndex].id;
                 const targetCity = draft.locations[targetIndex];
 
-                targetCity.x += diffX; // modify
-                targetCity.y += diffY; // modify
+                targetCity.point[0] += diffX; // modify
+                targetCity.point[1] += diffY; // modify
 
                 if (matrices.adjacencyMatrix) {
                   draft.edges
@@ -353,8 +356,9 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
                         sourceId
                       );
                       edge.distance = calculateDistanceByLocations(
-                        targetCity,
-                        sessionState.locations[sourceIndex]
+                        targetCity.point,
+                        sessionState.locations[sourceIndex].point,
+                        spherical
                       );
                     });
                 }
@@ -703,7 +707,11 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
               if (
                 isInfinity(matrices.adjacencyMatrix![sourceIndex][targetIndex])
               ) {
-                const distance = calculateDistanceByLocations(source, target);
+                const distance = calculateDistanceByLocations(
+                  source.point,
+                  target.point,
+                  spherical
+                );
                 const edge = {
                   source: source.id,
                   target: target.id,
@@ -859,7 +867,6 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
 
   const setSessionViewportCenter = useCallback(
     (viewportCenter: ViewportCenter) => {
-      console.log('setSessionViewportCenter', viewportCenter);
       setUIState((draft) => {
         draft.viewportCenter = viewportCenter;
       });
@@ -963,7 +970,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       addEdge: !simulation.isStarted && uiState.selectedIndices.length >= 2,
       removeEdge: !simulation.isStarted && uiState.selectedIndices.length >= 2,
       autoGraphLayout: !autoGraphLayoutTimer.isStarted,
-      mapLayer: true,
+      mapLayer: uiState.layer.map,
       undo: history.length > 0,
       redo: future.length > 0,
     });
@@ -1095,6 +1102,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
             setAutoGraphLayoutSpeed={setAutoGraphLayoutIntervalScale}
             mapLayer={uiState.layer.map}
             setMapLayer={setMapLayer}
+            country={sessionState.country}
           >
             <>
               {uiState.layer.map && (
@@ -1106,7 +1114,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
                       zIndex: -10,
                     }}
                   ></div>
-                  <MapTilerMap
+                  <MapTilerBackground
                     latitude={XYZ.X}
                     longitude={XYZ.Y}
                     zoom={XYZ.Z}

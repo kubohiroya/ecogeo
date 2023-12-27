@@ -12,7 +12,8 @@ import React from 'react';
 import { AutoLayoutButton } from './AutoLayoutButton';
 import { LayerSwitchButton } from './LayerSwitchButton';
 import { GraphPanelButtonsState } from './GraphPanelButtonsState';
-import { OverlayControlButton } from './OverlayControlButton'; /* eslint-disable-next-line */
+import { OverlayControlButton } from './OverlayControlButton';
+import { Country } from '../../../model/Country'; /* eslint-disable-next-line */
 
 /* eslint-disable-next-line */
 export interface GraphPanelButtonsProps {
@@ -28,8 +29,8 @@ export interface GraphPanelButtonsProps {
   setAutoLayoutSpeed: (autoLayoutSpeed: number) => void;
   mapLayer: boolean;
   setMapLLayer: (mapLayer: boolean) => void;
+  country: Country;
   state: GraphPanelButtonsState;
-
   onUndo: () => void;
   onRedo: () => void;
 }
@@ -58,11 +59,9 @@ const StyledAutoLayoutButton = styled(AutoLayoutButton)``;
 const StyledLayerSwitchButton = styled(LayerSwitchButton)``;
 
 const StyledUndoButton = styled(OverlayControlButton)`
-  // bottom: 165px;
   top: 55px;
 `;
 const StyledRedoButton = styled(OverlayControlButton)`
-  // bottom: 120px;
   top: 100px;
 `;
 
@@ -156,6 +155,7 @@ export const GraphPanelButtons = React.memo((props: GraphPanelButtonsProps) => {
 
             <StyledLayerSwitchButton
               mapLayer={props.mapLayer}
+              disabled={props.country.units == 'kilometers'}
               onChangeMapLayer={props.setMapLLayer}
             />
           </Box>

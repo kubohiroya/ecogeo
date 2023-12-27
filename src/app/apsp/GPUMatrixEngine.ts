@@ -313,7 +313,7 @@ export const updateGPUResources = (
   const vertexDataF32 = new Float32Array(vertices.length * 2);
   const edgeDataU32 = new Uint32Array(edges.length * 2);
 
-  vertexDataF32.set(vertices.flatMap((v) => [v.x, v.y]));
+  vertexDataF32.set(vertices.flatMap((v) => v.point));
 
   edgeDataU32.set(
     edges.flatMap((e) => {

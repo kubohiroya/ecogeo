@@ -1,6 +1,6 @@
-import { City } from '../model/City';
-import { Edge, Vertex } from '../model/Graph';
-import { isInfinity } from '../util/mathUtil';
+import { City } from '../models/City';
+import { Edge, Vertex } from '../models/Graph';
+import { isInfinity } from '../utils/mathUtil';
 
 export abstract class GraphLayout {
   abstract calculateRepulsion(node1: Vertex, node2: Vertex): number[];
@@ -17,7 +17,7 @@ export abstract class GraphLayout {
     edges: Edge[],
     adjacencyMatrix: number[][] | null,
     selectedIds: number[],
-    draggingId: number | null
+    draggingId: number | null,
   ): GraphLayoutTickResult {
     let maximumVelocity = Number.POSITIVE_INFINITY;
 
@@ -48,7 +48,7 @@ export abstract class GraphLayout {
         if (i !== j && isInfinity(adjacencyMatrix[i][j])) {
           const repulsionForce = this.calculateRepulsion(
             locations[i],
-            locations[j]
+            locations[j],
           );
           totalDisplacementX += repulsionForce[0];
           totalDisplacementY += repulsionForce[1];
@@ -63,7 +63,7 @@ export abstract class GraphLayout {
         ) {
           const attractionForce = this.calculateAttraction(
             locations[i],
-            locations[j]
+            locations[j],
           );
           totalDisplacementX += attractionForce[0];
           totalDisplacementY += attractionForce[1];
@@ -81,7 +81,7 @@ export abstract class GraphLayout {
       newLocations[i][1] += totalDisplacementY;
       maximumVelocity = Math.max(
         Math.max(Math.abs(totalDisplacementX), Math.abs(totalDisplacementY)),
-        maximumVelocity
+        maximumVelocity,
       );
     }
 

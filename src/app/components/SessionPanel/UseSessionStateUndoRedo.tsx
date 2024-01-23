@@ -1,10 +1,10 @@
 import { useImmerAtom } from 'jotai-immer';
 import { useUndoRedo } from '../../hooks/useUndoRedo';
-import { SessionState } from '../../model/SessionState';
+import { SessionState } from '../../models/SessionState';
 import { focusAtom } from 'jotai-optics';
-import { Session } from '../../model/Session';
+import { Session } from '../../models/Session';
 import { OpticFor_ } from 'optics-ts';
-import { rootAtom } from '../../model/Root';
+import { rootAtom } from '../../models/Root';
 
 const uiStateSelector = (optic: OpticFor_<Session>) => optic.prop('uiState');
 const matricesSelector = (optic: OpticFor_<Session>) => optic.prop('matrices');

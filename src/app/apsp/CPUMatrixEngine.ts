@@ -1,17 +1,17 @@
-import { City } from '../model/City';
-import { Edge } from '../model/Graph';
+import { City } from '../models/City';
+import { Edge } from '../models/Graph';
 import { AbstractMatrixEngine } from './MatrixEngine';
-import { create2DArray } from '../util/arrayUtil';
+import { create2DArray } from '../utils/arrayUtil';
 import { calculateDistanceByIds } from './calculateDistanceByLocations';
 import { computeShortestPaths } from './floydWarshall';
 
 export function createAdjacencyMatrix(locations: City[], edges: Edge[]) {
   const matrix = create2DArray(locations.length, (i, j) =>
-    i != j ? Number.POSITIVE_INFINITY : 0.0
+    i != j ? Number.POSITIVE_INFINITY : 0.0,
   );
 
   const locationMap = new Map<number, number>(
-    locations.map((location, index) => [location.id, index])
+    locations.map((location, index) => [location.id, index]),
   );
 
   edges.forEach((edge) => {
@@ -20,7 +20,7 @@ export function createAdjacencyMatrix(locations: City[], edges: Edge[]) {
       (edge.distance = calculateDistanceByIds(
         locations,
         edge.source,
-        edge.target
+        edge.target,
       ));
     const sourceIndex = locationMap.get(edge.source);
     const targetIndex = locationMap.get(edge.target);

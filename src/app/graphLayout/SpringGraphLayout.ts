@@ -1,5 +1,5 @@
 import { GraphLayout } from './GraphLayout';
-import { Vertex } from '../model/Graph';
+import { Vertex } from '../models/Graph';
 
 export class SpringGraphLayout extends GraphLayout {
   calculateRepulsion(n0: Vertex, n1: Vertex): number[] {

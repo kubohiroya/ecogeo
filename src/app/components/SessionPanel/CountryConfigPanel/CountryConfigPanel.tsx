@@ -7,8 +7,8 @@ import React, {
   useImperativeHandle,
 } from 'react';
 import { Domain, Factory, Favorite, LocalShipping } from '@mui/icons-material';
-import { INITIAL_COUNTRY_ARRAY } from '../../../model/initialCountryArray';
-import { Country } from '../../../model/Country';
+import { INITIAL_COUNTRY_ARRAY } from '../../../models/initialCountryArray';
+import { Country } from '../../../models/Country';
 
 /* eslint-disable-next-line */
 export interface CountryConfigPanelProps {

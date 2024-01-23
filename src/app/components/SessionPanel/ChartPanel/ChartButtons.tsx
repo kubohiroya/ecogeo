@@ -2,7 +2,7 @@ import { ZoomIn } from '@mui/icons-material';
 import { Backdrop, IconButton, Slider } from '@mui/material';
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
-import { BACKDROP_TIMEOUT_MILLI_SEC } from '../GraphPanel/Constatns';
+import { BACKDROP_TIMEOUT_MILLI_SEC } from '../MapPanel/Constatns';
 
 interface ChartButtonsProps {
   show: boolean;

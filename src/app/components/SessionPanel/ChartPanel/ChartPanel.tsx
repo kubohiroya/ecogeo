@@ -8,9 +8,9 @@ import {
   MenuItem,
   Select,
 } from '@mui/material';
-import { hasFeatureDetectingHoverEvent } from '../../../util/browserUtil';
+import { hasFeatureDetectingHoverEvent } from '../../../utils/browserUtil';
 import { ChartButtons } from './ChartButtons';
-import { ChartType, chartTypes } from '../../../type/ChartType';
+import { ChartType, chartTypes } from '../../../models/ChartType';
 import {
   Agriculture,
   AttachMoneyRounded,

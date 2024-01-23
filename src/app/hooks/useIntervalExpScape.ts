@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import useInterval from './useInterval';
-import { expScale } from '../util/mathUtil';
+import { expScale } from '../utils/mathUtil';
 
 function useIntervalExpScale<T>(props: {
   onStarted: () => void;
@@ -13,12 +13,12 @@ function useIntervalExpScale<T>(props: {
   initialIntervalScale: number;
 }) {
   const [intervalScale, setIntervalScale] = useState<number>(
-    props.initialIntervalScale
+    props.initialIntervalScale,
   );
   const interval = expScale(
     props.minInterval,
     props.maxInterval,
-    intervalScale
+    intervalScale,
   );
 
   const { changeInterval, start, stop, isStarted, counter, reset, result } =

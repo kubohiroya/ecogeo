@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { VertexChip } from './VertexChip';
-import { City } from '../../../model/City';
+import { City } from '../../../models/City';
 import styled from '@emotion/styled';
 
 const VertexChipBox = styled(Box)`
@@ -52,19 +52,19 @@ export const MatrixSetAccordionSummaryTitle = ({
                     onUnfocus([selectedNodeIndex]);
                     setTimeout(
                       () => setLockDiagonalMatrixSetPanelAccordion(false),
-                      3000
+                      3000,
                     );
                   }}
                   onMouseUp={() => {
                     setLockDiagonalMatrixSetPanelAccordion(true);
                     setTimeout(
                       () => setLockDiagonalMatrixSetPanelAccordion(false),
-                      300
+                      300,
                     );
                     onUnselect(selectedIndices, [selectedNodeIndex]);
                   }}
                 />
-              )
+              ),
           )}
         </VertexChipBox>
       )}

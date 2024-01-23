@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 
 import ChartPanel from './ChartPanel';
-import { ChartType } from '../../../type/ChartType';
+import { ChartType } from '../../../models/ChartType';
 
 describe('ChartPanel', () => {
   it('should render successfully', () => {
@@ -11,7 +11,7 @@ describe('ChartPanel', () => {
         onChangeChartType={() => {}}
         onChangeScale={() => {}}
         scale={1}
-      />
+      />,
     );
     expect(baseElement).toBeTruthy();
   });

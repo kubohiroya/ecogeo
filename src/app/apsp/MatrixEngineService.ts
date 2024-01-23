@@ -1,8 +1,8 @@
 import { GPUMatrixEngine } from './GPUMatrixEngine';
 import { CPUMatrixEngine } from './CPUMatrixEngine';
 import { MatrixEngine } from './MatrixEngine';
-import { Edge } from '../model/Graph';
-import { City } from '../model/City';
+import { Edge } from '../models/Graph';
+import { City } from '../models/City';
 
 export enum MatrixEngineKeyType {
   GPUMatrixEngine = 'GPUFloydWarshall',

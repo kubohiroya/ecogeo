@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { preferencesAtom } from '../../model/AppPreference';
+import { preferencesAtom } from '../../models/AppPreference';
 import { useAtomValue } from 'jotai';
 import { useSessionStateUndoRedo } from './UseSessionStateUndoRedo';
 import useHotkeys from '@reecelucas/react-use-hotkeys';
@@ -15,21 +15,21 @@ import {
   MatrixSetPanel,
 } from './MatrixSetPanel/MatrixSetPanel';
 import { SpringGraphLayout } from '../../graphLayout/SpringGraphLayout';
-import { GraphPanelButtonsState } from './GraphPanel/GraphPanelButtonsState';
-import { arrayXOR, convertIdToIndex } from '../../util/arrayUtil';
+import { MapPanelButtonsState } from './MapPanel/MapPanelButtonsState';
+import { arrayXOR, convertIdToIndex } from '../../utils/arrayUtil';
 import { calculateDistanceByLocations } from '../../apsp/calculateDistanceByLocations';
-import { City, resetCity } from '../../model/City';
-import { calcBoundingRect } from './GraphPanel/calcBoundingRect';
-import { createViewportCenter } from './GraphPanel/CreateViewportCenter';
-import { PADDING_MARGIN_RATIO } from './GraphPanel/Constatns';
+import { City, resetCity } from '../../models/City';
+import { calcBoundingRect } from './MapPanel/calcBoundingRect';
+import { createViewportCenter } from './MapPanel/CreateViewportCenter';
+import { PADDING_MARGIN_RATIO } from './MapPanel/Constatns';
 import {
   removeSubGraph,
   updateAddedSubGraph,
   updateRandomSubGraph,
-} from './GraphPanel/GraphHandlers';
-import { Edge } from '../../model/Graph';
-import { isInfinity } from '../../util/mathUtil';
-import { ViewportCenter } from '../../model/ViewportCenter';
+} from './MapPanel/GraphHandlers';
+import { Edge } from '../../models/Graph';
+import { isInfinity } from '../../utils/mathUtil';
+import { ViewportCenter } from '../../models/ViewportCenter';
 import { Box, LinearProgress, Snackbar, Typography } from '@mui/material';
 import { SessionLayoutPanel } from './SessionLayoutPanel';
 import AppAccordion from '../../../components/AppAccordion/AppAccordion';
@@ -38,20 +38,20 @@ import { SessionSelectorAccordionSummaryTitle } from './SessionSelectorAccordion
 import CountryConfigPanel from './CountryConfigPanel/CountryConfigPanel';
 import { MatrixSetAccordionSummaryTitle } from './MatrixSetPanel/MatrixSetAccordionSummaryTitle';
 import TimeControlPanel from './TimeControPanel/TimeControlPanel';
-import GraphPanel from './GraphPanel/GraphPanel';
+import MapPanel from './MapPanel/MapPanel';
 import { ChartCanvas } from './ChartPanel/ChartCanvas';
 import { ChartPanel } from './ChartPanel/ChartPanel';
-import { UIState } from '../../model/UIState';
+import { UIState } from '../../models/UIState';
 import useIntervalExpScale from '../../hooks/useIntervalExpScape';
-import { startSimulation, tickSimulator } from '../../model/Simulator';
+import { startSimulation, tickSimulator } from '../../models/Simulator';
 import { GraphLayoutTickResult } from '../../graphLayout/GraphLayout';
 import { SessionRenameDialog } from './SessionRenameDialog';
 import { getMatrixEngine } from '../../apsp/MatrixEngineService';
-import { AppMatrices } from '../../model/AppMatrices';
-import { SessionState } from '../../model/SessionState';
-import { MapTilerBackground } from './GraphPanel/deckgl/MapTilerBackground';
-import { GraphCanvas } from './GraphPanel/pixi/GraphCanvas';
-import { convertToXYZ } from '../../util/mapUtil';
+import { AppMatrices } from '../../models/AppMatrices';
+import { SessionState } from '../../models/SessionState';
+import { EuclideanCanvas } from './MapPanel/pixi/EuclideanCanvas';
+import MapComponent from './MapPanel/deckgl/MapComponent';
+import { globalPixelToTileXYZ } from '../../utils/mortonNumberUtil';
 
 type SessionPanelProps = {
   sessionId: string;
@@ -87,7 +87,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       sessionId,
       locations,
       edges,
-      sessionState.country.transportationCost
+      sessionState.country.transportationCost,
     ).then((newMatrices) => {
       setMatrices((draft) => {
         draft.adjacencyMatrix = newMatrices.adjacencyMatrix;
@@ -105,7 +105,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       sessionState.edges,
       matrices.adjacencyMatrix,
       uiState.selectedIndices,
-      uiState.draggingIndex
+      uiState.draggingIndex,
     );
 
     setSessionState(
@@ -115,7 +115,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
           draft.locations[index].point[1] = city[1];
         });
         const idToIndexMap = new Map<number, number>(
-          draft.locations.map((city, index) => [city.id, index])
+          draft.locations.map((city, index) => [city.id, index]),
         );
         draft.edges.forEach((edge, index) => {
           const source = draft.locations[idToIndexMap.get(edge.source)!];
@@ -123,12 +123,12 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
           draft.edges[index].distance = calculateDistanceByLocations(
             source.point,
             target.point,
-            spherical
+            spherical,
           );
         });
       },
       graphLayoutTickResult.maximumVelocity < 1.0,
-      'autoLayout'
+      'autoLayout',
     );
 
     return graphLayoutTickResult;
@@ -164,7 +164,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
             startSimulation(draft);
           },
           false,
-          'simulationStart'
+          'simulationStart',
         );
       });
     },
@@ -175,11 +175,11 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         setSessionState(
           (draft) => {
             draft.locations.forEach((location) =>
-              resetCity(location, draft.locations.length)
+              resetCity(location, draft.locations.length),
             );
           },
           true,
-          'simulationReset1'
+          'simulationReset1',
         );
       });
     },
@@ -190,7 +190,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
             tickSimulator(draft, matrices.transportationCostMatrix!);
           },
           false,
-          'simulationTick'
+          'simulationTick',
         );
       });
       return true;
@@ -262,7 +262,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
   } | null>(null);
 
   const [graphPanelButtonState, setGraphPanelButtonState] =
-    useState<GraphPanelButtonsState>({
+    useState<MapPanelButtonsState>({
       addLocation: false,
       removeLocation: false,
       addEdge: false,
@@ -282,7 +282,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       } else {
       }
     },
-    []
+    [],
   );
 
   const onDragStart = useCallback(
@@ -292,7 +292,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         draft.draggingIndex = index;
       });
     },
-    [setDragStartPosition, setUIState]
+    [setDragStartPosition, setUIState],
   );
 
   const onDragEnd = useCallback(
@@ -321,7 +321,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       setMatrices,
       setDragStartPosition,
       updateAndSetMatrices,
-    ]
+    ],
   );
 
   const onDrag = useCallback(
@@ -346,26 +346,26 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
                   draft.edges
                     .filter(
                       (edge) =>
-                        edge.source === targetId || edge.target === targetId
+                        edge.source === targetId || edge.target === targetId,
                     )
                     .forEach((edge) => {
                       const sourceId =
                         edge.source === targetId ? edge.target : edge.source;
                       const sourceIndex = convertIdToIndex(
                         sessionState.locations,
-                        sourceId
+                        sourceId,
                       );
                       edge.distance = calculateDistanceByLocations(
                         targetCity.point,
                         sessionState.locations[sourceIndex].point,
-                        spherical
+                        spherical,
                       );
                     });
                 }
               });
             },
             false,
-            'drag'
+            'drag',
           );
         });
       }
@@ -375,13 +375,13 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       matrices.adjacencyMatrix,
       sessionState,
       dragStartPosition,
-    ]
+    ],
   );
 
   const onFocus = useCallback((focusIndices: number[]) => {
     const newFocusedIndices = focusIndices.filter((value) => value != -1);
     diagonalMatrixSetPanelRef.current?.onFocus(
-      focusIndices.map((index) => index + 1)
+      focusIndices.map((index) => index + 1),
     );
     setUIState((draft) => {
       draft.focusedIndices = newFocusedIndices;
@@ -390,10 +390,10 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
 
   const onUnfocus = useCallback((unfocusIndices: number[]) => {
     diagonalMatrixSetPanelRef.current?.onUnfocus(
-      uiState.focusedIndices.map((unfocusIndices) => unfocusIndices + 1)
+      uiState.focusedIndices.map((unfocusIndices) => unfocusIndices + 1),
     );
     diagonalMatrixSetPanelRef.current?.onFocus(
-      unfocusIndices.map((unfocusIndex) => unfocusIndex + 1)
+      unfocusIndices.map((unfocusIndex) => unfocusIndex + 1),
     );
     setUIState((draft) => {
       draft.focusedIndices = [];
@@ -405,32 +405,32 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       setUIState((draft) => {
         const newSelectedIndices = arrayXOR(
           prevSelectedIndices,
-          selectedIndices
+          selectedIndices,
         ).sort();
         diagonalMatrixSetPanelRef.current?.onSelect(
           prevSelectedIndices,
-          newSelectedIndices
+          newSelectedIndices,
         );
         draft.selectedIndices = newSelectedIndices;
         draft.draggingIndex = null;
       });
       // uiState.selectedIndices = newSelectedIndices;
     },
-    [diagonalMatrixSetPanelRef.current, setUIState]
+    [diagonalMatrixSetPanelRef.current, setUIState],
   );
 
   const onUnselect = useCallback(
     (prevSelectedIndices: number[], unselectedIndices: number[]) => {
       setUIState((draft) => {
         const newSelectedIndices = prevSelectedIndices.filter(
-          (unselectedIndex) => !unselectedIndices.includes(unselectedIndex)
+          (unselectedIndex) => !unselectedIndices.includes(unselectedIndex),
         );
         diagonalMatrixSetPanelRef.current?.onUnselect(unselectedIndices);
         draft.selectedIndices = newSelectedIndices;
         draft.draggingIndex = null;
       });
     },
-    [diagonalMatrixSetPanelRef.current, setUIState]
+    [diagonalMatrixSetPanelRef.current, setUIState],
   );
 
   const onPointerUp = useCallback(
@@ -447,47 +447,45 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         }
       }
     },
-    [dragStartPosition, onSelect, onUnselect, uiState.selectedIndices]
+    [dragStartPosition, onSelect, onUnselect, uiState.selectedIndices],
   );
 
   const onClearSelection = useCallback(() => {
     onUnselect(uiState.selectedIndices, uiState.selectedIndices);
   }, [uiState.selectedIndices]);
 
-  const [XYZ, setXYZ] = useState<{ X: number; Y: number; Z: number }>({
-    X: 0,
-    Y: 0,
-    Z: 10,
+  const [XYZ, setXYZ] = useState<{ x: number; y: number; z: number }>({
+    x: -122.45,
+    y: 37.78,
+    z: 10,
   });
   const onMoved = useCallback(
     (centerX: number, centerY: number, zoom: number) => {
-      const xyz = convertToXYZ({
-        x: centerX,
-        y: centerY,
-        zoom,
-      });
+      const xyz = globalPixelToTileXYZ({ x: centerX, y: centerY }, zoom);
       setXYZ(xyz);
-
-      /*
-    console.log("onMoved->", centerX, centerY, zoom);
-    const viewportCenter = {
-      centerX,
-      centerY,
-      scale: zoom
-    };
-    setUIState((draft) => {
-      if (!draft.viewportCenter) {
-        draft.viewportCenter = viewportCenter;
-      } else {
-        draft.viewportCenter.centerX = centerX;
-        draft.viewportCenter.centerY = centerY;
-        draft.viewportCenter.scale = zoom;
-      }
-    });
-     */
     },
-    []
+    [],
   );
+  /*
+
+*/
+  /*
+console.log("onMoved->", centerX, centerY, zoom);
+const viewportCenter = {
+  centerX,
+  centerY,
+  scale: zoom
+};
+setUIState((draft) => {
+  if (!draft.viewportCenter) {
+    draft.viewportCenter = viewportCenter;
+  } else {
+    draft.viewportCenter.centerX = centerX;
+    draft.viewportCenter.centerY = centerY;
+    draft.viewportCenter.scale = zoom;
+  }
+});
+ */
 
   const doCreateViewportCenter = (uiState: UIState, locations: City[]) => {
     if (locations.length > 1) {
@@ -523,7 +521,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       requestAnimationFrame(() => {
         const { locations, edges, locationSerialNumber } = removeSubGraph(
           numLocations,
-          sessionState
+          sessionState,
         );
         setSessionState(
           (draft) => {
@@ -533,7 +531,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
             draft.locationSerialNumber = locationSerialNumber;
           },
           commit,
-          'removeBulkLocations'
+          'removeBulkLocations',
         );
         updateAndSetMatrices(locations, edges);
         setUIState((draft) => {
@@ -548,7 +546,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       sessionState.country.transportationCost,
       setMatrices,
       setUIState,
-    ]
+    ],
   );
 
   const onAddLocation = useCallback(() => {
@@ -567,7 +565,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
           updateRandomSubGraph(
             sessionId,
             sessionState,
-            uiState.selectedIndices
+            uiState.selectedIndices,
           );
 
         setSessionState(
@@ -578,7 +576,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
             draft.locationSerialNumber = locationSerialNumber;
           },
           true,
-          'addLocation'
+          'addLocation',
         );
         updateAndSetMatrices(locations, edges);
         setUIState((draft) => {
@@ -587,7 +585,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         });
       });
     },
-    [updateAndSetMatrices, setUIState]
+    [updateAndSetMatrices, setUIState],
   );
 
   const onAddBulkLocations = useCallback(
@@ -600,7 +598,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
                 sessionId,
                 sessionState,
                 uiState.selectedIndices,
-                numLocations
+                numLocations,
               );
             draft.locations = locations;
             draft.edges = edges;
@@ -613,7 +611,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
             });
           },
           commit,
-          'addBulkLocations'
+          'addBulkLocations',
         );
       });
     },
@@ -625,14 +623,14 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       setMatrices,
       setUIState,
       setSessionState,
-    ]
+    ],
   );
 
   const updateRemovedEdges = useCallback(
     (
       selectedIndices: number[],
       edges: Edge[],
-      predecessorMatrix: number[][] | null
+      predecessorMatrix: number[][] | null,
     ) => {
       if (!predecessorMatrix) {
         return [];
@@ -640,16 +638,16 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
 
       const selectedIdSet = new Set<number>(
         selectedIndices.map(
-          (selectedIndex) => sessionState.locations[selectedIndex]?.id
-        )
+          (selectedIndex) => sessionState.locations[selectedIndex]?.id,
+        ),
       );
 
       return edges.filter(
         (edge) =>
-          !selectedIdSet.has(edge.source) && !selectedIdSet.has(edge.target)
+          !selectedIdSet.has(edge.source) && !selectedIdSet.has(edge.target),
       );
     },
-    [sessionState.locations]
+    [sessionState.locations],
   );
 
   const updateRemovedPath = useCallback(
@@ -657,7 +655,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       sourceIndex: number,
       targetIndex: number,
       edges: Edge[],
-      predecessorMatrix: number[][] | null
+      predecessorMatrix: number[][] | null,
     ) => {
       if (!predecessorMatrix) {
         return [];
@@ -680,17 +678,17 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         removingEdgeSet.add(
           getKey(
             sessionState.locations[sourceIndex].id,
-            sessionState.locations[nextIndex].id
-          )
+            sessionState.locations[nextIndex].id,
+          ),
         );
         sourceIndex = nextIndex;
       }
 
       return edges.filter(
-        (edge, index) => !removingEdgeSet.has(getKey(edge.source, edge.target))
+        (edge, index) => !removingEdgeSet.has(getKey(edge.source, edge.target)),
       );
     },
-    [sessionState]
+    [sessionState],
   );
 
   const onAddEdge = useCallback(() => {
@@ -710,7 +708,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
                 const distance = calculateDistanceByLocations(
                   source.point,
                   target.point,
-                  spherical
+                  spherical,
                 );
                 const edge = {
                   source: source.id,
@@ -725,7 +723,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
           updateAndSetMatrices(sessionState.locations, sessionState.edges);
         },
         true,
-        'addEdge'
+        'addEdge',
       );
 
       /*
@@ -751,27 +749,27 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         uiState.selectedIndices[0],
         uiState.selectedIndices[1],
         sessionState.edges,
-        matrices.predecessorMatrix
+        matrices.predecessorMatrix,
       );
       setSessionState(
         (draft) => {
           draft.edges = newEdges;
         },
         true,
-        'removePath'
+        'removePath',
       );
     } else {
       const newEdges = updateRemovedEdges(
         uiState.selectedIndices,
         sessionState.edges,
-        matrices.predecessorMatrix
+        matrices.predecessorMatrix,
       );
       setSessionState(
         (draft) => {
           draft.edges = newEdges || [];
         },
         true,
-        'removeEdge'
+        'removeEdge',
       );
     }
   }, [uiState.selectedIndices, sessionState.edges, matrices.predecessorMatrix]);
@@ -782,7 +780,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         updateRemovedEdges(
           uiState.selectedIndices,
           sessionState.edges,
-          matrices.predecessorMatrix
+          matrices.predecessorMatrix,
         ) || [];
 
       const ratio =
@@ -804,7 +802,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
           draft.country.numLocations = newLocations.length;
         },
         true,
-        'removeLocation'
+        'removeLocation',
       );
       updateAndSetMatrices(newLocations, newEdges);
       setUIState((draft) => {
@@ -823,18 +821,18 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     sessionId: string,
     locations: City[],
     edges: Edge[],
-    transportationCost: number
+    transportationCost: number,
   ): Promise<AppMatrices> => {
     const matrixEngine = getMatrixEngine(
       sessionId,
       locations.length,
-      edges.length
+      edges.length,
     );
 
     return matrixEngine.updateAdjacencyMatrix(
       locations,
       edges,
-      transportationCost
+      transportationCost,
     );
   };
 
@@ -844,7 +842,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         draft.layer.map = enableMapLayer;
       });
     },
-    [setUIState]
+    [setUIState],
   );
 
   const setSessionChartType = useCallback(
@@ -853,7 +851,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         draft.chartType = chartType;
       });
     },
-    [setUIState]
+    [setUIState],
   );
 
   const setSessionChartScale = useCallback(
@@ -862,7 +860,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         draft.chartScale = chartScale;
       });
     },
-    [setUIState]
+    [setUIState],
   );
 
   const setSessionViewportCenter = useCallback(
@@ -871,7 +869,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         draft.viewportCenter = viewportCenter;
       });
     },
-    [setUIState]
+    [setUIState],
   );
 
   const setLockDiagonalMatrixSetPanelAccordion = useCallback(
@@ -880,7 +878,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         draft.lockMatrixSetPanelAccordion = lock;
       });
     },
-    [setUIState]
+    [setUIState],
   );
 
   const setCaseSelectorPanelAccordion = useCallback(
@@ -889,7 +887,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         draft.countryConfigPanelAccordion = expanded;
       });
     },
-    [setUIState]
+    [setUIState],
   );
 
   const setDiagonalMatrixSetPanelAccordion = useCallback(
@@ -898,7 +896,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         draft.matrixSetPanelAccordion = expanded;
       });
     },
-    [setUIState]
+    [setUIState],
   );
 
   useEffect(() => {
@@ -917,7 +915,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
           draft.country.manufactureShare = manufactureShare;
         },
         commit,
-        'updateCountry'
+        'updateCountry',
       );
     },
     [
@@ -925,7 +923,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       sessionState.edges,
       sessionState.country,
       setSessionState,
-    ]
+    ],
   );
   const setTransportationCost = useCallback(
     (transportationCost: number, commit?: boolean) => {
@@ -934,7 +932,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
           draft.country.transportationCost = transportationCost;
         },
         commit,
-        'updateCountry'
+        'updateCountry',
       );
     },
     [
@@ -942,7 +940,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       sessionState.edges,
       sessionState.country,
       setSessionState,
-    ]
+    ],
   );
   const setElasticitySubstitution = useCallback(
     (elasticitySubstitution: number, commit?: boolean) => {
@@ -951,7 +949,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
           draft.country.elasticitySubstitution = elasticitySubstitution;
         },
         commit,
-        'updateCountry'
+        'updateCountry',
       );
     },
     [
@@ -959,7 +957,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       sessionState.edges,
       sessionState.country,
       setSessionState,
-    ]
+    ],
   );
 
   useEffect(() => {
@@ -969,7 +967,9 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         !simulation.isStarted && uiState.selectedIndices.length > 0,
       addEdge: !simulation.isStarted && uiState.selectedIndices.length >= 2,
       removeEdge: !simulation.isStarted && uiState.selectedIndices.length >= 2,
-      autoGraphLayout: !autoGraphLayoutTimer.isStarted,
+      autoGraphLayout:
+        sessionState.country.units == 'kilometers' &&
+        !autoGraphLayoutTimer.isStarted,
       mapLayer: uiState.layer.map,
       undo: history.length > 0,
       redo: future.length > 0,
@@ -998,7 +998,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     (message: string) => {
       setSnackBarState({ ...snackBarState, open: true, message });
     },
-    [snackBarState, setSnackBarState]
+    [snackBarState, setSnackBarState],
   );
 
   const closeSnackBar = useCallback(() => {
@@ -1022,7 +1022,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         autoGraphLayoutTimer.start();
       }
     },
-    [autoGraphLayoutTimer.isStarted, autoGraphLayoutTimer.intervalScale]
+    [autoGraphLayoutTimer.isStarted, autoGraphLayoutTimer.intervalScale],
   );
 
   useEffect(() => {
@@ -1066,7 +1066,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
                 draft.country.title = newName;
               },
               true,
-              'renameSession'
+              'renameSession',
             );
             props.closeRenameDialog();
           });
@@ -1086,7 +1086,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
         uiState={uiState}
         setUIState={setUIState}
         left={
-          <GraphPanel
+          <MapPanel
             hideGraphEditButtons={simulation.isStarted}
             state={graphPanelButtonState}
             onFit={onFit}
@@ -1105,16 +1105,23 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
             country={sessionState.country}
           >
             <>
-              {uiState.layer.map && (
+              {sessionState.units == 'degrees' && (
                 <>
                   <div
                     style={{
                       width: uiState.splitPanelSizes[0] + 'px',
                       height: uiState.splitPanelHeight + 'px',
-                      zIndex: -10,
+                      zIndex: -1,
                     }}
                   ></div>
-                  <MapTilerBackground
+                  <MapComponent
+                    uuid={sessionId}
+                    map="openstreetmap"
+                    width={uiState.splitPanelSizes[0]}
+                    height={uiState.splitPanelHeight}
+                  />
+                  {/*
+                  <SphericalCanvas
                     latitude={XYZ.X}
                     longitude={XYZ.Y}
                     zoom={XYZ.Z}
@@ -1123,37 +1130,40 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
                       top: 0,
                       left: 0,
                       width: uiState.splitPanelSizes[0],
-                      height: uiState.splitPanelHeight,
+                      height: 500, //uiState.splitPanelHeight,
                       zIndex: 1,
                     }}
                   />
+                  */}
                 </>
               )}
-              <GraphCanvas
-                width={uiState.splitPanelSizes[0]}
-                height={uiState.splitPanelHeight}
-                boundingBox={{
-                  ...calcBoundingRect(sessionState.locations),
-                  paddingMarginRatio: PADDING_MARGIN_RATIO,
-                }}
-                setViewportCenter={setSessionViewportCenter}
-                onDragStart={onDragStart}
-                onDragEnd={onDragEnd}
-                onDrag={onDrag}
-                onFocus={onFocus}
-                onUnfocus={onUnfocus}
-                onPointerUp={onPointerUp}
-                onClearSelection={onClearSelection}
-                onMoved={onMoved}
-                draggingIndex={uiState.draggingIndex}
-                sessionState={sessionState}
-                viewportCenter={uiState.viewportCenter}
-                selectedIndices={uiState.selectedIndices}
-                focusedIndices={uiState.focusedIndices}
-                matrices={matrices}
-              />
+              {sessionState.units == 'kilometers' && (
+                <EuclideanCanvas
+                  width={uiState.splitPanelSizes[0]}
+                  height={uiState.splitPanelHeight}
+                  boundingBox={{
+                    ...calcBoundingRect(sessionState.locations),
+                    paddingMarginRatio: PADDING_MARGIN_RATIO,
+                  }}
+                  setViewportCenter={setSessionViewportCenter}
+                  onDragStart={onDragStart}
+                  onDragEnd={onDragEnd}
+                  onDrag={onDrag}
+                  onFocus={onFocus}
+                  onUnfocus={onUnfocus}
+                  onPointerUp={onPointerUp}
+                  onClearSelection={onClearSelection}
+                  onMoved={onMoved}
+                  draggingIndex={uiState.draggingIndex}
+                  sessionState={sessionState}
+                  viewportCenter={uiState.viewportCenter}
+                  selectedIndices={uiState.selectedIndices}
+                  focusedIndices={uiState.focusedIndices}
+                  matrices={matrices}
+                />
+              )}
             </>
-          </GraphPanel>
+          </MapPanel>
         }
         right={
           <ChartPanel

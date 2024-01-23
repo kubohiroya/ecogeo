@@ -1,5 +1,5 @@
-import { City } from '../model/City';
-import { Edge } from '../model/Graph';
+import { City } from '../models/City';
+import { Edge } from '../models/Graph';
 
 export interface MatrixEngine {
   getNumLocations: () => number;
@@ -8,31 +8,31 @@ export interface MatrixEngine {
   getAdjacencyMatrix: (
     locations: City[],
     edges: Edge[],
-    transportationCost: number
+    transportationCost: number,
   ) => Promise<number[][]>;
 
   getDistanceMatrix: (
     locations: City[],
     edges: Edge[],
-    transportationCost: number
+    transportationCost: number,
   ) => Promise<number[][]>;
 
   getPredecessorMatrix: (
     locations: City[],
     edges: Edge[],
-    transportationCost: number
+    transportationCost: number,
   ) => Promise<number[][]>;
 
   getTransportationCostMatrix: (
     locations: City[],
     edges: Edge[],
-    transportationCost: number
+    transportationCost: number,
   ) => Promise<number[][]>;
 
   updateAdjacencyMatrix: (
     locations: City[],
     edges: Edge[],
-    transportationCost: number
+    transportationCost: number,
   ) => Promise<{
     adjacencyMatrix: number[][];
     distanceMatrix: number[][];
@@ -43,7 +43,7 @@ export interface MatrixEngine {
   updateDistanceAndPredecessorMatrix: (
     locations: City[],
     edges: Edge[],
-    transportationCost: number
+    transportationCost: number,
   ) => Promise<{
     distanceMatrix: number[][];
     predecessorMatrix: number[][];
@@ -53,7 +53,7 @@ export interface MatrixEngine {
   updateTransportationCostMatrix: (
     locations: City[],
     edges: Edge[],
-    transportationCost: number
+    transportationCost: number,
   ) => Promise<{
     transportationCostMatrix: number[][];
   }>;
@@ -83,25 +83,25 @@ export abstract class AbstractMatrixEngine implements MatrixEngine {
   abstract createAdjacencyMatrix(
     locations: City[],
     edges: Edge[],
-    transportationCost: number
+    transportationCost: number,
   ): Promise<number[][]>;
 
   abstract createDistanceAndPredecessorMatrix(
     locations: City[],
     edges: Edge[],
-    transportationCost: number
+    transportationCost: number,
   ): Promise<[number[][], number[][]]>;
 
   abstract createTransportationCostMatrix(
     locations: City[],
     edges: Edge[],
-    transportationCost: number
+    transportationCost: number,
   ): Promise<number[][]>;
 
   getAdjacencyMatrix(
     locations: City[],
     edges: Edge[],
-    transportationCost: number
+    transportationCost: number,
   ): Promise<number[][]> {
     if (!this.adjacencyMatrix) {
       return this.createAdjacencyMatrix(locations, edges, transportationCost);
@@ -112,13 +112,13 @@ export abstract class AbstractMatrixEngine implements MatrixEngine {
   async getDistanceMatrix(
     locations: City[],
     edges: Edge[],
-    transportationCost: number
+    transportationCost: number,
   ): Promise<number[][]> {
     if (!this.distanceMatrix) {
       await this.createDistanceAndPredecessorMatrix(
         locations,
         edges,
-        transportationCost
+        transportationCost,
       );
     }
     return Promise.resolve(this.distanceMatrix!);
@@ -127,13 +127,13 @@ export abstract class AbstractMatrixEngine implements MatrixEngine {
   async getPredecessorMatrix(
     locations: City[],
     edges: Edge[],
-    transportationCost: number
+    transportationCost: number,
   ): Promise<number[][]> {
     if (!this.predecessorMatrix) {
       await this.createDistanceAndPredecessorMatrix(
         locations,
         edges,
-        transportationCost
+        transportationCost,
       );
     }
     return Promise.resolve(this.predecessorMatrix!);
@@ -142,13 +142,13 @@ export abstract class AbstractMatrixEngine implements MatrixEngine {
   getTransportationCostMatrix(
     locations: City[],
     edges: Edge[],
-    transportationCost: number
+    transportationCost: number,
   ): Promise<number[][]> {
     if (!this.transportationCostMatrix) {
       return this.createTransportationCostMatrix(
         locations,
         edges,
-        transportationCost
+        transportationCost,
       );
     }
     return Promise.resolve(this.transportationCostMatrix);
@@ -157,7 +157,7 @@ export abstract class AbstractMatrixEngine implements MatrixEngine {
   async updateAdjacencyMatrix(
     locations: City[],
     edges: Edge[],
-    transportationCost: number
+    transportationCost: number,
   ): Promise<{
     adjacencyMatrix: number[][];
     distanceMatrix: number[][];
@@ -172,7 +172,7 @@ export abstract class AbstractMatrixEngine implements MatrixEngine {
     const transportationCostMatrix = await this.getTransportationCostMatrix(
       locations,
       edges,
-      transportationCost
+      transportationCost,
     );
 
     return {
@@ -180,17 +180,17 @@ export abstract class AbstractMatrixEngine implements MatrixEngine {
       distanceMatrix: await this.getDistanceMatrix(
         locations,
         edges,
-        transportationCost
+        transportationCost,
       ),
       predecessorMatrix: await this.getPredecessorMatrix(
         locations,
         edges,
-        transportationCost
+        transportationCost,
       ),
       adjacencyMatrix: await this.getAdjacencyMatrix(
         locations,
         edges,
-        transportationCost
+        transportationCost,
       ),
     };
   }
@@ -198,7 +198,7 @@ export abstract class AbstractMatrixEngine implements MatrixEngine {
   async updateDistanceAndPredecessorMatrix(
     locations: City[],
     edges: Edge[],
-    transportationCost: number
+    transportationCost: number,
   ): Promise<{
     distanceMatrix: number[][];
     predecessorMatrix: number[][];
@@ -211,7 +211,7 @@ export abstract class AbstractMatrixEngine implements MatrixEngine {
     const transportationCostMatrix = await this.getTransportationCostMatrix(
       locations,
       edges,
-      transportationCost
+      transportationCost,
     );
 
     return {
@@ -219,12 +219,12 @@ export abstract class AbstractMatrixEngine implements MatrixEngine {
       distanceMatrix: await this.getDistanceMatrix(
         locations,
         edges,
-        transportationCost
+        transportationCost,
       ),
       predecessorMatrix: await this.getPredecessorMatrix(
         locations,
         edges,
-        transportationCost
+        transportationCost,
       ),
     };
   }
@@ -232,7 +232,7 @@ export abstract class AbstractMatrixEngine implements MatrixEngine {
   async updateTransportationCostMatrix(
     locations: City[],
     edges: Edge[],
-    transportationCost: number
+    transportationCost: number,
   ): Promise<{
     transportationCostMatrix: number[][];
   }> {
@@ -241,7 +241,7 @@ export abstract class AbstractMatrixEngine implements MatrixEngine {
     const transportationCostMatrix = await this.getTransportationCostMatrix(
       locations,
       edges,
-      transportationCost
+      transportationCost,
     );
 
     return {

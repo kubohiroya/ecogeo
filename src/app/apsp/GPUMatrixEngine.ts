@@ -1,6 +1,6 @@
-import { Edge, Vertex } from '../model/Graph';
-import { create2DArray } from '../util/arrayUtil';
-import { City } from '../model/City';
+import { Edge, Vertex } from '../models/Graph';
+import { create2DArray } from '../utils/arrayUtil';
+import { City } from '../models/City';
 import { AbstractMatrixEngine } from './MatrixEngine';
 import { DISTANCE_SCALE_FACTOR } from './calculateDistanceByLocations';
 

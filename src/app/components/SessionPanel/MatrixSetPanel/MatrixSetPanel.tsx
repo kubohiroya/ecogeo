@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import DiagonalMatrix from '../../../../components/DiagonalMatrix/DiagonalMatrix';
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { Box } from '@mui/material';
-import { City } from '../../../model/City';
+import { City } from '../../../models/City';
 
 /* eslint-disable-next-line */
 export interface DiagonalMatrixSetPanelProps {
@@ -64,7 +64,7 @@ export const MatrixSetPanel = forwardRef<
   const doSelect = (
     tableRef: HTMLTableElement | null,
     maxLength: number,
-    indices: number[]
+    indices: number[],
   ) => {
     if (tableRef && tableRef.rows) {
       indices.forEach((index) => {
@@ -79,7 +79,7 @@ export const MatrixSetPanel = forwardRef<
   const doUnselect = (
     tableRef: HTMLTableElement | null,
     maxLength: number,
-    indices: number[]
+    indices: number[],
   ) => {
     if (tableRef && tableRef.rows) {
       indices.forEach((index) => {
@@ -152,7 +152,7 @@ export const MatrixSetPanel = forwardRef<
 
     intersectionIndices.length > 0 &&
       dispatchUnselectEventToAllTables(
-        intersectionIndices.map((index) => index)
+        intersectionIndices.map((index) => index),
       );
     addingIndices.length > 0 &&
       dispatchSelectEventToAllTables(addingIndices.map((index) => index));

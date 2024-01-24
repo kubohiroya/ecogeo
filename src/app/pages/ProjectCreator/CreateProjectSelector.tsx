@@ -3,7 +3,7 @@ import { FileUpload, PsychologyAlt, Public } from '@mui/icons-material';
 import { Button, Typography } from '@mui/material';
 import styled from '@emotion/styled';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { ProjectType } from '../ProjectIndex/ProjectType';
+import { ProjectType } from '../../models/ProjectType';
 import { DOCUMENT_TITLE } from '../../Constants';
 
 const ModelSelectorBox = styled.div`

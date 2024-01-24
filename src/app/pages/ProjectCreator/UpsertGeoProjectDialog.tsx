@@ -3,7 +3,7 @@ import { ProjectTableDB } from '../../services/projectTable/ProjectTableDB';
 import { useCallback } from 'react';
 import { UpsertProjectDialog } from './UpsertProjectDialog';
 import { useLoaderData } from 'react-router-dom';
-import { ProjectType } from '../ProjectIndex/ProjectType';
+import { ProjectType } from '../../models/ProjectType';
 import { INITIAL_VIEW_STATE } from '../../Constants';
 
 export const UpsertGeoProjectDialog = () => {

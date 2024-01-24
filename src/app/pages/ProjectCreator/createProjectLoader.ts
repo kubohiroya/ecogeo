@@ -1,5 +1,5 @@
 import { ProjectTableDB } from '../../services/projectTable/ProjectTableDB';
-import { ProjectType } from '../ProjectIndex/ProjectType';
+import { ProjectType } from '../../models/ProjectType';
 
 export const createProjectLoader =
   ({ type }: { type: ProjectType }) =>

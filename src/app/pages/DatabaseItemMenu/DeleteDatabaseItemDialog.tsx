@@ -1,5 +1,5 @@
 import { Link, useLoaderData, useNavigate } from 'react-router-dom';
-import { ProjectType } from './ProjectType';
+import { ProjectType } from '../../models/ProjectType';
 import React, { useCallback } from 'react';
 import { ProjectTableDB } from '../../services/projectTable/ProjectTableDB';
 import {
@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { createMapLink } from '../../../createMapLink';
 
-export const DeleteProjectDialog = () => {
+export const DeleteDatabaseItemDialog = () => {
   const { uuid, type, name, description, coordinate, zoom } =
     useLoaderData() as {
       uuid: string;

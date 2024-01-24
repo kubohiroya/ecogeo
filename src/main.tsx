@@ -1,20 +1,21 @@
 import React, { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
-import {
-  createBrowserRouter,
-  Navigate,
-  RouterProvider,
-} from 'react-router-dom';
-import { ProjectIndexPage } from './app/pages/ProjectIndex/ProjectIndexPage';
-import { RealWorldSimPage } from './app/pages/RealWorldSimPage';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { RealWorldSimPage } from './app/pages/RealWorldSim/RealWorldSimPage';
 import { ProjectTableDB } from './app/services/projectTable/ProjectTableDB';
 import { ProjectDB } from './app/services/project/ProjectDB';
 import { CreateProjectSelector } from './app/pages/ProjectCreator/CreateProjectSelector';
 import { UpsertTheoreticalProjectDialog } from './app/pages/ProjectCreator/UpsertTheoreticalProjectDialog';
 import { createProjectLoader } from './app/pages/ProjectCreator/createProjectLoader';
 import { UpsertGeoProjectDialog } from './app/pages/ProjectCreator/UpsertGeoProjectDialog';
-import { ProjectType } from './app/pages/ProjectIndex/ProjectType';
-import { DeleteProjectDialog } from './app/pages/ProjectIndex/DeleteProjectDialog';
+import { ProjectType } from './app/models/ProjectType';
+import { DeleteDatabaseItemDialog } from './app/pages/DatabaseItemMenu/DeleteDatabaseItemDialog';
+
+import '/node_modules/react-grid-layout/css/styles.css';
+import '/node_modules/react-resizable/css/styles.css';
+import { DatabaseItemTableComponent } from './app/pages/Home/DatabaseItemTableComponent';
+import { HomePage } from './app/pages/Home/HomePage';
+import { FetchGADMResourcesComponent } from './app/pages/ResourceItemsComponent/FetchGADMResourcesComponent';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -23,25 +24,40 @@ const root = ReactDOM.createRoot(
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Navigate to="/projects" replace />,
-  },
-  {
-    path: '/projects',
-    element: <ProjectIndexPage />,
-    loader: async () => ({
-      projects: await ProjectTableDB.getProjects(),
-    }),
+    element: <HomePage />,
+    children: [
+      {
+        path: '/resources',
+        element: <DatabaseItemTableComponent mode={0} />,
+        loader: async () => ({
+          resources: [],
+        }),
+        children: [
+          {
+            path: '/resources/gadm',
+            element: <FetchGADMResourcesComponent />,
+          },
+        ],
+      },
+      {
+        path: '/projects',
+        element: <DatabaseItemTableComponent mode={1} />,
+        loader: async () => ({
+          projects: await ProjectTableDB.getProjects(),
+        }),
+      },
+    ],
   },
   {
     path: `/delete/${ProjectType.theoretical}/:uuid`,
-    element: <DeleteProjectDialog />,
+    element: <DeleteDatabaseItemDialog />,
     loader: createProjectLoader({
       type: ProjectType.realWorld,
     }),
   },
   {
     path: `/delete/${ProjectType.realWorld}/:uuid`,
-    element: <DeleteProjectDialog />,
+    element: <DeleteDatabaseItemDialog />,
     loader: createProjectLoader({
       type: ProjectType.realWorld,
     }),

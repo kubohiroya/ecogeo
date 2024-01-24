@@ -1,7 +1,7 @@
 import Dexie from 'dexie';
 import { v4 as uuidv4 } from 'uuid';
 import { ProjectEntity } from './ProjectEntity';
-import { ProjectType } from '../../pages/ProjectIndex/ProjectType';
+import { ProjectType } from '../../models/ProjectType';
 
 const TABLE_NAME = 'ProjectTable';
 

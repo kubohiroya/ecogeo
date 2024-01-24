@@ -11,7 +11,7 @@ import {
   sessionAtoms,
   sessionStateAtoms,
 } from './models/Session';
-import { ADMFetch } from '../components/ADMFetch/ADMFetch';
+import { GADMFetch } from '../components/GADMFetch/GADMFetch';
 import { FileDropComponent } from '../components/FileDropComponent/FileDropComponent';
 import { IndexDBConsole } from '../components/IndexDBConsole/IndexDBConsole';
 import { ProjectDB } from './services/project/ProjectDB';
@@ -28,7 +28,7 @@ export const ClassicStyleApp = ({ db }: { db: ProjectDB }) => {
         acceptableSuffixes={['.zip', '.json', '.csv']}
         onFinish={onFinish}
       />
-      <ADMFetch />
+      <GADMFetch />
       <IndexDBConsole db={db} />
 
       <AppHeader startIcon={<Share fontSize={'large'} />}>

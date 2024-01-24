@@ -1,7 +1,7 @@
 import { useLoaderData } from 'react-router-dom';
 import { UpsertProjectDialog } from './UpsertProjectDialog';
 import { ProjectTableDB } from '../../services/projectTable/ProjectTableDB';
-import { ProjectType } from '../ProjectIndex/ProjectType';
+import { ProjectType } from '../../models/ProjectType';
 
 export const UpsertTheoreticalProjectDialog = () => {
   const { uuid, type, name, description } = useLoaderData() as {

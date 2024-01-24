@@ -1,4 +1,4 @@
-import { ProjectType } from '../../pages/ProjectIndex/ProjectType';
+import { ProjectType } from '../../models/ProjectType';
 
 export interface ProjectSource {
   type: ProjectType;

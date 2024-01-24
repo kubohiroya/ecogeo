@@ -12,7 +12,11 @@ import { Close } from '@mui/icons-material';
 import { DraggableData, Position, ResizableDelta, Rnd } from 'react-rnd';
 import { DraggableEvent } from 'react-draggable';
 import { useImmerAtom } from 'jotai-immer';
-import { fileAtom, layerAtom, searchAtom } from './pages/RealWorldSimPage';
+import {
+  fileAtom,
+  layerAtom,
+  searchAtom,
+} from './pages/RealWorldSim/RealWorldSimPage';
 
 const CardTitle = styled(Box)`
   display: flex;

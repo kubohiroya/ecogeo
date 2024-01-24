@@ -15,7 +15,7 @@ import {
 import * as React from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ProjectType } from '../ProjectIndex/ProjectType';
+import { ProjectType } from '../../models/ProjectType';
 import { DOCUMENT_TITLE } from '../../Constants';
 
 type UpsertProjectDialogProps = {

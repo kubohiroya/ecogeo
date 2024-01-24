@@ -14,12 +14,13 @@ import Menu from '@mui/icons-material/Menu';
 import { ContentCopy, Delete, Edit } from '@mui/icons-material';
 import { ProjectEntity } from '../../services/projectTable/ProjectEntity';
 import { useNavigate } from 'react-router-dom';
+import { ResourceEntity } from '../../models/ResourceEntity';
 
-interface ProjectMenuProps {
-  item: ProjectEntity;
+interface DatabaseItemMenuProps {
+  item: ProjectEntity | ResourceEntity;
 }
 
-export const ProjectMenu = ({ item }: ProjectMenuProps) => {
+export const DatabaseItemMenu = ({ item }: DatabaseItemMenuProps) => {
   const ref = useRef(null);
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();

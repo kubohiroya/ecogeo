@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 
-import ChartPanel from './ChartPanel';
+import { ChartPanel } from './ChartPanel';
 import { ChartType } from '../../../models/ChartType';
 
 describe('ChartPanel', () => {

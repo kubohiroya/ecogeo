@@ -10,9 +10,6 @@ import { createProjectLoader } from './app/pages/ProjectCreator/createProjectLoa
 import { UpsertGeoProjectDialog } from './app/pages/ProjectCreator/UpsertGeoProjectDialog';
 import { ProjectType } from './app/models/ProjectType';
 import { DeleteDatabaseItemDialog } from './app/pages/DatabaseItemMenu/DeleteDatabaseItemDialog';
-
-import '/node_modules/react-grid-layout/css/styles.css';
-import '/node_modules/react-resizable/css/styles.css';
 import { DatabaseItemTableComponent } from './app/pages/Home/DatabaseItemTableComponent';
 import { HomePage } from './app/pages/Home/HomePage';
 import { FetchGADMResourcesComponent } from './app/pages/ResourceItemsComponent/FetchGADMResourcesComponent';

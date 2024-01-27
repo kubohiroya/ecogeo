@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DeckGL from '@deck.gl/react/typed';
 import { Map as ReactMap } from 'react-map-gl/maplibre';
 import { PolygonLayer, ScatterplotLayer } from '@deck.gl/layers/typed';
@@ -18,6 +18,7 @@ import { useLoaderData, useNavigate } from 'react-router-dom';
 import { PathStyleExtension } from '@deck.gl/extensions/typed';
 import { DexieQueryRequest } from '../../../../services/project/DexieQueryRequest';
 import { DexieQueryResponse } from '../../../../services/project/DexieQueryResponse';
+import { AsyncFunctionManager } from '../../../../utils/AsyncFunctionManager';
 
 const MAP_TILER_API_KEY = import.meta.env.VITE_MAP_TILER_API_KEY;
 
@@ -102,6 +103,7 @@ function extractPolygonLayerData(
   return ret;
 }
 
+const asyncFunctionManager = new AsyncFunctionManager();
 const MapComponent = (props: MapComponentProps) => {
   const data = useLoaderData() as {
     uuid: string;
@@ -138,9 +140,11 @@ const MapComponent = (props: MapComponentProps) => {
     zoom: number;
     latitude: number;
     longitude: number;
-  }) => {
+  }): void => {
     const url = `/map/${data.uuid}/${viewState.zoom.toFixed(2)}/${viewState.latitude.toFixed(4)}/${viewState.longitude.toFixed(4)}/`;
-    navigate(url, { replace: true });
+    asyncFunctionManager.runAsyncFunction(() => {
+      navigate(url, { replace: true });
+    });
   };
 
   useEffect(() => {
@@ -210,7 +214,14 @@ const MapComponent = (props: MapComponentProps) => {
         zoom: Math.floor(viewState.zoom),
       },
     });
-  }, [worker, viewState, setPolygons, props.width, props.height]);
+  }, [
+    worker,
+    viewState.longitude,
+    viewState.latitude,
+    viewState.zoom,
+    props.width,
+    props.height,
+  ]);
 
   // レイヤーの設定
   const layers = [
@@ -330,12 +341,9 @@ const MapComponent = (props: MapComponentProps) => {
     );
   };
 
-  const viewStateChange = useCallback(
-    (evt: any) => {
-      setViewState(evt.viewState);
-    },
-    [setViewState],
-  );
+  const viewStateChange = (evt: any) => {
+    setViewState(evt.viewState);
+  };
 
   useEffect(() => {
     updateURL(viewState);
@@ -353,6 +361,8 @@ const MapComponent = (props: MapComponentProps) => {
   return (
     <DeckGL
       views={[new MapView({ repeat: true })]}
+      width={props.width}
+      height={props.height}
       controller={true}
       layers={layers}
       viewState={viewState}
@@ -363,22 +373,6 @@ const MapComponent = (props: MapComponentProps) => {
       />
       {renderTooltip()}
       {props.children}
-      <div
-        style={{
-          fontSize: '12px',
-          position: 'absolute',
-          bottom: 0,
-          right: '7px',
-          background: 'rgba(255,255,255,0.1)',
-        }}
-      >
-        <a href="https://www.maptiler.com/copyright/" target="_blank">
-          &copy; MapTiler
-        </a>{' '}
-        <a href="https://www.openstreetmap.org/copyright" target="_blank">
-          &copy; OpenStreetMap contributors
-        </a>
-      </div>
     </DeckGL>
   );
 };

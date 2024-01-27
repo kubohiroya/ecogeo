@@ -16,7 +16,7 @@ import {
   fileAtom,
   layerAtom,
   searchAtom,
-} from './pages/RealWorldSim/RealWorldSimPage';
+} from './pages/RealWorldSim/FloatingPanelButtonGroup';
 
 const CardTitle = styled(Box)`
   display: flex;

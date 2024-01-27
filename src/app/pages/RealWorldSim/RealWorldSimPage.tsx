@@ -1,309 +1,326 @@
-import React, { useCallback, useEffect } from 'react';
-import MapComponent from '../../components/SessionPanel/MapPanel/deckgl/MapComponent';
-import { Box, Button, IconButton, Input } from '@mui/material';
-import {
-  Flag,
-  Folder,
-  Hexagon,
-  Layers,
-  LocationCity,
-  Route,
-  Search,
-  Square,
-} from '@mui/icons-material';
+import React, { useMemo, useState } from 'react';
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
+import { Box, CardContent } from '@mui/material';
 import styled from '@emotion/styled';
-import { FloatingPanel, FloatingPanelState } from '../../FloatingPanel';
 import { useParams } from 'react-router-dom';
-import { TreeView } from '@mui/x-tree-view';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { StyledTreeItem } from '../../../components/TreeView/StyledTreeItem';
-import { useAtom } from 'jotai';
-import { focusAtom } from 'jotai-optics';
-import { atomWithImmer, withImmer } from 'jotai-immer';
-import useMousePresence from '../../hooks/useMousePresence';
+import ReactGridLayout, {
+  ItemCallback,
+  Responsive as ResponsiveGridLayout,
+} from 'react-grid-layout';
+import useWindowDimensions from '../../hooks/useWindowDimenstions';
+import { FloatingButton } from '../../../components/FloatingButton/FloatingButton';
+import { FloatingPanel } from '../../../components/FloatingPanel/FloatingPanel';
+import { MapCopyright } from '../../../components/MapCopyright/MapCopyright';
+import { FolderOpen, Layers } from '@mui/icons-material';
+import MapComponent from '../../components/SessionPanel/MapPanel/deckgl/MapComponent';
 
-const SearchField = styled(Input)`
-  position: absolute;
-  top: 0;
-  right: 30px;
-  font-size: 14px;
-  background-color: rgba(255, 255, 255, 0.6);
-  width: 270px;
-  height: 20px;
-  padding-top: 3px;
-  margin-top: 7px;
-`;
+const NUM_HORIZONTAL_GRIDS = 32;
+const NUM_VERTICAL_GRIDS = 20;
+const ROW_HEIGHT = 32;
 
-const EdgeButton = styled(IconButton)`
-  position: absolute;
-  background-color: rgba(255, 255, 255, 0.6);
-`;
-const RightEdgeButton = styled(EdgeButton)`
-  right: 0;
-  border-radius: 10px 0 0 10px;
-  border-right: 5px solid rgba(0, 0, 0, 0);
-`;
+enum GridItemType {
+  Map = 'Map',
+  FloatingButton = 'FloatingButton',
+  FloatingPanel = 'FloatingPanel',
+}
 
-const LeftEdgeButton = styled(EdgeButton)`
-  left: 0;
-  border-radius: 0 10px 10px 0;
-  border-left: 5px solid rgba(0, 0, 0, 0);
-`;
+interface GridItemResources {
+  id: string;
+  type: GridItemType;
+  bindTo?: string;
+  icon?: React.ReactNode;
+  tooltip?: string;
+  title?: string;
+  titleBarMode?: 'win' | 'mac';
+  rowHeight?: number;
+  hide?: boolean;
+}
 
-const SearchEdgeButton = styled(LeftEdgeButton)`
-  top: 10px;
-`;
-const FileEdgeButton = styled(LeftEdgeButton)`
-  top: 50px;
-`;
-const LayerEdgeButton = styled(LeftEdgeButton)`
-  top: 90px;
-`;
-
-export const floatingPanelStateAtom = atomWithImmer<
-  Record<string, FloatingPanelState>
->({
-  search: {
-    open: true,
-    x: 5,
-    y: 10,
-    z: 100,
-    width: 405,
-    height: 32,
-    minimize: false,
+const initialLayouts: {
+  layout: ReactGridLayout.Layout;
+  resource: GridItemResources;
+}[] = [
+  {
+    layout: {
+      i: 'map',
+      x: 0,
+      y: 0,
+      w: 1,
+      h: 1,
+      resizeHandles: [],
+      static: true,
+    },
+    resource: {
+      id: 'map',
+      type: GridItemType.Map,
+    },
   },
-  file: {
-    open: false,
-    x: 5,
-    y: 50,
-    z: 101,
-    width: 400,
-    height: 100,
-    minimize: false,
+  {
+    layout: {
+      i: 'InputOutputButton',
+      x: 0,
+      y: 1,
+      w: 1,
+      h: 1,
+      resizeHandles: [],
+      isDraggable: true,
+      isResizable: false,
+    },
+    resource: {
+      id: 'InputOutputButton',
+      type: GridItemType.FloatingButton,
+      bindTo: 'InputOutput',
+      tooltip: 'Open Input/Output Panel',
+      icon: <FolderOpen />,
+    },
   },
-  layer: {
-    open: false,
-    x: 5,
-    y: 90,
-    z: 102,
-    width: 400,
-    height: 250,
-    minimize: false,
+  {
+    layout: {
+      i: 'LayersButton',
+      x: 0,
+      y: 2,
+      w: 1,
+      h: 1,
+      isDraggable: true,
+      isResizable: false,
+      resizeHandles: [],
+    },
+    resource: {
+      id: 'LayersButton',
+      type: GridItemType.FloatingButton,
+      bindTo: 'Layers',
+      tooltip: 'Open Layers Panel',
+      icon: <Layers />,
+    },
   },
-});
+  {
+    layout: {
+      i: 'InputOutput',
+      x: 5,
+      y: 5,
+      w: 10,
+      h: 5,
+      resizeHandles: ['se'],
+      isDraggable: true,
+      isResizable: true,
+    },
+    resource: {
+      id: 'InputOutput',
+      type: GridItemType.FloatingPanel,
+      title: 'Input/Output Panel',
+      icon: <FolderOpen />,
+      titleBarMode: 'win',
+      rowHeight: ROW_HEIGHT,
+      hide: false,
+    },
+  },
+  {
+    layout: {
+      i: 'Layers',
+      x: 10,
+      y: 10,
+      w: 10,
+      h: 10,
+      isDraggable: true,
+      isResizable: true,
+      resizeHandles: ['se'],
+    },
+    resource: {
+      id: 'Layers',
+      type: GridItemType.FloatingPanel,
+      title: 'Layers Panel',
+      icon: <Layers />,
+      titleBarMode: 'win',
+      rowHeight: ROW_HEIGHT,
+      hide: false,
+    },
+  },
+];
+const initialResources: Record<string, GridItemResources> = {};
+for (const item of initialLayouts) {
+  initialResources[item.resource.id] = item.resource;
+}
 
-export const searchAtom = withImmer(
-  focusAtom(floatingPanelStateAtom, (optic) => optic.prop('search')),
-);
-export const fileAtom = withImmer(
-  focusAtom(floatingPanelStateAtom, (optic) => optic.prop('file')),
-);
-export const layerAtom = withImmer(
-  focusAtom(floatingPanelStateAtom, (optic) => optic.prop('layer')),
-);
-
-export const RealWorldSimPage = () => {
+const RealWorldSimPageBase = () => {
   const params = useParams();
-  const uuid = params.uuid;
-
-  if (!uuid) {
-    throw new Error('uuid is not set');
-  }
-
-  useEffect(() => {
-    // window.addEventListener('mouseenter', mouseOver(true));
-    // window.addEventListener('mouseleave', mouseOver(false));
-  }, []);
-  /*onMouseOver={mouseOver(true)} onMouseLeave={mouseOver(false)*/
-  return (
-    <>
-      <div>
-        <MapComponent
-          uuid={uuid}
-          map="openstreetmap"
-          width={window.innerWidth}
-          height={window.innerHeight}
-        ></MapComponent>
-        <FloatingPanelGroup1 />
-        <FloatingPanelButtonGroup />
-      </div>
-    </>
+  const { width, height } = useWindowDimensions();
+  const [layouts, setLayouts] = useState<Array<ReactGridLayout.Layout>>(
+    initialLayouts.map((item) => item.layout),
   );
-};
+  const [removedLayoutsMap, setRemovedLayoutsMap] = useState<
+    Record<string, ReactGridLayout.Layout>
+  >({});
+  const [resources, setResources] =
+    useState<Record<string, GridItemResources>>(initialResources);
+  const [lastForefrontId, setLastForefrontId] = useState<string | null>(null);
 
-const FloatingPanelButtonGroup = () => {
-  const { isMouseInside } = useMousePresence();
-  const [, setPanelState] = useAtom(floatingPanelStateAtom);
-  const [searchState, setSearchState] = useAtom(searchAtom);
-  const [fileState, setFileState] = useAtom(fileAtom);
-  const [layerState, setLayerState] = useAtom(layerAtom);
+  const createForefront = (
+    id: string,
+    _layouts: Array<ReactGridLayout.Layout>,
+  ) => {
+    const index = _layouts.findIndex((layout) => layout.i === id);
+    if (index < 0) return _layouts;
+    const target = _layouts[index];
+    const newLayouts = new Array<ReactGridLayout.Layout>(_layouts.length);
+    for (let i = 0; i < index; i++) {
+      newLayouts[i] = _layouts[i];
+    }
+    for (let i = index; i < _layouts.length - 1; i++) {
+      newLayouts[i] = _layouts[i + 1];
+    }
+    newLayouts[_layouts.length - 1] = target;
+    setLastForefrontId(id);
+    return newLayouts;
+  };
 
-  const showPanel = useCallback(
-    (id: string, open: boolean) => () => {
-      const func =
-        id == 'search'
-          ? setSearchState
-          : id == 'file'
-            ? setFileState
-            : setLayerState;
-      func((draft) => {
-        draft.open = open;
-      });
-    },
-    [setSearchState, setFileState, setLayerState],
-  );
+  const setForefront = (id: string) => {
+    setLayouts((layout) => {
+      return createForefront(id, layout);
+    });
+  };
 
-  return (
-    isMouseInside && (
-      <>
-        {!searchState.open && (
-          <SearchEdgeButton size={'small'} onClick={showPanel('search', true)}>
-            <Search />
-          </SearchEdgeButton>
-        )}{' '}
-        {!fileState.open && (
-          <FileEdgeButton size={'small'} onClick={showPanel('file', true)}>
-            <Folder />
-          </FileEdgeButton>
-        )}{' '}
-        {!layerState.open && (
-          <LayerEdgeButton size={'small'} onClick={showPanel('layer', true)}>
-            <Layers />
-          </LayerEdgeButton>
-        )}
-      </>
-    )
-  );
-};
+  const hidePanel = (id: string, hide: boolean) => {
+    setResources((resources: Record<string, GridItemResources>) => {
+      return { ...resources, [id]: { ...resources[id], hide } };
+    });
+    setLayouts((layouts: ReactGridLayout.Layout[]) => {
+      const addingLayout = removedLayoutsMap[id];
+      if (!addingLayout || layouts.some((item) => item.i === id)) {
+        return layouts;
+      }
+      return [...layouts, addingLayout];
+    });
+  };
 
-const FloatingPanelGroup1 = () => {
-  const [, setPanelState] = useAtom(floatingPanelStateAtom);
-  const [searchState, setSearchState] = useAtom(searchAtom);
-  const [fileState, setFileState] = useAtom(fileAtom);
-  const [layerState, setLayerState] = useAtom(layerAtom);
+  const onDragStop: ItemCallback = (
+    layouts,
+    oldItem,
+    newItem,
+    placeholder,
+    e,
+    element,
+  ) => {
+    setForefront(newItem.i);
+  };
 
-  const showPanel = useCallback(
-    (id: string, open: boolean) => () => {
-      const func =
-        id == 'search'
-          ? setSearchState
-          : id == 'file'
-            ? setFileState
-            : setLayerState;
-      func((draft) => {
-        draft.open = open;
-      });
-    },
-    [setSearchState, setFileState, setLayerState],
-  );
+  const onLayoutChange = (current: ReactGridLayout.Layout[]) => {
+    setRemovedLayoutsMap(
+      (removedLayouts: Record<string, ReactGridLayout.Layout>) => {
+        const removedEntriesFromLayouts = layouts.filter(
+          (layout) => !current.some((current) => current.i == layout.i),
+        );
+        const removedEntriesMap: Record<string, ReactGridLayout.Layout> = {};
+        for (const entry of removedEntriesFromLayouts) {
+          removedEntriesMap[entry.i] = entry;
+        }
+        return { ...removedLayouts, ...removedEntriesMap };
+      },
+    );
+    if (lastForefrontId) {
+      return setLayouts(createForefront(lastForefrontId, current));
+    }
+    setLayouts(current);
+  };
 
-  const bringToFront = useCallback(
-    (id: string) => {
-      setPanelState((draft) => {
-        const maxZ = Object.values(draft)
-          .map((value) => value.z)
-          .reduce((prev, current) => (prev > current ? prev : current), 0);
-
-        Object.values(draft).map((value) => {
-          if (value.z > draft[id].z) {
-            value.z -= 1;
-          }
-          return value;
-        });
-        draft[id].z = maxZ;
-      });
-    },
-    [setPanelState],
-  );
-
-  return (
-    <div>
-      {[
-        <FloatingPanel
-          key={'search'}
-          id={'search'}
-          title={'Search'}
-          icon={<Search />}
-          open={searchState.open}
-          zIndex={searchState.z}
-          onClick={bringToFront}
-          onClose={showPanel('search', false)}
-          titleBarMode={true}
-        >
-          <SearchField id="search" type="search" size="small" margin="none" />
-        </FloatingPanel>,
-        <FloatingPanel
-          key={'file'}
-          id={'file'}
-          open={fileState.open}
-          zIndex={fileState.z}
-          icon={<Folder />}
-          title="I/O Actions"
-          onClick={bringToFront}
-          onClose={showPanel('file', false)}
-        >
+  const createDOM = (
+    layout: ReactGridLayout.Layout,
+    resource: GridItemResources,
+  ) => {
+    switch (resource.type) {
+      case 'Map':
+        return (
           <Box
-            style={{
-              gap: '8px',
-              display: 'flex',
-              justifyContent: 'center',
+            id={layout.i}
+            key={layout.i}
+            sx={{ position: 'absolute', top: 0, left: '-8px' }}
+          >
+            <MapComponent
+              uuid={params.uuid!}
+              map="openstreetmap"
+              width={width}
+              height={height}
+            ></MapComponent>
+          </Box>
+        );
+
+      case 'FloatingButton':
+        return (
+          <FloatingButton
+            id={layout.i}
+            key={layout.i}
+            tooltip={resource.tooltip!}
+            onClick={() => {
+              hidePanel(resource.bindTo!, false);
             }}
           >
-            <Button variant={'contained'}>Import...</Button>
-            <Button variant={'contained'}>Export...</Button>
-          </Box>
-        </FloatingPanel>,
-        <FloatingPanel
-          key={'layer'}
-          id={'layer'}
-          open={layerState.open}
-          zIndex={layerState.z}
-          icon={<Layers />}
-          title="Layer Panels"
-          onClick={bringToFront}
-          onClose={showPanel('layer', false)}
-        >
-          <TreeView
-            defaultCollapseIcon={<ExpandMoreIcon />}
-            defaultExpandIcon={<ChevronRightIcon />}
-            defaultExpanded={['1', '2']}
+            {resource.icon}
+          </FloatingButton>
+        );
+      case 'FloatingPanel':
+        return (
+          <FloatingPanel
+            id={layout.i}
+            key={layout.i}
+            title={resource.title!}
+            icon={resource.icon}
+            setToFront={() => setForefront(layout.i)}
+            rowHeight={resource.rowHeight!}
+            titleBarMode={resource.titleBarMode!}
+            hide={() => hidePanel(resource.id, true)}
           >
-            <StyledTreeItem
-              nodeId="1"
-              level={1}
-              labelText="Country Shapes"
-              labelIcon={Flag}
-            >
-              <StyledTreeItem
-                nodeId="1-1"
-                level={2}
-                labelText="Region1 Shapes"
-                labelIcon={Hexagon}
-              >
-                <StyledTreeItem
-                  nodeId="1-1-1"
-                  level={3}
-                  labelText="Region2 Shapes"
-                  labelIcon={Square}
-                />
-              </StyledTreeItem>
-            </StyledTreeItem>
-            <StyledTreeItem
-              nodeId="2"
-              level={1}
-              labelText="Cities"
-              labelIcon={LocationCity}
-            />
-            <StyledTreeItem
-              nodeId="3"
-              level={1}
-              labelText="Routes"
-              labelIcon={Route}
-            />
-          </TreeView>
-        </FloatingPanel>,
-      ].sort((a, b) => a.props.zIndex - b.props.zIndex)}
-    </div>
+            <CardContent>Input/Output</CardContent>
+          </FloatingPanel>
+        );
+      default:
+        throw new Error(resource.type);
+    }
+  };
+
+  const gridItems = useMemo(
+    () =>
+      layouts.map(
+        (layout, index) =>
+          !resources[layout.i].hide && createDOM(layout, resources[layout.i]),
+      ),
+    [layouts, resources],
+  );
+
+  return (
+    <Box
+      sx={{
+        margin: { xs: 0, md: 0, lg: 0 },
+        padding: 0,
+        border: 'none',
+      }}
+    >
+      <ResponsiveGridLayout
+        style={{
+          backgroundColor: 'rgba(255,255,255,0.6)',
+          margin: 0,
+          padding: 0,
+        }}
+        compactType={'vertical'}
+        autoSize={true}
+        allowOverlap={true}
+        isResizable={false}
+        isBounded={false}
+        width={width}
+        draggableHandle=".draggable"
+        breakpoints={{ lg: 1140 /*, sm: 580, xs: 0*/ }}
+        cols={{ lg: NUM_HORIZONTAL_GRIDS /*, sm: 9, xs: 3*/ }}
+        rowHeight={ROW_HEIGHT}
+        margin={[4, 4]}
+        containerPadding={[8, 2]}
+        layouts={{ lg: layouts }}
+        onLayoutChange={onLayoutChange}
+        onDragStop={onDragStop}
+      >
+        {gridItems}
+      </ResponsiveGridLayout>
+      <MapCopyright />
+    </Box>
   );
 };
+
+export const RealWorldSimPage = styled(RealWorldSimPageBase)``;

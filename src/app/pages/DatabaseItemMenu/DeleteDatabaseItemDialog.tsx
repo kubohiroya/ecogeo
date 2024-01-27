@@ -1,7 +1,7 @@
 import { Link, useLoaderData, useNavigate } from 'react-router-dom';
-import { ProjectType } from '../../models/ProjectType';
+import { GeoDatabaseType } from '../../services/database/GeoDatabaseType';
 import React, { useCallback } from 'react';
-import { ProjectTableDB } from '../../services/projectTable/ProjectTableDB';
+import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
 import {
   Button,
   Dialog,
@@ -16,7 +16,7 @@ export const DeleteDatabaseItemDialog = () => {
   const { uuid, type, name, description, coordinate, zoom } =
     useLoaderData() as {
       uuid: string;
-      type: ProjectType;
+      type: GeoDatabaseType;
       name: string | undefined;
       coordinate: [number, number];
       zoom: number;
@@ -26,8 +26,8 @@ export const DeleteDatabaseItemDialog = () => {
   const navigate = useNavigate();
 
   const handleOk = useCallback(async () => {
-    await ProjectTableDB.getSingleton()
-      .projects.where('uuid')
+    await GeoDatabaseTable.getSingleton()
+      .databases.where('uuid')
       .equals(uuid)
       .delete();
     navigate('/projects', { replace: true });

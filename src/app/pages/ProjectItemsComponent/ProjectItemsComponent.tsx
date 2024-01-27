@@ -16,42 +16,44 @@ import {
 } from '@mui/material';
 import { Link, useLoaderData, useNavigate } from 'react-router-dom';
 import { DatabaseItemMenu } from '../DatabaseItemMenu/DatabaseItemMenu';
-import { ProjectEntity } from '../../services/projectTable/ProjectEntity';
+import { GeoDatabaseEntity } from '../../services/database/GeoDatabaseEntity';
 
 import { createMapLink } from '../../../createMapLink';
-import { ProjectType } from '../../models/ProjectType';
+import { GeoDatabaseType } from '../../services/database/GeoDatabaseType';
+import SourceIcon from '@mui/icons-material/Source';
 
 export const ProjectItemsComponent = () => {
   const { projects } = useLoaderData() as {
-    projects: ProjectEntity[];
+    projects: GeoDatabaseEntity[];
   };
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!location.href.endsWith('/create') && projects.length == 0) {
-      return navigate('/create');
+    if (!location.href.endsWith('/projects-new') && projects.length == 0) {
+      return navigate('/projects-new');
     }
   }, []);
 
   const typeToIcon = {
-    [ProjectType.realWorld]: <Public />,
-    [ProjectType.theoretical]: <PsychologyAlt />,
+    [GeoDatabaseType.resource]: <SourceIcon />,
+    [GeoDatabaseType.realWorld]: <Public />,
+    [GeoDatabaseType.theoretical]: <PsychologyAlt />,
   };
 
   const speedDialActions = [
     {
-      icon: typeToIcon[ProjectType.theoretical],
+      icon: typeToIcon[GeoDatabaseType.theoretical],
       name: 'theoretical',
       onClick: () => {
-        return navigate(`/create/${ProjectType.theoretical}`);
+        return navigate(`/create/${GeoDatabaseType.theoretical}`);
       },
     },
     {
-      icon: typeToIcon[ProjectType.realWorld],
+      icon: typeToIcon[GeoDatabaseType.realWorld],
       name: 'realworld',
       onClick: () => {
-        return navigate(`/create/${ProjectType.realWorld}`);
+        return navigate(`/create/${GeoDatabaseType.realWorld}`);
       },
     },
   ];

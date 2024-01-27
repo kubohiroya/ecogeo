@@ -14,7 +14,7 @@ import {
   Coordinate,
   simplifyPolygons,
 } from '../../utils/simplify';
-import { ProjectDB } from '../project/ProjectDB';
+import { GeoDatabase } from '../database/GeoDatabase';
 
 const SIMPLIFY_TOLERANCE = 0.05;
 
@@ -42,7 +42,7 @@ export const storeGeoRegions = async ({
   errorCallback,
   cancelCallback,
 }: {
-  db: ProjectDB;
+  db: GeoDatabase;
   stream: ReadableStream;
   fileName: string;
   fileSize: number;

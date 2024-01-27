@@ -27,7 +27,6 @@ export class WorkerPool<T extends WorkerTaskRequest, R> {
   }
 
   private addWorkerToPool(workerConstructor: new () => Worker): void {
-    //const worker = new DexieWorker();
     const worker = new workerConstructor();
     worker.onerror = (event: ErrorEvent) => {
       console.log(event);

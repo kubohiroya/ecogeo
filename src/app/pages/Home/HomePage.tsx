@@ -3,7 +3,7 @@ import GithubCorner from 'react-github-corner';
 import { FullScreenBox } from '../../../components/FullScreenBox/FullScreenBox';
 import { FileDropComponent } from '../../../components/FileDropComponent/FileDropComponent';
 import AppHeader from '../../../components/AppHeader/AppHeader';
-import { Quiz, Share } from '@mui/icons-material';
+import { Share } from '@mui/icons-material';
 import { Tooltip, Typography } from '@mui/material';
 import { Outlet, useNavigate } from 'react-router-dom';
 
@@ -37,16 +37,9 @@ export const HomePage = () => {
             'resource files(GADM Shapes GeoJSON files, IDE-GSM cities and routes csv files) and project files'
           }
         >
-          <Typography style={{ textAlign: 'center', fontWeight: 'bold' }}>
-            Otherwise, drag and drop your local files
-            <Quiz
-              style={{
-                display: 'inline',
-                verticalAlign: 'middle',
-                margin: '3px',
-              }}
-            />
-          </Typography>
+          <Typography
+            style={{ textAlign: 'center', fontWeight: 'bold' }}
+          ></Typography>
         </Tooltip>
       </FileDropComponent>
     </FullScreenBox>

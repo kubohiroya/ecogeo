@@ -14,13 +14,13 @@ import {
 import { GADMFetch } from '../components/GADMFetch/GADMFetch';
 import { FileDropComponent } from '../components/FileDropComponent/FileDropComponent';
 import { IndexDBConsole } from '../components/IndexDBConsole/IndexDBConsole';
-import { ProjectDB } from './services/project/ProjectDB';
+import { GeoDatabase } from './services/database/GeoDatabase';
 
 const onFinish = (lastUpdated: number) => {
   console.log('finish loading: ', lastUpdated);
 };
 
-export const ClassicStyleApp = ({ db }: { db: ProjectDB }) => {
+export const ClassicStyleApp = ({ db }: { db: GeoDatabase }) => {
   return (
     <>
       <FileDropComponent

@@ -14,7 +14,7 @@ import {
 } from '../../utils/mortonNumberUtil';
 import { FileLoaderResponseType } from './FileLoaderResponseType';
 import { LoaderProgressResponse } from './FileLoaderResponse';
-import { ProjectDB } from '../project/ProjectDB';
+import { GeoDatabase } from '../database/GeoDatabase';
 
 export const loadCsvFile = async <T>({
   db,
@@ -27,7 +27,7 @@ export const loadCsvFile = async <T>({
   errorCallback,
   cancelCallback,
 }: {
-  db: ProjectDB;
+  db: GeoDatabase;
   stream: ReadableStream;
   fileName: string;
   fileSize: number;
@@ -163,7 +163,7 @@ export const GeoCsvLoaders: CsvLoaders = {
           'CapitalCity,Latitude,Longitude,Region,Country,Habitable,Population,Employment,EmploymentA,EmploymentM1,EmploymentM2,EmploymentM3,EmploymentM4,EmploymentM5,EmploymentS,EmploymentA2,GDP,GDPA,GDPM1,GDPM2,GDPM3,GDPM4,GDPM5,GDPS,GDPA2,Area,Mining,Grate,Plimit'
       );
     },
-    createEntity: async (db: ProjectDB, line: string) => {
+    createEntity: async (db: GeoDatabase, line: string) => {
       const [name, latitude, longitude, region, country, centroid, ...rest] =
         line.split(',');
 
@@ -207,7 +207,7 @@ export const GeoCsvLoaders: CsvLoaders = {
       return entity;
     },
     bulkAddEntity: async (
-      db: ProjectDB,
+      db: GeoDatabase,
       entityItemBuffer: GeoPointEntity[],
     ): Promise<void> => {
       await db.points.bulkAdd(entityItemBuffer);
@@ -222,7 +222,7 @@ export const GeoCsvLoaders: CsvLoaders = {
           'Start,End,Name,Distance,Speed,Border,Overhead,Loading,Mode,Quality,Oneway,Freight,Country1,Region1,Country2,Region2'
       );
     },
-    createEntity: async (db: ProjectDB, line: string) => {
+    createEntity: async (db: GeoDatabase, line: string) => {
       // FIXME
       const [
         start,
@@ -312,7 +312,7 @@ export const GeoCsvLoaders: CsvLoaders = {
       return source;
     },
     bulkAddEntity: async (
-      db: ProjectDB,
+      db: GeoDatabase,
       entityItemBuffer: GeoRouteSegmentEntity[],
     ): Promise<void> => {
       await db.routeSegments.bulkAdd(entityItemBuffer);

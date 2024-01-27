@@ -3,7 +3,7 @@ import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { Box, Button, CardContent } from '@mui/material';
 import styled from '@emotion/styled';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import ReactGridLayout, {
   ItemCallback,
   Responsive as ResponsiveGridLayout,
@@ -16,6 +16,7 @@ import {
   Flag,
   FolderOpen,
   Hexagon,
+  Home,
   Layers,
   LocationCity,
   Route,
@@ -40,7 +41,6 @@ enum GridItemType {
 interface GridItemResources {
   id: string;
   type: GridItemType;
-  bindTo?: string;
   icon?: React.ReactNode;
   tooltip?: string;
   title?: string;
@@ -48,6 +48,8 @@ interface GridItemResources {
   rowHeight?: number;
   hide?: boolean;
   children?: React.ReactNode;
+  bindTo?: string;
+  navigateTo?: string;
 }
 
 const initialLayouts: {
@@ -67,6 +69,25 @@ const initialLayouts: {
     resource: {
       id: 'map',
       type: GridItemType.Map,
+    },
+  },
+  {
+    layout: {
+      i: 'HomeButton',
+      x: 0,
+      y: 0,
+      w: 1,
+      h: 1,
+      resizeHandles: [],
+      isDraggable: true,
+      isResizable: false,
+    },
+    resource: {
+      id: 'HomeButton',
+      type: GridItemType.FloatingButton,
+      tooltip: 'Home',
+      icon: <Home />,
+      navigateTo: '/',
     },
   },
   {
@@ -208,6 +229,7 @@ const StyledResponsiveGridLayout = styled(ResponsiveGridLayout)`
 `;
 
 const RealWorldSimPageBase = () => {
+  const navigate = useNavigate();
   const params = useParams();
   const { width, height } = useWindowDimensions();
   const [layouts, setLayouts] = useState<Array<ReactGridLayout.Layout>>(
@@ -345,8 +367,12 @@ const RealWorldSimPageBase = () => {
             key={layout.i}
             tooltip={resource.tooltip!}
             onClick={() => {
-              onShowOrHide(resource.bindTo!, false);
-              onForefront(resource.bindTo!);
+              if (resource.bindTo) {
+                onShowOrHide(resource.bindTo, false);
+                onForefront(resource.bindTo);
+              } else if (resource.navigateTo) {
+                navigate(resource.navigateTo);
+              }
             }}
           >
             {resource.icon}

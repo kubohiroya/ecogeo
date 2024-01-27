@@ -16,9 +16,11 @@ import DexieQueryWorker from '../../../../../worker/DexieQueryWorker?worker';
 import { CircularProgress } from '@mui/material';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { PathStyleExtension } from '@deck.gl/extensions/typed';
-import { DexieQueryRequest } from '../../../../services/project/DexieQueryRequest';
-import { DexieQueryResponse } from '../../../../services/project/DexieQueryResponse';
+import { QueryRequest } from '../../../../services/database/QueryRequest';
+import { QueryResponse } from '../../../../services/database/QueryResponse';
 import { AsyncFunctionManager } from '../../../../utils/AsyncFunctionManager';
+import { GeoRequestPayload } from '../../../../services/database/GeoRequestPayload';
+import { GeoResponsePayload } from '../../../../services/database/GeoResponsePayload';
 
 const MAP_TILER_API_KEY = import.meta.env.VITE_MAP_TILER_API_KEY;
 
@@ -148,30 +150,29 @@ const MapComponent = (props: MapComponentProps) => {
   };
 
   useEffect(() => {
-    const worker = new WorkerPool<DexieQueryRequest, DexieQueryResponse>(
-      DexieQueryWorker,
-      10,
-      (response: DexieQueryResponse) => {
-        try {
-          const newPolygons = response.payload.polygons.map((region) =>
-            extractPolygonLayerData(region),
-          );
-          setPolygons(newPolygons);
+    const worker = new WorkerPool<
+      QueryRequest<GeoRequestPayload>,
+      QueryResponse<GeoResponsePayload>
+    >(DexieQueryWorker, 10, (response: QueryResponse<GeoResponsePayload>) => {
+      try {
+        const newPolygons = response.payload.polygons.map((region) =>
+          extractPolygonLayerData(region),
+        );
+        setPolygons(newPolygons);
 
-          const newPoints = response.payload.points
-            .flat(1)
-            .map((geoPointEntity) => {
-              return {
-                name: geoPointEntity.name,
-                coordinates: [geoPointEntity.lng, geoPointEntity.lat],
-              };
-            });
-          setPoints(newPoints);
-        } catch (error) {
-          console.log(error, response);
-        }
-      },
-    );
+        const newPoints = response.payload.points
+          .flat(1)
+          .map((geoPointEntity) => {
+            return {
+              name: geoPointEntity.name,
+              coordinates: [geoPointEntity.lng, geoPointEntity.lat],
+            };
+          });
+        setPoints(newPoints);
+      } catch (error) {
+        console.log(error, response);
+      }
+    });
     setWorker(worker);
     return () => {
       if (worker) worker.terminateAllTasks();

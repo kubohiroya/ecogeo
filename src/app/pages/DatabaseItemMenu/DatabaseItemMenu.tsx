@@ -12,12 +12,12 @@ import {
 import React, { useCallback, useRef } from 'react';
 import Menu from '@mui/icons-material/Menu';
 import { ContentCopy, Delete, Edit } from '@mui/icons-material';
-import { ProjectEntity } from '../../services/projectTable/ProjectEntity';
+import { GeoDatabaseEntity } from '../../services/database/GeoDatabaseEntity';
 import { useNavigate } from 'react-router-dom';
 import { ResourceEntity } from '../../models/ResourceEntity';
 
 interface DatabaseItemMenuProps {
-  item: ProjectEntity | ResourceEntity;
+  item: GeoDatabaseEntity | ResourceEntity;
 }
 
 export const DatabaseItemMenu = ({ item }: DatabaseItemMenuProps) => {

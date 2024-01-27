@@ -3,9 +3,10 @@ import { Box, Tab, Tabs } from '@mui/material';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { ResourceItemsComponent } from '../ResourceItemsComponent/ResourceItemsComponent';
 import { ProjectItemsComponent } from '../ProjectItemsComponent/ProjectItemsComponent';
+import { GeoDatabaseTableType } from './GeoDatabaseTableType';
 
 type DatabaseItemIndexPros = {
-  mode: number;
+  type: GeoDatabaseTableType;
 };
 
 const TabPanel = (props: any) => {
@@ -30,7 +31,7 @@ function a11yProps(index: number) {
   };
 }
 
-export const DatabaseItemTableComponent = (props: DatabaseItemIndexPros) => {
+export const GeoDatabaseTableComponent = (props: DatabaseItemIndexPros) => {
   const navigate = useNavigate();
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     navigate(newValue == 0 ? '/resources' : '/projects', { replace: true });
@@ -46,7 +47,7 @@ export const DatabaseItemTableComponent = (props: DatabaseItemIndexPros) => {
       >
         <Tabs
           variant="fullWidth"
-          value={props.mode}
+          value={props.type}
           onChange={handleChange}
           aria-label="tabs"
         >
@@ -54,10 +55,10 @@ export const DatabaseItemTableComponent = (props: DatabaseItemIndexPros) => {
           <Tab label="Projects" {...a11yProps(1)} />
         </Tabs>
       </Box>
-      <TabPanel value={props.mode} index={0}>
+      <TabPanel value={props.type} index={0}>
         <ResourceItemsComponent />
       </TabPanel>
-      <TabPanel value={props.mode} index={1}>
+      <TabPanel value={props.type} index={1}>
         <ProjectItemsComponent />
       </TabPanel>
       <Outlet />

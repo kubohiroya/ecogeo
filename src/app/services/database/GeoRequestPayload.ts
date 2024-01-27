@@ -1,4 +1,4 @@
-export type DexieQueryRequestPayload = {
+export type GeoRequestPayload = {
   dbName: string;
   mortonNumbers: number[][][];
   zoom: number;

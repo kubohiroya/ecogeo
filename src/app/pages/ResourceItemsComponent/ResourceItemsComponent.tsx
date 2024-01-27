@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Flag, LocationCity, Public, Route } from '@mui/icons-material';
 import {
   Box,
@@ -24,6 +24,19 @@ export const ResourceItemsComponent = () => {
   };
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (
+      !location.href.endsWith('/resources-new') &&
+      !location.href.endsWith('/resources/gadm') &&
+      !location.href.endsWith('/resources/cities') &&
+      !location.href.endsWith('/resources/routes') &&
+      resources.length == 0
+    ) {
+      return navigate('/resources-new');
+    }
+  }, []);
+
   const speedDialActions = [
     {
       icon: <Flag />,
@@ -36,14 +49,14 @@ export const ResourceItemsComponent = () => {
       icon: <LocationCity />,
       name: 'IDE-GSM Cities',
       onClick: () => {
-        return navigate(`/cities/`);
+        return navigate(`/resources/cities`);
       },
     },
     {
       icon: <Route />,
       name: 'IDE-GSM Routes',
       onClick: () => {
-        return navigate(`/routes/`);
+        return navigate(`/resources/routes`);
       },
     },
   ];

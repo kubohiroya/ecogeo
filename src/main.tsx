@@ -2,17 +2,26 @@ import React, { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { RealWorldSimPage } from './app/pages/RealWorldSim/RealWorldSimPage';
-import { ProjectTableDB } from './app/services/projectTable/ProjectTableDB';
-import { ProjectDB } from './app/services/project/ProjectDB';
-import { CreateProjectSelector } from './app/pages/ProjectCreator/CreateProjectSelector';
+import { GeoDatabase } from './app/services/database/GeoDatabase';
+import { GeoDatabaseItemCreateModeSelector } from './app/pages/Home/GeoDatabaseItemCreateModeSelector';
 import { UpsertTheoreticalProjectDialog } from './app/pages/ProjectCreator/UpsertTheoreticalProjectDialog';
 import { createProjectLoader } from './app/pages/ProjectCreator/createProjectLoader';
 import { UpsertGeoProjectDialog } from './app/pages/ProjectCreator/UpsertGeoProjectDialog';
-import { ProjectType } from './app/models/ProjectType';
+import { GeoDatabaseType } from './app/services/database/GeoDatabaseType';
 import { DeleteDatabaseItemDialog } from './app/pages/DatabaseItemMenu/DeleteDatabaseItemDialog';
-import { DatabaseItemTableComponent } from './app/pages/Home/DatabaseItemTableComponent';
+import { GeoDatabaseTableComponent } from './app/pages/Home/GeoDatabaseTableComponent';
 import { HomePage } from './app/pages/Home/HomePage';
 import { FetchGADMResourcesComponent } from './app/pages/ResourceItemsComponent/FetchGADMResourcesComponent';
+import { ResourceItemLoader } from './app/pages/ResourceItemsComponent/ResourceItemLoader';
+import { ProjectItemLoader } from './app/pages/ProjectItemsComponent/ProjectItemLoader';
+import { GeoDatabaseTableType } from './app/pages/Home/GeoDatabaseTableType';
+import {
+  Flag,
+  LocationCity,
+  PsychologyAlt,
+  Public,
+  Route,
+} from '@mui/icons-material';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -25,10 +34,10 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/resources',
-        element: <DatabaseItemTableComponent mode={0} />,
-        loader: async () => ({
-          resources: [],
-        }),
+        element: (
+          <GeoDatabaseTableComponent type={GeoDatabaseTableType.resources} />
+        ),
+        loader: ResourceItemLoader,
         children: [
           {
             path: '/resources/gadm',
@@ -37,58 +46,97 @@ const router = createBrowserRouter([
         ],
       },
       {
+        path: '/resources-new',
+        element: (
+          <GeoDatabaseItemCreateModeSelector
+            items={[
+              {
+                icon: <Flag fontSize="large" />,
+                name: 'GADM GeoJSON',
+                url: `/resources/gadm`,
+              },
+              {
+                icon: <LocationCity fontSize="large" />,
+                name: 'IDE-GSM Cities',
+                url: `/resources/cities`,
+              },
+              {
+                icon: <Route fontSize="large" />,
+                name: 'IDE-GSM Routes',
+                url: `/resources/routes`,
+              },
+            ]}
+          />
+        ),
+      },
+      {
         path: '/projects',
-        element: <DatabaseItemTableComponent mode={1} />,
-        loader: async () => ({
-          projects: await ProjectTableDB.getProjects(),
-        }),
+        element: (
+          <GeoDatabaseTableComponent type={GeoDatabaseTableType.projects} />
+        ),
+        loader: ProjectItemLoader,
+      },
+      {
+        path: '/projects-new',
+        element: (
+          <GeoDatabaseItemCreateModeSelector
+            items={[
+              {
+                icon: <PsychologyAlt fontSize="large" />,
+                name: 'Theoretical Model',
+                url: `/create/${GeoDatabaseType.theoretical}`,
+              },
+              {
+                icon: <Public fontSize="large" />,
+                name: 'Real-World Model',
+                url: `/create/${GeoDatabaseType.realWorld}`,
+              },
+            ]}
+          />
+        ),
       },
     ],
   },
   {
-    path: `/delete/${ProjectType.theoretical}/:uuid`,
+    path: `/delete/${GeoDatabaseType.theoretical}/:uuid`,
     element: <DeleteDatabaseItemDialog />,
     loader: createProjectLoader({
-      type: ProjectType.realWorld,
+      type: GeoDatabaseType.realWorld,
     }),
   },
   {
-    path: `/delete/${ProjectType.realWorld}/:uuid`,
+    path: `/delete/${GeoDatabaseType.realWorld}/:uuid`,
     element: <DeleteDatabaseItemDialog />,
     loader: createProjectLoader({
-      type: ProjectType.realWorld,
+      type: GeoDatabaseType.realWorld,
     }),
   },
   {
-    path: '/create',
-    element: <CreateProjectSelector />,
-  },
-  {
-    path: `/create/${ProjectType.theoretical}`,
+    path: `/create/${GeoDatabaseType.theoretical}`,
     element: <UpsertTheoreticalProjectDialog />,
     loader: createProjectLoader({
-      type: ProjectType.theoretical,
+      type: GeoDatabaseType.theoretical,
     }),
   },
   {
-    path: `/create/${ProjectType.realWorld}`,
+    path: `/create/${GeoDatabaseType.realWorld}`,
     element: <UpsertGeoProjectDialog />,
     loader: createProjectLoader({
-      type: ProjectType.realWorld,
+      type: GeoDatabaseType.realWorld,
     }),
   },
   {
-    path: `/update/${ProjectType.theoretical}/:uuid`,
+    path: `/update/${GeoDatabaseType.theoretical}/:uuid`,
     element: <UpsertTheoreticalProjectDialog />,
     loader: createProjectLoader({
-      type: ProjectType.theoretical,
+      type: GeoDatabaseType.theoretical,
     }),
   },
   {
-    path: `/update/${ProjectType.realWorld}/:uuid`,
+    path: `/update/${GeoDatabaseType.realWorld}/:uuid`,
     element: <UpsertGeoProjectDialog />,
     loader: createProjectLoader({
-      type: ProjectType.realWorld,
+      type: GeoDatabaseType.realWorld,
     }),
   },
   {
@@ -99,7 +147,7 @@ const router = createBrowserRouter([
       latitude: parseFloat(request.params.latitude),
       longitude: parseFloat(request.params.longitude),
       zoom: parseFloat(request.params.zoom),
-      projectDB: await ProjectDB.getProjectDB(request.params.uuid),
+      projectDB: await GeoDatabase.open(request.params.uuid),
     }),
   },
 ]);

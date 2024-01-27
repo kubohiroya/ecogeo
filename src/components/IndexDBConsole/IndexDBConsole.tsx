@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
 import { Box, Button } from '@mui/material';
-import { ProjectDB } from '../../app/services/project/ProjectDB';
+import { GeoDatabase } from '../../app/services/database/GeoDatabase';
 
-export const IndexDBConsole = ({ db }: { db: ProjectDB }) => {
+export const IndexDBConsole = ({ db }: { db: GeoDatabase }) => {
   const handleDelete = useCallback(() => {
     db.countries.clear();
     db.regions1.clear();

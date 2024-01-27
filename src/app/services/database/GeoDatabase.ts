@@ -12,26 +12,32 @@ import {
 const zoomLevels = 'z0, z1, z2, z3, z4, z5, z6, z7, z8, z9, z10';
 const zoomLevelsExt = 'z0_, z1_, z2_, z3_, z4_, z5_, z6_, z7_, z8_, z9_, z10_';
 
-export class ProjectDB extends Dexie {
-  public points: Dexie.Table<GeoPointEntity, number>;
+export class GeoDatabase extends Dexie {
   public countries: Dexie.Table<GeoRegionEntity, number>;
   public regions1: Dexie.Table<GeoRegionEntity, number>;
   public regions2: Dexie.Table<GeoRegionEntity, number>;
+  public points: Dexie.Table<GeoPointEntity, number>;
   public routeSegments: Dexie.Table<GeoRouteSegmentEntity, number>;
 
-  public constructor(dbName: string) {
-    super(dbName);
+  public constructor(name: string) {
+    super(name);
     this.version(8).stores({
-      points:
-        '++id, type, country, name_1, name, &[country+name_1+name], ' +
-        zoomLevels,
       countries: '++id, name, &gid_0, ' + zoomLevels + ',' + zoomLevelsExt,
       regions1:
-        '++id, name, &[gid_0+gid_1], ' + zoomLevels + ',' + zoomLevelsExt,
+        '++id, name, resourceIdRef, &[gid_0+gid_1], ' +
+        zoomLevels +
+        ',' +
+        zoomLevelsExt,
       regions2:
-        '++id, name, &[gid_0+gid_1+gid_2], ' + zoomLevels + ',' + zoomLevelsExt,
+        '++id, resourceIdRef, name, &[gid_0+gid_1+gid_2], ' +
+        zoomLevels +
+        ',' +
+        zoomLevelsExt,
+      points:
+        '++id, resourceIdRef, type, country, name_1, name, &[country+name_1+name], ' +
+        zoomLevels,
       routeSegments:
-        '++id, mode, sourceCountry, sourceName1, sourceName2, sourceName, targetCountry, targetName1, targetName2, targetName, sourceIdRef, targetIdRef, &[sourceIdRef+targetIdRef], ' +
+        '++id, resourceIdRef, mode, sourceCountry, sourceName1, sourceName2, sourceName, targetCountry, targetName1, targetName2, targetName, sourceIdRef, targetIdRef, &[sourceIdRef+targetIdRef], ' +
         zoomLevels +
         ',' +
         zoomLevelsExt,
@@ -43,8 +49,8 @@ export class ProjectDB extends Dexie {
     this.routeSegments = this.table('routeSegments');
   }
 
-  static async getProjectDB(uuid: string): Promise<ProjectDB> {
-    return new ProjectDB(uuid);
+  public static async open(name: string): Promise<GeoDatabase> {
+    return new GeoDatabase(name);
   }
 
   async findAllGeoRegions(mortonNumbers: number[][][], zoom: number) {

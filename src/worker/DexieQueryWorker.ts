@@ -1,11 +1,11 @@
 // dexieWorker.js
-import { DexieQueryRequestPayload } from '../app/services/project/DexieQueryRequestPayload';
-import { ProjectDB } from '../app/services/project/ProjectDB';
+import { GeoRequestPayload } from '../app/services/database/GeoRequestPayload';
+import { GeoDatabase } from '../app/services/database/GeoDatabase';
 
 async function processQueue(
-  db: ProjectDB,
+  db: GeoDatabase,
   id: number,
-  payload: DexieQueryRequestPayload,
+  payload: GeoRequestPayload,
 ) {
   const polygons = await db.findAllGeoRegions(
     payload.mortonNumbers,
@@ -31,11 +31,9 @@ self.addEventListener(
       return;
     }
 
-    const payload = JSON.parse(
-      message.data.payload,
-    ) as DexieQueryRequestPayload;
+    const payload = JSON.parse(message.data.payload) as GeoRequestPayload;
     const dbName = payload.dbName;
-    const db = new ProjectDB(dbName);
+    const db = new GeoDatabase(dbName);
     processQueue(db, message.data.id, payload);
   },
 );

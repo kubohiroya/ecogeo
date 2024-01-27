@@ -1,13 +1,13 @@
-import { ProjectTableDB } from '../../services/projectTable/ProjectTableDB';
-import { ProjectType } from '../../models/ProjectType';
+import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
+import { GeoDatabaseType } from '../../services/database/GeoDatabaseType';
 
 export const createProjectLoader =
-  ({ type }: { type: ProjectType }) =>
+  ({ type }: { type: GeoDatabaseType }) =>
   async ({ params }: any) => {
     return params.uuid === undefined
       ? { uuid: undefined, type, name: '', description: '' }
-      : await ProjectTableDB.getSingleton()
-          .projects.where('uuid')
+      : await GeoDatabaseTable.getSingleton()
+          .databases.where('uuid')
           .equals(params.uuid)
           .last();
   };

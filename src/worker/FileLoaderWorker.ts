@@ -12,7 +12,7 @@ import {
 import { GeoPointEntity } from '../app/models/geo/GeoPointEntity';
 import { storeGeoRegions } from '../app/services/file/GeoJsonLoaders';
 import { unzipFileToStream } from '../app/services/file/UnzipFileToStream';
-import { ProjectDB } from '../app/services/project/ProjectDB';
+import { GeoDatabase } from '../app/services/database/GeoDatabase';
 
 let workerBusy: boolean = false;
 
@@ -70,7 +70,7 @@ const cancelCallback = (fileName: string) => {
 };
 
 const loadFileList = async (
-  db: ProjectDB,
+  db: GeoDatabase,
   fileList: FileList,
   csvLoaders: CsvLoaders,
 ) => {
@@ -141,7 +141,7 @@ self.onmessage = async function fileLoaderWorker(
         workerBusy = true;
         const dbName = payload.value.dbName;
         console.log(dbName);
-        const db = new ProjectDB(dbName);
+        const db = new GeoDatabase(dbName);
         await loadFileList(
           db,
           (event.data as any).data as FileList,

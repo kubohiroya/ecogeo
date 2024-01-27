@@ -1,15 +1,15 @@
 import { useGeolocated } from 'react-geolocated';
-import { ProjectTableDB } from '../../services/projectTable/ProjectTableDB';
+import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
 import { useCallback } from 'react';
 import { UpsertProjectDialog } from './UpsertProjectDialog';
 import { useLoaderData } from 'react-router-dom';
-import { ProjectType } from '../../models/ProjectType';
+import { GeoDatabaseType } from '../../services/database/GeoDatabaseType';
 import { INITIAL_VIEW_STATE } from '../../Constants';
 
 export const UpsertGeoProjectDialog = () => {
   const { uuid, type, name, description } = useLoaderData() as {
     uuid: string | undefined;
-    type: ProjectType;
+    type: GeoDatabaseType;
     name: string | undefined;
     description: string | undefined;
   };
@@ -31,12 +31,12 @@ export const UpsertGeoProjectDialog = () => {
   const onSubmit = useCallback(
     async (value: {
       uuid: string | undefined;
-      type: ProjectType;
+      type: GeoDatabaseType;
       name: string;
       description: string;
     }) => {
       if (!uuid) {
-        await ProjectTableDB.createProject({
+        await GeoDatabaseTable.createDatabase({
           ...value,
           type,
           version: 1,
@@ -45,7 +45,7 @@ export const UpsertGeoProjectDialog = () => {
           zoom,
         });
       } else {
-        await ProjectTableDB.updateProject(uuid, {
+        await GeoDatabaseTable.updateDatabase(uuid, {
           ...value,
         });
       }

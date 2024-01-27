@@ -142,6 +142,12 @@ for (const item of initialLayouts) {
   initialResources[item.resource.id] = item.resource;
 }
 
+const StyledResponsiveGridLayout = styled(ResponsiveGridLayout)`
+  .react-grid-item.react-grid-placeholder {
+    background: grey !important;
+  }
+`;
+
 const RealWorldSimPageBase = () => {
   const params = useParams();
   const { width, height } = useWindowDimensions();
@@ -294,7 +300,7 @@ const RealWorldSimPageBase = () => {
         border: 'none',
       }}
     >
-      <ResponsiveGridLayout
+      <StyledResponsiveGridLayout
         style={{
           backgroundColor: 'rgba(255,255,255,0.6)',
           margin: 0,
@@ -317,7 +323,7 @@ const RealWorldSimPageBase = () => {
         onDragStop={onDragStop}
       >
         {gridItems}
-      </ResponsiveGridLayout>
+      </StyledResponsiveGridLayout>
       <MapCopyright />
     </Box>
   );

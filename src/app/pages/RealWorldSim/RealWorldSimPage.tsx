@@ -1,7 +1,7 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
-import { Box, CardContent } from '@mui/material';
+import { Box, Button, CardContent } from '@mui/material';
 import styled from '@emotion/styled';
 import { useParams } from 'react-router-dom';
 import ReactGridLayout, {
@@ -12,8 +12,20 @@ import useWindowDimensions from '../../hooks/useWindowDimenstions';
 import { FloatingButton } from '../../../components/FloatingButton/FloatingButton';
 import { FloatingPanel } from '../../../components/FloatingPanel/FloatingPanel';
 import { MapCopyright } from '../../../components/MapCopyright/MapCopyright';
-import { FolderOpen, Layers } from '@mui/icons-material';
+import {
+  Flag,
+  FolderOpen,
+  Hexagon,
+  Layers,
+  LocationCity,
+  Route,
+  Square,
+} from '@mui/icons-material';
 import MapComponent from '../../components/SessionPanel/MapPanel/deckgl/MapComponent';
+import { TreeView } from '@mui/x-tree-view';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { StyledTreeItem } from '../../../components/TreeView/StyledTreeItem';
 
 const NUM_HORIZONTAL_GRIDS = 32;
 const NUM_VERTICAL_GRIDS = 20;
@@ -35,6 +47,7 @@ interface GridItemResources {
   titleBarMode?: 'win' | 'mac';
   rowHeight?: number;
   hide?: boolean;
+  children?: React.ReactNode;
 }
 
 const initialLayouts: {
@@ -113,12 +126,18 @@ const initialLayouts: {
       titleBarMode: 'win',
       rowHeight: ROW_HEIGHT,
       hide: false,
+      children: (
+        <Box style={{ display: 'flex', gap: '10px' }}>
+          <Button variant={'contained'}>Import...</Button>
+          <Button variant={'contained'}>Export...</Button>
+        </Box>
+      ),
     },
   },
   {
     layout: {
       i: 'Layers',
-      x: 10,
+      x: 5,
       y: 10,
       w: 10,
       h: 10,
@@ -134,6 +153,46 @@ const initialLayouts: {
       titleBarMode: 'win',
       rowHeight: ROW_HEIGHT,
       hide: false,
+      children: (
+        <TreeView
+          defaultCollapseIcon={<ExpandMoreIcon />}
+          defaultExpandIcon={<ChevronRightIcon />}
+          defaultExpanded={['1', '2']}
+        >
+          <StyledTreeItem
+            nodeId="1"
+            level={1}
+            labelText="Country Shapes"
+            labelIcon={Flag}
+          >
+            <StyledTreeItem
+              nodeId="1-1"
+              level={2}
+              labelText="Region1 Shapes"
+              labelIcon={Hexagon}
+            >
+              <StyledTreeItem
+                nodeId="1-1-1"
+                level={3}
+                labelText="Region2 Shapes"
+                labelIcon={Square}
+              />
+            </StyledTreeItem>
+          </StyledTreeItem>
+          <StyledTreeItem
+            nodeId="2"
+            level={1}
+            labelText="Cities"
+            labelIcon={LocationCity}
+          />
+          <StyledTreeItem
+            nodeId="3"
+            level={1}
+            labelText="Routes"
+            labelIcon={Route}
+          />
+        </TreeView>
+      ),
     },
   },
 ];
@@ -154,12 +213,13 @@ const RealWorldSimPageBase = () => {
   const [layouts, setLayouts] = useState<Array<ReactGridLayout.Layout>>(
     initialLayouts.map((item) => item.layout),
   );
+
   const [removedLayoutsMap, setRemovedLayoutsMap] = useState<
-    Record<string, ReactGridLayout.Layout>
+    Record<string, ReactGridLayout.Layout | undefined>
   >({});
   const [resources, setResources] =
     useState<Record<string, GridItemResources>>(initialResources);
-  const [lastForefrontId, setLastForefrontId] = useState<string | null>(null);
+  const [forefront, setForefront] = useState<string>('' as string);
 
   const createForefront = (
     id: string,
@@ -176,57 +236,85 @@ const RealWorldSimPageBase = () => {
       newLayouts[i] = _layouts[i + 1];
     }
     newLayouts[_layouts.length - 1] = target;
-    setLastForefrontId(id);
     return newLayouts;
   };
 
-  const setForefront = (id: string) => {
-    setLayouts((layout) => {
-      return createForefront(id, layout);
-    });
-  };
+  const onShowOrHide = (id: string, hide: boolean) => {
+    if (hide) {
+      const removingLayout = layouts.find((layout) => layout.i == id);
+      if (removingLayout) {
+        setRemovedLayoutsMap(
+          (
+            removedLayoutsMap: Record<
+              string,
+              ReactGridLayout.Layout | undefined
+            >,
+          ) => {
+            return {
+              ...removedLayoutsMap,
+              [removingLayout.i]: { ...removingLayout },
+            };
+          },
+        );
+      } else {
+        throw new Error();
+      }
+    } else {
+      setRemovedLayoutsMap(
+        (
+          removedLayoutsMap: Record<string, ReactGridLayout.Layout | undefined>,
+        ) => {
+          const addingLayout = removedLayoutsMap[id];
+          setLayouts((layouts: ReactGridLayout.Layout[]) => {
+            if (!addingLayout || layouts.some((item) => item.i === id)) {
+              return [...layouts];
+            }
+            return [...layouts, addingLayout];
+          });
+          return { ...removedLayoutsMap, [id]: undefined };
+        },
+      );
+    }
 
-  const hidePanel = (id: string, hide: boolean) => {
     setResources((resources: Record<string, GridItemResources>) => {
       return { ...resources, [id]: { ...resources[id], hide } };
     });
-    setLayouts((layouts: ReactGridLayout.Layout[]) => {
-      const addingLayout = removedLayoutsMap[id];
-      if (!addingLayout || layouts.some((item) => item.i === id)) {
-        return layouts;
-      }
-      return [...layouts, addingLayout];
+  };
+
+  const onForefront = (id: string) => {
+    setForefront(id);
+    setLayouts((layouts) => {
+      return createForefront(id, layouts);
     });
   };
 
-  const onDragStop: ItemCallback = (
-    layouts,
+  const onResizeStop: ItemCallback = (
+    current,
     oldItem,
     newItem,
     placeholder,
     e,
     element,
   ) => {
-    setForefront(newItem.i);
+    const newLayouts = createForefront(oldItem.i, current);
+    setLayouts(newLayouts);
+  };
+
+  const onDragStop: ItemCallback = (
+    current,
+    oldItem,
+    newItem,
+    placeholder,
+    e,
+    element,
+  ) => {
+    const newLayouts = createForefront(oldItem.i, current);
+    setLayouts(newLayouts);
   };
 
   const onLayoutChange = (current: ReactGridLayout.Layout[]) => {
-    setRemovedLayoutsMap(
-      (removedLayouts: Record<string, ReactGridLayout.Layout>) => {
-        const removedEntriesFromLayouts = layouts.filter(
-          (layout) => !current.some((current) => current.i == layout.i),
-        );
-        const removedEntriesMap: Record<string, ReactGridLayout.Layout> = {};
-        for (const entry of removedEntriesFromLayouts) {
-          removedEntriesMap[entry.i] = entry;
-        }
-        return { ...removedLayouts, ...removedEntriesMap };
-      },
-    );
-    if (lastForefrontId) {
-      return setLayouts(createForefront(lastForefrontId, current));
-    }
-    setLayouts(current);
+    const newLayouts = createForefront(forefront, current);
+    setLayouts(newLayouts);
   };
 
   const createDOM = (
@@ -257,7 +345,8 @@ const RealWorldSimPageBase = () => {
             key={layout.i}
             tooltip={resource.tooltip!}
             onClick={() => {
-              hidePanel(resource.bindTo!, false);
+              onShowOrHide(resource.bindTo!, false);
+              onForefront(resource.bindTo!);
             }}
           >
             {resource.icon}
@@ -270,27 +359,18 @@ const RealWorldSimPageBase = () => {
             key={layout.i}
             title={resource.title!}
             icon={resource.icon}
-            setToFront={() => setForefront(layout.i)}
+            setToFront={() => onForefront(layout.i)}
             rowHeight={resource.rowHeight!}
             titleBarMode={resource.titleBarMode!}
-            hide={() => hidePanel(resource.id, true)}
+            hide={() => onShowOrHide(resource.id, true)}
           >
-            <CardContent>Input/Output</CardContent>
+            <CardContent>{resource.children}</CardContent>
           </FloatingPanel>
         );
       default:
         throw new Error(resource.type);
     }
   };
-
-  const gridItems = useMemo(
-    () =>
-      layouts.map(
-        (layout, index) =>
-          !resources[layout.i].hide && createDOM(layout, resources[layout.i]),
-      ),
-    [layouts, resources],
-  );
 
   return (
     <Box
@@ -321,8 +401,12 @@ const RealWorldSimPageBase = () => {
         layouts={{ lg: layouts }}
         onLayoutChange={onLayoutChange}
         onDragStop={onDragStop}
+        onResizeStop={onResizeStop}
       >
-        {gridItems}
+        {layouts.map(
+          (layout) =>
+            !resources[layout.i].hide && createDOM(layout, resources[layout.i]),
+        )}
       </StyledResponsiveGridLayout>
       <MapCopyright />
     </Box>

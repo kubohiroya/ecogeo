@@ -4,7 +4,6 @@ import React, {
   MouseEvent,
   ReactNode,
   TouchEvent,
-  useCallback,
 } from 'react';
 import {
   Box,
@@ -77,9 +76,9 @@ export const FloatingPanel = forwardRef<HTMLDivElement, FloatingPanelProps>(
     }: FloatingPanelProps,
     ref,
   ) => {
-    const hideMe = useCallback(() => {
+    const hideMe = () => {
       hide && hide();
-    }, []);
+    };
 
     return (
       <FloatingCard

@@ -1,6 +1,6 @@
 export const create2DArray = (
   numVertices: number,
-  createValue?: (i: number, j: number) => number
+  createValue?: (i: number, j: number) => number,
 ): number[][] => {
   const matrix2d: number[][] = [];
   for (let i = 0; i < numVertices; i++) {
@@ -55,7 +55,7 @@ export const loop = (start: number, end?: number) => {
 
 export function convertIdToIndex<T extends { id: number }>(
   arr: T[],
-  id: number
+  id: number,
 ): number {
   let left = 0;
   let right = arr.length - 1;
@@ -84,7 +84,7 @@ export function convertIdToIndex<T extends { id: number }>(
 export function getById<
   T extends {
     id: number;
-  }
+  },
 >(arr: T[], id: number): T | null {
   let left = 0;
   let right = arr.length - 1;
@@ -115,4 +115,46 @@ export function shuffleArray<T>(array: T[]) {
     [array[i], array[j]] = [array[j], array[i]];
   }
   return array; // for chaining
+}
+
+export function entriesToRecord<K extends string | number | symbol, V>(
+  entries: [K, V][],
+): Record<K, V> {
+  const result: Record<K, V> = {} as Record<K, V>;
+  entries.forEach(([key, value]) => {
+    result[key] = value;
+  });
+  return result;
+}
+
+export function filterRecord<K extends string | number | symbol, V>(
+  record: Record<K, V>,
+  filter: (k: K, v: V) => boolean,
+): Record<K, V> {
+  // 新しいRecordオブジェクトを作成する
+  const updatedRecord: Record<K, V> = {} as Record<K, V>;
+  // 元のRecordの各エントリーをループする
+  Object.keys(record).forEach((key: string) => {
+    // キャストしてK型に合わせる
+    const castedKey = key as K;
+    const value = record[castedKey];
+    // フィルター関数がtrueを返す場合のみ、新しいRecordにエントリーを追加する
+    if (filter(castedKey, value)) {
+      updatedRecord[castedKey] = value;
+    }
+  });
+  return updatedRecord;
+}
+
+export function removeEntries<K extends string | number | symbol, V>(
+  record: Record<K, V>,
+  removingKeys: K[],
+): Record<K, V> {
+  // 新しいRecordオブジェクトを作成する
+  const updatedRecord: Record<K, V> = { ...record };
+  // 削除するキーの配列をループして、それぞれのキーをRecordから削除する
+  removingKeys.forEach((key) => {
+    delete updatedRecord[key];
+  });
+  return updatedRecord;
 }

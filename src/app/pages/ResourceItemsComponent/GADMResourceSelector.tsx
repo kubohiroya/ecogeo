@@ -232,18 +232,38 @@ export const GADMResourceSelector = forwardRef<
               onChange={() => handleRowHeaderCheckboxChange(dataIndex + 1)}
               name={`${dataIndex + 1}`}
             />
-            {item.name}({item.code})
+            <a href={`https://gadm.org/maps/${item.code}.html`} target="_blank">
+              {item.name}({item.code})
+            </a>
           </TableCell>
           {LEVELS.map((level: number) => (
             <TableCell key={level}>
               {level <= item.level && (
-                <Checkbox
-                  checked={selectionMatrix[dataIndex + 1][level + 1]}
-                  onChange={() =>
-                    handleCheckboxChange(dataIndex + 1, level + 1)
-                  }
-                  name={`${dataIndex + 1}_${level + 1}`}
-                />
+                <>
+                  <Checkbox
+                    checked={selectionMatrix[dataIndex + 1][level + 1]}
+                    onChange={() =>
+                      handleCheckboxChange(dataIndex + 1, level + 1)
+                    }
+                    name={`${dataIndex + 1}_${level + 1}`}
+                  />
+                  {level == 0 && (
+                    <a
+                      href={`https://gadm.org/maps/${item.code}.html`}
+                      target="_blank"
+                    >
+                      {level}
+                    </a>
+                  )}
+                  {level == 1 && (
+                    <a
+                      href={`https://gadm.org/maps/${item.code}_${level}.html`}
+                      target="_blank"
+                    >
+                      {level}
+                    </a>
+                  )}
+                </>
               )}
             </TableCell>
           ))}

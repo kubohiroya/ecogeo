@@ -1,7 +1,6 @@
 import React, { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { RealWorldSimPage } from './app/pages/RealWorldSim/RealWorldSimPage';
 import { GeoDatabase } from './app/services/database/GeoDatabase';
 import { GeoDatabaseItemCreateModeSelector } from './app/pages/Home/GeoDatabaseItemCreateModeSelector';
 import { UpsertTheoreticalProjectDialog } from './app/pages/ProjectCreator/UpsertTheoreticalProjectDialog';
@@ -11,17 +10,22 @@ import { GeoDatabaseType } from './app/services/database/GeoDatabaseType';
 import { DeleteDatabaseItemDialog } from './app/pages/DatabaseItemMenu/DeleteDatabaseItemDialog';
 import { GeoDatabaseTableComponent } from './app/pages/Home/GeoDatabaseTableComponent';
 import { HomePage } from './app/pages/Home/HomePage';
-import { FetchGADMResourcesComponent } from './app/pages/ResourceItemsComponent/FetchGADMResourcesComponent';
+import { GADMGeoJsonComponent } from './app/pages/ResourceItemsComponent/GADMGeoJsonComponent';
 import { ResourceItemLoader } from './app/pages/ResourceItemsComponent/ResourceItemLoader';
 import { ProjectItemLoader } from './app/pages/ProjectItemsComponent/ProjectItemLoader';
 import { GeoDatabaseTableType } from './app/pages/Home/GeoDatabaseTableType';
 import {
   Flag,
   LocationCity,
-  PsychologyAlt,
+  PanoramaFishEye,
   Public,
   Route,
+  Share,
 } from '@mui/icons-material';
+import { IdeGsmCitiesComponent } from './app/pages/ResourceItemsComponent/IdeGsmCitiesComponent';
+import { IdeGsmRoutesComponent } from './app/pages/ResourceItemsComponent/IdeGsmRoutesComponent';
+import { RealWorldSimPage } from './app/pages/Sim/RealWorldSimPage';
+import { RaceTrackSimPage } from './app/pages/Sim/RaceTrackSimPage';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -41,7 +45,15 @@ const router = createBrowserRouter([
         children: [
           {
             path: '/resources/gadm',
-            element: <FetchGADMResourcesComponent />,
+            element: <GADMGeoJsonComponent />,
+          },
+          {
+            path: '/resources/cities',
+            element: <IdeGsmCitiesComponent />,
+          },
+          {
+            path: '/resources/routes',
+            element: <IdeGsmRoutesComponent />,
           },
         ],
       },
@@ -82,9 +94,14 @@ const router = createBrowserRouter([
           <GeoDatabaseItemCreateModeSelector
             items={[
               {
-                icon: <PsychologyAlt fontSize="large" />,
-                name: 'Theoretical Model',
-                url: `/create/${GeoDatabaseType.theoretical}`,
+                icon: <PanoramaFishEye fontSize="large" />,
+                name: 'Racetrack Model',
+                url: `/create/${GeoDatabaseType.racetrack}`,
+              },
+              {
+                icon: <Share fontSize="large" />,
+                name: 'Graph Structured Model',
+                url: `/create/${GeoDatabaseType.racetrack}`,
               },
               {
                 icon: <Public fontSize="large" />,
@@ -98,10 +115,17 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: `/delete/${GeoDatabaseType.theoretical}/:uuid`,
+    path: `/delete/${GeoDatabaseType.racetrack}/:uuid`,
     element: <DeleteDatabaseItemDialog />,
     loader: createProjectLoader({
-      type: GeoDatabaseType.realWorld,
+      type: GeoDatabaseType.racetrack,
+    }),
+  },
+  {
+    path: `/delete/${GeoDatabaseType.graph}/:uuid`,
+    element: <DeleteDatabaseItemDialog />,
+    loader: createProjectLoader({
+      type: GeoDatabaseType.graph,
     }),
   },
   {
@@ -112,10 +136,17 @@ const router = createBrowserRouter([
     }),
   },
   {
-    path: `/create/${GeoDatabaseType.theoretical}`,
+    path: `/create/${GeoDatabaseType.racetrack}`,
     element: <UpsertTheoreticalProjectDialog />,
     loader: createProjectLoader({
-      type: GeoDatabaseType.theoretical,
+      type: GeoDatabaseType.racetrack,
+    }),
+  },
+  {
+    path: `/create/${GeoDatabaseType.graph}`,
+    element: <UpsertTheoreticalProjectDialog />,
+    loader: createProjectLoader({
+      type: GeoDatabaseType.graph,
     }),
   },
   {
@@ -126,10 +157,17 @@ const router = createBrowserRouter([
     }),
   },
   {
-    path: `/update/${GeoDatabaseType.theoretical}/:uuid`,
+    path: `/update/${GeoDatabaseType.racetrack}/:uuid`,
     element: <UpsertTheoreticalProjectDialog />,
     loader: createProjectLoader({
-      type: GeoDatabaseType.theoretical,
+      type: GeoDatabaseType.racetrack,
+    }),
+  },
+  {
+    path: `/update/${GeoDatabaseType.graph}/:uuid`,
+    element: <UpsertTheoreticalProjectDialog />,
+    loader: createProjectLoader({
+      type: GeoDatabaseType.graph,
     }),
   },
   {
@@ -137,6 +175,28 @@ const router = createBrowserRouter([
     element: <UpsertGeoProjectDialog />,
     loader: createProjectLoader({
       type: GeoDatabaseType.realWorld,
+    }),
+  },
+  {
+    path: '/racetrack/:uuid/:zoom/:y/:x',
+    element: <RaceTrackSimPage />,
+    loader: async (request: any) => ({
+      uuid: request.params.uuid,
+      x: parseFloat(request.params.x),
+      y: parseFloat(request.params.y),
+      zoom: parseFloat(request.params.zoom),
+      projectDB: await GeoDatabase.open(request.params.uuid),
+    }),
+  },
+  {
+    path: '/graph/:uuid/:zoom/:y/:x',
+    element: <RaceTrackSimPage />,
+    loader: async (request: any) => ({
+      uuid: request.params.uuid,
+      y: parseFloat(request.params.y),
+      x: parseFloat(request.params.x),
+      zoom: parseFloat(request.params.zoom),
+      projectDB: await GeoDatabase.open(request.params.uuid),
     }),
   },
   {

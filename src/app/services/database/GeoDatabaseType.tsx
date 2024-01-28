@@ -1,5 +1,6 @@
 export enum GeoDatabaseType {
   resource = 'Resource',
-  theoretical = 'Theoretical',
+  racetrack = 'Racetrack',
+  graph = 'Graph',
   realWorld = 'Real-World',
 }

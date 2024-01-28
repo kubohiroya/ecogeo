@@ -28,6 +28,7 @@ interface FloatingButtonProps {
   onMouseUp?: (event: MouseEvent) => void;
   onTouchEnd?: (event: TouchEvent) => void;
   children: ReactNode;
+  disabled?: boolean;
 }
 
 export const FloatingButton = forwardRef<HTMLDivElement, FloatingButtonProps>(
@@ -36,6 +37,7 @@ export const FloatingButton = forwardRef<HTMLDivElement, FloatingButtonProps>(
       null,
     );
 
+    // const [disabled, setDisabled] = useState(props.disabled);
     const handleMouseDown = useCallback((event: MouseEvent) => {
       setMouseDownEvent(event);
       props.onMouseDown && props.onMouseDown(event);
@@ -46,7 +48,8 @@ export const FloatingButton = forwardRef<HTMLDivElement, FloatingButtonProps>(
         if (
           mouseDownEvent &&
           mouseDownEvent.clientX === event.clientX &&
-          mouseDownEvent.clientY === event.clientY
+          mouseDownEvent.clientY === event.clientY &&
+          !props.disabled
         ) {
           props.onClick();
         } else {
@@ -60,6 +63,8 @@ export const FloatingButton = forwardRef<HTMLDivElement, FloatingButtonProps>(
     const handleTouchEnd = useCallback((ev: TouchEvent) => {
       props.onTouchEnd && props.onTouchEnd(ev);
     }, []);
+
+    // console.log('props.disabled', props.id, props.disabled, disabled);
 
     return (
       <Box
@@ -84,7 +89,7 @@ export const FloatingButton = forwardRef<HTMLDivElement, FloatingButtonProps>(
           >
             <Typography style={{ color: 'blue' }}></Typography>
           </HandleArea>
-          <Tooltip title={props.tooltip} placement="right">
+          {props.disabled ? (
             <IconButton
               style={{
                 userSelect: 'none',
@@ -92,10 +97,24 @@ export const FloatingButton = forwardRef<HTMLDivElement, FloatingButtonProps>(
                 height: '32px',
                 border: '1px solid #00000020',
               }}
+              disabled={true}
             >
               <Box style={{ marginTop: '4px' }}>{props.children}</Box>
             </IconButton>
-          </Tooltip>
+          ) : (
+            <Tooltip title={props.tooltip} placement="right">
+              <IconButton
+                style={{
+                  userSelect: 'none',
+                  width: '32px',
+                  height: '32px',
+                  border: '1px solid #00000020',
+                }}
+              >
+                <Box style={{ marginTop: '4px' }}>{props.children}</Box>
+              </IconButton>
+            </Tooltip>
+          )}
         </RowBox>
       </Box>
     );

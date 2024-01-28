@@ -60,7 +60,7 @@ enum StepStatus {
 
 const NUM_STEPS = 5;
 
-export const FetchGADMResourcesComponent = () => {
+export const GADMGeoJsonComponent = () => {
   const navigete = useNavigate();
   const [stepIndex, setStepIndex] = React.useState(0);
   const [stepStatus, setStepStatus] = React.useState<StepStatus[]>(

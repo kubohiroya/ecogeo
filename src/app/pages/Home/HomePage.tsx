@@ -12,7 +12,7 @@ export const HomePage = () => {
 
   useEffect(() => {
     if (location.pathname == '/') {
-      navigate('/resources', { replace: true });
+      navigate('/projects', { replace: true });
     }
   }, []);
 

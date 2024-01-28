@@ -10,7 +10,8 @@ import {
   DialogTitle,
   Typography,
 } from '@mui/material';
-import { createMapLink } from '../../../createMapLink';
+import { createSimulatorLink } from '../../../createSimulatorLink';
+import dexie from 'dexie';
 
 export const DeleteDatabaseItemDialog = () => {
   const { uuid, type, name, description, coordinate, zoom } =
@@ -25,16 +26,33 @@ export const DeleteDatabaseItemDialog = () => {
 
   const navigate = useNavigate();
 
-  const handleOk = useCallback(async () => {
+  const goHome = () => {
+    switch (type) {
+      case GeoDatabaseType.racetrack:
+      case GeoDatabaseType.graph:
+      case GeoDatabaseType.realWorld:
+        navigate('/projects', { replace: true });
+        break;
+      case GeoDatabaseType.resource:
+        navigate('/resources', { replace: true });
+        break;
+      default:
+        throw new Error(`Unknown GeoDatabaseType: ${type}`);
+    }
+  };
+
+  const handleDelete = useCallback(async () => {
     await GeoDatabaseTable.getSingleton()
       .databases.where('uuid')
       .equals(uuid)
       .delete();
-    navigate('/projects', { replace: true });
+
+    await dexie.delete(uuid);
+    goHome();
   }, [uuid]);
 
   const handleCancel = useCallback(() => {
-    navigate('/projects', { replace: true });
+    goHome();
   }, []);
 
   return (
@@ -44,13 +62,15 @@ export const DeleteDatabaseItemDialog = () => {
         <Typography>
           Are you sure you want to delete the following project?
         </Typography>
-        <Link to={createMapLink({ uuid, coordinate, zoom })}>{name}</Link>
+        <Link to={createSimulatorLink({ uuid, type, coordinate, zoom })}>
+          {name}
+        </Link>
       </DialogContent>
       <DialogActions>
         <Button variant={'contained'} autoFocus onClick={handleCancel}>
           Cancel
         </Button>
-        <Button variant={'contained'} onClick={handleOk}>
+        <Button variant={'outlined'} onClick={handleDelete}>
           DELETE
         </Button>
       </DialogActions>

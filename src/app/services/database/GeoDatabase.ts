@@ -42,10 +42,11 @@ export class GeoDatabase extends Dexie {
         ',' +
         zoomLevelsExt,
     });
-    this.points = this.table('points');
+
     this.countries = this.table('countries');
     this.regions1 = this.table('regions1');
     this.regions2 = this.table('regions2');
+    this.points = this.table('points');
     this.routeSegments = this.table('routeSegments');
   }
 

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { PsychologyAlt, Public } from '@mui/icons-material';
+import { PanoramaFishEye, Public, Share } from '@mui/icons-material';
 import {
   Box,
   IconButton,
@@ -18,7 +18,7 @@ import { Link, useLoaderData, useNavigate } from 'react-router-dom';
 import { DatabaseItemMenu } from '../DatabaseItemMenu/DatabaseItemMenu';
 import { GeoDatabaseEntity } from '../../services/database/GeoDatabaseEntity';
 
-import { createMapLink } from '../../../createMapLink';
+import { createSimulatorLink } from '../../../createSimulatorLink';
 import { GeoDatabaseType } from '../../services/database/GeoDatabaseType';
 import SourceIcon from '@mui/icons-material/Source';
 
@@ -38,20 +38,28 @@ export const ProjectItemsComponent = () => {
   const typeToIcon = {
     [GeoDatabaseType.resource]: <SourceIcon />,
     [GeoDatabaseType.realWorld]: <Public />,
-    [GeoDatabaseType.theoretical]: <PsychologyAlt />,
+    [GeoDatabaseType.graph]: <Share />,
+    [GeoDatabaseType.racetrack]: <PanoramaFishEye />,
   };
 
   const speedDialActions = [
     {
-      icon: typeToIcon[GeoDatabaseType.theoretical],
-      name: 'theoretical',
+      icon: typeToIcon[GeoDatabaseType.racetrack],
+      name: GeoDatabaseType.racetrack,
       onClick: () => {
-        return navigate(`/create/${GeoDatabaseType.theoretical}`);
+        return navigate(`/create/${GeoDatabaseType.racetrack}`);
+      },
+    },
+    {
+      icon: typeToIcon[GeoDatabaseType.graph],
+      name: GeoDatabaseType.graph,
+      onClick: () => {
+        return navigate(`/create/${GeoDatabaseType.graph}`);
       },
     },
     {
       icon: typeToIcon[GeoDatabaseType.realWorld],
-      name: 'realworld',
+      name: GeoDatabaseType.realWorld,
       onClick: () => {
         return navigate(`/create/${GeoDatabaseType.realWorld}`);
       },
@@ -79,15 +87,13 @@ export const ProjectItemsComponent = () => {
                     <IconButton
                       color={'primary'}
                       size={'large'}
-                      onClick={() => navigate(createMapLink(item))}
+                      onClick={() => navigate(createSimulatorLink(item))}
                     >
                       {typeToIcon[item.type]}
                     </IconButton>
                   </TableCell>
                   <TableCell>
-                    <Link to={`/update/${item.type}/${item.uuid}`}>
-                      {item.name}
-                    </Link>
+                    <Link to={createSimulatorLink(item)}>{item.name}</Link>
                   </TableCell>
                   <TableCell>
                     <pre>{item.description}</pre>

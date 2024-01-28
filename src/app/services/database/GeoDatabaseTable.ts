@@ -2,6 +2,7 @@ import Dexie from 'dexie';
 import { v4 as uuidv4 } from 'uuid';
 import { GeoDatabaseEntity } from './GeoDatabaseEntity';
 import { GeoDatabaseType } from './GeoDatabaseType';
+import { GeoDatabase } from './GeoDatabase';
 
 const TABLE_NAME = 'databases';
 
@@ -37,11 +38,14 @@ export class GeoDatabaseTable extends Dexie {
     zoom: number;
     createdAt: number;
   }) {
+    const uuid = uuidv4();
     await GeoDatabaseTable.getSingleton().databases.add({
       ...source,
-      uuid: uuidv4(),
+      uuid,
       updatedAt: source.createdAt,
     });
+    const db = await GeoDatabase.open(uuid);
+    db.close();
   }
 
   static async updateDatabase(

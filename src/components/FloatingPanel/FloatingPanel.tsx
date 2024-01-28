@@ -36,7 +36,7 @@ type FloatingPanelProps = {
   onTouchEnd?: (event: TouchEvent) => void;
   titleBarMode: 'win' | 'mac';
   setToFront: () => void;
-  hide?: () => void;
+  onClose?: () => void;
 } & ComponentProps<'div'>;
 
 const MiniWindowControlButton = styled(IconButton)`
@@ -71,13 +71,13 @@ export const FloatingPanel = forwardRef<HTMLDivElement, FloatingPanelProps>(
       onMouseUp,
       onTouchEnd,
       setToFront,
-      hide,
+      onClose,
       titleBarMode,
     }: FloatingPanelProps,
     ref,
   ) => {
     const hideMe = () => {
-      hide && hide();
+      onClose && onClose();
     };
 
     return (

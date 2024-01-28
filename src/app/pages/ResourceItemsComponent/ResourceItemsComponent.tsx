@@ -93,9 +93,7 @@ export const ResourceItemsComponent = () => {
                   </IconButton>
                 </TableCell>
                 <TableCell>
-                  <Link to={`/update/${item.type}/${item.uuid}`}>
-                    {item.name}
-                  </Link>
+                  <Link to={item.url}>{item.name}</Link>
                 </TableCell>
                 <TableCell>
                   <pre>{item.description}</pre>

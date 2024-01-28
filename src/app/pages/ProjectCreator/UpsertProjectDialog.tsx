@@ -109,7 +109,7 @@ export const UpsertProjectDialog = ({
               justify-content: center;
             `}
           >
-            <Button variant={'contained'} onClick={onCancel}>
+            <Button variant={'outlined'} onClick={onCancel}>
               Cancel
             </Button>
 

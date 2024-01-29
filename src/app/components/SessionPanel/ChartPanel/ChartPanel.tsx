@@ -43,7 +43,6 @@ const ChartBox = styled(Box)`
   align-items: center;
   align-content: center;
   border-radius: 8px;
-  margin-top: 15px;
   background-color: #f5f5f5;
 `;
 

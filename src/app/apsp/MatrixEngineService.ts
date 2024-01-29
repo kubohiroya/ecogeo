@@ -9,7 +9,7 @@ export enum MatrixEngineKeyType {
   CPUMatrixEngine = 'CPUFloydWarshall',
 }
 
-export const defaultMatrixEngineType = MatrixEngineKeyType.GPUMatrixEngine;
+export const defaultMatrixEngineType = MatrixEngineKeyType.CPUMatrixEngine;
 
 const params = new URLSearchParams(location.search);
 //const matrixEngineType = params.get('engine') || 'CPU:FloydWarshall';
@@ -19,15 +19,15 @@ export const createMatrixEngine = (numLocations: number, numEdges: number) =>
   matrixEngineType === MatrixEngineKeyType.CPUMatrixEngine
     ? new CPUMatrixEngine(numLocations, numEdges)
     : matrixEngineType === MatrixEngineKeyType.GPUMatrixEngine
-    ? new GPUMatrixEngine(numLocations, numEdges)
-    : new CPUMatrixEngine(numLocations, numEdges);
+      ? new GPUMatrixEngine(numLocations, numEdges)
+      : new CPUMatrixEngine(numLocations, numEdges);
 
 const map: Map<string, MatrixEngine> = new Map<string, MatrixEngine>();
 
 export function getMatrixEngine(
   sessionId: string,
   numLocations: number,
-  numEdges: number
+  numEdges: number,
 ) {
   let matrixEngine = map.get(sessionId);
   if (
@@ -45,7 +45,7 @@ export async function updateAdjacencyMatrix(
   sessionId: string,
   locations: City[],
   edges: Edge[],
-  transportationCost: number
+  transportationCost: number,
 ): Promise<{
   adjacencyMatrix: number[][];
   distanceMatrix: number[][];
@@ -60,7 +60,7 @@ export async function updateAdjacencyMatrix(
   } = await getMatrixEngine(
     sessionId,
     locations.length,
-    edges.length
+    edges.length,
   ).updateAdjacencyMatrix(locations, edges, transportationCost);
 
   return {
@@ -75,7 +75,7 @@ export async function updateDistanceMatrix(
   sessionId: string,
   locations: City[],
   edges: Edge[],
-  transportationCost: number
+  transportationCost: number,
 ): Promise<{
   distanceMatrix: number[][];
   predecessorMatrix: number[][];
@@ -85,7 +85,7 @@ export async function updateDistanceMatrix(
     await getMatrixEngine(
       sessionId,
       locations.length,
-      edges.length
+      edges.length,
     ).updateDistanceAndPredecessorMatrix(locations, edges, transportationCost);
 
   return {
@@ -99,14 +99,14 @@ export async function updateTransportationMatrix(
   sessionId: string,
   locations: City[],
   edges: Edge[],
-  transportationCost: number
+  transportationCost: number,
 ): Promise<{
   transportationCostMatrix: number[][];
 }> {
   const { transportationCostMatrix } = await getMatrixEngine(
     sessionId,
     locations.length,
-    edges.length
+    edges.length,
   ).updateTransportationCostMatrix(locations, edges, transportationCost);
 
   return {

@@ -7,7 +7,7 @@ import {
   produceWithPatches,
 } from 'immer';
 
-type PatchPair = {
+export type PatchPair = {
   patch: Patch[];
   inversePatch: Patch[];
   label?: string;
@@ -20,8 +20,8 @@ export interface UndoRedoState<T extends Objectish> {
   staging: PatchPair[];
 }
 
-export const createInitialState = <T extends Objectish>(
-  initialState: T
+export const createInitialUndoRedoState = <T extends Objectish>(
+  initialState: T,
 ): UndoRedoState<T> => {
   return {
     current: initialState,
@@ -81,7 +81,7 @@ function removeRedundantPatches(src: PatchPair[]): PatchPair | null {
 
 export const useUndoRedo = <T extends Objectish>(
   undoRedoAtom: PrimitiveAtom<UndoRedoState<T>>, //initialState: T,
-  maxHistoryLength = 30
+  maxHistoryLength = 30,
 ) => {
   const [{ history, future, current, staging }, setUndoRedo] =
     useAtom(undoRedoAtom);
@@ -89,11 +89,11 @@ export const useUndoRedo = <T extends Objectish>(
   const set = (
     updateFunction: (draft: Draft<T>) => void,
     commit: boolean = true,
-    label?: string
+    label?: string,
   ) => {
     const [nextState, patches, inversePatches] = produceWithPatches(
       current,
-      updateFunction
+      updateFunction,
     );
 
     const newPathPairItem = {
@@ -104,7 +104,7 @@ export const useUndoRedo = <T extends Objectish>(
 
     if (commit) {
       const newPatchPair = removeRedundantPatches(
-        staging.length > 0 ? staging : [newPathPairItem]
+        staging.length > 0 ? staging : [newPathPairItem],
       );
 
       if (newPatchPair == null) {

@@ -30,13 +30,8 @@ import {
 import { Edge } from '../../models/Graph';
 import { isInfinity } from '../../utils/mathUtil';
 import { ViewportCenter } from '../../models/ViewportCenter';
-import { Box, LinearProgress, Snackbar, Typography } from '@mui/material';
-import { SessionLayoutPanel } from './SessionLayoutPanel';
-import AppAccordion from '../../../components/AppAccordion/AppAccordion';
-import { GridOn, LinearScale } from '@mui/icons-material';
-import { SessionSelectorAccordionSummaryTitle } from './SessionSelectorAccordionSummaryTitle';
+import { Box, LinearProgress, Snackbar } from '@mui/material';
 import CountryConfigPanel from './CountryConfigPanel/CountryConfigPanel';
-import { MatrixSetAccordionSummaryTitle } from './MatrixSetPanel/MatrixSetAccordionSummaryTitle';
 import TimeControlPanel from './TimeControPanel/TimeControlPanel';
 import MapPanel from './MapPanel/MapPanel';
 import { ChartCanvas } from './ChartPanel/ChartCanvas';
@@ -57,6 +52,8 @@ type SessionPanelProps = {
   sessionId: string;
   openRenameDialog: boolean;
   closeRenameDialog: () => void;
+  width: number;
+  height: number;
 };
 
 export const SessionPanel = React.memo((props: SessionPanelProps) => {
@@ -78,7 +75,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     staging,
   } = useSessionStateUndoRedo(sessionId);
 
-  const spherical: boolean = sessionState.units == 'degrees';
+  const spherical: boolean = sessionState.country.units == 'degrees';
 
   const autoGraphLayoutEngine: SpringGraphLayout = new SpringGraphLayout();
 
@@ -268,7 +265,6 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       addEdge: false,
       removeEdge: false,
       autoGraphLayout: true,
-      mapLayer: true,
       undo: false,
       redo: false,
     });
@@ -496,8 +492,8 @@ setUIState((draft) => {
         top: boundingRect.top,
         right: boundingRect.right,
         bottom: boundingRect.bottom,
-        width: uiState.splitPanelSizes[0],
-        height: uiState.splitPanelHeight,
+        width: props.width / 2,
+        height: props.height,
         paddingMarginRatio:
           uiState.viewportCenter && uiState.viewportCenter!.scale < 1.7
             ? PADDING_MARGIN_RATIO
@@ -836,15 +832,6 @@ setUIState((draft) => {
     );
   };
 
-  const setMapLayer = useCallback(
-    (enableMapLayer: boolean) => {
-      setUIState((draft) => {
-        draft.layer.map = enableMapLayer;
-      });
-    },
-    [setUIState],
-  );
-
   const setSessionChartType = useCallback(
     (chartType: string) => {
       setUIState((draft) => {
@@ -867,33 +854,6 @@ setUIState((draft) => {
     (viewportCenter: ViewportCenter) => {
       setUIState((draft) => {
         draft.viewportCenter = viewportCenter;
-      });
-    },
-    [setUIState],
-  );
-
-  const setLockDiagonalMatrixSetPanelAccordion = useCallback(
-    (lock: boolean) => {
-      setUIState((draft) => {
-        draft.lockMatrixSetPanelAccordion = lock;
-      });
-    },
-    [setUIState],
-  );
-
-  const setCaseSelectorPanelAccordion = useCallback(
-    (expanded: boolean) => {
-      setUIState((draft) => {
-        draft.countryConfigPanelAccordion = expanded;
-      });
-    },
-    [setUIState],
-  );
-
-  const setDiagonalMatrixSetPanelAccordion = useCallback(
-    (expanded: boolean) => {
-      setUIState((draft) => {
-        draft.matrixSetPanelAccordion = expanded;
       });
     },
     [setUIState],
@@ -970,7 +930,6 @@ setUIState((draft) => {
       autoGraphLayout:
         sessionState.country.units == 'kilometers' &&
         !autoGraphLayoutTimer.isStarted,
-      mapLayer: uiState.layer.map,
       undo: history.length > 0,
       redo: future.length > 0,
     });
@@ -1082,45 +1041,39 @@ setUIState((draft) => {
         onClose={closeSnackBar}
         message={snackBarState.message}
       />
-      <SessionLayoutPanel
-        uiState={uiState}
-        setUIState={setUIState}
-        left={
-          <MapPanel
-            hideGraphEditButtons={simulation.isStarted}
-            state={graphPanelButtonState}
-            onFit={onFit}
-            onAddLocation={onAddLocation}
-            onRemoveLocation={onRemoveLocation}
-            onAddEdge={onAddEdge}
-            onRemoveEdge={onRemoveEdge}
-            onUndo={undo}
-            onRedo={redo}
-            onToggleAutoGraphLayout={onToggleAutoGraphLayout}
-            autoGraphLayoutStarted={autoGraphLayoutTimer.isStarted}
-            autoGraphLayoutSpeed={autoGraphLayoutTimer.intervalScale}
-            setAutoGraphLayoutSpeed={setAutoGraphLayoutIntervalScale}
-            mapLayer={uiState.layer.map}
-            setMapLayer={setMapLayer}
-            country={sessionState.country}
-          >
+      <MapPanel
+        hideGraphEditButtons={simulation.isStarted}
+        state={graphPanelButtonState}
+        onFit={onFit}
+        onAddLocation={onAddLocation}
+        onRemoveLocation={onRemoveLocation}
+        onAddEdge={onAddEdge}
+        onRemoveEdge={onRemoveEdge}
+        onUndo={undo}
+        onRedo={redo}
+        onToggleAutoGraphLayout={onToggleAutoGraphLayout}
+        autoGraphLayoutStarted={autoGraphLayoutTimer.isStarted}
+        autoGraphLayoutSpeed={autoGraphLayoutTimer.intervalScale}
+        setAutoGraphLayoutSpeed={setAutoGraphLayoutIntervalScale}
+        country={sessionState.country}
+      >
+        <>
+          {sessionState.country.units == 'degrees' && (
             <>
-              {sessionState.units == 'degrees' && (
-                <>
-                  <div
-                    style={{
-                      width: uiState.splitPanelSizes[0] + 'px',
-                      height: uiState.splitPanelHeight + 'px',
-                      zIndex: -1,
-                    }}
-                  ></div>
-                  <MapComponent
-                    uuid={sessionId}
-                    map="openstreetmap"
-                    width={uiState.splitPanelSizes[0]}
-                    height={uiState.splitPanelHeight}
-                  />
-                  {/*
+              <div
+                style={{
+                  width: props.width / 2 + 'px',
+                  height: props.height + 'px',
+                  zIndex: -1,
+                }}
+              ></div>
+              <MapComponent
+                uuid={sessionId}
+                map="openstreetmap"
+                width={props.width / 2}
+                height={props.height}
+              />
+              {/*
                   <SphericalCanvas
                     latitude={XYZ.X}
                     longitude={XYZ.Y}
@@ -1135,121 +1088,80 @@ setUIState((draft) => {
                     }}
                   />
                   */}
-                </>
-              )}
-              {sessionState.units == 'kilometers' && (
-                <EuclideanCanvas
-                  width={uiState.splitPanelSizes[0]}
-                  height={uiState.splitPanelHeight}
-                  boundingBox={{
-                    ...calcBoundingRect(sessionState.locations),
-                    paddingMarginRatio: PADDING_MARGIN_RATIO,
-                  }}
-                  setViewportCenter={setSessionViewportCenter}
-                  onDragStart={onDragStart}
-                  onDragEnd={onDragEnd}
-                  onDrag={onDrag}
-                  onFocus={onFocus}
-                  onUnfocus={onUnfocus}
-                  onPointerUp={onPointerUp}
-                  onClearSelection={onClearSelection}
-                  onMoved={onMoved}
-                  draggingIndex={uiState.draggingIndex}
-                  sessionState={sessionState}
-                  viewportCenter={uiState.viewportCenter}
-                  selectedIndices={uiState.selectedIndices}
-                  focusedIndices={uiState.focusedIndices}
-                  matrices={matrices}
-                />
-              )}
             </>
-          </MapPanel>
-        }
-        right={
-          <ChartPanel
-            onChangeChartType={setSessionChartType}
-            onChangeScale={setSessionChartScale}
-            scale={uiState.chartScale}
-            chartType={uiState.chartType}
-          >
-            <ChartCanvas
-              width={uiState.splitPanelSizes[1]}
-              height={uiState.splitPanelHeight}
-              chartTypeKey={uiState.chartType}
-              scale={uiState.chartScale}
-              locations={sessionState.locations}
-              focusedIndices={uiState.focusedIndices}
-              selectedIndices={uiState.selectedIndices}
+          )}
+          {sessionState.country.units == 'kilometers' && (
+            <EuclideanCanvas
+              width={props.width / 2}
+              height={props.height}
+              boundingBox={{
+                ...calcBoundingRect(sessionState.locations),
+                paddingMarginRatio: PADDING_MARGIN_RATIO,
+              }}
+              setViewportCenter={setSessionViewportCenter}
+              onDragStart={onDragStart}
+              onDragEnd={onDragEnd}
+              onDrag={onDrag}
               onFocus={onFocus}
               onUnfocus={onUnfocus}
-              onSelect={onSelect}
-              onUnselect={onUnselect}
+              onPointerUp={onPointerUp}
+              onClearSelection={onClearSelection}
+              onMoved={onMoved}
+              draggingIndex={uiState.draggingIndex}
+              sessionState={sessionState}
+              viewportCenter={uiState.viewportCenter}
+              selectedIndices={uiState.selectedIndices}
+              focusedIndices={uiState.focusedIndices}
+              matrices={matrices}
             />
-          </ChartPanel>
-        }
-      />
+          )}
+        </>
+      </MapPanel>
+
+      <ChartPanel
+        onChangeChartType={setSessionChartType}
+        onChangeScale={setSessionChartScale}
+        scale={uiState.chartScale}
+        chartType={uiState.chartType}
+      >
+        <ChartCanvas
+          width={props.width / 2}
+          height={props.height}
+          chartTypeKey={uiState.chartType}
+          scale={uiState.chartScale}
+          locations={sessionState.locations}
+          focusedIndices={uiState.focusedIndices}
+          selectedIndices={uiState.selectedIndices}
+          onFocus={onFocus}
+          onUnfocus={onUnfocus}
+          onSelect={onSelect}
+          onUnselect={onUnselect}
+        />
+      </ChartPanel>
 
       <Box sx={{ margin: '0 2px 0 2px' }}>
-        <AppAccordion
-          expanded={uiState.countryConfigPanelAccordion}
-          onClickSummary={() =>
-            setCaseSelectorPanelAccordion(!uiState.countryConfigPanelAccordion)
-          }
-          summaryAriaControl="parameter-control-panel-content"
-          summaryIcon={<LinearScale />}
-          summaryTitle={
-            <SessionSelectorAccordionSummaryTitle
-              title={sessionState.country.title}
-            />
-          }
-        >
-          <Typography>{sessionState.country.description}</Typography>
-          <CountryConfigPanel
-            country={sessionState.country}
-            setNumLocations={setNumLocations}
-            setManufactureShare={setManufactureShare}
-            setTransportationCost={setTransportationCost}
-            setElasticitySubstitution={setElasticitySubstitution}
-          />
-        </AppAccordion>
+        <CountryConfigPanel
+          country={sessionState.country}
+          setNumLocations={setNumLocations}
+          setManufactureShare={setManufactureShare}
+          setTransportationCost={setTransportationCost}
+          setElasticitySubstitution={setElasticitySubstitution}
+        />
 
-        <AppAccordion
-          expanded={uiState.matrixSetPanelAccordion}
-          onClickSummary={() =>
-            setDiagonalMatrixSetPanelAccordion(!uiState.matrixSetPanelAccordion)
-          }
-          lock={uiState.lockMatrixSetPanelAccordion}
-          summaryAriaControl="matrices-panel-content"
-          summaryIcon={<GridOn />}
-          summaryTitle={
-            <MatrixSetAccordionSummaryTitle
-              locations={sessionState.locations}
-              selectedIndices={uiState.selectedIndices}
-              focusedIndices={uiState.focusedIndices}
-              onUnselect={onUnselect}
-              onFocus={onFocus}
-              onUnfocus={onUnfocus}
-              setLockDiagonalMatrixSetPanelAccordion={
-                setLockDiagonalMatrixSetPanelAccordion
-              }
-            />
-          }
-        >
-          <MatrixSetPanel
-            ref={diagonalMatrixSetPanelRef}
-            locations={sessionState.locations}
-            maxRowColLength={preferences.maxRowColLength}
-            adjacencyMatrix={matrices.adjacencyMatrix}
-            distanceMatrix={matrices.distanceMatrix}
-            transportationCostMatrix={matrices.transportationCostMatrix}
-            rgb={{ r: 23, g: 111, b: 203 }}
-            selectedIndices={uiState.selectedIndices}
-            focusedIndices={uiState.focusedIndices}
-            onSelected={onSelect}
-            onFocus={onFocus}
-            onUnfocus={onUnfocus}
-          />
-        </AppAccordion>
+        <MatrixSetPanel
+          ref={diagonalMatrixSetPanelRef}
+          locations={sessionState.locations}
+          maxRowColLength={preferences.maxRowColLength}
+          adjacencyMatrix={matrices.adjacencyMatrix}
+          distanceMatrix={matrices.distanceMatrix}
+          transportationCostMatrix={matrices.transportationCostMatrix}
+          rgb={{ r: 23, g: 111, b: 203 }}
+          selectedIndices={uiState.selectedIndices}
+          focusedIndices={uiState.focusedIndices}
+          onSelected={onSelect}
+          onFocus={onFocus}
+          onUnfocus={onUnfocus}
+        />
 
         <TimeControlPanel
           counter={simulation.counter}

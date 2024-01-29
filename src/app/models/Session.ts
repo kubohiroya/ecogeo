@@ -5,9 +5,10 @@ import { ChartType } from './ChartType';
 import * as uuid from 'uuid';
 import { updateAddedSubGraph } from '../components/SessionPanel/MapPanel/GraphHandlers';
 import { SessionState } from './SessionState';
-import { createInitialState } from '../hooks/useUndoRedo';
-import { DEFAULT_MAIN_CONTAINER_HEIGHT } from '../components/SessionPanel/SessionLayoutPanel';
-import { UndoRedoSessionState } from './Root';
+import {
+  createInitialUndoRedoState,
+  UndoRedoState,
+} from '../hooks/useUndoRedo';
 import { PrimitiveAtom } from 'jotai';
 import { INITIAL_COUNTRY_ARRAY } from './initialCountryArray';
 import { atom } from 'jotai/index';
@@ -23,7 +24,7 @@ export type Session = {
 export function createSessionState(
   sessionId: string,
   country: Country,
-): UndoRedoSessionState {
+): UndoRedoState<SessionState> {
   const graph = updateAddedSubGraph(
     sessionId,
     {
@@ -31,7 +32,6 @@ export function createSessionState(
       locations: [],
       edges: [],
       locationSerialNumber: 0,
-      units: country.units,
     },
     [],
     country.numLocations,
@@ -45,12 +45,12 @@ export function createSessionState(
     units: country.units,
   };
 
-  return createInitialState<SessionState>(current);
+  return createInitialUndoRedoState<SessionState>(current);
 }
 
 export function createSession(country: Country): {
   session: Session;
-  sessionState: UndoRedoSessionState;
+  sessionState: UndoRedoState<SessionState>;
 } {
   const sessionId = uuid.v4();
   return {
@@ -64,20 +64,12 @@ export function createSession(country: Country): {
       },
       uiState: {
         viewportCenter: null,
-        splitPanelHeight: DEFAULT_MAIN_CONTAINER_HEIGHT,
-        splitPanelSizes: [0, 0],
         focusedIndices: [],
         selectedIndices: [],
         draggingIndex: null,
-        countryConfigPanelAccordion: true,
-        matrixSetPanelAccordion: false,
-        lockMatrixSetPanelAccordion: false,
         chartScale: 1,
         chartType: ChartType.ManufactureShare,
         autoLayoutFinished: true,
-        layer: {
-          map: false,
-        },
       },
     },
     sessionState: createSessionState(sessionId, country),
@@ -87,7 +79,7 @@ export function createSession(country: Country): {
 export const sessionAtoms: Record<string, PrimitiveAtom<Session>> = {};
 export const sessionStateAtoms: Record<
   string,
-  PrimitiveAtom<UndoRedoSessionState>
+  PrimitiveAtom<UndoRedoState<SessionState>>
 > = {};
 const initialSessionStateArray = INITIAL_COUNTRY_ARRAY.map((country) =>
   createSession(country),

@@ -19,6 +19,12 @@ const NUM_HORIZONTAL_GRIDS = 32;
 const NUM_VERTICAL_GRIDS = 20;
 const ROW_HEIGHT = 32;
 
+const FloatingPanelContent = styled(CardContent)`
+  padding: 8px;
+  margin: 0;
+  overflow: hidden;
+`;
+
 const StyledResponsiveGridLayout = styled(ResponsiveGridLayout)`
   .react-grid-item.react-grid-placeholder {
     background: grey !important;
@@ -75,6 +81,9 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
     ),
   );
 
+  const [maximizedLayout, setMaximizedLayout] =
+    useState<ReactGridLayout.Layout | null>(null);
+
   const createForefront = (
     id: string,
     _layouts: Array<ReactGridLayout.Layout>,
@@ -91,6 +100,29 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
     }
     newLayouts[_layouts.length - 1] = target;
     return newLayouts;
+  };
+
+  const createMaximizeLastItem = (_layouts: Array<ReactGridLayout.Layout>) => {
+    const target = _layouts[_layouts.length - 1];
+    setMaximizedLayout({ ...target });
+    const newLayouts = [..._layouts];
+    newLayouts[_layouts.length - 1] = {
+      ...target,
+      x: 0,
+      y: 0,
+      w: NUM_HORIZONTAL_GRIDS,
+      h: Math.floor((height - 10) / ROW_HEIGHT - 3),
+    };
+    return newLayouts;
+  };
+
+  const onDemaximize = (id: string) => {
+    if (maximizedLayout) {
+      const newLayouts = [...layouts];
+      newLayouts[layouts.length - 1] = maximizedLayout;
+      setLayouts(newLayouts);
+      setMaximizedLayout(null);
+    }
   };
 
   const onShowOrHide = (panelId: string, show: boolean) => {
@@ -161,6 +193,13 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
     });
   };
 
+  const onMaximize = (id: string) => {
+    setForefront(id);
+    setLayouts((layouts) => {
+      return createMaximizeLastItem(createForefront(id, layouts));
+    });
+  };
+
   const onResizeStop: ItemCallback = (
     current,
     oldItem,
@@ -201,7 +240,7 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
           <Box
             id={layout.i}
             key={layout.i}
-            sx={{ position: 'absolute', top: 0, left: '-8px' }}
+            sx={{ position: 'absolute', top: '-2px', left: '-8px' }}
           >
             {resource.children}
           </Box>
@@ -242,8 +281,15 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
             onClose={() => {
               onShowOrHide(resource.id, false);
             }}
+            onMaximize={() => {
+              onMaximize(layout.i);
+            }}
+            onDemaximize={() => {
+              onDemaximize(layout.i);
+            }}
+            maximized={maximizedLayout?.i === layout.i}
           >
-            <CardContent>{resource.children}</CardContent>
+            <FloatingPanelContent>{resource.children}</FloatingPanelContent>
           </FloatingPanel>
         );
       default:

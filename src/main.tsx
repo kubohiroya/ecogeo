@@ -11,8 +11,7 @@ import { DeleteDatabaseItemDialog } from './app/pages/DatabaseItemMenu/DeleteDat
 import { GeoDatabaseTableComponent } from './app/pages/Home/GeoDatabaseTableComponent';
 import { HomePage } from './app/pages/Home/HomePage';
 import { GADMGeoJsonComponent } from './app/pages/ResourceItemsComponent/GADMGeoJsonComponent';
-import { ResourceItemLoader } from './app/pages/ResourceItemsComponent/ResourceItemLoader';
-import { ProjectItemLoader } from './app/pages/ProjectItemsComponent/ProjectItemLoader';
+import { GeoDatabaseItemLoader } from './app/pages/ResourceItemsComponent/GeoDatabaseItemLoader';
 import { GeoDatabaseTableType } from './app/pages/Home/GeoDatabaseTableType';
 import {
   Flag,
@@ -26,6 +25,9 @@ import { IdeGsmCitiesComponent } from './app/pages/ResourceItemsComponent/IdeGsm
 import { IdeGsmRoutesComponent } from './app/pages/ResourceItemsComponent/IdeGsmRoutesComponent';
 import { RealWorldSimPage } from './app/pages/Sim/RealWorldSimPage';
 import { RaceTrackSimPage } from './app/pages/Sim/RaceTrackSimPage';
+import { ProjectItemsComponent } from './app/pages/ProjectItemsComponent/ProjectItemsComponent';
+import { ResourceItemsComponent } from './app/pages/ResourceItemsComponent/ResourceItemsComponent';
+import { FileDropComponent } from './components/FileDropComponent/FileDropComponent';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -39,9 +41,12 @@ const router = createBrowserRouter([
       {
         path: '/resources',
         element: (
-          <GeoDatabaseTableComponent type={GeoDatabaseTableType.resources} />
+          <GeoDatabaseTableComponent
+            type={GeoDatabaseTableType.resources}
+            items={[<ResourceItemsComponent />, <ProjectItemsComponent />]}
+          />
         ),
-        loader: ResourceItemLoader,
+        loader: GeoDatabaseItemLoader,
         children: [
           {
             path: '/resources/gadm',
@@ -60,56 +65,77 @@ const router = createBrowserRouter([
       {
         path: '/resources-new',
         element: (
-          <GeoDatabaseItemCreateModeSelector
-            items={[
-              {
-                icon: <Flag fontSize="large" />,
-                name: 'GADM GeoJSON',
-                url: `/resources/gadm`,
-              },
-              {
-                icon: <LocationCity fontSize="large" />,
-                name: 'IDE-GSM Cities',
-                url: `/resources/cities`,
-              },
-              {
-                icon: <Route fontSize="large" />,
-                name: 'IDE-GSM Routes',
-                url: `/resources/routes`,
-              },
-            ]}
-          />
+          <FileDropComponent acceptableSuffixes={['.json', '.csv', '.csv.zip']}>
+            <GeoDatabaseTableComponent
+              type={GeoDatabaseTableType.resources}
+              items={[
+                <GeoDatabaseItemCreateModeSelector
+                  type={GeoDatabaseTableType.resources}
+                  items={[
+                    {
+                      icon: <Flag fontSize="large" />,
+                      name: 'GADM GeoJSON',
+                      url: `/resources/gadm`,
+                    },
+                    {
+                      icon: <LocationCity fontSize="large" />,
+                      name: 'IDE-GSM Cities',
+                      url: `/resources/cities`,
+                    },
+                    {
+                      icon: <Route fontSize="large" />,
+                      name: 'IDE-GSM Routes',
+                      url: `/resources/routes`,
+                    },
+                  ]}
+                />,
+                <>dummy</>,
+              ]}
+            />
+          </FileDropComponent>
         ),
       },
       {
         path: '/projects',
         element: (
-          <GeoDatabaseTableComponent type={GeoDatabaseTableType.projects} />
+          <GeoDatabaseTableComponent
+            type={GeoDatabaseTableType.projects}
+            items={[<ResourceItemsComponent />, <ProjectItemsComponent />]}
+          />
         ),
-        loader: ProjectItemLoader,
+        loader: GeoDatabaseItemLoader,
       },
       {
         path: '/projects-new',
         element: (
-          <GeoDatabaseItemCreateModeSelector
-            items={[
-              {
-                icon: <PanoramaFishEye fontSize="large" />,
-                name: 'Racetrack Model',
-                url: `/create/${GeoDatabaseType.racetrack}`,
-              },
-              {
-                icon: <Share fontSize="large" />,
-                name: 'Graph Structured Model',
-                url: `/create/${GeoDatabaseType.racetrack}`,
-              },
-              {
-                icon: <Public fontSize="large" />,
-                name: 'Real-World Model',
-                url: `/create/${GeoDatabaseType.realWorld}`,
-              },
-            ]}
-          />
+          <FileDropComponent acceptableSuffixes={['.json', '.csv', '.csv.zip']}>
+            <GeoDatabaseTableComponent
+              type={GeoDatabaseTableType.projects}
+              items={[
+                <></>,
+                <GeoDatabaseItemCreateModeSelector
+                  type={GeoDatabaseTableType.projects}
+                  items={[
+                    {
+                      icon: <PanoramaFishEye fontSize="large" />,
+                      name: 'Racetrack Model',
+                      url: `/create/${GeoDatabaseType.racetrack}`,
+                    },
+                    {
+                      icon: <Share fontSize="large" />,
+                      name: 'Graph Structured Model',
+                      url: `/create/${GeoDatabaseType.racetrack}`,
+                    },
+                    {
+                      icon: <Public fontSize="large" />,
+                      name: 'Real-World Model',
+                      url: `/create/${GeoDatabaseType.realWorld}`,
+                    },
+                  ]}
+                />,
+              ]}
+            />
+          </FileDropComponent>
         ),
       },
     ],
@@ -179,7 +205,18 @@ const router = createBrowserRouter([
   },
   {
     path: '/racetrack/:uuid/:zoom/:y/:x',
-    element: <RaceTrackSimPage />,
+    element: (
+      <div
+        style={{
+          overscrollBehavior: 'none',
+          overflow: 'hidden',
+          width: '100vw',
+          height: '100vh',
+        }}
+      >
+        <RaceTrackSimPage />
+      </div>
+    ),
     loader: async (request: any) => ({
       uuid: request.params.uuid,
       x: parseFloat(request.params.x),

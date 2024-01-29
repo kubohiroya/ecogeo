@@ -27,8 +27,6 @@ export interface MapPanelButtonsProps {
   autoGraphLayoutStarted: boolean;
   autoLayoutSpeed: number;
   setAutoLayoutSpeed: (autoLayoutSpeed: number) => void;
-  mapLayer: boolean;
-  setMapLLayer: (mapLayer: boolean) => void;
   country: Country;
   state: MapPanelButtonsState;
   onUndo: () => void;
@@ -151,12 +149,6 @@ export const MapPanelButtons = React.memo((props: MapPanelButtonsProps) => {
               autoLayoutStarted={props.autoGraphLayoutStarted}
               speed={props.autoLayoutSpeed}
               onChangeSpeed={props.setAutoLayoutSpeed}
-            />
-
-            <StyledLayerSwitchButton
-              mapLayer={props.mapLayer}
-              disabled={props.country.units == 'kilometers'}
-              onChangeMapLayer={props.setMapLLayer}
             />
           </Box>
         </Box>

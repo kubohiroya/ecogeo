@@ -13,7 +13,7 @@ import TabPanel from '@mui/lab/TabPanel';
 import { PrimitiveAtom, useAtomValue } from 'jotai';
 import { SessionPanel } from './SessionPanel';
 import { useImmerAtom } from 'jotai-immer';
-import { rootAtom, UndoRedoSessionState } from '../../models/Root';
+import { rootAtom } from '../../models/Root';
 import { Session, sessionState } from '../../models/Session';
 import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import { TabContext, TabList } from '@mui/lab';
@@ -26,6 +26,7 @@ import {
   MoreVert,
   RestartAlt,
 } from '@mui/icons-material';
+import { UndoRedoSessionState } from '../../pages/Sim/RaceTrackSimPage';
 
 const StyledTabList = styled(TabList)`
   border-radius: 10px 10px 0 0;
@@ -290,6 +291,8 @@ export function SessionSelectorPanel(props: {
             {sessionIds.map((_sessionId, index) => (
               <StyledTabPanel key={_sessionId} value={_sessionId}>
                 <SessionPanel
+                  width={640}
+                  height={480}
                   sessionId={_sessionId}
                   openRenameDialog={isRenameDialogOpen}
                   closeRenameDialog={() => setRenameDialogOpen(false)}

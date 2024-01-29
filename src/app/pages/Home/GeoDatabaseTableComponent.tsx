@@ -1,12 +1,11 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Box, Tab, Tabs } from '@mui/material';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { ResourceItemsComponent } from '../ResourceItemsComponent/ResourceItemsComponent';
-import { ProjectItemsComponent } from '../ProjectItemsComponent/ProjectItemsComponent';
 import { GeoDatabaseTableType } from './GeoDatabaseTableType';
 
 type DatabaseItemIndexPros = {
   type: GeoDatabaseTableType;
+  items: [ReactNode, ReactNode];
 };
 
 const TabPanel = (props: any) => {
@@ -56,10 +55,10 @@ export const GeoDatabaseTableComponent = (props: DatabaseItemIndexPros) => {
         </Tabs>
       </Box>
       <TabPanel value={props.type} index={0}>
-        <ResourceItemsComponent />
+        {props.items[0]}
       </TabPanel>
       <TabPanel value={props.type} index={1}>
-        <ProjectItemsComponent />
+        {props.items[1]}
       </TabPanel>
       <Outlet />
     </Box>

@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { DOCUMENT_TITLE } from '../../Constants';
 import { FileUploadPrompt } from './FileUploadPrompt';
+import { GeoDatabaseTableType } from './GeoDatabaseTableType';
 
 const ModelSelectorBox = styled.div`
   display: flex;
@@ -27,6 +28,7 @@ type GeoDatabaseItemCreateModeSelectorItem = {
   url: string;
 };
 type GeoDatabaseItemCreateModeSelectorProps = {
+  type: GeoDatabaseTableType;
   items: GeoDatabaseItemCreateModeSelectorItem[];
 };
 
@@ -35,7 +37,10 @@ export const GeoDatabaseItemCreateModeSelector = (
 ) => {
   const navigate = useNavigate();
   useEffect(() => {
-    document.title = DOCUMENT_TITLE + ': Select Project Type';
+    document.title =
+      DOCUMENT_TITLE + (props.type == GeoDatabaseTableType.resources)
+        ? 'Select Resource Type'
+        : 'Select Project Type';
   }, []);
   return (
     <div>
@@ -53,6 +58,7 @@ export const GeoDatabaseItemCreateModeSelector = (
           ),
         )}
       </ModelSelectorBox>
+
       <hr />
 
       <Outlet />

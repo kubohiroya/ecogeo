@@ -8,19 +8,19 @@ import { enablePatches } from 'immer';
 
 enablePatches();
 
-export type UndoRedoSessionState = UndoRedoState<SessionState>;
+//export type UndoRedoSessionState = ;
 
 export interface Root {
   sessionIdsAtom: Atom<string[]>;
   sessionAtoms: Record<string, PrimitiveAtom<Session>>;
-  sessionStateAtoms: Record<string, PrimitiveAtom<UndoRedoSessionState>>;
+  sessionStateAtoms: Record<string, PrimitiveAtom<UndoRedoState<SessionState>>>;
   sessionTitlesAtom: Atom<Map<string, string>>;
 }
 
 const sessionAtoms = {};
 const sessionStateAtoms: Record<
   string,
-  PrimitiveAtom<UndoRedoSessionState>
+  PrimitiveAtom<UndoRedoState<SessionState>>
 > = {};
 
 const sessionIdsAtom = atom((get) =>

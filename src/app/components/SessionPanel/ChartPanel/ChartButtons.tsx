@@ -21,7 +21,7 @@ const ControlButton = styled(IconButton)`
   border: 1px solid gray;
 `;
 const ScaleButton = styled(ControlButton)`
-  top: 10px;
+  top: 40px;
 `;
 const ScaleSlider = styled(Slider)`
   width: 120px;
@@ -33,7 +33,7 @@ const ScaleSliderContainer = styled.div`
   position: absolute;
   width: 210px;
   height: 50px;
-  top: 5px;
+  top: 40px;
   right: 55px;
   background-color: white;
   border-radius: 20px;

@@ -1,49 +1,53 @@
-import styled from "@emotion/styled";
-import { AccessTime, PauseCircle, PlayCircle, RestartAlt } from "@mui/icons-material";
-import { Button, ButtonGroup, Slider, Tooltip } from "@mui/material";
-import React from "react";
+import styled from '@emotion/styled';
+import {
+  AccessTime,
+  PauseCircle,
+  PlayCircle,
+  RestartAlt,
+} from '@mui/icons-material';
+import { Button, ButtonGroup, Slider, Tooltip } from '@mui/material';
+import React from 'react';
 
 const StyledTimeControlPanel = styled.div`
-    display: flex;
-    justify-content: center;
-    vertical-align: middle;
-    align-content: center;
-    align-items: center;
-    margin-left: 48px;
-    margin-right: 48px;
-    gap: 4px;
+  display: flex;
+  justify-content: center;
+  vertical-align: middle;
+  align-content: center;
+  align-items: center;
+  margin-left: 0;
+  margin-right: 8px;
+  gap: 16px;
 `;
 const StyledButtonGroup = styled(ButtonGroup)``;
 const StyledButton = styled(Button)`
-    border-radius: 24px;
-    padding-left: 25px;
-    padding-right: 25px;
+  border-radius: 24px;
+  padding-left: 20px;
+  padding-right: 20px;
 `;
 const ButtonPanel = styled.div`
-    display: flex;
-    gap: 5px;
+  display: flex;
+  gap: 5px;
 `;
 const TimeCounter = styled.div`
-    display: flex;
-    align-items: flex-end;
-    margin-left: 8px;
-    margin-right: 8px;
-    font-size: 1em;
-    white-space: nowrap;
-    gap: 8px;
+  display: flex;
+  align-items: flex-end;
+  margin-left: 8px;
+  margin-right: 8px;
+  font-size: 1em;
+  white-space: nowrap;
+  gap: 8px;
 
-    input {
-        text-align: right;
-    }
+  input {
+    text-align: right;
+  }
 `;
 const SpeedSlider = styled(Slider)``;
 const TimeSliderContainer = styled.div`
-    width: 60%;
-    display: flex;
-    gap: 5px;
-    align-content: center;
-    align-items: center;
-    margin: 12px 12px 12px 12px;
+  width: 60%;
+  display: flex;
+  gap: 5px;
+  align-content: center;
+  align-items: center;
 `;
 
 /* eslint-disable-next-line */
@@ -61,7 +65,7 @@ const buttonAnimation = (speed: number) => ({
   animation: `blinking ${
     1.1 - speed
   }s ease-in-out infinite alternate; @keyframes blinking { 0% { background-color: rgb(35,138,230);} 100% { background-color: rgb(135,188,230); }}`,
-  color: "#444"
+  color: '#444',
 });
 
 export function TimeControlPanel(props: TimeControlPanelProps) {
@@ -87,7 +91,7 @@ export function TimeControlPanel(props: TimeControlPanelProps) {
             onClick={props.onStop}
             disabled={!props.isStarted}
             sx={{
-              ...(props.isStarted ? buttonAnimation(props.intervalScale) : {})
+              ...(props.isStarted ? buttonAnimation(props.intervalScale) : {}),
             }}
             startIcon={<PauseCircle />}
           >
@@ -100,14 +104,14 @@ export function TimeControlPanel(props: TimeControlPanelProps) {
           variant="contained"
           color="primary"
           sx={{
-            ...(props.isStarted ? buttonAnimation(props.intervalScale) : {})
+            ...(props.isStarted ? buttonAnimation(props.intervalScale) : {}),
           }}
           startIcon={<RestartAlt />}
         >
           Reset
         </StyledButton>
       </ButtonPanel>
-      <Tooltip title={"Elapsed time"}>
+      <Tooltip title={'Elapsed time'}>
         <TimeCounter>
           <AccessTime />
           <input type="text" value={props.counter} size={6} disabled />
@@ -115,18 +119,18 @@ export function TimeControlPanel(props: TimeControlPanelProps) {
       </Tooltip>
 
       <TimeSliderContainer>
-        <Tooltip title={"Simulation Speed"}>
+        <Tooltip title={'Simulation Speed'}>
           <SpeedSlider
-            aria-label={"Simulation speed"}
+            aria-label={'Simulation speed'}
             value={props.intervalScale}
             step={0.01}
             marks={[
-              { value: 0, label: "🐢" },
-              { value: 0.2, label: "20%" },
-              { value: 0.4, label: "40%" },
-              { value: 0.6, label: "60%" },
-              { value: 0.8, label: "80%" },
-              { value: 1, label: "🐇" }
+              { value: 0, label: '🐢' },
+              { value: 0.2, label: '20%' },
+              { value: 0.4, label: '40%' },
+              { value: 0.6, label: '60%' },
+              { value: 0.8, label: '80%' },
+              { value: 1, label: '🐇' },
             ]}
             onChange={(event: Event, newValue: number | number[]) => {
               props.changeIntervalScale(newValue as number);
@@ -135,9 +139,9 @@ export function TimeControlPanel(props: TimeControlPanelProps) {
             max={1}
             valueLabelDisplay="auto"
             sx={{
-              "& .MuiSlider-markLabel": {
-                fontSize: "120%"
-              }
+              '& .MuiSlider-markLabel': {
+                fontSize: '90%',
+              },
             }}
           />
         </Tooltip>

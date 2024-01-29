@@ -24,7 +24,6 @@ export const ClassicStyleApp = ({ db }: { db: GeoDatabase }) => {
   return (
     <>
       <FileDropComponent
-        isDragOver={false}
         acceptableSuffixes={['.zip', '.json', '.csv']}
         onFinish={onFinish}
       />

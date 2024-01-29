@@ -181,7 +181,7 @@ export const MatrixSetPanel = forwardRef<
           locations={props.locations}
           focused={focusedTableId == 'adjacencyMatrix'}
           tableRef={refs[0]}
-          title={'Adjacency distances between each pair of locations'}
+          title={'Adjacency distances'}
           maxRowColLength={props.maxRowColLength}
           data={props.adjacencyMatrix}
           rgb={props.rgb}
@@ -203,7 +203,7 @@ export const MatrixSetPanel = forwardRef<
           locations={props.locations}
           focused={focusedTableId == 'distanceMatrix'}
           tableRef={refs[1]}
-          title={'Path distances between each pair of locations'}
+          title={'Path distances'}
           maxRowColLength={props.maxRowColLength}
           data={props.distanceMatrix}
           rgb={props.rgb}
@@ -225,7 +225,7 @@ export const MatrixSetPanel = forwardRef<
           locations={props.locations}
           focused={focusedTableId == 'transportationCostMatrix'}
           tableRef={refs[2]}
-          title={'Transportation costs between each pair of locations'}
+          title={'Transportation costs'}
           maxRowColLength={props.maxRowColLength}
           data={props.transportationCostMatrix}
           rgb={props.rgb}

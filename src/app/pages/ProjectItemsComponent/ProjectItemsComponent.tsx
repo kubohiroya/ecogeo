@@ -30,7 +30,12 @@ export const ProjectItemsComponent = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!location.href.endsWith('/projects-new') && projects.length == 0) {
+    console.log('projects', location.pathname);
+    if (
+      location.pathname.startsWith('/projects') &&
+      !location.pathname.endsWith('/projects-new') &&
+      projects.length == 0
+    ) {
       return navigate('/projects-new');
     }
   }, []);

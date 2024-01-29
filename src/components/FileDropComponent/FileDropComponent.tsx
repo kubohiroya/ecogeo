@@ -13,6 +13,7 @@ import {
   DialogContent,
   DialogTitle,
   LinearProgress,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import {
@@ -25,7 +26,6 @@ import { atom } from 'jotai/index';
 import { useAtom } from 'jotai';
 
 interface FileDropComponentProps {
-  isDragOver: boolean;
   acceptableSuffixes: string[];
   handleFiles?: (fileList: FileList) => void;
   onFinish?: (lastUpdated: number) => void;
@@ -59,7 +59,6 @@ function checkAcceptableFileList(
 
 // 背景色が変わるコンポーネントのスタイルを定義
 const DropZone = styled.div<DropZoneProps>`
-  display: flex;
   height: calc(100vh - 20px);
   // border: 10px dashed gray;
   align-items: center;
@@ -273,22 +272,40 @@ export const FileDropComponent = (props: FileDropComponentProps) => {
     >
       <div>
         {props.children}
-        <PromptMessageBox>
-          {props.prompt}
-          <div
-            style={{
-              textAlign: 'center',
-              marginTop: '20px',
-              marginLeft: '40px',
-            }}
-          >
-            <input id="file" onChange={handleFileInput} type="file" multiple />
-          </div>
-          <ErrorMessageBox>
-            {isError && 'エラー:非対応の拡張子です'}
-          </ErrorMessageBox>
-        </PromptMessageBox>
+        {props.prompt}
       </div>
+
+      <div>
+        <Tooltip
+          title={
+            'resource files(GADM Shapes GeoJSON files, IDE-GSM cities and routes csv files) and project files'
+          }
+        >
+          <PromptMessageBox>
+            <Typography
+              style={{ textAlign: 'center', fontWeight: 'bold' }}
+            ></Typography>
+            <div
+              style={{
+                textAlign: 'center',
+                marginTop: '20px',
+                marginLeft: '40px',
+              }}
+            >
+              <input
+                id="file"
+                onChange={handleFileInput}
+                type="file"
+                multiple
+              />
+            </div>
+            <ErrorMessageBox>
+              {isError && 'エラー:非対応の拡張子です'}
+            </ErrorMessageBox>
+          </PromptMessageBox>
+        </Tooltip>
+      </div>
+
       <Dialog open={processDialogOpen} fullScreen>
         <DialogTitle> Processing File </DialogTitle>
         <ProgressDialogContent>

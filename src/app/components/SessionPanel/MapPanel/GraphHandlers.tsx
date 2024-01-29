@@ -9,7 +9,7 @@ import {
 import { loop, shuffleArray } from '../../../utils/arrayUtil';
 import { SessionState } from '../../../models/SessionState';
 
-function updateRaceTrackSubGraph(
+export function updateRaceTrackSubGraph(
   sessionState: SessionState,
   numLocations: number,
 ) {
@@ -49,7 +49,7 @@ function updateRaceTrackSubGraph(
       });
     }
   });
-  const spherical = sessionState.units == 'degrees';
+  const spherical = sessionState.country.units == 'degrees';
   const edges =
     numLocations == 1
       ? []
@@ -269,7 +269,7 @@ export function updateRandomSubGraph(
   }
 
   const newLocations = [...cities, ...addingCities];
-  const spherical = sessionState.units == 'degrees';
+  const spherical = sessionState.country.units == 'degrees';
   const addingEdges =
     _numLocations == undefined
       ? createEdges(

@@ -18,13 +18,13 @@ export interface CountryConfigPanelProps {
   setTransportationCost: (transportationCost: number, commit?: boolean) => void;
   setElasticitySubstitution: (
     elasticitySubstitution: number,
-    commit?: boolean
+    commit?: boolean,
   ) => void;
 }
 
 const StyledCountryConfigPanel = styled.div`
-  margin-left: 64px;
-  margin-right: 64px;
+  margin-left: 0;
+  margin-right: 10px;
 `;
 
 export const CountryConfigPanel = React.memo(
@@ -39,7 +39,7 @@ export const CountryConfigPanel = React.memo(
     useImperativeHandle(ref, () => ({
       reset() {
         const countryDefault = INITIAL_COUNTRY_ARRAY.find(
-          (c) => country.countryId == c.countryId
+          (c) => country.countryId == c.countryId,
         );
         props.setNumLocations(countryDefault!.numLocations, true);
         props.setManufactureShare(countryDefault!.manufactureShare);
@@ -52,52 +52,52 @@ export const CountryConfigPanel = React.memo(
       (event: Event | SyntheticEvent, value: number | number[]) => {
         props.setNumLocations(value as number, false);
       },
-      [props.setNumLocations]
+      [props.setNumLocations],
     );
     const onNumLocationsChangeCommitted = useCallback(
       (event: Event | SyntheticEvent, value: number | number[]) => {
         props.setNumLocations(value as number, true);
       },
-      [props.setNumLocations]
+      [props.setNumLocations],
     );
 
     const onManufactureShareChanged = useCallback(
       (event: Event | SyntheticEvent, value: number | number[]) => {
         props.setManufactureShare(value as number, false);
       },
-      [props.setManufactureShare]
+      [props.setManufactureShare],
     );
     const onManufactureShareChangeCommitted = useCallback(
       (event: Event | SyntheticEvent, value: number | number[]) => {
         props.setManufactureShare(value as number, true);
       },
-      [props.setManufactureShare]
+      [props.setManufactureShare],
     );
 
     const onTransportationCostChange = useCallback(
       (event: Event | SyntheticEvent, value: number | number[]) => {
         props.setTransportationCost(value as number, false);
       },
-      [props.setTransportationCost]
+      [props.setTransportationCost],
     );
     const onTransportationCostChangeCommitted = useCallback(
       (event: Event | SyntheticEvent, value: number | number[]) => {
         props.setTransportationCost(value as number, true);
       },
-      [props.setTransportationCost]
+      [props.setTransportationCost],
     );
 
     const onElasticitySubstitutionChange = useCallback(
       (event: Event | SyntheticEvent, value: number | number[]) => {
         props.setElasticitySubstitution(value as number, false);
       },
-      [props.setElasticitySubstitution]
+      [props.setElasticitySubstitution],
     );
     const onElasticitySubstitutionChangeCommitted = useCallback(
       (event: Event | SyntheticEvent, value: number | number[]) => {
         props.setElasticitySubstitution(value as number, true);
       },
-      [props.setElasticitySubstitution]
+      [props.setElasticitySubstitution],
     );
 
     return (
@@ -184,7 +184,7 @@ export const CountryConfigPanel = React.memo(
         />
       </StyledCountryConfigPanel>
     );
-  })
+  }),
 );
 
 export default CountryConfigPanel;

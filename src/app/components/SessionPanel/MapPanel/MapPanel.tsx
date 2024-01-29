@@ -21,8 +21,6 @@ export interface MapPanelProps {
   autoGraphLayoutStarted: boolean;
   autoGraphLayoutSpeed: number;
   setAutoGraphLayoutSpeed: (autoLayoutSpeed: number) => void;
-  mapLayer: boolean;
-  setMapLayer: (layer: boolean) => void;
   country: Country;
 }
 
@@ -71,8 +69,6 @@ export const MapPanel = React.memo((props: MapPanelProps) => {
         autoGraphLayoutStarted={props.autoGraphLayoutStarted}
         autoLayoutSpeed={props.autoGraphLayoutSpeed}
         setAutoLayoutSpeed={props.setAutoGraphLayoutSpeed}
-        mapLayer={props.mapLayer}
-        setMapLLayer={props.setMapLayer}
       />
       {props.children}
     </StyledMapPanel>

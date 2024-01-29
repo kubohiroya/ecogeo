@@ -9,12 +9,16 @@ import {
   Box,
   Card,
   CardActions,
-  CardContent,
   CardHeader,
   IconButton,
   Typography,
 } from '@mui/material';
-import { Close, OpenInFull, Remove } from '@mui/icons-material';
+import {
+  Close,
+  CloseFullscreen,
+  OpenInFull,
+  Remove,
+} from '@mui/icons-material';
 import { RowBox } from '../RowBox/RowBox';
 import styled from '@emotion/styled';
 
@@ -37,6 +41,9 @@ type FloatingPanelProps = {
   titleBarMode: 'win' | 'mac';
   setToFront: () => void;
   onClose?: () => void;
+  maximized?: boolean;
+  onMaximize?: () => void;
+  onDemaximize?: () => void;
 } & ComponentProps<'div'>;
 
 const MiniWindowControlButton = styled(IconButton)`
@@ -72,6 +79,9 @@ export const FloatingPanel = forwardRef<HTMLDivElement, FloatingPanelProps>(
       onTouchEnd,
       setToFront,
       onClose,
+      maximized,
+      onMaximize,
+      onDemaximize,
       titleBarMode,
     }: FloatingPanelProps,
     ref,
@@ -79,6 +89,15 @@ export const FloatingPanel = forwardRef<HTMLDivElement, FloatingPanelProps>(
     const hideMe = () => {
       onClose && onClose();
     };
+    const maximizeMe = () => {
+      onMaximize && onMaximize();
+    };
+    const demaximizeMe = () => {
+      onDemaximize && onDemaximize();
+    };
+
+    const iconSize = 26;
+    const titleBarMarginRight = iconSize * (titleBarMode === 'win' ? 2 : 0);
 
     return (
       <FloatingCard
@@ -89,8 +108,7 @@ export const FloatingPanel = forwardRef<HTMLDivElement, FloatingPanelProps>(
         onMouseDown={(ev) => {
           const rect = document.getElementById(id)!.getBoundingClientRect();
           if (
-            titleBarMode == 'win' &&
-            rect.right - ev.clientX < 26 &&
+            rect.right - ev.clientX < titleBarMarginRight &&
             ev.clientY - rect.top < 26
           ) {
             return;
@@ -152,14 +170,41 @@ export const FloatingPanel = forwardRef<HTMLDivElement, FloatingPanelProps>(
                 </Typography>
               </RowBox>
               {titleBarMode == 'win' && (
-                <IconButton
-                  size="small"
-                  aria-label="close"
-                  style={{ marginRight: '6px', zIndex: 100 }}
-                  onClick={hideMe}
-                >
-                  <Close />
-                </IconButton>
+                <>
+                  {maximized ? (
+                    <IconButton
+                      size="small"
+                      style={{ margin: 0, padding: 0 }}
+                      aria-label="demaximize"
+                      title="demaximize"
+                      onClick={demaximizeMe}
+                    >
+                      <CloseFullscreen
+                        style={{ width: '18px', height: '18px' }}
+                      />
+                    </IconButton>
+                  ) : (
+                    <IconButton
+                      size="small"
+                      style={{ margin: 0, padding: 0 }}
+                      aria-label="maximize"
+                      title="maximize"
+                      onClick={maximizeMe}
+                    >
+                      <OpenInFull style={{ width: '18px', height: '18px' }} />
+                    </IconButton>
+                  )}
+
+                  <IconButton
+                    size="small"
+                    aria-label="close"
+                    style={{ marginRight: '6px' }}
+                    onClick={hideMe}
+                    title="close"
+                  >
+                    <Close />
+                  </IconButton>
+                </>
               )}
             </Box>
           }
@@ -172,7 +217,7 @@ export const FloatingPanel = forwardRef<HTMLDivElement, FloatingPanelProps>(
           }}
           titleTypographyProps={{ fontSize: '16px' }}
         ></CardHeader>
-        <CardContent>{children}</CardContent>
+        {children}
         <CardActions></CardActions>
       </FloatingCard>
     );

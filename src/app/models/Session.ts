@@ -2,31 +2,25 @@ import { UIState } from './UIState';
 import { AppMatrices } from './AppMatrices';
 import { Country } from './Country';
 import { ChartType } from './ChartType';
-import * as uuid from 'uuid';
 import { updateAddedSubGraph } from '../components/SessionPanel/MapPanel/GraphHandlers';
 import { SessionState } from './SessionState';
 import {
   createInitialUndoRedoState,
   UndoRedoState,
 } from '../hooks/useUndoRedo';
-import { PrimitiveAtom } from 'jotai';
-import { INITIAL_COUNTRY_ARRAY } from './initialCountryArray';
-import { atom } from 'jotai/index';
 
 export type Session = {
-  sessionId: string;
-
   matrices: AppMatrices;
 
   uiState: UIState;
 };
 
 export function createSessionState(
-  sessionId: string,
+  //sessionId: string,
   country: Country,
 ): UndoRedoState<SessionState> {
   const graph = updateAddedSubGraph(
-    sessionId,
+    //sessionId,
     {
       country,
       locations: [],
@@ -52,10 +46,8 @@ export function createSession(country: Country): {
   session: Session;
   sessionState: UndoRedoState<SessionState>;
 } {
-  const sessionId = uuid.v4();
   return {
     session: {
-      sessionId,
       matrices: {
         adjacencyMatrix: null,
         distanceMatrix: null,
@@ -72,15 +64,18 @@ export function createSession(country: Country): {
         autoLayoutFinished: true,
       },
     },
-    sessionState: createSessionState(sessionId, country),
+    sessionState: createSessionState(country),
   };
 }
+
+/*
 
 export const sessionAtoms: Record<string, PrimitiveAtom<Session>> = {};
 export const sessionStateAtoms: Record<
   string,
   PrimitiveAtom<UndoRedoState<SessionState>>
 > = {};
+
 const initialSessionStateArray = INITIAL_COUNTRY_ARRAY.map((country) =>
   createSession(country),
 );
@@ -94,3 +89,4 @@ const initialSelectedSessionIndex = initialSessionStateArray.length - 1;
 export const { session, sessionState } =
   initialSessionStateArray[initialSelectedSessionIndex];
 export const initialSelectedSessionId = session.sessionId;
+*/

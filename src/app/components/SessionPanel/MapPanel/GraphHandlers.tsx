@@ -204,7 +204,6 @@ function createRandomEdges(
 }
 
 export function updateRandomSubGraph(
-  sessionId: string,
   sessionState: SessionState,
   selectedIndices: number[],
   _numLocations?: number,
@@ -213,7 +212,7 @@ export function updateRandomSubGraph(
     _numLocations != undefined
       ? _numLocations
       : sessionState.locations.length + 1;
-  const seedRandom = new SeedRandom(sessionId + sessionState.locations.length);
+  const seedRandom = new SeedRandom(sessionState.locations.length);
   const ratio = sessionState.locations.length / numLocations;
   const cities = sessionState.locations.map((city) => ({
     ...city,
@@ -293,7 +292,7 @@ export function updateRandomSubGraph(
 }
 
 export const updateAddedSubGraph = (
-  sessionId: string,
+  //sessionId: string,
   sessionState: SessionState,
   selectedIndices: number[],
   numLocations: number,
@@ -303,7 +302,7 @@ export const updateAddedSubGraph = (
       return updateRaceTrackSubGraph(sessionState, numLocations);
     case 'Graph':
       return updateRandomSubGraph(
-        sessionId,
+        //sessionId,
         sessionState,
         selectedIndices,
         numLocations,

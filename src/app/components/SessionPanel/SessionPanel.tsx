@@ -546,7 +546,7 @@ setUIState((draft) => {
   );
 
   const onAddLocation = useCallback(() => {
-    doAddLocation(sessionId, sessionState, uiState);
+    doAddLocation(sessionState, uiState);
   }, [
     uiState.selectedIndices,
     sessionState.locations,
@@ -555,14 +555,10 @@ setUIState((draft) => {
   ]);
 
   const doAddLocation = useCallback(
-    (sessionId: string, sessionState: SessionState, uiState: UIState) => {
+    (sessionState: SessionState, uiState: UIState) => {
       requestAnimationFrame(() => {
         const { locations, edges, locationSerialNumber, addedIndices } =
-          updateRandomSubGraph(
-            sessionId,
-            sessionState,
-            uiState.selectedIndices,
-          );
+          updateRandomSubGraph(sessionState, uiState.selectedIndices);
 
         setSessionState(
           (draft) => {
@@ -591,7 +587,6 @@ setUIState((draft) => {
           (draft) => {
             const { locations, edges, locationSerialNumber, addedIndices } =
               updateAddedSubGraph(
-                sessionId,
                 sessionState,
                 uiState.selectedIndices,
                 numLocations,

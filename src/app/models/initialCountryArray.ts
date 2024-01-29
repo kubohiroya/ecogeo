@@ -55,6 +55,7 @@ export const INITIAL_COUNTRY_ARRAY: Country[] = [
     elasticitySubstitution: 4,
     units: 'kilometers',
   },
+  /*
   {
     countryId: '999',
     title: 'test',
@@ -78,4 +79,5 @@ export const INITIAL_COUNTRY_ARRAY: Country[] = [
     elasticitySubstitution: sigma,
     units: 'degrees',
   },
+   */
 ];

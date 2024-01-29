@@ -11,11 +11,11 @@ import { Box, Button } from '@mui/material';
 import {
   BarChart,
   Edit,
-  Flag,
   FolderOpen,
   GridOn,
   Home,
   Timer,
+  Tune,
 } from '@mui/icons-material';
 import { DesktopComponent } from './DesktopComponent';
 import { useLoaderData } from 'react-router-dom';
@@ -62,7 +62,6 @@ import {
 } from '../../hooks/useUndoRedo';
 import { INITIAL_COUNTRY_ARRAY } from '../../models/initialCountryArray';
 import { ChartType } from '../../models/ChartType';
-import { session } from '../../models/Session';
 import { ChartPanel } from '../../components/SessionPanel/ChartPanel/ChartPanel';
 import { ChartCanvas } from '../../components/SessionPanel/ChartPanel/ChartCanvas';
 import { atomWithImmer, useImmerAtom } from 'jotai-immer';
@@ -144,7 +143,6 @@ export const useSessionStateUndoRedo = () => {
   } = useUndoRedoSessionState();
 
   return {
-    session,
     current: sessionState,
     set: setSessionState,
     undo: undoSessionState,
@@ -649,7 +647,7 @@ setUIState((draft) => {
   );
 
   const onAddLocation = useCallback(() => {
-    doAddLocation(sessionId, sessionState, uiState);
+    doAddLocation(sessionState, uiState);
   }, [
     uiState.selectedIndices,
     sessionState.locations,
@@ -658,14 +656,10 @@ setUIState((draft) => {
   ]);
 
   const doAddLocation = useCallback(
-    (sessionId: string, sessionState: SessionState, uiState: UIState) => {
+    (sessionState: SessionState, uiState: UIState) => {
       requestAnimationFrame(() => {
         const { locations, edges, locationSerialNumber, addedIndices } =
-          updateRandomSubGraph(
-            sessionId,
-            sessionState,
-            uiState.selectedIndices,
-          );
+          updateRandomSubGraph(sessionState, uiState.selectedIndices);
 
         setSessionState(
           (draft) => {
@@ -694,7 +688,6 @@ setUIState((draft) => {
           (draft) => {
             const { locations, edges, locationSerialNumber, addedIndices } =
               updateAddedSubGraph(
-                sessionId,
                 sessionState,
                 uiState.selectedIndices,
                 numLocations,
@@ -1200,8 +1193,10 @@ setUIState((draft) => {
             i: 'InputOutput',
             x: 1,
             y: 0,
-            w: 7,
+            w: 5,
             h: 3,
+            minW: 5,
+            minH: 3,
             resizeHandles: ['se'],
             isDraggable: true,
             isResizable: true,
@@ -1209,7 +1204,7 @@ setUIState((draft) => {
           resource: {
             id: 'InputOutput',
             type: GridItemType.FloatingPanel,
-            title: 'Input/Output Panel',
+            title: 'Input/Output',
             icon: <FolderOpen />,
             titleBarMode: 'win',
             rowHeight: ROW_HEIGHT,
@@ -1276,7 +1271,7 @@ setUIState((draft) => {
         },
         {
           layout: {
-            i: 'CountryConfigButton',
+            i: 'ParametersButton',
             x: 0,
             y: 3,
             w: 1,
@@ -1286,35 +1281,37 @@ setUIState((draft) => {
             resizeHandles: [],
           },
           resource: {
-            id: 'CountryConfigButton',
+            id: 'ParametersButton',
             type: GridItemType.FloatingButton,
-            bindToPanelId: 'CountryConfig',
-            tooltip: 'Open CountryConfig Panel',
-            icon: <Flag />,
+            bindToPanelId: 'Parameters',
+            tooltip: 'Open Parameters Panel',
+            icon: <Tune />,
             shown: true,
             enabled: false,
           },
         },
         {
           layout: {
-            i: 'CountryConfig',
+            i: 'Parameters',
             x: 1,
             y: 3,
             w: 9,
-            h: 8,
+            h: 9,
+            minW: 9,
+            minH: 9,
             isDraggable: true,
             isResizable: true,
             resizeHandles: ['se'],
           },
           resource: {
-            id: 'CountryConfig',
+            id: 'Parameters',
             type: GridItemType.FloatingPanel,
-            title: 'CountryConfig Panel',
-            icon: <Flag />,
+            title: 'Parameters',
+            icon: <Tune />,
             titleBarMode: 'win',
             rowHeight: ROW_HEIGHT,
             shown: true,
-            bindToButtonId: 'CountryConfigButton',
+            bindToButtonId: 'ParametersButton',
             children: (
               <CountryConfigPanel
                 country={sessionState.country}
@@ -1326,71 +1323,12 @@ setUIState((draft) => {
             ),
           },
         },
-        {
-          layout: {
-            i: 'MatricesButton',
-            x: 0,
-            y: 4,
-            w: 1,
-            h: 1,
-            isDraggable: true,
-            isResizable: false,
-            resizeHandles: [],
-          },
-          resource: {
-            id: 'MatricesButton',
-            type: GridItemType.FloatingButton,
-            bindToPanelId: 'Matrices',
-            tooltip: 'Open Matrices Panel',
-            icon: <GridOn />,
-            shown: true,
-            enabled: false,
-          },
-        },
-        {
-          layout: {
-            i: 'Matrices',
-            x: 1,
-            y: 11,
-            w: 23,
-            h: 11,
-            isDraggable: true,
-            isResizable: true,
-            resizeHandles: ['se'],
-          },
-          resource: {
-            id: 'Matrices',
-            type: GridItemType.FloatingPanel,
-            title: 'Matrices Panel',
-            icon: <GridOn />,
-            titleBarMode: 'win',
-            rowHeight: ROW_HEIGHT,
-            shown: true,
-            bindToButtonId: 'MatricesButton',
-            children: (
-              <MatrixSetPanel
-                ref={diagonalMatrixSetPanelRef}
-                locations={sessionState.locations}
-                maxRowColLength={preferences.maxRowColLength}
-                adjacencyMatrix={matrices.adjacencyMatrix}
-                distanceMatrix={matrices.distanceMatrix}
-                transportationCostMatrix={matrices.transportationCostMatrix}
-                rgb={{ r: 23, g: 111, b: 203 }}
-                selectedIndices={uiState.selectedIndices}
-                focusedIndices={uiState.focusedIndices}
-                onSelected={onSelect}
-                onFocus={onFocus}
-                onUnfocus={onUnfocus}
-              />
-            ),
-          },
-        },
 
         {
           layout: {
             i: 'TimerControlButton',
             x: 0,
-            y: 5,
+            y: 4,
             w: 1,
             h: 1,
             isDraggable: true,
@@ -1411,9 +1349,11 @@ setUIState((draft) => {
           layout: {
             i: 'TimerControl',
             x: 1,
-            y: 22,
-            w: 22,
+            y: 12,
+            w: 16,
             h: 3,
+            minW: 16,
+            minH: 3,
             isDraggable: true,
             isResizable: true,
             resizeHandles: ['se'],
@@ -1421,7 +1361,7 @@ setUIState((draft) => {
           resource: {
             id: 'TimerControl',
             type: GridItemType.FloatingPanel,
-            title: 'TimerControl Panel',
+            title: 'TimerControl',
             icon: <Timer />,
             titleBarMode: 'win',
             rowHeight: ROW_HEIGHT,
@@ -1436,6 +1376,66 @@ setUIState((draft) => {
                 onReset={simulation.reset}
                 intervalScale={simulation.intervalScale}
                 changeIntervalScale={simulation.changeIntervalScale}
+              />
+            ),
+          },
+        },
+
+        {
+          layout: {
+            i: 'MatricesButton',
+            x: 0,
+            y: 5,
+            w: 1,
+            h: 1,
+            isDraggable: true,
+            isResizable: false,
+            resizeHandles: [],
+          },
+          resource: {
+            id: 'MatricesButton',
+            type: GridItemType.FloatingButton,
+            bindToPanelId: 'Matrices',
+            tooltip: 'Open Matrices Panel',
+            icon: <GridOn />,
+            shown: true,
+            enabled: false,
+          },
+        },
+        {
+          layout: {
+            i: 'Matrices',
+            x: 1,
+            y: 15,
+            w: 23,
+            h: 10,
+            isDraggable: true,
+            isResizable: true,
+            resizeHandles: ['se'],
+          },
+          resource: {
+            id: 'Matrices',
+            type: GridItemType.FloatingPanel,
+            title: 'Matrices',
+            icon: <GridOn />,
+            titleBarMode: 'win',
+            rowHeight: ROW_HEIGHT,
+            shown: true,
+            bindToButtonId: 'MatricesButton',
+            children: (
+              <MatrixSetPanel
+                ref={diagonalMatrixSetPanelRef}
+                locations={sessionState.locations}
+                maxRowColLength={preferences.maxRowColLength}
+                adjacencyMatrix={matrices.adjacencyMatrix}
+                distanceMatrix={matrices.distanceMatrix}
+                transportationCostMatrix={matrices.transportationCostMatrix}
+                rgb={{ r: 23, g: 111, b: 203 }}
+                selectedIndices={uiState.selectedIndices}
+                focusedIndices={uiState.focusedIndices}
+                onSelected={onSelect}
+                onFocus={onFocus}
+                onUnfocus={onUnfocus}
               />
             ),
           },
@@ -1476,7 +1476,7 @@ setUIState((draft) => {
           resource: {
             id: 'Chart',
             type: GridItemType.FloatingPanel,
-            title: 'Chart Panel',
+            title: 'Chart',
             icon: <BarChart />,
             titleBarMode: 'win',
             rowHeight: ROW_HEIGHT,

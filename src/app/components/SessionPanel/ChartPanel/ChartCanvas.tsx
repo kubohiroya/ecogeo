@@ -16,7 +16,7 @@ const drawHorizontalLabels = (
   numLocations: number,
   yBase: number,
   focusedLocationIndices: number[],
-  selectedLocationIndices: number[]
+  selectedLocationIndices: number[],
 ) => {
   ctx.textAlign = 'left';
   let numDrawnHorizontalLines = 0;
@@ -90,8 +90,12 @@ export const ChartCanvas = React.memo(
       position: {
         x: number;
         y: number;
-      } | null
+      } | null,
     ): number | null => {
+      if (!locations || locations.length == 0) {
+        return null;
+      }
+
       const wScale = (width - labelWidth - rightMargin) / locations.length;
 
       if (position) {
@@ -115,13 +119,17 @@ export const ChartCanvas = React.memo(
         labelWidth,
         0,
         canvas.width - labelWidth - rightMargin,
-        canvas.height - labelHeight
+        canvas.height - labelHeight,
       );
 
       const config = chartConfig[chartTypeKey];
 
       if (!config) {
         throw new Error('ERROR ChartTypeKey=' + chartTypeKey);
+      }
+      if (!locations || locations.length == 0) {
+        console.error('ERROR location == null || location.length == 0');
+        return;
       }
 
       const wScale =
@@ -138,7 +146,7 @@ export const ChartCanvas = React.memo(
           config.min,
           graphHeight,
           config.oy,
-          scale
+          scale,
         );
       };
 
@@ -148,7 +156,7 @@ export const ChartCanvas = React.memo(
         min: number,
         graphHeight: number,
         oy: number = 0,
-        scale: number = 1
+        scale: number = 1,
       ): number => {
         const relativeY = (value - oy) / (max - min);
         return graphHeight * scale * relativeY + (oy * graphHeight) / 2;
@@ -190,7 +198,7 @@ export const ChartCanvas = React.memo(
               labelWidth + index * wScale,
               0,
               Math.max(wScale - 1, 1),
-              canvas.height - labelHeight
+              canvas.height - labelHeight,
             );
           }
         }
@@ -206,14 +214,14 @@ export const ChartCanvas = React.memo(
                 labelWidth + index * wScale + 2,
                 canvas.height - labelHeight - y + 2,
                 Math.max(wScale - 1, 1) - 4,
-                y - 4
+                y - 4,
               );
             } else if (canvas.height - labelHeight < y) {
               ctx.strokeRect(
                 labelWidth + index * wScale,
                 0,
                 Math.max(wScale - 1, 1),
-                canvas.height - labelHeight
+                canvas.height - labelHeight,
               );
             }
             ctx.strokeStyle = style;
@@ -226,14 +234,14 @@ export const ChartCanvas = React.memo(
               labelWidth + index * wScale,
               canvas.height - labelHeight - y,
               Math.max(wScale - 1, 1),
-              y
+              y,
             );
           } else if (canvas.height - labelHeight < y) {
             ctx.fillRect(
               labelWidth + index * wScale,
               0,
               Math.max(wScale - 1, 1),
-              canvas.height - labelHeight
+              canvas.height - labelHeight,
             );
           }
         }
@@ -284,7 +292,7 @@ export const ChartCanvas = React.memo(
                 labelWidth + (index + 0.5) * wScale - 3,
                 y - 3,
                 6,
-                6
+                6,
               );
               ctx.restore();
             }
@@ -330,7 +338,7 @@ export const ChartCanvas = React.memo(
         locations.length,
         canvas.height - labelHeight + 13,
         focusedIndices,
-        selectedIndices
+        selectedIndices,
       );
 
       function drawFocusedItemTooltip(index: number | null) {
@@ -344,14 +352,14 @@ export const ChartCanvas = React.memo(
             Math.min(width - 230, pointerPosition.x),
             pointerPosition.y + 12,
             230,
-            20
+            20,
           );
           ctx.fillStyle = 'rgb(255,255,255,1)';
           ctx.textAlign = 'left';
           ctx.fillText(
             locations[index].label,
             Math.min(width - 230 + 16, pointerPosition.x + 8),
-            pointerPosition.y + 26
+            pointerPosition.y + 26,
           );
         }
       }
@@ -374,7 +382,7 @@ export const ChartCanvas = React.memo(
         }
         setPointerPosition({ x: event.offsetX, y: event.offsetY });
       },
-      [canvasRef.current, focusedIndices]
+      [canvasRef.current, focusedIndices],
     );
 
     const onMouseLeave = useCallback(
@@ -385,7 +393,7 @@ export const ChartCanvas = React.memo(
           onUnfocus(focusedIndices);
         }
       },
-      [canvasRef.current, focusedIndices]
+      [canvasRef.current, focusedIndices],
     );
 
     const onMouseDown = useCallback(
@@ -400,7 +408,7 @@ export const ChartCanvas = React.memo(
           }
         }
       },
-      [canvasRef.current, selectedIndices]
+      [canvasRef.current, selectedIndices],
     );
 
     useEffect(() => {
@@ -428,5 +436,5 @@ export const ChartCanvas = React.memo(
     ]);
 
     return <canvas ref={canvasRef} width={width} height={height}></canvas>;
-  }
+  },
 );

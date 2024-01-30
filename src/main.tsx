@@ -28,6 +28,7 @@ import { RaceTrackSimPage } from './app/pages/Sim/RaceTrackSimPage';
 import { ProjectItemsComponent } from './app/pages/ProjectItemsComponent/ProjectItemsComponent';
 import { ResourceItemsComponent } from './app/pages/ResourceItemsComponent/ResourceItemsComponent';
 import { FileDropComponent } from './components/FileDropComponent/FileDropComponent';
+import { raceTrackSimLoader } from './app/pages/Sim/RaceTrackSimLoader';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -228,13 +229,7 @@ const router = createBrowserRouter([
   {
     path: '/graph/:uuid/:zoom/:y/:x',
     element: <RaceTrackSimPage />,
-    loader: async (request: any) => ({
-      uuid: request.params.uuid,
-      y: parseFloat(request.params.y),
-      x: parseFloat(request.params.x),
-      zoom: parseFloat(request.params.zoom),
-      projectDB: await GeoDatabase.open(request.params.uuid),
-    }),
+    loader: raceTrackSimLoader,
   },
   {
     path: '/map/:uuid/:zoom/:latitude/:longitude',

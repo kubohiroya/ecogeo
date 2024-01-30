@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { Box, CardContent } from '@mui/material';
@@ -11,9 +11,9 @@ import ReactGridLayout, {
 import useWindowDimensions from '../../hooks/useWindowDimenstions';
 import { FloatingButton } from '../../../components/FloatingButton/FloatingButton';
 import { FloatingPanel } from '../../../components/FloatingPanel/FloatingPanel';
-import { GridItemResources } from './GridItemResources';
+import { GridItemResources } from '../../models/GridItemResources';
 import { entriesToRecord, filterRecord } from '../../utils/arrayUtil';
-import { GridItemType } from './GridItemType';
+import { GridItemType } from '../../models/GridItemType';
 
 const NUM_HORIZONTAL_GRIDS = 32;
 const NUM_VERTICAL_GRIDS = 20;
@@ -32,13 +32,10 @@ const StyledResponsiveGridLayout = styled(ResponsiveGridLayout)`
 `;
 
 export type DesktopComponentProps = {
-  gridItems: {
-    layout: ReactGridLayout.Layout;
-    resource: GridItemResources;
-  }[];
+  initialLayouts: ReactGridLayout.Layout[];
+  resources: Record<string, GridItemResources>;
   children?: React.ReactNode;
 };
-
 export const DesktopComponent = (props: DesktopComponentProps) => {
   const navigate = useNavigate();
   const params = useParams();
@@ -46,22 +43,27 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
   const [forefront, setForefront] = useState<string>('' as string);
 
   const [layouts, setLayouts] = useState<ReactGridLayout.Layout[]>(
-    props.gridItems
-      .filter((item) => item.resource.shown)
-      .map((item) => item.layout),
+    props.initialLayouts,
   );
+
+  useEffect(() => {
+    setLayouts([...props.initialLayouts]);
+  }, [props.initialLayouts]);
 
   const [resources, setResources] = useState<Record<string, GridItemResources>>(
-    entriesToRecord<string, GridItemResources>(
-      props.gridItems.map((item) => [item.resource.id, item.resource]),
-    ),
+    { ...props.resources },
   );
 
+  useEffect(() => {
+    setResources({ ...props.resources });
+  }, [props.resources]);
+
+  /*
   const [buttonEnabledState, setButtonEnabledState] = useState<
     Record<string, boolean>
   >(
     entriesToRecord<string, boolean>(
-      props.gridItems
+
         .filter(
           (item) =>
             item.resource.enabled &&
@@ -70,14 +72,20 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
         .map((item) => [item.resource.id, true]),
     ),
   );
+   */
 
   const [removedLayoutsMap, setRemovedLayoutsMap] = useState<
     Record<string, ReactGridLayout.Layout>
   >(
     entriesToRecord<string, ReactGridLayout.Layout>(
-      props.gridItems
-        .filter((item) => !item.resource.shown)
-        .map((item) => [item.resource.id, item.layout]),
+      layouts
+        .filter(
+          (item) =>
+            resources[item.i] &&
+            resources[item.i].type == GridItemType.FloatingPanel &&
+            !resources[item.i].shown,
+        )
+        .map((item) => [item.i, item]),
     ),
   );
 
@@ -142,6 +150,7 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
         },
       );
 
+      /*
       setButtonEnabledState((buttonEnabledState) => {
         const buttonId = resources[panelId].bindToButtonId;
         if (buttonId) {
@@ -153,6 +162,7 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
           return buttonEnabledState;
         }
       });
+       */
     } else {
       const removingLayout = layouts.find((layout) => layout.i == panelId);
       if (removingLayout) {
@@ -167,6 +177,7 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
         setLayouts((layouts: ReactGridLayout.Layout[]) => {
           return layouts.filter((layout) => layout.i !== panelId);
         });
+        /*
         setButtonEnabledState((enableState) => {
           // console.log(panelId, resources[panelId]);
           if (resources[panelId].bindToButtonId) {
@@ -178,6 +189,7 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
             return enableState;
           }
         });
+         */
       }
     }
 
@@ -234,6 +246,8 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
     layout: ReactGridLayout.Layout,
     resource: GridItemResources,
   ) => {
+    if (!resource) return;
+
     switch (resource.type) {
       case 'Background':
         return (
@@ -256,14 +270,14 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
               if (resource.bindToPanelId) {
                 onShowOrHide(
                   resource.bindToPanelId,
-                  !buttonEnabledState[resource.bindToPanelId],
+                  !resources[resource.bindToPanelId].shown,
                 );
                 onForefront(resource.bindToPanelId);
               } else if (resource.navigateTo) {
                 navigate(resource.navigateTo);
               }
             }}
-            disabled={!buttonEnabledState[layout.i]}
+            disabled={!resources[layout.i].enabled}
           >
             {resource.icon}
           </FloatingButton>
@@ -293,9 +307,21 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
           </FloatingPanel>
         );
       default:
-        throw new Error(resource.type);
+        console.error({ layout, resource });
+        throw new Error('Unknown Item');
     }
   };
+
+  /*
+  useEffect(() => {
+    setLayouts(createLayouts(props.gridItems));
+    setResources(createResources(props.gridItems));
+  }, [props.gridItems]);
+   */
+
+  if (layouts.length !== Object.keys(resources).length) {
+    return;
+  }
 
   return (
     <Box
@@ -328,7 +354,9 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
         onDragStop={onDragStop}
         onResizeStop={onResizeStop}
       >
-        {layouts.map((layout) => createDOM(layout, resources[layout.i]))}
+        {layouts.map((layout) => {
+          return createDOM(layout, resources[layout.i]);
+        })}
       </StyledResponsiveGridLayout>
       {props.children}
     </Box>

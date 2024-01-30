@@ -10,13 +10,14 @@ import React from 'react';
 
 const StyledTimeControlPanel = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   vertical-align: middle;
   align-content: center;
   align-items: center;
   margin-left: 0;
   margin-right: 8px;
-  gap: 16px;
+  gap: 8px;
 `;
 const StyledButtonGroup = styled(ButtonGroup)``;
 const StyledButton = styled(Button)`
@@ -43,8 +44,8 @@ const TimeCounter = styled.div`
 `;
 const SpeedSlider = styled(Slider)``;
 const TimeSliderContainer = styled.div`
-  width: 60%;
   display: flex;
+  width: 90%;
   gap: 5px;
   align-content: center;
   align-items: center;
@@ -111,14 +112,14 @@ export function TimeControlPanel(props: TimeControlPanelProps) {
           Reset
         </StyledButton>
       </ButtonPanel>
-      <Tooltip title={'Elapsed time'}>
-        <TimeCounter>
-          <AccessTime />
-          <input type="text" value={props.counter} size={6} disabled />
-        </TimeCounter>
-      </Tooltip>
 
       <TimeSliderContainer>
+        <Tooltip title={'Elapsed time'}>
+          <TimeCounter>
+            <AccessTime />
+            <input type="text" value={props.counter} size={6} disabled />
+          </TimeCounter>
+        </Tooltip>
         <Tooltip title={'Simulation Speed'}>
           <SpeedSlider
             aria-label={'Simulation speed'}

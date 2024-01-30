@@ -9,10 +9,12 @@ import React, {
 import { Domain, Factory, Favorite, LocalShipping } from '@mui/icons-material';
 import { INITIAL_COUNTRY_ARRAY } from '../../../models/initialCountryArray';
 import { Country } from '../../../models/Country';
+import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 
 /* eslint-disable-next-line */
-export interface CountryConfigPanelProps {
+export interface ParameterConfigPanelProps {
   country: Country;
+  setCountry: (countryId: string) => void;
   setNumLocations: (numLocations: number, commit: boolean) => void;
   setManufactureShare: (manufactureShare: number, commit?: boolean) => void;
   setTransportationCost: (transportationCost: number, commit?: boolean) => void;
@@ -22,18 +24,18 @@ export interface CountryConfigPanelProps {
   ) => void;
 }
 
-const StyledCountryConfigPanel = styled.div`
+const StyledParameterConfigPanel = styled.div`
   margin-left: 0;
   margin-right: 10px;
 `;
 
-export const CountryConfigPanel = React.memo(
+export const ParameterConfigPanel = React.memo(
   forwardRef<
     {
       reset: () => void;
     },
-    CountryConfigPanelProps
-  >((props: CountryConfigPanelProps, ref) => {
+    ParameterConfigPanelProps
+  >((props: ParameterConfigPanelProps, ref) => {
     const country = props.country;
 
     useImperativeHandle(ref, () => ({
@@ -101,7 +103,34 @@ export const CountryConfigPanel = React.memo(
     );
 
     return (
-      <StyledCountryConfigPanel>
+      <StyledParameterConfigPanel>
+        <ToggleButtonGroup
+          exclusive
+          value={country?.countryId || ''}
+          onChange={(
+            event: React.MouseEvent<HTMLElement>,
+            countryId: string | null,
+          ) => {
+            countryId && props.setCountry(countryId);
+          }}
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            marginTop: '4px',
+            marginBottom: '8px',
+          }}
+        >
+          {INITIAL_COUNTRY_ARRAY.map((c, index) => (
+            <ToggleButton
+              size="small"
+              key={index}
+              title={c.title + ': ' + c.description}
+              value={c.countryId}
+            >
+              {c.title}
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
         <LabelSlider
           title={
             'K: The number of locations connected by transportation network.'
@@ -117,7 +146,7 @@ export const CountryConfigPanel = React.memo(
             { value: 80, label: '80' },
             { value: 100, label: '100' },
           ]}
-          value={country.numLocations}
+          value={country?.numLocations || 0}
           onChange={onNumLocationsChange}
           onChangeCommitted={onNumLocationsChangeCommitted}
           min={1}
@@ -136,7 +165,7 @@ export const CountryConfigPanel = React.memo(
             { value: 0.8, label: '0.8' },
             { value: 1.0, label: '1.0' },
           ]}
-          value={country.manufactureShare}
+          value={country?.manufactureShare || 0}
           onChange={onManufactureShareChanged}
           onChangeCommitted={onManufactureShareChangeCommitted}
           min={0}
@@ -155,7 +184,7 @@ export const CountryConfigPanel = React.memo(
             { value: 7, label: '7' },
             { value: 10, label: '10' },
           ]}
-          value={country.transportationCost}
+          value={country?.transportationCost || 0}
           onChange={onTransportationCostChange}
           onChangeCommitted={onTransportationCostChangeCommitted}
           min={1}
@@ -176,15 +205,15 @@ export const CountryConfigPanel = React.memo(
             { value: 15, label: '15' },
             { value: 20, label: '20' },
           ]}
-          value={country.elasticitySubstitution}
+          value={country?.elasticitySubstitution || 0}
           onChange={onElasticitySubstitutionChange}
           onChangeCommitted={onElasticitySubstitutionChangeCommitted}
           min={1}
           max={20}
         />
-      </StyledCountryConfigPanel>
+      </StyledParameterConfigPanel>
     );
   }),
 );
 
-export default CountryConfigPanel;
+export default ParameterConfigPanel;

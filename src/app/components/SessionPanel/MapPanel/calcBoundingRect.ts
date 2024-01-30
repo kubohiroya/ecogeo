@@ -1,7 +1,7 @@
 import { City } from '../../../models/City';
 
 export function calcBoundingRect(locations: City[]) {
-  if (locations.length == 0) {
+  if (!locations || locations.length == 0) {
     return {
       top: Number.NEGATIVE_INFINITY,
       left: Number.NEGATIVE_INFINITY,

@@ -31,7 +31,7 @@ import { Edge } from '../../models/Graph';
 import { isInfinity } from '../../utils/mathUtil';
 import { ViewportCenter } from '../../models/ViewportCenter';
 import { Box, LinearProgress, Snackbar } from '@mui/material';
-import CountryConfigPanel from './CountryConfigPanel/CountryConfigPanel';
+import ParameterConfigPanel from './ParameterConfigPanel/ParameterConfigPanel';
 import TimeControlPanel from './TimeControPanel/TimeControlPanel';
 import MapPanel from './MapPanel/MapPanel';
 import { ChartCanvas } from './ChartPanel/ChartCanvas';
@@ -41,12 +41,12 @@ import useIntervalExpScale from '../../hooks/useIntervalExpScape';
 import { startSimulation, tickSimulator } from '../../models/Simulator';
 import { GraphLayoutTickResult } from '../../graphLayout/GraphLayout';
 import { SessionRenameDialog } from './SessionRenameDialog';
-import { getMatrixEngine } from '../../apsp/MatrixEngineService';
 import { AppMatrices } from '../../models/AppMatrices';
 import { SessionState } from '../../models/SessionState';
 import { EuclideanCanvas } from './MapPanel/pixi/EuclideanCanvas';
 import MapComponent from './MapPanel/deckgl/MapComponent';
 import { globalPixelToTileXYZ } from '../../utils/mortonNumberUtil';
+import { createMatrixEngine } from '../../apsp/MatrixEngineService';
 
 type SessionPanelProps = {
   sessionId: string;
@@ -814,11 +814,7 @@ setUIState((draft) => {
     edges: Edge[],
     transportationCost: number,
   ): Promise<AppMatrices> => {
-    const matrixEngine = getMatrixEngine(
-      sessionId,
-      locations.length,
-      edges.length,
-    );
+    const matrixEngine = createMatrixEngine(locations.length, edges.length);
 
     return matrixEngine.updateAdjacencyMatrix(
       locations,
@@ -1135,12 +1131,13 @@ setUIState((draft) => {
       </ChartPanel>
 
       <Box sx={{ margin: '0 2px 0 2px' }}>
-        <CountryConfigPanel
+        <ParameterConfigPanel
           country={sessionState.country}
           setNumLocations={setNumLocations}
           setManufactureShare={setManufactureShare}
           setTransportationCost={setTransportationCost}
           setElasticitySubstitution={setElasticitySubstitution}
+          setCountry={(countryId: string) => {}}
         />
 
         <MatrixSetPanel

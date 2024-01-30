@@ -23,7 +23,7 @@ import { RowBox } from '../RowBox/RowBox';
 import styled from '@emotion/styled';
 
 const FloatingCard = styled(Card)`
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.9);
 `;
 
 type FloatingPanelProps = {
@@ -108,14 +108,12 @@ export const FloatingPanel = forwardRef<HTMLDivElement, FloatingPanelProps>(
         onMouseDown={(ev) => {
           const rect = document.getElementById(id)!.getBoundingClientRect();
           if (
-            rect.right - ev.clientX < titleBarMarginRight &&
+            titleBarMarginRight < rect.right - ev.clientX &&
             ev.clientY - rect.top < 26
           ) {
-            return;
+            setToFront();
+            onMouseDown && onMouseDown(ev);
           }
-
-          setToFront();
-          onMouseDown && onMouseDown(ev);
         }}
         onMouseUp={onMouseUp}
         onTouchEnd={onTouchEnd}

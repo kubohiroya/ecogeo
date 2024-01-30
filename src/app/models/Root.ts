@@ -1,5 +1,4 @@
 import { Atom } from 'jotai/vanilla/atom';
-import { Session } from './Session';
 import { PrimitiveAtom } from 'jotai';
 import { atom } from 'jotai/index';
 import { UndoRedoState } from '../hooks/useUndoRedo';
@@ -12,7 +11,6 @@ enablePatches();
 
 export interface Root {
   sessionIdsAtom: Atom<string[]>;
-  sessionAtoms: Record<string, PrimitiveAtom<Session>>;
   sessionStateAtoms: Record<string, PrimitiveAtom<UndoRedoState<SessionState>>>;
   sessionTitlesAtom: Atom<Map<string, string>>;
 }
@@ -45,7 +43,6 @@ const sessionTitlesAtom = atom(
 );
 
 const root: Root = {
-  sessionAtoms,
   sessionStateAtoms,
   sessionIdsAtom,
   sessionTitlesAtom,

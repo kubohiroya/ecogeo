@@ -1,8 +1,14 @@
 import styled from '@emotion/styled';
 import DiagonalMatrix from '../../../../components/DiagonalMatrix/DiagonalMatrix';
-import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
+import React, {
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import { Box } from '@mui/material';
 import { City } from '../../../models/City';
+import { LocalShipping, Route, TrendingFlat } from '@mui/icons-material';
 
 /* eslint-disable-next-line */
 export interface DiagonalMatrixSetPanelProps {
@@ -181,6 +187,7 @@ export const MatrixSetPanel = forwardRef<
           locations={props.locations}
           focused={focusedTableId == 'adjacencyMatrix'}
           tableRef={refs[0]}
+          icon={<TrendingFlat />}
           title={'Adjacency distances'}
           maxRowColLength={props.maxRowColLength}
           data={props.adjacencyMatrix}
@@ -203,6 +210,7 @@ export const MatrixSetPanel = forwardRef<
           locations={props.locations}
           focused={focusedTableId == 'distanceMatrix'}
           tableRef={refs[1]}
+          icon={<Route />}
           title={'Path distances'}
           maxRowColLength={props.maxRowColLength}
           data={props.distanceMatrix}
@@ -225,6 +233,7 @@ export const MatrixSetPanel = forwardRef<
           locations={props.locations}
           focused={focusedTableId == 'transportationCostMatrix'}
           tableRef={refs[2]}
+          icon={<LocalShipping />}
           title={'Transportation costs'}
           maxRowColLength={props.maxRowColLength}
           data={props.transportationCostMatrix}

@@ -123,7 +123,6 @@ export const RaceTrackDesktopComponent = (props: SimDesktopComponentProps) => {
     setUIState,
     matrices,
     updateAndSetMatrices,
-    //diagonalMatrixSetPanelRef,
   });
 
   useEffect(() => {
@@ -233,7 +232,7 @@ export const RaceTrackDesktopComponent = (props: SimDesktopComponentProps) => {
     });
     setLayouts(newLayouts);
     setResources(newResources);
-  }, [width, height, sessionState]);
+  }, [width, height, sessionState, matrices]);
 
   return <DesktopComponent initialLayouts={layouts} resources={resources} />;
 };

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import React, { ForwardedRef } from 'react';
+import React, { ForwardedRef, ReactNode } from 'react';
 import { isInfinity, round } from '../../app/utils/mathUtil';
 import { Box, CircularProgress } from '@mui/material';
 import { City } from '../../app/models/City';
@@ -7,6 +7,7 @@ import { City } from '../../app/models/City';
 /* eslint-disable-next-line */
 export interface MatrixProps {
   matrixId: string;
+  icon: ReactNode;
   title: string;
   locations: City[];
   data: number[][] | null;
@@ -45,6 +46,8 @@ const MatrixContainer = styled.div`
 
 const HeaderWithIcon = styled.h3`
   display: flex;
+  text-align: center;
+  justify-content: center;
   gap: 10px;
   align-content: center;
   align-items: center;
@@ -272,7 +275,10 @@ export const DiagonalMatrix = (props: MatrixProps) => {
 
   return (
     <MatrixContainer>
-      <HeaderWithIcon>{props.title}</HeaderWithIcon>
+      <HeaderWithIcon>
+        {props.icon}
+        {props.title}
+      </HeaderWithIcon>
       {props.data == null ? (
         <StyledBox>
           <CircularProgress />

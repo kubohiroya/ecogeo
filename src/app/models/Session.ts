@@ -1,6 +1,6 @@
 import { UIState } from './UIState';
 import { AppMatrices } from './AppMatrices';
-import { Country } from './Country';
+import { ParameterSet } from './ParameterSet';
 import { ChartType } from './ChartType';
 import { updateAddedSubGraph } from '../components/SessionPanel/MapPanel/GraphHandlers';
 import { SessionState } from './SessionState';
@@ -16,33 +16,31 @@ export type Session = {
 };
 
 export function createSessionState(
-  //sessionId: string,
-  country: Country,
+  parameterSet: ParameterSet,
 ): UndoRedoState<SessionState> {
   const graph = updateAddedSubGraph(
-    //sessionId,
     {
-      country,
+      parameterSet: parameterSet,
       locations: [],
       edges: [],
       locationSerialNumber: 0,
     },
     [],
-    country.numLocations,
+    parameterSet.numLocations,
   );
 
   const current = {
-    country,
+    parameterSet,
     locations: graph.locations,
     edges: graph.edges,
     locationSerialNumber: graph.locationSerialNumber,
-    units: country.units,
+    units: parameterSet.units,
   };
 
   return createInitialUndoRedoState<SessionState>(current);
 }
 
-export function createSession(country: Country): {
+export function createSession(parameterSet: ParameterSet): {
   session: Session;
   sessionState: UndoRedoState<SessionState>;
 } {
@@ -64,29 +62,6 @@ export function createSession(country: Country): {
         autoLayoutFinished: true,
       },
     },
-    sessionState: createSessionState(country),
+    sessionState: createSessionState(parameterSet),
   };
 }
-
-/*
-
-export const sessionAtoms: Record<string, PrimitiveAtom<Session>> = {};
-export const sessionStateAtoms: Record<
-  string,
-  PrimitiveAtom<UndoRedoState<SessionState>>
-> = {};
-
-const initialSessionStateArray = INITIAL_COUNTRY_ARRAY.map((country) =>
-  createSession(country),
-);
-
-initialSessionStateArray.forEach(({ session, sessionState }) => {
-  sessionAtoms[session.sessionId] = atom(session);
-  sessionStateAtoms[session.sessionId] = atom(sessionState);
-});
-
-const initialSelectedSessionIndex = initialSessionStateArray.length - 1;
-export const { session, sessionState } =
-  initialSessionStateArray[initialSelectedSessionIndex];
-export const initialSelectedSessionId = session.sessionId;
-*/

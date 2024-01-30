@@ -49,7 +49,7 @@ export function updateRaceTrackSubGraph(
       });
     }
   });
-  const spherical = sessionState.country.units == 'degrees';
+  const spherical = sessionState.parameterSet.units == 'degrees';
   const edges =
     numLocations == 1
       ? []
@@ -268,7 +268,7 @@ export function updateRandomSubGraph(
   }
 
   const newLocations = [...cities, ...addingCities];
-  const spherical = sessionState.country.units == 'degrees';
+  const spherical = sessionState.parameterSet.units == 'degrees';
   const addingEdges =
     _numLocations == undefined
       ? createEdges(
@@ -297,7 +297,7 @@ export const updateAddedSubGraph = (
   selectedIndices: number[],
   numLocations: number,
 ) => {
-  switch (sessionState.country.type) {
+  switch (sessionState.parameterSet.type) {
     case 'RaceTrack':
       return updateRaceTrackSubGraph(sessionState, numLocations);
     case 'Graph':
@@ -346,7 +346,7 @@ export const removeSubGraph = (
   numLocations: number,
   sessionState: SessionState,
 ) => {
-  switch (sessionState.country.type) {
+  switch (sessionState.parameterSet.type) {
     case 'RaceTrack':
       return updateRaceTrackSubGraph(sessionState, numLocations);
     case 'Graph':

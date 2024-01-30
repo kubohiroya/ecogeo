@@ -58,22 +58,6 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
     setResources({ ...props.resources });
   }, [props.resources]);
 
-  /*
-  const [buttonEnabledState, setButtonEnabledState] = useState<
-    Record<string, boolean>
-  >(
-    entriesToRecord<string, boolean>(
-
-        .filter(
-          (item) =>
-            item.resource.enabled &&
-            item.resource.type === GridItemType.FloatingButton,
-        )
-        .map((item) => [item.resource.id, true]),
-    ),
-  );
-   */
-
   const [removedLayoutsMap, setRemovedLayoutsMap] = useState<
     Record<string, ReactGridLayout.Layout>
   >(
@@ -133,10 +117,12 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
     }
   };
 
-  const onShowOrHide = (panelId: string, show: boolean) => {
-    if (show) {
+  const onShowOrHide = (panelId: string, shown: boolean) => {
+    if (shown) {
       setLayouts((layouts: ReactGridLayout.Layout[]) => {
         const addingLayout = removedLayoutsMap[panelId];
+        console.log(panelId, addingLayout, shown);
+
         if (addingLayout && !layouts.some((item) => item.i === panelId)) {
           return [...layouts, addingLayout];
         } else {
@@ -150,19 +136,16 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
         },
       );
 
-      /*
-      setButtonEnabledState((buttonEnabledState) => {
-        const buttonId = resources[panelId].bindToButtonId;
-        if (buttonId) {
+      const buttonId = resources[panelId].bindToButtonId;
+      if (buttonId) {
+        setResources((resources: Record<string, GridItemResources>) => {
           return {
-            ...buttonEnabledState,
-            [buttonId]: !buttonEnabledState[buttonId],
+            ...resources,
+            [panelId]: { ...resources[panelId], shown: true },
+            [buttonId]: { ...resources[buttonId], enabled: false },
           };
-        } else {
-          return buttonEnabledState;
-        }
-      });
-       */
+        });
+      }
     } else {
       const removingLayout = layouts.find((layout) => layout.i == panelId);
       if (removingLayout) {
@@ -177,25 +160,19 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
         setLayouts((layouts: ReactGridLayout.Layout[]) => {
           return layouts.filter((layout) => layout.i !== panelId);
         });
-        /*
-        setButtonEnabledState((enableState) => {
-          // console.log(panelId, resources[panelId]);
-          if (resources[panelId].bindToButtonId) {
-            return {
-              ...enableState,
-              [resources[panelId].bindToButtonId as string]: true,
-            };
-          } else {
-            return enableState;
-          }
+      }
+
+      const buttonId = resources[panelId].bindToButtonId;
+      if (buttonId) {
+        setResources((resources: Record<string, GridItemResources>) => {
+          return {
+            ...resources,
+            [panelId]: { ...resources[panelId], shown: false },
+            [buttonId]: { ...resources[buttonId], enabled: true },
+          };
         });
-         */
       }
     }
-
-    setResources((resources: Record<string, GridItemResources>) => {
-      return { ...resources, [panelId]: { ...resources[panelId], show } };
-    });
   };
 
   const onForefront = (id: string) => {
@@ -273,6 +250,8 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
                   !resources[resource.bindToPanelId].shown,
                 );
                 onForefront(resource.bindToPanelId);
+              } else if (resource.onClick) {
+                resource.onClick();
               } else if (resource.navigateTo) {
                 navigate(resource.navigateTo);
               }
@@ -311,17 +290,6 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
         throw new Error('Unknown Item');
     }
   };
-
-  /*
-  useEffect(() => {
-    setLayouts(createLayouts(props.gridItems));
-    setResources(createResources(props.gridItems));
-  }, [props.gridItems]);
-   */
-
-  if (layouts.length !== Object.keys(resources).length) {
-    return;
-  }
 
   return (
     <Box

@@ -16,4 +16,5 @@ export interface GridItemResources {
   bindToPanelId?: string;
   bindToButtonId?: string;
   navigateTo?: string;
+  onClick?: () => void;
 }

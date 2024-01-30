@@ -115,7 +115,7 @@ export const ChartPanel = React.memo((props: ChartPanelProps) => {
       onMouseLeave={() => setHover(false)}
     >
       <ChartButtons
-        show={hover || !hasFeatureDetectingHoverEvent()}
+        shown={hover || !hasFeatureDetectingHoverEvent()}
         scale={props.scale}
         onChangeScale={props.onChangeScale}
       />

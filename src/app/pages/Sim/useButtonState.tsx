@@ -155,7 +155,7 @@ const useGraphPanelButtonState = ({
       addEdge: !simulation.isStarted && uiState.selectedIndices.length >= 2,
       removeEdge: !simulation.isStarted && uiState.selectedIndices.length >= 2,
       autoGraphLayout:
-        sessionState?.country?.units == 'kilometers' &&
+        sessionState?.parameterSet?.units == 'kilometers' &&
         !autoGraphLayoutTimer?.isStarted,
       undo: history?.length > 0,
       redo: future?.length > 0,

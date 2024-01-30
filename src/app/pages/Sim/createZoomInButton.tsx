@@ -4,7 +4,13 @@ import { ZoomIn } from '@mui/icons-material';
 import React from 'react';
 import { ROW_HEIGHT } from './RaceTrackDesktopComponent';
 
-export function createZoomInButton({ height }: { height: number }): GridItem {
+export function createZoomInButton({
+  height,
+  onClick,
+}: {
+  height: number;
+  onClick: () => void;
+}): GridItem {
   return {
     layout: {
       i: 'ZoomInButton',
@@ -23,6 +29,7 @@ export function createZoomInButton({ height }: { height: number }): GridItem {
       icon: <ZoomIn />,
       shown: true,
       enabled: true,
+      onClick,
     },
   };
 }

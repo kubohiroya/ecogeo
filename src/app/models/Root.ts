@@ -25,8 +25,10 @@ const sessionStateAtoms: Record<
 
 const sessionIdsAtom = atom((get) =>
   Object.keys(get(rootAtom).sessionStateAtoms).sort((a: string, b: string) => {
-    const key_a = get(get(rootAtom).sessionStateAtoms[a]).current.country.title;
-    const key_b = get(get(rootAtom).sessionStateAtoms[b]).current.country.title;
+    const key_a = get(get(rootAtom).sessionStateAtoms[a]).current.parameterSet
+      .title;
+    const key_b = get(get(rootAtom).sessionStateAtoms[b]).current.parameterSet
+      .title;
     return key_a < key_b ? -1 : key_a > key_b ? 1 : 0;
   }),
 );
@@ -36,7 +38,8 @@ const sessionTitlesAtom = atom(
     new Map(
       get(sessionIdsAtom).map((sessionId) => [
         sessionId,
-        get(get(rootAtom).sessionStateAtoms[sessionId]).current.country.title,
+        get(get(rootAtom).sessionStateAtoms[sessionId]).current.parameterSet
+          .title,
       ]),
     ),
 );

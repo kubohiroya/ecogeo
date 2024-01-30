@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { SessionState } from '../../models/SessionState';
-import ParameterConfigPanel from '../../components/SessionPanel/ParameterConfigPanel/ParameterConfigPanel';
 import { GridItemResources } from '../../models/GridItemResources';
 import { DesktopComponent } from './DesktopComponent';
 import { AppMatrices } from '../../models/AppMatrices';
@@ -17,14 +16,7 @@ import { createInputOutputPanel } from './createInputOutputPanel';
 import { createEditButton } from './createEditButton';
 import { createEditPanel } from './createEditPanel';
 import { createParameterButton } from './createParameterButton';
-import {
-  createParameterPanel,
-  setCountry,
-  setElasticitySubstitution,
-  setManufactureShare,
-  setNumLocations,
-  setTransportationCost,
-} from './createParameterPanel';
+import { createParameterPanel } from './createParameterPanel';
 import { createTimeControlButton } from './createTimeControlButton';
 import { createTimeControlPanel } from './createTimeControlPanel';
 import { createMatricesButton } from './createMatricesButton';
@@ -40,6 +32,12 @@ import { PatchPair } from '../../hooks/useUndoRedo';
 import { City } from '../../models/City';
 import { Edge } from '../../models/Graph';
 import { useViewportActions } from './useViewportActions';
+import { ParameterSet } from '../../models/ParameterSet';
+import { CASE_ARRAY } from '../../models/CaseArray';
+import { createUndoButton } from './createUndoButton';
+import { createRedoButton } from './createRedoButton';
+import { createInfoButton } from './createInfoButton';
+import { createInfoPanel } from './createInfoPanel';
 
 export const ROW_HEIGHT = 32;
 
@@ -125,7 +123,7 @@ export const RaceTrackDesktopComponent = (props: SimDesktopComponentProps) => {
     setUIState,
     matrices,
     updateAndSetMatrices,
-    diagonalMatrixSetPanelRef,
+    //diagonalMatrixSetPanelRef,
   });
 
   useEffect(() => {
@@ -146,17 +144,61 @@ export const RaceTrackDesktopComponent = (props: SimDesktopComponentProps) => {
         onUnfocus,
         onPointerUp,
         onClearSelection,
+        onMoved,
       }),
       createHomeButton(),
-      createZoomInButton({ height }),
-      createZoomOutButton({ height }),
-      createFitScreenButton({ height }),
+      createUndoButton({
+        height,
+        onClick: () => undoSessionState(),
+        enabled: history.length > 0,
+      }),
+      createRedoButton({
+        height,
+        onClick: () => redoSessionState(),
+        enabled: future.length > 0,
+      }),
+      createZoomInButton({ height, onClick: () => console.log('zoom in') }),
+      createZoomOutButton({ height, onClick: () => console.log('zoom out') }),
+      createFitScreenButton({
+        height,
+        onClick: () => console.log('fit screen'),
+      }),
       createInputOutputButton(),
       createInputOutputPanel(),
       createEditButton(),
       createEditPanel({ height }),
       createParameterButton(),
-      createParameterPanel({ country: sessionState.country }),
+      createParameterPanel({
+        parameterSet: sessionState.parameterSet,
+        setNumLocations: (value: number) => {
+          setSessionState((draft) => {
+            draft.parameterSet.numLocations = value;
+          });
+        },
+        setManufactureShare: (value: number) => {
+          setSessionState((draft) => {
+            draft.parameterSet.manufactureShare = value;
+          });
+        },
+        setTransportationCost: (value: number) => {
+          setSessionState((draft) => {
+            draft.parameterSet.transportationCost = value;
+          });
+        },
+        setElasticitySubstitution: (value: number) => {
+          setSessionState((draft) => {
+            draft.parameterSet.elasticitySubstitution = value;
+          });
+        },
+        onParameterSetChanged: (caseId: string) => {
+          setSessionState((draft) => {
+            const newCase = CASE_ARRAY.find(
+              (paramSet: ParameterSet) => caseId == paramSet.caseId,
+            );
+            if (newCase) draft.parameterSet = newCase;
+          });
+        },
+      }),
       createTimeControlButton(),
       createTimeControlPanel({ simulation }),
       createMatricesButton(),
@@ -166,6 +208,9 @@ export const RaceTrackDesktopComponent = (props: SimDesktopComponentProps) => {
         matrices,
         uiState,
         preferences,
+        onSelect,
+        onFocus,
+        onUnfocus,
       }),
       createChartButton(),
       createChartPanel({
@@ -180,6 +225,8 @@ export const RaceTrackDesktopComponent = (props: SimDesktopComponentProps) => {
       }),
       createLayerButton(),
       createLayerPanel(),
+      createInfoButton(),
+      createInfoPanel(),
     ].forEach((item) => {
       newLayouts.push(item.layout);
       newResources[item.resource.id] = item.resource;
@@ -187,30 +234,6 @@ export const RaceTrackDesktopComponent = (props: SimDesktopComponentProps) => {
     setLayouts(newLayouts);
     setResources(newResources);
   }, [width, height, sessionState]);
-
-  useEffect(() => {
-    setResources((draft) => {
-      if (!resources) {
-        return draft;
-      }
-      return {
-        ...resources,
-        ['Parameters']: {
-          ...resources['Parameters'],
-          children: (
-            <ParameterConfigPanel
-              country={sessionState?.country}
-              setNumLocations={setNumLocations}
-              setManufactureShare={setManufactureShare}
-              setTransportationCost={setTransportationCost}
-              setElasticitySubstitution={setElasticitySubstitution}
-              setCountry={setCountry}
-            />
-          ),
-        },
-      };
-    });
-  }, [sessionState?.country]);
 
   return <DesktopComponent initialLayouts={layouts} resources={resources} />;
 };

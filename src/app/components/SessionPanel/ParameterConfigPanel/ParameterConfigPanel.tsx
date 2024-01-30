@@ -7,14 +7,14 @@ import React, {
   useImperativeHandle,
 } from 'react';
 import { Domain, Factory, Favorite, LocalShipping } from '@mui/icons-material';
-import { INITIAL_COUNTRY_ARRAY } from '../../../models/initialCountryArray';
-import { Country } from '../../../models/Country';
+import { CASE_ARRAY } from '../../../models/CaseArray';
+import { ParameterSet } from '../../../models/ParameterSet';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 
 /* eslint-disable-next-line */
 export interface ParameterConfigPanelProps {
-  country: Country;
-  setCountry: (countryId: string) => void;
+  parameterSet: ParameterSet;
+  onParameterSetChanged: (countryId: string) => void;
   setNumLocations: (numLocations: number, commit: boolean) => void;
   setManufactureShare: (manufactureShare: number, commit?: boolean) => void;
   setTransportationCost: (transportationCost: number, commit?: boolean) => void;
@@ -36,12 +36,12 @@ export const ParameterConfigPanel = React.memo(
     },
     ParameterConfigPanelProps
   >((props: ParameterConfigPanelProps, ref) => {
-    const country = props.country;
+    const parameterSet = props.parameterSet;
 
     useImperativeHandle(ref, () => ({
       reset() {
-        const countryDefault = INITIAL_COUNTRY_ARRAY.find(
-          (c) => country.countryId == c.countryId,
+        const countryDefault = CASE_ARRAY.find(
+          (c) => parameterSet.caseId == c.caseId,
         );
         props.setNumLocations(countryDefault!.numLocations, true);
         props.setManufactureShare(countryDefault!.manufactureShare);
@@ -106,12 +106,12 @@ export const ParameterConfigPanel = React.memo(
       <StyledParameterConfigPanel>
         <ToggleButtonGroup
           exclusive
-          value={country?.countryId || ''}
+          value={parameterSet?.caseId || ''}
           onChange={(
             event: React.MouseEvent<HTMLElement>,
-            countryId: string | null,
+            caseId: string | null,
           ) => {
-            countryId && props.setCountry(countryId);
+            caseId && props.onParameterSetChanged(caseId);
           }}
           sx={{
             display: 'flex',
@@ -120,12 +120,12 @@ export const ParameterConfigPanel = React.memo(
             marginBottom: '8px',
           }}
         >
-          {INITIAL_COUNTRY_ARRAY.map((c, index) => (
+          {CASE_ARRAY.map((c, index) => (
             <ToggleButton
               size="small"
               key={index}
               title={c.title + ': ' + c.description}
-              value={c.countryId}
+              value={c.caseId}
             >
               {c.title}
             </ToggleButton>
@@ -146,7 +146,7 @@ export const ParameterConfigPanel = React.memo(
             { value: 80, label: '80' },
             { value: 100, label: '100' },
           ]}
-          value={country?.numLocations || 0}
+          value={parameterSet?.numLocations || 0}
           onChange={onNumLocationsChange}
           onChangeCommitted={onNumLocationsChangeCommitted}
           min={1}
@@ -165,7 +165,7 @@ export const ParameterConfigPanel = React.memo(
             { value: 0.8, label: '0.8' },
             { value: 1.0, label: '1.0' },
           ]}
-          value={country?.manufactureShare || 0}
+          value={parameterSet?.manufactureShare || 0}
           onChange={onManufactureShareChanged}
           onChangeCommitted={onManufactureShareChangeCommitted}
           min={0}
@@ -184,7 +184,7 @@ export const ParameterConfigPanel = React.memo(
             { value: 7, label: '7' },
             { value: 10, label: '10' },
           ]}
-          value={country?.transportationCost || 0}
+          value={parameterSet?.transportationCost || 0}
           onChange={onTransportationCostChange}
           onChangeCommitted={onTransportationCostChangeCommitted}
           min={1}
@@ -205,7 +205,7 @@ export const ParameterConfigPanel = React.memo(
             { value: 15, label: '15' },
             { value: 20, label: '20' },
           ]}
-          value={country?.elasticitySubstitution || 0}
+          value={parameterSet?.elasticitySubstitution || 0}
           onChange={onElasticitySubstitutionChange}
           onChangeCommitted={onElasticitySubstitutionChangeCommitted}
           min={1}

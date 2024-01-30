@@ -9,41 +9,32 @@ import MatrixSetPanel from '../../components/SessionPanel/MatrixSetPanel/MatrixS
 import React from 'react';
 import { ROW_HEIGHT } from './RaceTrackDesktopComponent';
 
-export function onSelect(
-  prevSelectedIndices: number[],
-  indices: number[],
-): void {
-  // FIXME!
-}
-
-export function onFocus(indices: number[]): void {
-  // FIXME!
-}
-
-export function onUnfocus(indices: number[]): void {
-  // FIXME!
-}
-
 export function createMatricesPanel({
   height,
   sessionState,
   matrices,
   uiState,
   preferences,
+  onSelect,
+  onFocus,
+  onUnfocus,
 }: {
   height: number;
   sessionState: SessionState;
   matrices: AppMatrices;
   uiState: UIState;
   preferences: AppPreference;
+  onSelect: (prev: number[], indices: number[]) => void;
+  onFocus: (indices: number[]) => void;
+  onUnfocus: (prev: number[]) => void;
 }): GridItem {
   return {
     layout: {
       i: 'Matrices',
       x: 10,
-      y: Math.floor(height / ROW_HEIGHT - 14),
+      y: Math.floor(height / ROW_HEIGHT - 13),
       w: 23,
-      h: 10,
+      h: 9,
       isDraggable: true,
       isResizable: true,
       resizeHandles: ['se'],

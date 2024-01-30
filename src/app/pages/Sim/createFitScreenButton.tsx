@@ -6,8 +6,10 @@ import { ROW_HEIGHT } from './RaceTrackDesktopComponent';
 
 export function createFitScreenButton({
   height,
+  onClick,
 }: {
   height: number;
+  onClick: () => void;
 }): GridItem {
   return {
     layout: {
@@ -27,6 +29,7 @@ export function createFitScreenButton({
       icon: <FitScreen />,
       shown: true,
       enabled: true,
+      onClick,
     },
   };
 }

@@ -8,7 +8,7 @@ import {
   createInitialUndoRedoState,
   UndoRedoState,
 } from '../../hooks/useUndoRedo';
-import { INITIAL_COUNTRY_ARRAY } from '../../models/initialCountryArray';
+import { CASE_ARRAY } from '../../models/CaseArray';
 import { ChartType } from '../../models/ChartType';
 import { atomWithImmer } from 'jotai-immer';
 import { enablePatches } from 'immer';
@@ -22,11 +22,11 @@ const NUM_VERTICAL_GRIDS = 20;
 
 export type UndoRedoSessionState = UndoRedoState<SessionState>;
 
-const country = INITIAL_COUNTRY_ARRAY[0];
+const country = CASE_ARRAY[0];
 
 const graph = updateAddedSubGraph(
   {
-    country,
+    parameterSet: country,
     locations: [],
     edges: [],
     locationSerialNumber: 0,
@@ -36,7 +36,7 @@ const graph = updateAddedSubGraph(
 );
 
 const initialSessionState: SessionState = {
-  country,
+  parameterSet: country,
   locations: graph.locations,
   edges: graph.edges,
   locationSerialNumber: graph.locationSerialNumber,

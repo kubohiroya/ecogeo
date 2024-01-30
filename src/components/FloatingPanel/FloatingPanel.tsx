@@ -23,7 +23,7 @@ import { RowBox } from '../RowBox/RowBox';
 import styled from '@emotion/styled';
 
 const FloatingCard = styled(Card)`
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.95);
 `;
 
 type FloatingPanelProps = {

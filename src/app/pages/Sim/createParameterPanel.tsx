@@ -1,4 +1,4 @@
-import { Country } from '../../models/Country';
+import { ParameterSet } from '../../models/ParameterSet';
 import { GridItem } from '../../models/GridItem';
 import { GridItemType } from '../../models/GridItemType';
 import { Tune } from '@mui/icons-material';
@@ -6,30 +6,20 @@ import ParameterConfigPanel from '../../components/SessionPanel/ParameterConfigP
 import React from 'react';
 import { ROW_HEIGHT } from './RaceTrackDesktopComponent';
 
-export function setNumLocations(numLocations: number) {
-  // FIXME!
-}
-
-export function setManufactureShare(manufactureShare: number) {
-  // FIXME!
-}
-
-export function setTransportationCost(transportationCost: number) {
-  // FIXME!
-}
-
-export function setElasticitySubstitution(elasticitySubstitution: number) {
-  // FIXME!
-}
-
-export function setCountry(country: string) {
-  // FIXME!
-}
-
 export function createParameterPanel({
-  country,
+  parameterSet,
+  setNumLocations,
+  setManufactureShare,
+  setTransportationCost,
+  setElasticitySubstitution,
+  onParameterSetChanged,
 }: {
-  country: Country;
+  parameterSet: ParameterSet;
+  setNumLocations: (numLocations: number) => void;
+  setManufactureShare: (manufactureShare: number) => void;
+  setTransportationCost: (transportationCost: number) => void;
+  setElasticitySubstitution: (elasticitySubstitution: number) => void;
+  onParameterSetChanged: (caseId: string) => void;
 }): GridItem {
   return {
     layout: {
@@ -55,12 +45,12 @@ export function createParameterPanel({
       bindToButtonId: 'ParametersButton',
       children: (
         <ParameterConfigPanel
-          country={country}
+          parameterSet={parameterSet}
           setNumLocations={setNumLocations}
           setManufactureShare={setManufactureShare}
           setTransportationCost={setTransportationCost}
           setElasticitySubstitution={setElasticitySubstitution}
-          setCountry={setCountry}
+          onParameterSetChanged={onParameterSetChanged}
         />
       ),
     },

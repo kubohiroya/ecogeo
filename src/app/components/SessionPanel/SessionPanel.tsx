@@ -75,7 +75,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
     staging,
   } = useSessionStateUndoRedo(sessionId);
 
-  const spherical: boolean = sessionState.country.units == 'degrees';
+  const spherical: boolean = sessionState.parameterSet.units == 'degrees';
 
   const autoGraphLayoutEngine: SpringGraphLayout = new SpringGraphLayout();
 
@@ -84,7 +84,7 @@ export const SessionPanel = React.memo((props: SessionPanelProps) => {
       sessionId,
       locations,
       edges,
-      sessionState.country.transportationCost,
+      sessionState.parameterSet.transportationCost,
     ).then((newMatrices) => {
       setMatrices((draft) => {
         draft.adjacencyMatrix = newMatrices.adjacencyMatrix;
@@ -523,7 +523,7 @@ setUIState((draft) => {
           (draft) => {
             draft.locations = locations;
             draft.edges = edges;
-            draft.country.numLocations = numLocations;
+            draft.parameterSet.numLocations = numLocations;
             draft.locationSerialNumber = locationSerialNumber;
           },
           commit,
@@ -539,7 +539,7 @@ setUIState((draft) => {
       uiState,
       sessionState.locations,
       sessionState.edges,
-      sessionState.country.transportationCost,
+      sessionState.parameterSet.transportationCost,
       setMatrices,
       setUIState,
     ],
@@ -564,7 +564,8 @@ setUIState((draft) => {
           (draft) => {
             draft.locations = locations;
             draft.edges = edges;
-            draft.country.numLocations = draft.country.numLocations + 1;
+            draft.parameterSet.numLocations =
+              draft.parameterSet.numLocations + 1;
             draft.locationSerialNumber = locationSerialNumber;
           },
           true,
@@ -593,7 +594,7 @@ setUIState((draft) => {
               );
             draft.locations = locations;
             draft.edges = edges;
-            draft.country.numLocations = numLocations;
+            draft.parameterSet.numLocations = numLocations;
             draft.locationSerialNumber = locationSerialNumber;
             updateAndSetMatrices(locations, edges);
             setUIState((draft) => {
@@ -727,7 +728,7 @@ setUIState((draft) => {
     uiState.selectedIndices,
     sessionState.locations,
     sessionState.edges,
-    sessionState.country.transportationCost,
+    sessionState.parameterSet.transportationCost,
     setSessionState,
     matrices.adjacencyMatrix,
     setMatrices,
@@ -790,7 +791,7 @@ setUIState((draft) => {
         (draft) => {
           draft.locations = newLocations;
           draft.edges = newEdges;
-          draft.country.numLocations = newLocations.length;
+          draft.parameterSet.numLocations = newLocations.length;
         },
         true,
         'removeLocation',
@@ -855,7 +856,7 @@ setUIState((draft) => {
   }, [
     sessionState.locations,
     sessionState.edges,
-    sessionState.country.transportationCost,
+    sessionState.parameterSet.transportationCost,
     setMatrices,
   ]);
 
@@ -863,7 +864,7 @@ setUIState((draft) => {
     (manufactureShare: number, commit?: boolean) => {
       setSessionState(
         (draft) => {
-          draft.country.manufactureShare = manufactureShare;
+          draft.parameterSet.manufactureShare = manufactureShare;
         },
         commit,
         'updateCountry',
@@ -872,7 +873,7 @@ setUIState((draft) => {
     [
       sessionState.locations,
       sessionState.edges,
-      sessionState.country,
+      sessionState.parameterSet,
       setSessionState,
     ],
   );
@@ -880,7 +881,7 @@ setUIState((draft) => {
     (transportationCost: number, commit?: boolean) => {
       setSessionState(
         (draft) => {
-          draft.country.transportationCost = transportationCost;
+          draft.parameterSet.transportationCost = transportationCost;
         },
         commit,
         'updateCountry',
@@ -889,7 +890,7 @@ setUIState((draft) => {
     [
       sessionState.locations,
       sessionState.edges,
-      sessionState.country,
+      sessionState.parameterSet,
       setSessionState,
     ],
   );
@@ -897,7 +898,7 @@ setUIState((draft) => {
     (elasticitySubstitution: number, commit?: boolean) => {
       setSessionState(
         (draft) => {
-          draft.country.elasticitySubstitution = elasticitySubstitution;
+          draft.parameterSet.elasticitySubstitution = elasticitySubstitution;
         },
         commit,
         'updateCountry',
@@ -906,7 +907,7 @@ setUIState((draft) => {
     [
       sessionState.locations,
       sessionState.edges,
-      sessionState.country,
+      sessionState.parameterSet,
       setSessionState,
     ],
   );
@@ -919,7 +920,7 @@ setUIState((draft) => {
       addEdge: !simulation.isStarted && uiState.selectedIndices.length >= 2,
       removeEdge: !simulation.isStarted && uiState.selectedIndices.length >= 2,
       autoGraphLayout:
-        sessionState.country.units == 'kilometers' &&
+        sessionState.parameterSet.units == 'kilometers' &&
         !autoGraphLayoutTimer.isStarted,
       undo: history.length > 0,
       redo: future.length > 0,
@@ -976,8 +977,8 @@ setUIState((draft) => {
   );
 
   useEffect(() => {
-    document.title = `GEO-ECO: ${sessionState.country.title} - Geological Economics Modeling Simulator`;
-  }, [sessionState.country.title]);
+    document.title = `GEO-ECO: ${sessionState.parameterSet.title} - Geological Economics Modeling Simulator`;
+  }, [sessionState.parameterSet.title]);
 
   useLayoutEffect(() => {
     if (uiState.viewportCenter == null) {
@@ -1013,7 +1014,7 @@ setUIState((draft) => {
           requestAnimationFrame(() => {
             setSessionState(
               (draft) => {
-                draft.country.title = newName;
+                draft.parameterSet.title = newName;
               },
               true,
               'renameSession',
@@ -1021,7 +1022,7 @@ setUIState((draft) => {
             props.closeRenameDialog();
           });
         }}
-        name={sessionState.country.title}
+        name={sessionState.parameterSet.title}
       />
       <Snackbar
         anchorOrigin={{
@@ -1046,10 +1047,10 @@ setUIState((draft) => {
         autoGraphLayoutStarted={autoGraphLayoutTimer.isStarted}
         autoGraphLayoutSpeed={autoGraphLayoutTimer.intervalScale}
         setAutoGraphLayoutSpeed={setAutoGraphLayoutIntervalScale}
-        country={sessionState.country}
+        parameterSet={sessionState.parameterSet}
       >
         <>
-          {sessionState.country.units == 'degrees' && (
+          {sessionState.parameterSet.units == 'degrees' && (
             <>
               <div
                 style={{
@@ -1081,7 +1082,7 @@ setUIState((draft) => {
                   */}
             </>
           )}
-          {sessionState.country.units == 'kilometers' && (
+          {sessionState.parameterSet.units == 'kilometers' && (
             <EuclideanCanvas
               width={props.width / 2}
               height={props.height}
@@ -1132,12 +1133,14 @@ setUIState((draft) => {
 
       <Box sx={{ margin: '0 2px 0 2px' }}>
         <ParameterConfigPanel
-          country={sessionState.country}
+          parameterSet={sessionState.parameterSet}
           setNumLocations={setNumLocations}
           setManufactureShare={setManufactureShare}
           setTransportationCost={setTransportationCost}
           setElasticitySubstitution={setElasticitySubstitution}
-          setCountry={(countryId: string) => {}}
+          onParameterSetChanged={(parameterSet: string) => {
+            throw new Error('not implemented');
+          }}
         />
 
         <MatrixSetPanel

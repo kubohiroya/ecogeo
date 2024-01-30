@@ -1,21 +1,23 @@
 import { GridItem } from '../../models/GridItem';
 import { GridItemType } from '../../models/GridItemType';
-import { ZoomOut } from '@mui/icons-material';
 import React from 'react';
 import { ROW_HEIGHT } from './RaceTrackDesktopComponent';
+import { Redo } from '@mui/icons-material';
 
-export function createZoomOutButton({
+export function createRedoButton({
   height,
+  enabled,
   onClick,
 }: {
   height: number;
+  enabled: boolean;
   onClick: () => void;
 }): GridItem {
   return {
     layout: {
-      i: 'ZoomOutButton',
+      i: 'RedoButton',
       x: 0,
-      y: Math.floor(height / ROW_HEIGHT - 6),
+      y: Math.floor(height / ROW_HEIGHT) - 9,
       w: 1,
       h: 1,
       resizeHandles: [],
@@ -23,12 +25,12 @@ export function createZoomOutButton({
       isResizable: false,
     },
     resource: {
-      id: 'ZoomOutButton',
+      id: 'RedoButton',
       type: GridItemType.FloatingButton,
-      tooltip: 'zoom out',
-      icon: <ZoomOut />,
+      tooltip: 'redo',
+      icon: <Redo />,
       shown: true,
-      enabled: true,
+      enabled,
       onClick,
     },
   };

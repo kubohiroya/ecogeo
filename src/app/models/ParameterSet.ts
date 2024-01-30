@@ -1,6 +1,6 @@
-export interface Country {
+export interface ParameterSet {
   /* a country has her locations in this vector */
-  countryId: string;
+  caseId: string;
   title: string;
   description: string;
 

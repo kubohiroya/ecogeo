@@ -19,12 +19,11 @@ import { useAtom, useAtomValue } from 'jotai';
 import { preferencesAtom } from '../../models/AppPreference';
 import { DiagonalMatrixSetPanelHandle } from '../../components/SessionPanel/MatrixSetPanel/MatrixSetPanel';
 import { startSimulation, tickSimulator } from '../../models/Simulator';
-import { INITIAL_COUNTRY_ARRAY } from '../../models/initialCountryArray';
-import { Country } from '../../models/Country';
+import { CASE_ARRAY } from '../../models/CaseArray';
+import { ParameterSet } from '../../models/ParameterSet';
 import { useMatrixEngine } from './useMatrixEngine';
 import { RaceTrackDesktopComponent } from './RaceTrackDesktopComponent';
 import { useRaceTrackSimulator } from './useRaceTrackSimulator';
-import { UIState } from 'src/app/models/UIState';
 
 enablePatches();
 
@@ -71,11 +70,11 @@ export const RaceTrackSimPage = () => {
     // call from the Parameter panel
     setSessionState(
       (draft) => {
-        const selectedCountry = INITIAL_COUNTRY_ARRAY.find(
-          (c: Country) => c.countryId === countryId,
+        const selectedCountry = CASE_ARRAY.find(
+          (c: ParameterSet) => c.caseId === countryId,
         );
         if (selectedCountry) {
-          draft.country = { ...selectedCountry };
+          draft.parameterSet = { ...selectedCountry };
         }
         return draft;
       },
@@ -108,7 +107,7 @@ export const RaceTrackSimPage = () => {
       updateMatrices(
         locations,
         edges,
-        sessionState.country.transportationCost,
+        sessionState.parameterSet.transportationCost,
       ).then((newMatrices) => {
         setMatrices({
           adjacencyMatrix: newMatrices.adjacencyMatrix,
@@ -124,25 +123,19 @@ export const RaceTrackSimPage = () => {
   }, [
     sessionState?.locations,
     sessionState?.edges,
-    sessionState?.country?.transportationCost,
+    sessionState?.parameterSet?.transportationCost,
   ]);
 
   useEffect(() => {
-    if (sessionState?.country?.title) {
-      document.title = `GEO-ECO - ${sessionState?.country?.title}`;
+    if (sessionState?.parameterSet?.title) {
+      document.title = `GEO-ECO - ${sessionState?.parameterSet?.title}`;
     } else {
       document.title = `GEO-ECO: Geological Economics Modeling Simulator`;
     }
-  }, [sessionState?.country?.title]);
+  }, [sessionState?.parameterSet?.title]);
 
   return (
     <RaceTrackDesktopComponent
-      setMatrices={function (matrices: AppMatrices): void {
-        throw new Error('Function not implemented.');
-      }}
-      setUIState={function (func: (draft: UIState) => void): void {
-        throw new Error('Function not implemented.');
-      }}
       {...{
         sessionState,
         setSessionState,
@@ -153,7 +146,9 @@ export const RaceTrackSimPage = () => {
         staging,
         simulation,
         matrices,
+        setMatrices,
         uiState,
+        setUIState,
         preferences,
         updateMatrices,
         updateAndSetMatrices,

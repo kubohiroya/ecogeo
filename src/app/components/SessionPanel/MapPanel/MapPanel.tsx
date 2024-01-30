@@ -3,7 +3,7 @@ import React, { ReactElement, useCallback, useState } from 'react';
 import MapPanelButtons from './MapPanelButtons';
 import { MapPanelButtonsState } from './MapPanelButtonsState';
 import { hasFeatureDetectingHoverEvent } from '../../../utils/browserUtil';
-import { Country } from '../../../models/Country';
+import { ParameterSet } from '../../../models/ParameterSet';
 
 /* eslint-disable-next-line */
 export interface MapPanelProps {
@@ -21,7 +21,7 @@ export interface MapPanelProps {
   autoGraphLayoutStarted: boolean;
   autoGraphLayoutSpeed: number;
   setAutoGraphLayoutSpeed: (autoLayoutSpeed: number) => void;
-  country: Country;
+  parameterSet: ParameterSet;
 }
 
 const StyledMapPanel = styled.div`
@@ -55,8 +55,8 @@ export const MapPanel = React.memo((props: MapPanelProps) => {
       onMouseLeave={setHoverDisabled}
     >
       <MapPanelButtons
-        country={props.country}
-        show={hover || !hasFeatureDetectingHoverEvent()}
+        parameterSet={props.parameterSet}
+        shown={hover || !hasFeatureDetectingHoverEvent()}
         state={props.state}
         onFit={props.onFit}
         onAddLocation={props.onAddLocation}

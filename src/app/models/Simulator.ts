@@ -38,14 +38,14 @@ export function tickSimulator(
     });
     sessionState.locations.forEach((location, index) => {
       location.income = calcIncome(
-        sessionState.country.manufactureShare,
+        sessionState.parameterSet.manufactureShare,
         location,
       );
     });
     sessionState.locations.forEach((location, index) => {
       location.priceIndex = calcPriceIndex(
         sessionState.locations,
-        sessionState.country.elasticitySubstitution,
+        sessionState.parameterSet.elasticitySubstitution,
         transportationCostMatrix,
         location,
         index,
@@ -55,7 +55,7 @@ export function tickSimulator(
     sessionState.locations.forEach((location, index) => {
       location.nominalWage = calcNominalWage(
         sessionState.locations,
-        sessionState.country.elasticitySubstitution,
+        sessionState.parameterSet.elasticitySubstitution,
         transportationCostMatrix,
         index,
       );
@@ -63,7 +63,7 @@ export function tickSimulator(
 
     sessionState.locations.forEach((location, index) => {
       location.realWage = calcRealWage(
-        sessionState.country.manufactureShare,
+        sessionState.parameterSet.manufactureShare,
         location,
       );
     });
@@ -75,8 +75,8 @@ export function tickSimulator(
 
   sessionState.locations.forEach((location, index) => {
     location.manufactureShare += calcDynamics(
-      sessionState.country.numLocations,
-      sessionState.country.elasticitySubstitution,
+      sessionState.parameterSet.numLocations,
+      sessionState.parameterSet.elasticitySubstitution,
       avgRealWage,
       location,
     );

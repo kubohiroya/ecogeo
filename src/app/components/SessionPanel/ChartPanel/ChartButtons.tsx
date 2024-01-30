@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { BACKDROP_TIMEOUT_MILLI_SEC } from '../MapPanel/Constatns';
 
 interface ChartButtonsProps {
-  show: boolean;
+  shown: boolean;
   scale: number;
   onChangeScale: (scale: number) => void;
 }
@@ -44,7 +44,7 @@ const ScaleSliderContainer = styled.div`
 export const ChartButtons = (props: ChartButtonsProps) => {
   const [scaleSliderShown, setScaleSliderShown] = useState<boolean>(false);
 
-  if (!props.show) {
+  if (!props.shown) {
     return null;
   }
 

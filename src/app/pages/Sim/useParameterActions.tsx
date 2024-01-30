@@ -20,7 +20,7 @@ const useParameterActions = ({
     (manufactureShare: number, commit?: boolean) => {
       setSessionState(
         (draft) => {
-          draft.country.manufactureShare = manufactureShare;
+          draft.parameterSet.manufactureShare = manufactureShare;
         },
         commit || false,
         'updateCountry',
@@ -29,7 +29,7 @@ const useParameterActions = ({
     [
       sessionState?.locations,
       sessionState?.edges,
-      sessionState?.country,
+      sessionState?.parameterSet,
       setSessionState,
     ],
   );
@@ -37,7 +37,7 @@ const useParameterActions = ({
     (transportationCost: number, commit?: boolean) => {
       setSessionState(
         (draft) => {
-          draft.country.transportationCost = transportationCost;
+          draft.parameterSet.transportationCost = transportationCost;
         },
         commit || false,
         'updateCountry',
@@ -46,7 +46,7 @@ const useParameterActions = ({
     [
       sessionState?.locations,
       sessionState?.edges,
-      sessionState?.country,
+      sessionState?.parameterSet,
       ,
       setSessionState,
     ],
@@ -55,7 +55,7 @@ const useParameterActions = ({
     (elasticitySubstitution: number, commit?: boolean) => {
       setSessionState(
         (draft) => {
-          draft.country.elasticitySubstitution = elasticitySubstitution;
+          draft.parameterSet.elasticitySubstitution = elasticitySubstitution;
         },
         commit || false,
         'updateCountry',
@@ -64,7 +64,7 @@ const useParameterActions = ({
     [
       sessionState?.locations,
       sessionState?.edges,
-      sessionState?.country,
+      sessionState?.parameterSet,
       setSessionState,
     ],
   );

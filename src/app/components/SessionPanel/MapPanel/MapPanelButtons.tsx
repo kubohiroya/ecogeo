@@ -13,11 +13,11 @@ import { AutoLayoutButton } from './AutoLayoutButton';
 import { LayerSwitchButton } from './LayerSwitchButton';
 import { MapPanelButtonsState } from './MapPanelButtonsState';
 import { OverlayControlButton } from './OverlayControlButton';
-import { Country } from '../../../models/Country'; /* eslint-disable-next-line */
+import { ParameterSet } from '../../../models/ParameterSet'; /* eslint-disable-next-line */
 
 /* eslint-disable-next-line */
 export interface MapPanelButtonsProps {
-  show: boolean;
+  shown: boolean;
   onFit: () => void;
   onAddLocation: () => void;
   onRemoveLocation: () => void;
@@ -27,7 +27,7 @@ export interface MapPanelButtonsProps {
   autoGraphLayoutStarted: boolean;
   autoLayoutSpeed: number;
   setAutoLayoutSpeed: (autoLayoutSpeed: number) => void;
-  country: Country;
+  parameterSet: ParameterSet;
   state: MapPanelButtonsState;
   onUndo: () => void;
   onRedo: () => void;
@@ -66,7 +66,7 @@ const StyledRedoButton = styled(OverlayControlButton)`
 const StyledMapButtons = styled.div``;
 
 export const MapPanelButtons = React.memo((props: MapPanelButtonsProps) => {
-  return props.show ? (
+  return props.shown ? (
     <StyledMapButtons>
       <MapEditButtons>
         <Box>

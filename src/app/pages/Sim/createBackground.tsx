@@ -31,14 +31,14 @@ export function createBackground({
   uiState: UIState;
   matrices: AppMatrices;
   setSessionViewportCenter: (viewportCenter: ViewportCenter) => void;
-  onDragStart: () => void;
-  onDragEnd: () => void;
-  onDrag: (dx: number, dy: number) => void;
+  onDragStart: (x: number, y: number, index: number) => void;
+  onDragEnd: (x: number, y: number, index: number) => void;
+  onDrag: (dx: number, dy: number, index: number) => void;
   onFocus: (indices: number[]) => void;
   onUnfocus: (indices: number[]) => void;
-  onPointerUp: () => void;
+  onPointerUp: (x: number, y: number, index: number) => void;
   onClearSelection: () => void;
-  onMoved: (dx: number, dy: number) => void;
+  onMoved: (dx: number, dy: number, index: number) => void;
 }): GridItem {
   return {
     layout: {
@@ -61,7 +61,7 @@ export function createBackground({
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: '#ddf',
+            backgroundColor: '#eef',
           }}
         >
           {

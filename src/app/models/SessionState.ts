@@ -1,10 +1,10 @@
-import { Country } from './Country';
+import { ParameterSet } from './ParameterSet';
 import { City } from './City';
 import { Edge } from './Graph';
 
 export type SessionState = {
   locationSerialNumber: number;
-  country: Country;
+  parameterSet: ParameterSet;
   locations: City[];
   edges: Edge[];
 };

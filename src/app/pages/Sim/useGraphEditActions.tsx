@@ -3,8 +3,7 @@ import { UIState } from '../../models/UIState';
 import { AppMatrices } from '../../models/AppMatrices';
 import { City } from '../../models/City';
 import { Edge } from '../../models/Graph';
-import { RefObject, useCallback, useState } from 'react';
-import { DiagonalMatrixSetPanelHandle } from '../../components/SessionPanel/MatrixSetPanel/MatrixSetPanel';
+import { useCallback, useState } from 'react';
 import {
   removeSubGraph,
   updateAddedSubGraph,
@@ -23,7 +22,7 @@ export const useGraphEditActions = ({
   setUIState,
   matrices,
   updateAndSetMatrices,
-  diagonalMatrixSetPanelRef,
+  //diagonalMatrixSetPanelRef,
 }: {
   sessionState: SessionState;
   setSessionState: (
@@ -35,7 +34,7 @@ export const useGraphEditActions = ({
   setUIState: (func: (draft: UIState) => void) => void;
   matrices: AppMatrices;
   updateAndSetMatrices: (locations: City[], edges: Edge[]) => void;
-  diagonalMatrixSetPanelRef: RefObject<DiagonalMatrixSetPanelHandle>;
+  //diagonalMatrixSetPanelRef: RefObject<DiagonalMatrixSetPanelHandle>;
 }) => {
   const [dragStartPosition, setDragStartPosition] = useState<{
     x: number;
@@ -53,7 +52,7 @@ export const useGraphEditActions = ({
           (draft) => {
             draft.locations = locations;
             draft.edges = edges;
-            draft.country.numLocations = numLocations;
+            draft.parameterSet.numLocations = numLocations;
             draft.locationSerialNumber = locationSerialNumber;
           },
           commit || false,
@@ -68,7 +67,7 @@ export const useGraphEditActions = ({
     [
       sessionState?.locations,
       sessionState?.edges,
-      sessionState?.country?.transportationCost,
+      sessionState?.parameterSet?.transportationCost,
     ],
   );
 
@@ -91,7 +90,8 @@ export const useGraphEditActions = ({
           (draft) => {
             draft.locations = locations;
             draft.edges = edges;
-            draft.country.numLocations = draft.country.numLocations + 1;
+            draft.parameterSet.numLocations =
+              draft.parameterSet.numLocations + 1;
             draft.locationSerialNumber = locationSerialNumber;
           },
           true,
@@ -120,7 +120,7 @@ export const useGraphEditActions = ({
               );
             draft.locations = locations;
             draft.edges = edges;
-            draft.country.numLocations = numLocations;
+            draft.parameterSet.numLocations = numLocations;
             draft.locationSerialNumber = locationSerialNumber;
             updateAndSetMatrices(locations, edges);
             setUIState((draft) => {
@@ -240,7 +240,7 @@ export const useGraphEditActions = ({
     uiState?.selectedIndices,
     sessionState?.locations,
     sessionState?.edges,
-    sessionState?.country?.transportationCost,
+    sessionState?.parameterSet?.transportationCost,
     setSessionState,
     matrices?.adjacencyMatrix,
     setUIState,
@@ -306,7 +306,7 @@ export const useGraphEditActions = ({
         (draft) => {
           draft.locations = newLocations;
           draft.edges = newEdges;
-          draft.country.numLocations = newLocations.length;
+          draft.parameterSet.numLocations = newLocations.length;
         },
         true,
         'removeLocation',
@@ -426,21 +426,25 @@ export const useGraphEditActions = ({
 
   const onFocus = useCallback((focusIndices: number[]) => {
     const newFocusedIndices = focusIndices.filter((value) => value != -1);
+    /*
     diagonalMatrixSetPanelRef.current?.onFocus(
       focusIndices.map((index) => index + 1),
     );
+     */
     setUIState((draft) => {
       draft.focusedIndices = newFocusedIndices;
     });
   }, []);
 
   const onUnfocus = useCallback((unfocusIndices: number[]) => {
+    /*
     diagonalMatrixSetPanelRef.current?.onUnfocus(
       uiState.focusedIndices.map((unfocusIndices) => unfocusIndices + 1),
     );
     diagonalMatrixSetPanelRef.current?.onFocus(
       unfocusIndices.map((unfocusIndex) => unfocusIndex + 1),
     );
+     */
     setUIState((draft) => {
       draft.focusedIndices = [];
     });
@@ -453,16 +457,18 @@ export const useGraphEditActions = ({
           prevSelectedIndices,
           selectedIndices,
         ).sort();
+        /*
         diagonalMatrixSetPanelRef.current?.onSelect(
           prevSelectedIndices,
           newSelectedIndices,
         );
+         */
         draft.selectedIndices = newSelectedIndices;
         draft.draggingIndex = null;
       });
       // uiState.selectedIndices = newSelectedIndices;
     },
-    [diagonalMatrixSetPanelRef.current, setUIState],
+    [/*diagonalMatrixSetPanelRef.current, */ setUIState],
   );
 
   const onUnselect = useCallback(
@@ -471,12 +477,12 @@ export const useGraphEditActions = ({
         const newSelectedIndices = prevSelectedIndices.filter(
           (unselectedIndex) => !unselectedIndices.includes(unselectedIndex),
         );
-        diagonalMatrixSetPanelRef.current?.onUnselect(unselectedIndices);
+        //diagonalMatrixSetPanelRef.current?.onUnselect(unselectedIndices);
         draft.selectedIndices = newSelectedIndices;
         draft.draggingIndex = null;
       });
     },
-    [diagonalMatrixSetPanelRef.current, setUIState],
+    [/*diagonalMatrixSetPanelRef.current, */ setUIState],
   );
 
   const onPointerUp = useCallback(

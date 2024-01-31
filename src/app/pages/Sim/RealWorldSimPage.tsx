@@ -20,6 +20,7 @@ export const RealWorldSimPage = () => {
     <SimComponent
       type={ProjectTypes.realWorld}
       {...{ uuid, x, y, zoom }}
+      backgroundColor="rgba(230,230,230,0.6)"
       backgroundPanel={(params: {
         width: number;
         height: number;

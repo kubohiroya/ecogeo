@@ -35,6 +35,7 @@ type SimComponentProps = {
   y: number;
   zoom: number;
   uuid: string;
+  backgroundColor: string;
   backgroundPanel: (params: {
     width: number;
     height: number;
@@ -62,7 +63,7 @@ type SimComponentProps = {
   }) => ReactNode;
 };
 export const SimComponent = (props: SimComponentProps) => {
-  const { type, uuid, x, y, zoom, backgroundPanel } = props;
+  const { type, uuid, x, y, zoom, backgroundPanel, backgroundColor } = props;
 
   const { set: setSessionState, current: sessionState } =
     useUndoRedo<SessionState>(undoRedoSessionStateAtom);
@@ -192,6 +193,7 @@ export const SimComponent = (props: SimComponentProps) => {
   return (
     <SimDesktopComponent
       {...{
+        backgroundColor,
         type,
         uuid,
         x,

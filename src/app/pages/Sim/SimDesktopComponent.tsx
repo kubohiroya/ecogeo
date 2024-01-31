@@ -62,6 +62,7 @@ export const RESIZE_HANDLES: ResizeHandle[] = ['se', 'sw', 'nw'];
 
 type SimDesktopComponentProps = {
   type: ProjectType;
+  backgroundColor: string;
   uuid: string;
   x: number;
   y: number;
@@ -112,6 +113,7 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
     future,
   } = useUndoRedo<SessionState>(undoRedoSessionStateAtom);
   const {
+    backgroundColor,
     type,
     uuid,
     // x: number,
@@ -124,7 +126,6 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
     setUIState,
     preferences,
     updateAndSetMatrices,
-    // backgroundPanel,
   } = props;
 
   const { setSessionChartScale, setSessionChartType } = useChartActions({
@@ -439,6 +440,7 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
       initialLayouts={layouts}
       resources={resources}
       gridItemChildrenMap={gridItemChildrenMap}
+      backgroundColor={backgroundColor}
     >
       {props.backgroundPanel({
         width,

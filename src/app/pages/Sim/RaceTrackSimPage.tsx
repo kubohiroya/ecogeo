@@ -16,6 +16,7 @@ export const RaceTrackSimPage = () => {
     <SimComponent
       type={ProjectTypes.racetrack}
       {...{ uuid, x, y, zoom }}
+      backgroundColor="rgba(255,230,230,0.6)"
       backgroundPanel={(params: {
         width: number;
         height: number;

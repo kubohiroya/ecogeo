@@ -34,6 +34,7 @@ const StyledResponsiveGridLayout = styled(ResponsiveGridLayout)`
 `;
 
 export type DesktopComponentProps = {
+  backgroundColor: string;
   initialLayouts: ReactGridLayout.Layout[];
   resources: Record<string, FloatingPanelResource | FloatingButtonResource>;
   gridItemChildrenMap: Record<string, ReactNode>;
@@ -380,7 +381,7 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
       ) : (
         <StyledResponsiveGridLayout
           style={{
-            backgroundColor: 'rgba(255,255,255,0.6)',
+            backgroundColor: props.backgroundColor,
             margin: 0,
             padding: 0,
           }}

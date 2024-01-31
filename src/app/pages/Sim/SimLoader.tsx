@@ -8,37 +8,35 @@ import {
   createInitialUndoRedoState,
   UndoRedoState,
 } from '../../hooks/useUndoRedo';
-import { CASE_ARRAY } from '../../models/CaseArray';
-import { ChartType } from '../../models/ChartType';
+import { ChartTypes } from '../../models/ChartType';
 import { atomWithImmer } from 'jotai-immer';
 import { enablePatches } from 'immer';
 import { updateAddedSubGraph } from '../../components/SessionPanel/MapPanel/GraphHandlers';
-import { ProjectType } from '../../services/database/ProjectType';
+import { ProjectType, ProjectTypes } from '../../services/database/ProjectType';
 import { LoaderFunctionArgs } from 'react-router-dom';
+import { DEFAULT_PARAMS_BY_CASE } from '../../models/DefaultParamByCase';
 
 enablePatches();
 
-const NUM_HORIZONTAL_GRIDS = 32;
-const NUM_VERTICAL_GRIDS = 20;
 //const graph = updateRaceTrackSubGraph(initialSessionState, numLocations);
 
 export type UndoRedoSessionState = UndoRedoState<SessionState>;
 
-const country = CASE_ARRAY[0];
+const parameterSet = DEFAULT_PARAMS_BY_CASE[ProjectTypes.racetrack][0];
 
 const graph = updateAddedSubGraph(
   {
-    parameterSet: country,
+    parameterSet,
     locations: [],
     edges: [],
     locationSerialNumber: 0,
   },
   [],
-  country.numLocations,
+  parameterSet.numLocations,
 );
 
 const initialSessionState: SessionState = {
-  parameterSet: country,
+  parameterSet,
   locations: graph.locations,
   edges: graph.edges,
   locationSerialNumber: graph.locationSerialNumber,
@@ -63,7 +61,7 @@ export const uiStateAtom = atom<UIState>({
   selectedIndices: [],
   draggingIndex: null,
   chartScale: 1,
-  chartType: ChartType.ManufactureShare,
+  chartType: ChartTypes.ManufactureShare,
   autoLayoutFinished: true,
 });
 

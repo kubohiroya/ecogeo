@@ -1,4 +1,4 @@
-import { GridItemType } from '../../models/GridItemType';
+import { GridItemTypes } from '../../models/GridItemType';
 import { GridOn } from '@mui/icons-material';
 import React from 'react';
 import { FloatingButtonItem } from '../../models/FloatingButtonItem';
@@ -17,7 +17,7 @@ export function getMatricesButton(): FloatingButtonItem {
     },
     resource: {
       id: 'MatricesButton',
-      type: GridItemType.FloatingButton,
+      type: GridItemTypes.FloatingButton,
       bindToPanelId: 'Matrices',
       tooltip: 'Open Matrices Panel',
       icon: <GridOn />,

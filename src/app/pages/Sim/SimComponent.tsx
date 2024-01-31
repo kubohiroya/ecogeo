@@ -19,12 +19,13 @@ import { tickSimulator } from '../../models/Simulator';
 import { useMatrixEngine } from './useMatrixEngine';
 import { SimDesktopComponent } from './SimDesktopComponent';
 import { useSimulator } from './useSimulator';
-import { CASE_ARRAY } from '../../models/CaseArray';
 import { UIState } from '../../models/UIState';
 import { ViewportCenter } from '../../models/ViewportCenter';
 import { ProjectType } from '../../services/database/ProjectType';
 import { useSnackBar } from './useSnackBar';
 import { useUndoRedoActions } from './useUndoRedoActions';
+import { DEFAULT_PARAMS_BY_CASE } from '../../models/DefaultParamByCase';
+import { ParameterSet } from '../../models/ParameterSet';
 
 enablePatches();
 
@@ -88,8 +89,8 @@ export const SimComponent = (props: SimComponentProps) => {
   //const diagonalMatrixSetPanelRef = useRef<DiagonalMatrixSetPanelHandle>(null);
 
   const resetToCaseDefault = () => {
-    const caseDefault = CASE_ARRAY.find(
-      (c) => sessionState.parameterSet.caseId === c.caseId,
+    const caseDefault = DEFAULT_PARAMS_BY_CASE[type].find(
+      (c: ParameterSet) => sessionState.parameterSet.caseId === c.caseId,
     );
     caseDefault &&
       setSessionState((draft) => {

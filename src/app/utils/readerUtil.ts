@@ -1,7 +1,7 @@
 export async function readAllChunks(
   reader: ReadableStreamDefaultReader<Uint8Array>,
 ): Promise<ArrayBuffer> {
-  let chunks: Uint8Array[] = [];
+  const chunks: Uint8Array[] = [];
   let totalLength = 0;
 
   while (true) {

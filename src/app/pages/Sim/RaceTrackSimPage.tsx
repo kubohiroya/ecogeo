@@ -7,14 +7,14 @@ import { SessionState } from '../../models/SessionState';
 import { UIState } from '../../models/UIState';
 import { AppMatrices } from '../../models/AppMatrices';
 import { ViewportCenter } from '../../models/ViewportCenter';
-import { ProjectType } from '../../services/database/ProjectType';
+import { ProjectTypes } from '../../services/database/ProjectType';
 
 export const RaceTrackSimPage = () => {
   const { uuid, x, y, zoom } = useLoaderData() as SimLoaderResult;
 
   return (
     <SimComponent
-      type={ProjectType.racetrack}
+      type={ProjectTypes.racetrack}
       {...{ uuid, x, y, zoom }}
       backgroundPanel={(params: {
         width: number;

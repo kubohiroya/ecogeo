@@ -1,4 +1,4 @@
-import { GridItemType } from '../../models/GridItemType';
+import { GridItemTypes } from '../../models/GridItemType';
 import { Info } from '@mui/icons-material';
 import React from 'react';
 import { FloatingButtonItem } from '../../models/FloatingButtonItem';
@@ -17,7 +17,7 @@ export function getInfoButton(): FloatingButtonItem {
     },
     resource: {
       id: 'InfoButton',
-      type: GridItemType.FloatingButton,
+      type: GridItemTypes.FloatingButton,
       tooltip: 'Info',
       icon: <Info />,
       bindToPanelId: 'Info',

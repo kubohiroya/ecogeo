@@ -1,26 +1,29 @@
 import { useLoaderData } from 'react-router-dom';
 import { UpsertProjectDialog } from './UpsertProjectDialog';
 import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
-import { ProjectType } from '../../services/database/ProjectType';
+import {
+  DatabaseItemType,
+  ProjectType,
+} from '../../services/database/ProjectType';
 
 export const UpsertTheoreticalProjectDialog = () => {
   const { uuid, type, name, description } = useLoaderData() as {
     uuid: string | undefined;
-    type: ProjectType;
+    type: string;
     name: string | undefined;
     description: string | undefined;
   };
 
-  const onSubmit = async (value: {
+  const onSubmit = async (values: {
     uuid: string | undefined;
-    type: ProjectType;
+    type: string;
     name: string;
     description: string;
   }) => {
     if (!uuid) {
       await GeoDatabaseTable.createDatabase({
-        ...value,
-        type,
+        ...values,
+        type: type as ProjectType & DatabaseItemType,
         coordinate: [0, 0],
         zoom: 1,
         version: 1,
@@ -28,7 +31,7 @@ export const UpsertTheoreticalProjectDialog = () => {
       });
     } else {
       await GeoDatabaseTable.updateDatabase(uuid, {
-        ...value,
+        ...values,
       });
     }
   };

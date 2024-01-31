@@ -15,7 +15,7 @@ import { FloatingButton } from '../../../components/FloatingButton/FloatingButto
 import { FloatingPanel } from '../../../components/FloatingPanel/FloatingPanel';
 import { FloatingButtonResource } from '../../models/FloatingButtonResource';
 import { FloatingPanelResource } from '../../models/FloatingPanelResource';
-import { GridItemType } from '../../models/GridItemType';
+import { GridItemTypes } from '../../models/GridItemType';
 
 const NUM_HORIZONTAL_GRIDS = 32;
 const ROW_HEIGHT = 32;
@@ -26,6 +26,7 @@ const FloatingPanelContent = styled(CardContent)`
   overflow: hidden;
 `;
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 const StyledResponsiveGridLayout = styled(ResponsiveGridLayout)`
   .react-grid-item.react-grid-placeholder {
     background: grey !important;
@@ -84,7 +85,7 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
       layouts.map((item) => {
         const shown = props.resources[item.i].shown || false;
         const enabled =
-          props.resources[item.i].type == GridItemType.FloatingButton
+          props.resources[item.i].type === GridItemTypes.FloatingButton
             ? (props.resources[item.i] as FloatingButtonResource).enabled
             : true;
         return [
@@ -135,7 +136,7 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
     return newLayouts;
   };
 
-  const onDemaximize = (id: string) => {
+  const onDemaximize = () => {
     if (maximizedLayout) {
       const newLayouts = [...layouts];
       newLayouts[layouts.length - 1] = maximizedLayout;
@@ -182,7 +183,7 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
   };
 
   const onHide = (panelId: string) => {
-    const removingLayout = layouts.find((layout) => layout.i == panelId);
+    const removingLayout = layouts.find((layout) => layout.i === panelId);
     if (removingLayout) {
       /*
       setRemovedLayoutsMap(
@@ -254,7 +255,7 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
   };
 
   const onLayoutChange = (current: ReactGridLayout.Layout[]) => {
-    if (current.length == 0) return;
+    if (current.length === 0) return;
     const newLayouts = createForefront(forefront, current);
     /*
     setRemovedLayoutsMap(
@@ -279,7 +280,7 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
     resource: FloatingItemResource,
     children: ReactNode,
   ) => {
-    if (!resource) return <></>;
+    if (!resource) return null;
 
     switch (resource.type) {
       case 'FloatingButton': {
@@ -322,7 +323,7 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
               onMaximize(id);
             }}
             onDemaximize={() => {
-              onDemaximize(id);
+              onDemaximize();
             }}
             maximized={maximizedLayout?.i === id}
           >
@@ -363,7 +364,7 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
         border: 'none',
       }}
     >
-      {width == 0 || layouts.length == 0 || gridItemMap == null ? (
+      {width === 0 || layouts.length === 0 || gridItemMap == null ? (
         <Box
           sx={{
             display: 'flex',

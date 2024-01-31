@@ -15,17 +15,17 @@ import {
 import * as React from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ProjectType } from '../../services/database/ProjectType';
+import { DatabaseItemTypes } from '../../services/database/ProjectType';
 import { DOCUMENT_TITLE } from '../../Constants';
 
 type UpsertProjectDialogProps = {
   uuid: string | undefined;
-  type: ProjectType;
+  type: string;
   name: string | undefined;
   description: string | undefined;
   onSubmit: (values: {
     uuid: string | undefined;
-    type: ProjectType;
+    type: string;
     name: string;
     description: string;
   }) => Promise<void>;
@@ -43,7 +43,8 @@ export const UpsertProjectDialog = ({
 
   const navigate = useNavigate();
 
-  const urlPrefix = type === ProjectType.resource ? '/resources' : '/projects';
+  const urlPrefix =
+    type === DatabaseItemTypes.resource ? '/resources' : '/projects';
 
   const onCancel = () => navigate(urlPrefix);
 

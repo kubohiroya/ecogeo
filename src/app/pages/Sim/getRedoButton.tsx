@@ -1,4 +1,4 @@
-import { GridItemType } from '../../models/GridItemType';
+import { GridItemTypes } from '../../models/GridItemType';
 import React from 'react';
 import { ROW_HEIGHT } from './SimDesktopComponent';
 import { Redo } from '@mui/icons-material';
@@ -27,7 +27,7 @@ export function getRedoButton({
     },
     resource: {
       id: 'RedoButton',
-      type: GridItemType.FloatingButton,
+      type: GridItemTypes.FloatingButton,
       tooltip: 'redo',
       icon: <Redo />,
       shown: true,

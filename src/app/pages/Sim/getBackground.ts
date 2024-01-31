@@ -1,4 +1,4 @@
-import { GridItemType } from '../../models/GridItemType';
+import { GridItemTypes } from '../../models/GridItemType';
 
 import { FloatingPanelItem } from '../../models/FloatingPanelItem';
 
@@ -15,7 +15,7 @@ export function getBackground(): FloatingPanelItem {
     },
     resource: {
       id: 'Background',
-      type: GridItemType.Background,
+      type: GridItemTypes.Background,
       shown: true,
     },
   };

@@ -47,7 +47,7 @@ function simplifyRadialDist(
   sqTolerance: number,
 ): Coordinate[] {
   let prevPoint = points[0];
-  let newPoints = [prevPoint];
+  const newPoints = [prevPoint];
   let point: Coordinate | null = null;
 
   for (let i = 1, len = points.length; i < len; i++) {
@@ -75,7 +75,7 @@ function simplifyDPStep(
   let index: number = 0;
 
   for (let i = first + 1; i < last; i++) {
-    let sqDist = getSqSegDist(points[i], points[first], points[last]);
+    const sqDist = getSqSegDist(points[i], points[first], points[last]);
 
     if (sqDist > maxSqDist) {
       index = i;
@@ -257,7 +257,7 @@ export function simplifyPolygons(
               for (let i = segment.startIndex; i <= segment.endIndex; i++) {
                 const currentCoord = polygonCoords[i];
                 const combinedValue = calculateCombinedValue(currentCoord);
-                if (combinedValueMap.get(combinedValue) == combinedValue) {
+                if (combinedValueMap.get(combinedValue) === combinedValue) {
                   polygonCoordsSimplified.push(currentCoord);
                 }
               }
@@ -277,7 +277,7 @@ export function simplifyPolygons(
                 segmentCoordsSimplified.length > 0
               ) {
                 if (
-                  calculateCombinedValue(segmentCoords[0]) !=
+                  calculateCombinedValue(segmentCoords[0]) !==
                   calculateCombinedValue(segmentCoordsSimplified[0])
                 ) {
                   segmentCoordsSimplified.unshift(segmentCoords[0]);
@@ -285,7 +285,7 @@ export function simplifyPolygons(
                 if (
                   calculateCombinedValue(
                     segmentCoords[segmentCoords.length - 1],
-                  ) !=
+                  ) !==
                   calculateCombinedValue(
                     segmentCoordsSimplified[segmentCoordsSimplified.length - 1],
                   )

@@ -7,25 +7,18 @@ import React, {
   useImperativeHandle,
 } from 'react';
 import { Domain, Factory, Favorite, LocalShipping } from '@mui/icons-material';
-import { CASE_ARRAY } from '../../../models/CaseArray';
+import { DEFAULT_PARAMS_BY_CASE } from '../../../models/DefaultParamByCase';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { useUndoRedo } from '../../../hooks/useUndoRedo';
 import { SessionState } from '../../../models/SessionState';
+import { ProjectType } from '../../../services/database/ProjectType';
 import { undoRedoSessionStateAtom } from '../../../pages/Sim/SimLoader';
+import { ParameterSet } from '../../../models/ParameterSet';
 
 /* eslint-disable-next-line */
 export interface ParameterConfigPanelProps {
+  type: ProjectType;
   onParameterSetChange: (caseId: string, commit: boolean) => void;
-  /*
-  parameterSet: ParameterSet;
-  setNumLocations: (numLocations: number, commit: boolean) => void;
-  setManufactureShare: (manufactureShare: number, commit: boolean) => void;
-  setTransportationCost: (transportationCost: number, commit: boolean) => void;
-  setElasticitySubstitution: (
-    elasticitySubstitution: number,
-    commit: boolean,
-  ) => void;
-   */
 }
 
 const StyledParameterConfigPanel = styled.div`
@@ -45,9 +38,9 @@ export const ParameterConfigPanel = forwardRef<
 
   useImperativeHandle(ref, () => ({
     resetToDefault() {
-      const caseDefault = CASE_ARRAY.find(
-        (c) => sessionState.parameterSet.caseId === c.caseId,
-      );
+      const caseDefault = (
+        DEFAULT_PARAMS_BY_CASE[props.type] as ParameterSet[]
+      ).find((c) => sessionState.parameterSet.caseId === c.caseId);
       setSessionState(
         (draft) => {
           draft.parameterSet.numLocations = caseDefault!.numLocations;
@@ -181,7 +174,7 @@ export const ParameterConfigPanel = forwardRef<
           marginBottom: '8px',
         }}
       >
-        {CASE_ARRAY.map((c, index) => (
+        {DEFAULT_PARAMS_BY_CASE[props.type].map((c, index) => (
           <ToggleButton
             size="small"
             key={index}

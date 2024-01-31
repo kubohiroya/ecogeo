@@ -1,4 +1,4 @@
-import { GridItemType } from '../../models/GridItemType';
+import { GridItemTypes } from '../../models/GridItemType';
 import { Edit } from '@mui/icons-material';
 import React from 'react';
 import { FloatingButtonItem } from '../../models/FloatingButtonItem';
@@ -23,7 +23,7 @@ export function getEditButton({
     },
     resource: {
       id: 'EditButton',
-      type: GridItemType.FloatingButton,
+      type: GridItemTypes.FloatingButton,
       bindToPanelId: 'Edit',
       tooltip: 'Open Edit Panel',
       icon: <Edit />,

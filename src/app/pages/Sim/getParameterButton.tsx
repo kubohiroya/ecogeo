@@ -1,4 +1,4 @@
-import { GridItemType } from '../../models/GridItemType';
+import { GridItemTypes } from '../../models/GridItemType';
 import { Tune } from '@mui/icons-material';
 import React from 'react';
 import { FloatingButtonItem } from '../../models/FloatingButtonItem';
@@ -17,7 +17,7 @@ export function getParameterButton(): FloatingButtonItem {
     },
     resource: {
       id: 'ParametersButton',
-      type: GridItemType.FloatingButton,
+      type: GridItemTypes.FloatingButton,
       bindToPanelId: 'Parameters',
       tooltip: 'Open Parameters Panel',
       icon: <Tune />,

@@ -1,4 +1,4 @@
-import { GridItemType } from '../../models/GridItemType';
+import { GridItemTypes } from '../../models/GridItemType';
 import { Layers } from '@mui/icons-material';
 import React from 'react';
 import { FloatingButtonItem } from '../../models/FloatingButtonItem';
@@ -25,7 +25,7 @@ export function getLayersButton({
     },
     resource: {
       id: 'LayersButton',
-      type: GridItemType.FloatingButton,
+      type: GridItemTypes.FloatingButton,
       bindToPanelId: 'Layers',
       tooltip: 'Open Layers Panel',
       icon: <Layers />,

@@ -44,6 +44,7 @@ export async function extractFromZip(
 
   for (const fileName in content.files) {
     if (
+      // @ts-expect-error
       content.files.hasOwnProperty(fileName) &&
       fileName.endsWith(extension)
     ) {

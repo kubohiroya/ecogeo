@@ -108,9 +108,11 @@ function mortonNumberToTileCoord(morton: number): [number, number, number] {
 }
 */
 
-export enum SpecialMortonNumbers {
-  NOT_CONTAINED = -1,
-}
+export const SpecialMortonNumbers = {
+  NOT_CONTAINED: -1,
+} as const;
+export type SpecialMortonNumber =
+  (typeof SpecialMortonNumbers)[keyof typeof SpecialMortonNumbers];
 
 export type LatLng = { lat: number; lng: number };
 export type TileXYZ = { x: number; y: number; z: number };
@@ -223,7 +225,7 @@ export function getTileMortonNumbers(
     );
     return [leftSide, rightSide];
   } else {
-    if (topLeft.lng == -180 && bottomRight.lng == 180) {
+    if (topLeft.lng === -180 && bottomRight.lng === 180) {
       return [[0]];
     } else {
       return [getTilesForHalf(topLeft, bottomRight, zoom)];
@@ -303,14 +305,14 @@ export const modifyMortonNumbers = (mortonNumbers: number[][][]) => {
       modifiedMortonNumbers.push(mortonNumber);
     } else {
       modifiedMortonNumbers.push(
-        mortonNumber.length == 1
+        mortonNumber.length === 1
           ? [mortonNumbers[zoom][0].concat(modifiedMortonNumbers[zoom - 1][0])]
-          : mortonNumber.length == 2
+          : mortonNumber.length === 2
             ? [
                 modifiedMortonNumbers[zoom - 1][0].concat(
                   mortonNumbers[zoom][0],
                 ),
-                modifiedMortonNumbers[zoom - 1].length == 2
+                modifiedMortonNumbers[zoom - 1].length === 2
                   ? modifiedMortonNumbers[zoom - 1][1].concat(
                       mortonNumbers[zoom][1],
                     )

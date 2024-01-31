@@ -6,7 +6,7 @@ import { createBrowserRouter, LoaderFunctionArgs, RouterProvider } from "react-r
 import { GeoDatabase } from "./app/services/database/GeoDatabase";
 import { GeoDatabaseItemCreateModeSelector } from "./app/pages/Home/GeoDatabaseItemCreateModeSelector";
 import { projectLoader } from "./app/pages/ProjectCreator/projectLoader";
-import { ProjectType } from "./app/services/database/ProjectType";
+import { ProjectTypes } from "./app/services/database/ProjectType";
 import { DeleteDatabaseItemDialog } from "./app/pages/DatabaseItemMenu/DeleteDatabaseItemDialog";
 import { GeoDatabaseTableComponent } from "./app/pages/Home/GeoDatabaseTableComponent";
 import { HomePage } from "./app/pages/Home/HomePage";
@@ -116,19 +116,19 @@ const router = createBrowserRouter([
                     {
                       icon: <PanoramaFishEye fontSize="large" />,
                       name: 'Racetrack Model',
-                      url: `/create/${ProjectType.racetrack}`,
+                      url: `/create/${ProjectTypes.racetrack}`,
                       tooltip: "Paul Krugman's spatial economy model",
                     },
                     {
                       icon: <Share fontSize="large" />,
                       name: 'Graph Structured Model',
-                      url: `/create/${ProjectType.racetrack}`,
+                      url: `/create/${ProjectTypes.racetrack}`,
                       tooltip: 'Graph structured spatial economy model',
                     },
                     {
                       icon: <Public fontSize="large" />,
                       name: 'Real-World Model',
-                      url: `/create/${ProjectType.realWorld}`,
+                      url: `/create/${ProjectTypes.realWorld}`,
                       tooltip: 'Full-set simulation model',
                     },
                   ]}

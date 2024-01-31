@@ -5,9 +5,7 @@ export function round(value: number, n: number) {
 
 export function isInfinity(value: number) {
   return (
-    value == Number.POSITIVE_INFINITY ||
-    value >= 1000000000 ||
-    value == Number.NaN
+    value === Number.POSITIVE_INFINITY || value >= 1000000000 || isNaN(value)
   );
 }
 

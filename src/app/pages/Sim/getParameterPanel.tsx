@@ -1,4 +1,4 @@
-import { GridItemType } from '../../models/GridItemType';
+import { GridItemTypes } from '../../models/GridItemType';
 import { Tune } from '@mui/icons-material';
 import React from 'react';
 import { RESIZE_HANDLES, ROW_HEIGHT } from './SimDesktopComponent';
@@ -20,7 +20,7 @@ export function getParameterPanel(): FloatingPanelItem {
     },
     resource: {
       id: 'Parameters',
-      type: GridItemType.FloatingPanel,
+      type: GridItemTypes.FloatingPanel,
       title: 'Parameters',
       icon: <Tune />,
       titleBarMode: 'win',

@@ -4,21 +4,23 @@ import { Edge } from '../models/Graph';
 import { City } from '../models/City';
 import { AbstractMatrixEngine } from './MatrixEngine';
 
-export enum MatrixEngineKeyType {
-  GPUMatrixEngine = 'GPUFloydWarshall',
-  CPUMatrixEngine = 'CPUFloydWarshall',
-}
+export const MatrixEngineKeyTypes = {
+  GPUMatrixEngine: 'GPUFloydWarshall',
+  CPUMatrixEngine: 'CPUFloydWarshall',
+} as const;
+export type MatrixEngineKeyType =
+  (typeof MatrixEngineKeyTypes)[keyof typeof MatrixEngineKeyTypes];
 
-export const defaultMatrixEngineType = MatrixEngineKeyType.CPUMatrixEngine;
+export const defaultMatrixEngineType = MatrixEngineKeyTypes.CPUMatrixEngine;
 
 const params = new URLSearchParams(location.search);
 //const matrixEngineType = params.get('engine') || 'CPU:FloydWarshall';
 const matrixEngineType = params.get('engine') || defaultMatrixEngineType;
 
 export const createMatrixEngine = (numLocations: number, numEdges: number) =>
-  matrixEngineType === MatrixEngineKeyType.CPUMatrixEngine
+  matrixEngineType === MatrixEngineKeyTypes.CPUMatrixEngine
     ? new CPUMatrixEngine(numLocations, numEdges)
-    : matrixEngineType === MatrixEngineKeyType.GPUMatrixEngine
+    : matrixEngineType === MatrixEngineKeyTypes.GPUMatrixEngine
       ? new GPUMatrixEngine(numLocations, numEdges)
       : new CPUMatrixEngine(numLocations, numEdges);
 

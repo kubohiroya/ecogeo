@@ -1,4 +1,4 @@
-import { GridItemType } from '../../models/GridItemType';
+import { GridItemTypes } from '../../models/GridItemType';
 import { ZoomIn } from '@mui/icons-material';
 import React from 'react';
 import { ROW_HEIGHT } from './SimDesktopComponent';
@@ -24,7 +24,7 @@ export function getZoomInButton({
     },
     resource: {
       id: 'ZoomInButton',
-      type: GridItemType.FloatingButton,
+      type: GridItemTypes.FloatingButton,
       tooltip: 'zoom in',
       icon: <ZoomIn />,
       shown: true,

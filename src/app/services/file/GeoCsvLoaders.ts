@@ -1,8 +1,8 @@
 import * as uuid from 'uuid';
 import { GeoPointEntity } from '../../models/geo/GeoPointEntity';
-import { GeoPointType } from '../../models/geo/GeoPointType';
+import { GeoPointTypes } from '../../models/geo/GeoPointType';
 import { GeoRouteSegmentEntity } from '../../models/geo/GeoRouteSegmentEntity';
-import { GeoRouteSegmentMode } from '../../models/geo/GeoRouteSegmentMode';
+import { GeoRouteSegmentModes } from '../../models/geo/GeoRouteSegmentMode';
 import { FileLoaderHandler } from './FileLoaderHandler';
 import {
   getTileMortonNumbers,
@@ -70,14 +70,12 @@ export const loadCsvFile = async <T>({
     for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
       lineNumber++;
       const line = lines[lineIndex];
-      if (itemBufferLength == 0 && lineIndex == 0) {
-        const [key, loader] = Object.entries(csvLoaders).find(
-          ([key, loader]) => {
-            if (loader.check(line)) {
-              return true;
-            }
-          },
-        ) || [null, null];
+      if (itemBufferLength === 0 && lineIndex === 0) {
+        const [, loader] = Object.entries(csvLoaders).find(([key, loader]) => {
+          if (loader.check(line)) {
+            return true;
+          }
+        }) || [null, null];
         if (loader == null) {
           throw new Error('loader not found:' + line);
         }
@@ -93,7 +91,7 @@ export const loadCsvFile = async <T>({
       if (entity) {
         entityItemBuffer.push(entity);
         itemBufferLength++;
-        if (entityItemBuffer.length == itemBufferLengthMax) {
+        if (entityItemBuffer.length === itemBufferLengthMax) {
           // console.log('bulkAdd', await db.cities.count());
           await selectedLoader.bulkAddEntity(db, entityItemBuffer as any[]);
           entityItemBuffer = [];
@@ -127,27 +125,27 @@ export enum CsvFileTypes {
 export const getCityType = (name: string, centroid: boolean) => {
   const capitalCityWords = name.split(/[.\s]/);
   return capitalCityWords[0] === 'Stn'
-    ? GeoPointType.RailwayStation
+    ? GeoPointTypes.RailwayStation
     : capitalCityWords[0] === 'Port'
-      ? GeoPointType.Seaport
+      ? GeoPointTypes.Seaport
       : capitalCityWords[0] === 'Airport'
-        ? GeoPointType.Airport
+        ? GeoPointTypes.Airport
         : centroid
-          ? GeoPointType.RegionCentroid
-          : GeoPointType.RoadWaypoint;
+          ? GeoPointTypes.RegionCentroid
+          : GeoPointTypes.RoadWaypoint;
 };
 
 export const getRouteSegmentMode = (mode: string) => {
   if (mode === '0') {
-    return GeoRouteSegmentMode.Road;
+    return GeoRouteSegmentModes.Road;
   } else if (mode === '1') {
-    return GeoRouteSegmentMode.Seaway;
+    return GeoRouteSegmentModes.Seaway;
   } else if (mode === '2') {
-    return GeoRouteSegmentMode.Airway;
+    return GeoRouteSegmentModes.Airway;
   } else if (mode === '3') {
-    return GeoRouteSegmentMode.Railway;
+    return GeoRouteSegmentModes.Railway;
   } else if (mode === '4') {
-    return GeoRouteSegmentMode.HighSpeedRailway;
+    return GeoRouteSegmentModes.HighSpeedRailway;
   } else {
     throw new Error();
   }
@@ -267,11 +265,11 @@ export const GeoCsvLoaders: CsvLoaders = {
           zoom,
         );
 
-        if (mortonNumbers.length == 0) {
+        if (mortonNumbers.length === 0) {
           mortonNumbersByZoomLevels[`z${zoom}`] =
             SpecialMortonNumbers.NOT_CONTAINED;
-        } else if (mortonNumbers.length == 1) {
-          if (mortonNumbers[0].length == 1) {
+        } else if (mortonNumbers.length === 1) {
+          if (mortonNumbers[0].length === 1) {
             mortonNumbersByZoomLevels[`z${zoom}`] = mortonNumbers[0][0];
           } else if (mortonNumbers[0].length >= 2) {
             mortonNumbersByZoomLevels[`z${zoom}`] =
@@ -279,8 +277,8 @@ export const GeoCsvLoaders: CsvLoaders = {
           } else {
             throw new Error();
           }
-        } else if (mortonNumbers.length == 2) {
-          if (mortonNumbers[1].length == 1) {
+        } else if (mortonNumbers.length === 2) {
+          if (mortonNumbers[1].length === 1) {
             mortonNumbersByZoomLevels[`z${zoom}_`] = mortonNumbers[1][0];
           } else if (mortonNumbers[1].length >= 2) {
             mortonNumbersByZoomLevels[`z${zoom}_`] =

@@ -97,7 +97,6 @@ export const ChartPanel = ({
     const ppp = getPPP(innerWidth, innerHeight, data, 'HEIGHT');
     return filterFeatures(BARCHART_FEATURES, ppp);
   }
-   */
 
   const data: { x: number; y: number }[] = sessionState.locations.map(
     (city, index) => ({
@@ -115,6 +114,7 @@ export const ChartPanel = ({
     },
     { max: -Infinity, min: Infinity },
   );
+   */
 
   // const [yDomain, setYDomain] = React.useState([0, 1]);
 

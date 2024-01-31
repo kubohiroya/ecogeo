@@ -14,9 +14,14 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import { Link, useLoaderData, useNavigate } from 'react-router-dom';
+import {
+  Link,
+  useLoaderData,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom';
 import { DatabaseItemMenu } from '../DatabaseItemMenu/DatabaseItemMenu';
-import { ResourceEntity, ResourceType } from '../../models/ResourceEntity';
+import { ResourceEntity, ResourceTypes } from '../../models/ResourceEntity';
 
 export const ResourceItemsComponent = () => {
   const { resources } = useLoaderData() as {
@@ -25,8 +30,10 @@ export const ResourceItemsComponent = () => {
 
   const navigate = useNavigate();
 
+  const location = useLocation();
+
   useEffect(() => {
-    if (location.pathname.endsWith('/resources') && resources.length == 0) {
+    if (location.pathname.endsWith('/resources') && resources.length === 0) {
       return navigate('/resources/new');
     }
   }, []);
@@ -56,9 +63,9 @@ export const ResourceItemsComponent = () => {
   ];
 
   const typeToIcon = {
-    [ResourceType.gadmShapes]: <Public />,
-    [ResourceType.idegsmCities]: <LocationCity />,
-    [ResourceType.idegsmRoutes]: <Route />,
+    [ResourceTypes.gadmShapes]: <Public />,
+    [ResourceTypes.idegsmCities]: <LocationCity />,
+    [ResourceTypes.idegsmRoutes]: <Route />,
   };
 
   return (

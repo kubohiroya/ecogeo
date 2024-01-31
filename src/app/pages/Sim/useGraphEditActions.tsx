@@ -179,11 +179,11 @@ export const useGraphEditActions = ({
 
       for (
         let i = 0;
-        sourceIndex != targetIndex && i < predecessorMatrix.length;
+        sourceIndex !== targetIndex && i < predecessorMatrix.length;
         i++
       ) {
         const nextIndex = predecessorMatrix[sourceIndex][targetIndex];
-        if (nextIndex == -1) break;
+        if (nextIndex === -1) break;
         removingEdgeSet.add(
           getKey(
             sessionState.locations[sourceIndex].id,
@@ -246,7 +246,7 @@ export const useGraphEditActions = ({
   ]);
 
   const onRemoveEdge = useCallback(() => {
-    if (uiState.selectedIndices.length == 2) {
+    if (uiState.selectedIndices.length === 2) {
       const newEdges = updateRemovedPath(
         uiState.selectedIndices[0],
         uiState.selectedIndices[1],
@@ -330,7 +330,7 @@ export const useGraphEditActions = ({
   const onDragEnd = useCallback(
     (x: number, y: number, index: number) => {
       if (
-        dragStartPosition == null ||
+        dragStartPosition === null ||
         (Math.abs(dragStartPosition.x - x) <= 1.0 &&
           Math.abs(dragStartPosition.y - y) <= 1.0)
       ) {
@@ -357,8 +357,8 @@ export const useGraphEditActions = ({
 
   const onDrag = useCallback(
     (diffX: number, diffY: number, index: number) => {
-      const isDragged = diffX != 0 || diffY != 0;
-      if (isDragged && dragStartPosition != null) {
+      const isDragged = diffX !== 0 || diffY !== 0;
+      if (isDragged && dragStartPosition !== null) {
         requestAnimationFrame(() => {
           const targetIndices = uiState.selectedIndices.includes(index)
             ? uiState.selectedIndices
@@ -410,7 +410,7 @@ export const useGraphEditActions = ({
   );
 
   const onFocus = useCallback((focusIndices: number[]) => {
-    const newFocusedIndices = focusIndices.filter((value) => value != -1);
+    const newFocusedIndices = focusIndices.filter((value) => value !== -1);
     /*
     diagonalMatrixSetPanelRef.current?.onFocus(
       focusIndices.map((index) => index + 1),
@@ -474,8 +474,8 @@ export const useGraphEditActions = ({
     (x: number, y: number, index: number) => {
       if (
         index >= 0 &&
-        (dragStartPosition == null ||
-          (dragStartPosition.x == x && dragStartPosition.y == y))
+        (dragStartPosition === null ||
+          (dragStartPosition.x === x && dragStartPosition.y === y))
       ) {
         if (uiState.selectedIndices.includes(index)) {
           onUnselect(uiState.selectedIndices, [index]);

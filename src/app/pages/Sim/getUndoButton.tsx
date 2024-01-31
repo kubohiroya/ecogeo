@@ -1,4 +1,4 @@
-import { GridItemType } from '../../models/GridItemType';
+import { GridItemTypes } from '../../models/GridItemType';
 import { Undo } from '@mui/icons-material';
 import React from 'react';
 import { ROW_HEIGHT } from './SimDesktopComponent';
@@ -26,7 +26,7 @@ export function getUndoButton({
     },
     resource: {
       id: 'UndoButton',
-      type: GridItemType.FloatingButton,
+      type: GridItemTypes.FloatingButton,
       tooltip: 'undo',
       icon: <Undo />,
       shown: true,

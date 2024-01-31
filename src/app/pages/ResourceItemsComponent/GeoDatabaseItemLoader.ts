@@ -1,14 +1,18 @@
 import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
-import { ProjectType } from '../../services/database/ProjectType';
+import {
+  DatabaseItemTypes,
+  ProjectTypes,
+} from '../../services/database/ProjectType';
+import { LoaderFunctionArgs } from 'react-router-dom';
 
-export async function GeoDatabaseItemLoader(request: any) {
+export async function GeoDatabaseItemLoader(request: LoaderFunctionArgs) {
   const resources = await GeoDatabaseTable.getSingleton()
     .databases.where('type')
-    .equals(ProjectType.resource)
+    .equals(DatabaseItemTypes.resource)
     .toArray();
   const projects = await GeoDatabaseTable.getSingleton()
     .databases.where('type')
-    .anyOf([ProjectType.racetrack, ProjectType.graph, ProjectType.realWorld])
+    .anyOf([ProjectTypes.racetrack, ProjectTypes.graph, ProjectTypes.realWorld])
     .toArray();
 
   return {

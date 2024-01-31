@@ -211,6 +211,7 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
     setElasticitySubstitution,
     setNumLocations,
   } = useParameterActions({
+    type,
     sessionState,
     setSessionState,
     onAddBulkLocations,
@@ -305,12 +306,9 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
       Parameters: (
         <ParametersPanel
           {...{
+            type: props.type,
             parameterSet: sessionState.parameterSet,
             onParameterSetChange,
-            setNumLocations,
-            setManufactureShare,
-            setTransportationCost,
-            setElasticitySubstitution,
           }}
         />
       ),
@@ -368,6 +366,7 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
       Parameters: (
         <ParametersPanel
           {...{
+            type: props.type,
             parameterSet: sessionState.parameterSet,
             onParameterSetChange,
             setNumLocations,

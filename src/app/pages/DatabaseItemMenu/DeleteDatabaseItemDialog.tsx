@@ -11,29 +11,33 @@ import {
 } from '@mui/material';
 import { createSimulatorLink } from '../../../createSimulatorLink';
 import dexie from 'dexie';
-import { ProjectType } from '../../services/database/ProjectType';
+import {
+  DatabaseItemType,
+  DatabaseItemTypes,
+  ProjectType,
+  ProjectTypes,
+} from '../../services/database/ProjectType';
 
 export const DeleteDatabaseItemDialog = () => {
-  const { uuid, type, name, description, coordinate, zoom } =
-    useLoaderData() as {
-      uuid: string;
-      type: ProjectType;
-      name: string | undefined;
-      coordinate: [number, number];
-      zoom: number;
-      description: string | undefined;
-    };
+  const { uuid, type, name, coordinate, zoom } = useLoaderData() as {
+    uuid: string;
+    type: ProjectType & DatabaseItemType;
+    name: string | undefined;
+    coordinate: [number, number];
+    zoom: number;
+    description: string | undefined;
+  };
 
   const navigate = useNavigate();
 
   const goHome = () => {
     switch (type) {
-      case ProjectType.racetrack:
-      case ProjectType.graph:
-      case ProjectType.realWorld:
+      case ProjectTypes.racetrack:
+      case ProjectTypes.graph:
+      case ProjectTypes.realWorld:
         navigate('/projects', { replace: true });
         break;
-      case ProjectType.resource:
+      case DatabaseItemTypes.resource:
         navigate('/resources', { replace: true });
         break;
       default:

@@ -1,4 +1,4 @@
-import { GridItemType } from '../../models/GridItemType';
+import { GridItemTypes } from '../../models/GridItemType';
 import { FitScreen } from '@mui/icons-material';
 import React from 'react';
 import { ROW_HEIGHT } from './SimDesktopComponent';
@@ -24,7 +24,7 @@ export function getFitScreenButton({
     },
     resource: {
       id: 'FitScreenButton',
-      type: GridItemType.FloatingButton,
+      type: GridItemTypes.FloatingButton,
       tooltip: 'fit to screen',
       icon: <FitScreen />,
       shown: true,

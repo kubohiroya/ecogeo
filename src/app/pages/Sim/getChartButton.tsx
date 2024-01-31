@@ -1,4 +1,4 @@
-import { GridItemType } from '../../models/GridItemType';
+import { GridItemTypes } from '../../models/GridItemType';
 import { BarChart } from '@mui/icons-material';
 import React from 'react';
 import { FloatingButtonItem } from '../../models/FloatingButtonItem';
@@ -17,7 +17,7 @@ export function getChartButton(): FloatingButtonItem {
     },
     resource: {
       id: 'ChartButton',
-      type: GridItemType.FloatingButton,
+      type: GridItemTypes.FloatingButton,
       bindToPanelId: 'Chart',
       tooltip: 'Open Chart Panel',
       icon: <BarChart />,

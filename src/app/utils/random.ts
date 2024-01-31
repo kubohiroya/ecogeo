@@ -3,11 +3,11 @@ import seedrandom from 'seedrandom';
 export class SeedRandom {
   rng: seedrandom.PRNG;
 
-  constructor(seed: any) {
-    if (seed == undefined) {
+  constructor(seed?: string | number) {
+    if (seed === undefined) {
       seed = Math.random().toString();
     }
-    this.rng = seedrandom(seed);
+    this.rng = seedrandom(seed.toString());
   }
 
   random() {
@@ -16,7 +16,7 @@ export class SeedRandom {
 }
 
 export const SEED =
-  new URLSearchParams(location.search).get('seed') || Math.random();
+  new URLSearchParams(window.location.search).get('seed') || Math.random();
 export const SEED_RANDOM: SeedRandom = new SeedRandom(SEED);
 
 export function random() {

@@ -11,18 +11,14 @@ import { SimComponent } from './SimComponent';
 import { UIState } from '../../models/UIState';
 import { AppMatrices } from '../../models/AppMatrices';
 import { ViewportCenter } from '../../models/ViewportCenter';
-import { ProjectType } from '../../services/database/ProjectType';
-
-const NUM_HORIZONTAL_GRIDS = 32;
-const NUM_VERTICAL_GRIDS = 20;
-const ROW_HEIGHT = 32;
+import { ProjectTypes } from '../../services/database/ProjectType';
 
 export const RealWorldSimPage = () => {
-  const { type, uuid, x, y, zoom } = useLoaderData() as SimLoaderResult;
+  const { uuid, x, y, zoom } = useLoaderData() as SimLoaderResult;
   const { width, height } = useWindowDimensions();
   return (
     <SimComponent
-      type={ProjectType.realWorld}
+      type={ProjectTypes.realWorld}
       {...{ uuid, x, y, zoom }}
       backgroundPanel={(params: {
         width: number;

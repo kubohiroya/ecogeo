@@ -1,12 +1,8 @@
-import { GridItemType } from '../../models/GridItemType';
+import { GridItemTypes } from '../../models/GridItemType';
 import { Layers } from '@mui/icons-material';
 import React from 'react';
 import { RESIZE_HANDLES, ROW_HEIGHT } from './SimDesktopComponent';
 import { FloatingPanelItem } from '../../models/FloatingPanelItem';
-
-type LayersPanelProps = {
-  shown?: boolean;
-};
 
 export function getLayersPanel({ shown = true }): FloatingPanelItem {
   return {
@@ -22,7 +18,7 @@ export function getLayersPanel({ shown = true }): FloatingPanelItem {
     },
     resource: {
       id: 'Layers',
-      type: GridItemType.FloatingPanel,
+      type: GridItemTypes.FloatingPanel,
       title: 'Layers',
       icon: <Layers />,
       titleBarMode: 'win',

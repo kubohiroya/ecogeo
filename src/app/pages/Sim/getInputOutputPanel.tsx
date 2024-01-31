@@ -1,4 +1,4 @@
-import { GridItemType } from '../../models/GridItemType';
+import { GridItemTypes } from '../../models/GridItemType';
 import { FolderOpen } from '@mui/icons-material';
 import React from 'react';
 import { RESIZE_HANDLES, ROW_HEIGHT } from './SimDesktopComponent';
@@ -26,7 +26,7 @@ export function getInputOutputPanel({
     },
     resource: {
       id: 'InputOutput',
-      type: GridItemType.FloatingPanel,
+      type: GridItemTypes.FloatingPanel,
       title: 'Input/Output',
       icon: <FolderOpen />,
       titleBarMode: 'win',

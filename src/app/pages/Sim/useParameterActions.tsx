@@ -1,13 +1,16 @@
 import { SessionState } from '../../models/SessionState';
 import { useCallback } from 'react';
-import { CASE_ARRAY } from '../../models/CaseArray';
+import { DEFAULT_PARAMS_BY_CASE } from '../../models/DefaultParamByCase';
+import { ProjectType } from '../../services/database/ProjectType';
 
 export const useParameterActions = ({
+  type,
   sessionState,
   setSessionState,
   onAddBulkLocations,
   onRemoveBulkLocations,
 }: {
+  type: ProjectType;
   sessionState: SessionState;
   setSessionState: (
     func: (draft: SessionState) => void,
@@ -22,8 +25,9 @@ export const useParameterActions = ({
       setSessionState(
         (sessionState) => {
           sessionState.parameterSet =
-            CASE_ARRAY.find((item) => item.caseId === caseId) ||
-            sessionState.parameterSet;
+            DEFAULT_PARAMS_BY_CASE[type].find(
+              (item) => item.caseId === caseId,
+            ) || sessionState.parameterSet;
           return sessionState;
         },
         true,

@@ -24,7 +24,10 @@ import { DatabaseItemMenu } from '../DatabaseItemMenu/DatabaseItemMenu';
 import { GeoDatabaseEntity } from '../../services/database/GeoDatabaseEntity';
 
 import { createSimulatorLink } from '../../../createSimulatorLink';
-import { ProjectType } from '../../services/database/ProjectType';
+import {
+  DatabaseItemTypes,
+  ProjectTypes,
+} from '../../services/database/ProjectType';
 import SourceIcon from '@mui/icons-material/Source';
 // import { HeadCell } from "../../../../../../SortableTable/SortableTable";
 import { DOCUMENT_TITLE } from '../../Constants';
@@ -54,32 +57,32 @@ export const ProjectItemsComponent = () => {
   }, []);
 
   const typeToIcon = {
-    [ProjectType.resource]: <SourceIcon />,
-    [ProjectType.realWorld]: <Public />,
-    [ProjectType.graph]: <Share />,
-    [ProjectType.racetrack]: <PanoramaFishEye />,
+    [DatabaseItemTypes.resource]: <SourceIcon />,
+    [ProjectTypes.realWorld]: <Public />,
+    [ProjectTypes.graph]: <Share />,
+    [ProjectTypes.racetrack]: <PanoramaFishEye />,
   };
 
   const speedDialActions = [
     {
-      icon: typeToIcon[ProjectType.racetrack],
-      name: ProjectType.racetrack,
+      icon: typeToIcon[ProjectTypes.racetrack],
+      name: ProjectTypes.racetrack,
       onClick: () => {
-        return navigate(`/create/${ProjectType.racetrack}`);
+        return navigate(`/create/${ProjectTypes.racetrack}`);
       },
     },
     {
-      icon: typeToIcon[ProjectType.graph],
-      name: ProjectType.graph,
+      icon: typeToIcon[ProjectTypes.graph],
+      name: ProjectTypes.graph,
       onClick: () => {
-        return navigate(`/create/${ProjectType.graph}`);
+        return navigate(`/create/${ProjectTypes.graph}`);
       },
     },
     {
-      icon: typeToIcon[ProjectType.realWorld],
-      name: ProjectType.realWorld,
+      icon: typeToIcon[ProjectTypes.realWorld],
+      name: ProjectTypes.realWorld,
       onClick: () => {
-        return navigate(`/create/${ProjectType.realWorld}`);
+        return navigate(`/create/${ProjectTypes.realWorld}`);
       },
     },
   ];

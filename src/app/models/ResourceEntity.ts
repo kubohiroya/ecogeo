@@ -7,8 +7,9 @@ export type ResourceEntity = {
   downloadedAt: number;
 };
 
-export enum ResourceType {
-  gadmShapes,
-  idegsmCities,
-  idegsmRoutes,
-}
+export const ResourceTypes = {
+  gadmShapes: 0,
+  idegsmCities: 1,
+  idegsmRoutes: 2,
+};
+export type ResourceType = (typeof ResourceTypes)[keyof typeof ResourceTypes];

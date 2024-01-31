@@ -1,4 +1,4 @@
-import { GridItemType } from '../../models/GridItemType';
+import { GridItemTypes } from '../../models/GridItemType';
 import { GridOn } from '@mui/icons-material';
 import React from 'react';
 import { RESIZE_HANDLES, ROW_HEIGHT } from './SimDesktopComponent';
@@ -22,7 +22,7 @@ export function getMatricesPanel({
     },
     resource: {
       id: 'Matrices',
-      type: GridItemType.FloatingPanel,
+      type: GridItemTypes.FloatingPanel,
       title: 'Matrices',
       icon: <GridOn />,
       titleBarMode: 'win',

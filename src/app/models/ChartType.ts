@@ -1,15 +1,16 @@
-export enum ChartType {
-  ManufactureShare = 'Share of Manufacturing',
-  AgricultureShare = 'Share of Agriculture',
-  PriceIndex = 'Price Index',
-  NominalWage = 'Nominal Wage',
-  RealWage = 'Real Wage',
-}
+export const ChartTypes = {
+  ManufactureShare: 'Share of Manufacturing',
+  AgricultureShare: 'Share of Agriculture',
+  PriceIndex: 'Price Index',
+  NominalWage: 'Nominal Wage',
+  RealWage: 'Real Wage',
+};
+export type ChartType = (typeof ChartTypes)[keyof typeof ChartTypes];
 
 export const chartTypes: ChartType[] = [
-  ChartType.ManufactureShare,
-  ChartType.AgricultureShare,
-  ChartType.PriceIndex,
-  ChartType.NominalWage,
-  ChartType.RealWage,
+  ChartTypes.ManufactureShare,
+  ChartTypes.AgricultureShare,
+  ChartTypes.PriceIndex,
+  ChartTypes.NominalWage,
+  ChartTypes.RealWage,
 ];

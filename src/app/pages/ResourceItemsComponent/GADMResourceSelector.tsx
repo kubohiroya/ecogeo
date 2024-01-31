@@ -87,7 +87,7 @@ export const GADMResourceSelector = forwardRef<
         } else {
           numFalse++;
         }
-        if (numCell == numTrue || numCell == numFalse) {
+        if (numCell === numTrue || numCell === numFalse) {
           continue;
         }
         return true;
@@ -108,7 +108,7 @@ export const GADMResourceSelector = forwardRef<
       } else {
         numFalse++;
       }
-      if (numCell == numTrue || numCell == numFalse) {
+      if (numCell === numTrue || numCell === numFalse) {
         continue;
       }
       return true;
@@ -138,7 +138,7 @@ export const GADMResourceSelector = forwardRef<
       columnIndex < newMatrix[rowIndex].length;
       columnIndex++
     ) {
-      if (newMatrix[rowIndex][columnIndex] != newValue && 0 < rowIndex) {
+      if (newMatrix[rowIndex][columnIndex] !== newValue && 0 < rowIndex) {
         newValueCount += newValue ? 1 : -1;
       }
       newMatrix[rowIndex][columnIndex] = newMatrix[rowIndex][0];
@@ -154,7 +154,7 @@ export const GADMResourceSelector = forwardRef<
     newMatrix[0][columnIndex] = newValue;
     for (let rowIndex = 1; rowIndex < newMatrix.length; rowIndex++) {
       if (columnIndex < newMatrix[rowIndex].length) {
-        if (newMatrix[rowIndex][columnIndex] != newValue && 0 < columnIndex) {
+        if (newMatrix[rowIndex][columnIndex] !== newValue && 0 < columnIndex) {
           newValueCount += newValue ? 1 : -1;
         }
         newMatrix[rowIndex][columnIndex] = newValue;
@@ -174,7 +174,7 @@ export const GADMResourceSelector = forwardRef<
         columnIndex++
       ) {
         if (
-          newMatrix[rowIndex][columnIndex] != newValue &&
+          newMatrix[rowIndex][columnIndex] !== newValue &&
           0 < rowIndex &&
           0 < columnIndex
         ) {
@@ -232,7 +232,11 @@ export const GADMResourceSelector = forwardRef<
               onChange={() => handleRowHeaderCheckboxChange(dataIndex + 1)}
               name={`${dataIndex + 1}`}
             />
-            <a href={`https://gadm.org/maps/${item.code}.html`} target="_blank">
+            <a
+              href={`https://gadm.org/maps/${item.code}.html`}
+              target="_blank"
+              rel="noreferrer"
+            >
               {item.name}({item.code})
             </a>
           </TableCell>
@@ -247,18 +251,20 @@ export const GADMResourceSelector = forwardRef<
                     }
                     name={`${dataIndex + 1}_${level + 1}`}
                   />
-                  {level == 0 && (
+                  {level === 0 && (
                     <a
                       href={`https://gadm.org/maps/${item.code}.html`}
                       target="_blank"
+                      rel="noreferrer"
                     >
                       {level}
                     </a>
                   )}
-                  {level == 1 && (
+                  {level === 1 && (
                     <a
                       href={`https://gadm.org/maps/${item.code}_${level}.html`}
                       target="_blank"
+                      rel="noreferrer"
                     >
                       {level}
                     </a>

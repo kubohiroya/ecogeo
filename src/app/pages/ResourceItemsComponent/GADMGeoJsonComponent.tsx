@@ -20,7 +20,6 @@ import {
   Step,
   StepButton,
   Stepper,
-  Tooltip,
   Typography,
 } from '@mui/material';
 import { InlineIcon } from '../../../components/InlineIcon/InlineIcon';
@@ -42,7 +41,7 @@ import {
   GADMResourceSelectorFunctions,
 } from './GADMResourceSelector';
 import { LinearProgressWithLabel } from '../../../components/LinearProgressWithLabel/LinearProgressWithLabel';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { DOCUMENT_TITLE } from '../../Constants';
 
 type Step = {
@@ -52,17 +51,18 @@ type Step = {
   onLeave: () => Promise<void>;
 };
 
-enum StepStatus {
-  onEnterTask,
-  display,
-  onLeaveTask,
-  done,
-}
+const StepStatuses = {
+  onEnterTask: 0,
+  display: 1,
+  onLeaveTask: 2,
+  done: 3,
+} as const;
+
+type StepStatus = (typeof StepStatuses)[keyof typeof StepStatuses];
 
 const NUM_STEPS = 5;
 
 export const GADMGeoJsonComponent = () => {
-  const navigate = useNavigate();
   const [stepIndex, setStepIndex] = React.useState(0);
   const [stepStatus, setStepStatus] = React.useState<StepStatus[]>(
     new Array<StepStatus>(NUM_STEPS),
@@ -79,12 +79,12 @@ export const GADMGeoJsonComponent = () => {
     null,
   );
   const [selectionMatrix, setSelectionMatrix] = useState<boolean[][]>([]);
-  const [simplifyLevel, setSimplifyLevel] = useState(3);
+  const [, setSimplifyLevel] = useState(3);
   const [downloadingUrlList, setDownloadingUrlList] = useState<string[] | null>(
     null,
   );
   const [downloadingUrlStatus, setDownloadingUrlStatus] = useState<
-    Record<string, { status: FetchStatus; error?: any; retry?: number }>
+    Record<string, { status: FetchStatus; retry?: number }>
   >({});
   const [loadingProgress, setLoadingProgress] = useState<{
     index: number;
@@ -92,6 +92,7 @@ export const GADMGeoJsonComponent = () => {
     progress: number;
   } | null>(null);
 
+  /*
   const totalSteps = () => {
     return steps.length;
   };
@@ -104,9 +105,12 @@ export const GADMGeoJsonComponent = () => {
   const isLastStep = () => {
     return stepIndex === NUM_STEPS - 1;
   };
+   */
 
   const allStepsCompleted = () => {
-    return Object.values(stepStatus).every((task) => task == StepStatus.done);
+    return Object.values(stepStatus).every(
+      (task) => task === StepStatuses.done,
+    );
   };
 
   const goBack = async () => {
@@ -124,7 +128,7 @@ export const GADMGeoJsonComponent = () => {
   const leaveFrom = async (stepIndex: number) => {
     setStepStatus((prevStepStatus) => {
       const newStepStatus = [...prevStepStatus];
-      newStepStatus[stepIndex] = StepStatus.onLeaveTask;
+      newStepStatus[stepIndex] = StepStatuses.onLeaveTask;
       return newStepStatus;
     });
 
@@ -132,7 +136,7 @@ export const GADMGeoJsonComponent = () => {
 
     setStepStatus((prevStepStatus) => {
       const newStepStatus = [...prevStepStatus];
-      newStepStatus[stepIndex] = StepStatus.done;
+      newStepStatus[stepIndex] = StepStatuses.done;
       return newStepStatus;
     });
   };
@@ -141,7 +145,7 @@ export const GADMGeoJsonComponent = () => {
     if (0 <= newStepIndex) {
       setStepStatus((prevStepStatus) => {
         const newStepStatus = [...prevStepStatus];
-        newStepStatus[newStepIndex] = StepStatus.onEnterTask;
+        newStepStatus[newStepIndex] = StepStatuses.onEnterTask;
         return newStepStatus;
       });
 
@@ -149,7 +153,7 @@ export const GADMGeoJsonComponent = () => {
 
       setStepStatus((prevStepStatus) => {
         const newStepStatus = [...prevStepStatus];
-        newStepStatus[newStepIndex] = StepStatus.display;
+        newStepStatus[newStepIndex] = StepStatuses.display;
         return newStepStatus;
       });
     }
@@ -217,13 +221,13 @@ export const GADMGeoJsonComponent = () => {
               variant="contained"
               onClick={() => goNext()}
               disabled={
-                stepStatus[1] == StepStatus.onLeaveTask ||
-                stepStatus[1] == StepStatus.done
+                stepStatus[1] === StepStatuses.onLeaveTask ||
+                stepStatus[1] === StepStatuses.done
               }
             >
-              {stepStatus[1] == StepStatus.display
+              {stepStatus[1] === StepStatuses.display
                 ? 'Download GADM Index'
-                : stepStatus[1] == StepStatus.onLeaveTask
+                : stepStatus[1] === StepStatuses.onLeaveTask
                   ? 'download GADM files...'
                   : 'download GADM files finished'}
             </Button>
@@ -274,7 +278,7 @@ export const GADMGeoJsonComponent = () => {
       label: 'Step 4: Download data files',
       contents: (
         <>
-          {downloadingUrlList && downloadingUrlList.length == 0 && (
+          {downloadingUrlList && downloadingUrlList.length === 0 && (
             <Box>
               <DialogContentText>
                 No data file to download at this time. Skip to next.
@@ -304,11 +308,11 @@ export const GADMGeoJsonComponent = () => {
                   const urlStatus = downloadingUrlStatus[url];
                   if (!urlStatus) {
                     return <Chip key={index} label={url} color="primary" />;
-                  } else if (urlStatus.status == FetchStatus.loading) {
+                  } else if (urlStatus.status === FetchStatus.loading) {
                     return (
                       <Chip key={index} label={url} deleteIcon={<Download />} />
                     );
-                  } else if (urlStatus.status == FetchStatus.success) {
+                  } else if (urlStatus.status === FetchStatus.success) {
                     return (
                       <Chip
                         color={'success'}
@@ -317,17 +321,15 @@ export const GADMGeoJsonComponent = () => {
                         deleteIcon={<Done />}
                       />
                     );
-                  } else if (urlStatus.status == FetchStatus.error) {
+                  } else if (urlStatus.status === FetchStatus.error) {
                     return (
-                      <Tooltip key={index} title={urlStatus.error.message}>
-                        <Badge badgeContent={urlStatus.retry} color="warning">
-                          <Chip
-                            color={'warning'}
-                            label={url}
-                            deleteIcon={<ReportProblem />}
-                          />
-                        </Badge>
-                      </Tooltip>
+                      <Badge badgeContent={urlStatus.retry} color="warning">
+                        <Chip
+                          color={'warning'}
+                          label={url}
+                          deleteIcon={<ReportProblem />}
+                        />
+                      </Badge>
                     );
                   }
                 })}
@@ -348,7 +350,7 @@ export const GADMGeoJsonComponent = () => {
             (urlList: string[]) => {
               setDownloadingUrlList(urlList);
             },
-            (url: string, urlStatus: { status: FetchStatus; error?: any }) => {
+            (url: string, urlStatus: { status: FetchStatus }) => {
               setDownloadingUrlStatus((prev) => {
                 return {
                   ...prev,
@@ -425,7 +427,7 @@ export const GADMGeoJsonComponent = () => {
           {steps.map((step, index) => (
             <Step
               key={step.label}
-              completed={stepStatus[index] === StepStatus.done}
+              completed={stepStatus[index] === StepStatuses.done}
             >
               <StepButton color="inherit">{step.label}</StepButton>
             </Step>
@@ -474,7 +476,8 @@ export const GADMGeoJsonComponent = () => {
           variant={'contained'}
           color="inherit"
           disabled={
-            stepIndex === 0 || stepStatus[stepIndex] == StepStatus.onEnterTask
+            stepIndex === 0 ||
+            stepStatus[stepIndex] === StepStatuses.onEnterTask
           }
           onClick={goBack}
         >
@@ -486,9 +489,9 @@ export const GADMGeoJsonComponent = () => {
           style={{ padding: '16px 48px 16px 48px' }}
           variant={'contained'}
           disabled={
-            stepStatus[stepIndex] == StepStatus.onEnterTask ||
-            stepStatus[stepIndex] == StepStatus.onLeaveTask ||
-            stepStatus[stepIndex] == StepStatus.done
+            stepStatus[stepIndex] === StepStatuses.onEnterTask ||
+            stepStatus[stepIndex] === StepStatuses.onLeaveTask ||
+            stepStatus[stepIndex] === StepStatuses.done
           }
           title={
             stepIndex < steps.length - 1 ? `Step ${stepIndex + 1}` : 'Finish'

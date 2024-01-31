@@ -45,14 +45,14 @@ export const useUndoRedoActions = ({
   }, [redoSessionState, setUIState]);
 
   useHotkeys(['Meta+z', 'Control+z'], () => {
-    if (history.length == 0) {
+    if (history.length === 0) {
       openSnackBar('No more undo!');
       return;
     }
     undo();
   });
   useHotkeys(['Shift+Meta+z', 'Shift+Control+z'], () => {
-    if (future.length == 0) {
+    if (future.length === 0) {
       openSnackBar('No more redo!');
       return;
     }

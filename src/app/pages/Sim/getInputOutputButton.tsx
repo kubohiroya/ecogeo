@@ -1,4 +1,4 @@
-import { GridItemType } from '../../models/GridItemType';
+import { GridItemTypes } from '../../models/GridItemType';
 import { FolderOpen } from '@mui/icons-material';
 import React from 'react';
 import { FloatingButtonItem } from '../../models/FloatingButtonItem';
@@ -25,7 +25,7 @@ export function getInputOutputButton({
     },
     resource: {
       id: 'InputOutputButton',
-      type: GridItemType.FloatingButton,
+      type: GridItemTypes.FloatingButton,
       bindToPanelId: 'InputOutput',
       tooltip: 'Open Input/Output Panel',
       icon: <FolderOpen />,

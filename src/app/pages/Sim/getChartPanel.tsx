@@ -1,4 +1,4 @@
-import { GridItemType } from '../../models/GridItemType';
+import { GridItemTypes } from '../../models/GridItemType';
 import { BarChart } from '@mui/icons-material';
 import React from 'react';
 import { RESIZE_HANDLES, ROW_HEIGHT } from './SimDesktopComponent';
@@ -19,7 +19,7 @@ export function getChartPanel(): FloatingPanelItem {
     },
     resource: {
       id: 'Chart',
-      type: GridItemType.FloatingPanel,
+      type: GridItemTypes.FloatingPanel,
       title: 'Chart',
       icon: <BarChart />,
       titleBarMode: 'win',

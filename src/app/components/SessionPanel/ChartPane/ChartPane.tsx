@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { hasFeatureDetectingHoverEvent } from '../../../utils/browserUtil';
 import { ChartButtons } from './ChartButtons';
-import { ChartType, chartTypes } from '../../../models/ChartType';
+import { ChartTypes, chartTypes } from '../../../models/ChartType';
 import {
   Agriculture,
   AttachMoneyRounded,
@@ -55,11 +55,11 @@ const ChartCaptionBox = styled(Box)`
 `;
 
 const chartItemIcons: Record<string, ReactElement> = {
-  [ChartType.ManufactureShare]: <Factory />,
-  [ChartType.AgricultureShare]: <Agriculture />,
-  [ChartType.PriceIndex]: <PriceChange />,
-  [ChartType.NominalWage]: <RequestQuoteRounded />,
-  [ChartType.RealWage]: <AttachMoneyRounded />,
+  [ChartTypes.ManufactureShare]: <Factory />,
+  [ChartTypes.AgricultureShare]: <Agriculture />,
+  [ChartTypes.PriceIndex]: <PriceChange />,
+  [ChartTypes.NominalWage]: <RequestQuoteRounded />,
+  [ChartTypes.RealWage]: <AttachMoneyRounded />,
 };
 
 const chartItems = Object.values(chartTypes).map((title) => ({

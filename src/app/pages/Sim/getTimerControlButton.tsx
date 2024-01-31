@@ -1,4 +1,4 @@
-import { GridItemType } from '../../models/GridItemType';
+import { GridItemTypes } from '../../models/GridItemType';
 import { Timer } from '@mui/icons-material';
 import React from 'react';
 import { FloatingButtonItem } from '../../models/FloatingButtonItem';
@@ -17,7 +17,7 @@ export function getTimerControlButton(): FloatingButtonItem {
     },
     resource: {
       id: 'TimerControlButton',
-      type: GridItemType.FloatingButton,
+      type: GridItemTypes.FloatingButton,
       bindToPanelId: 'TimerControl',
       tooltip: 'Open TimerControl Panel',
       icon: <Timer />,

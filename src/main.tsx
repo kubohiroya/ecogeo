@@ -23,6 +23,7 @@ import { ResourceItemsComponent } from "./app/pages/ResourceItemsComponent/Resou
 import { FileDropComponent } from "./components/FileDropComponent/FileDropComponent";
 import { UpsertGeoProjectDialog } from "./app/pages/ProjectCreator/UpsertGeoProjectDialog";
 import { createRoot } from "react-dom/client";
+import { GraphSimPage } from "./app/pages/Sim/GraphSimPage";
 
 const router = createBrowserRouter([
   {
@@ -184,7 +185,8 @@ const router = createBrowserRouter([
   },
   {
     path: '/graph/:uuid/:zoom/:y/:x/',
-    element: <RaceTrackSimPage />,
+    // eslint-disable-next-line react/jsx-no-undef
+    element: <GraphSimPage />,
     loader: async (
       request: LoaderFunctionArgs<{
         params: { uuid: string; x: string; y: string; zoom: string };

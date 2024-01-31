@@ -417,7 +417,7 @@ export const GADMGeoJsonComponent = () => {
   ];
 
   return (
-    <Dialog open={true} fullScreen>
+    <Dialog open={true} maxWidth="xl">
       <DialogTitle>
         <Typography>Setup the GADM maps</Typography>
         <Stepper

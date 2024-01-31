@@ -19,7 +19,7 @@ export const IdeGsmRoutesComponent = () => {
 
   const navigate = useNavigate();
   return (
-    <Dialog open={true} fullScreen>
+    <Dialog open={true} maxWidth="xl">
       <DialogTitle>
         <Typography>IDE GSM Routes</Typography>
       </DialogTitle>

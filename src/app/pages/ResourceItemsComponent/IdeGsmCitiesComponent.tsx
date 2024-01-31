@@ -19,7 +19,7 @@ export const IdeGsmCitiesComponent = () => {
 
   const navigate = useNavigate();
   return (
-    <Dialog open={true} fullScreen>
+    <Dialog open={true} maxWidth="xl">
       <DialogTitle>
         <Typography>IDE GSM Cities</Typography>
       </DialogTitle>

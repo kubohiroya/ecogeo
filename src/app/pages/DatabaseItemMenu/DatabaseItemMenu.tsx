@@ -88,7 +88,7 @@ export const DatabaseItemMenu = ({ item }: DatabaseItemMenuProps) => {
                     <ListItemIcon>
                       <Delete />
                     </ListItemIcon>
-                    <ListItemText>Remove</ListItemText>
+                    <ListItemText>Delete</ListItemText>
                   </MenuItem>
                 </MenuList>
               </ClickAwayListener>

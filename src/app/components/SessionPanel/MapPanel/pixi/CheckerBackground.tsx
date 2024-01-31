@@ -9,7 +9,7 @@ type BackgroundProps = {
 
 export const CheckerBackground = (props: BackgroundProps) => {
   const [mouseDownPosition, setMouseDownPosition] = useState<number[] | null>(
-    null
+    null,
   );
 
   //const draw = useCallback(, []);
@@ -29,7 +29,7 @@ export const CheckerBackground = (props: BackgroundProps) => {
               if ((x + y) % 2 === 0) {
                 g.beginFill(0xffffff, 0.001 + props.backgroundAlpha); // 白
               } else {
-                g.beginFill(0x0000ff, 0.001 + 0.01 * props.backgroundAlpha); // 黒
+                g.beginFill(0x0000ff, 0.001 + 0.05 * props.backgroundAlpha); // 黒
               }
               g.drawRect(x * tileSize, y * tileSize, tileSize, tileSize);
               g.endFill();

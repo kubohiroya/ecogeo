@@ -3,24 +3,23 @@ import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
 import { useCallback } from 'react';
 import { UpsertProjectDialog } from './UpsertProjectDialog';
 import { useLoaderData } from 'react-router-dom';
-import { GeoDatabaseType } from '../../services/database/GeoDatabaseType';
-import { INITIAL_VIEW_STATE } from '../../Constants';
+import { ProjectType } from '../../services/database/ProjectType';
+import { INITIAL_VIEW_STATE } from '../../../app/Constants';
 
 export const UpsertGeoProjectDialog = () => {
   const { uuid, type, name, description } = useLoaderData() as {
     uuid: string | undefined;
-    type: GeoDatabaseType;
+    type: ProjectType;
     name: string | undefined;
     description: string | undefined;
   };
 
-  const { coords, isGeolocationAvailable, isGeolocationEnabled } =
-    useGeolocated({
-      positionOptions: {
-        enableHighAccuracy: false,
-      },
-      userDecisionTimeout: 5000,
-    });
+  const { coords } = useGeolocated({
+    positionOptions: {
+      enableHighAccuracy: false,
+    },
+    userDecisionTimeout: 5000,
+  });
 
   const { latitude, longitude, zoom } = {
     latitude: coords?.latitude || INITIAL_VIEW_STATE.latitude,
@@ -31,7 +30,7 @@ export const UpsertGeoProjectDialog = () => {
   const onSubmit = useCallback(
     async (value: {
       uuid: string | undefined;
-      type: GeoDatabaseType;
+      type: ProjectType;
       name: string;
       description: string;
     }) => {

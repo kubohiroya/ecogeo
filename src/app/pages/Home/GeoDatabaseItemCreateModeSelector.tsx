@@ -26,6 +26,7 @@ type GeoDatabaseItemCreateModeSelectorItem = {
   icon: React.ReactNode;
   name: string;
   url: string;
+  tooltip: string;
 };
 type GeoDatabaseItemCreateModeSelectorProps = {
   type: GeoDatabaseTableType;
@@ -38,9 +39,10 @@ export const GeoDatabaseItemCreateModeSelector = (
   const navigate = useNavigate();
   useEffect(() => {
     document.title =
-      DOCUMENT_TITLE + (props.type == GeoDatabaseTableType.resources)
-        ? 'Select Resource Type'
-        : 'Select Project Type';
+      DOCUMENT_TITLE +
+      (props.type == GeoDatabaseTableType.resources
+        ? ' - Select Resource Type'
+        : ' - Select Project Type');
   }, []);
   return (
     <div>
@@ -50,6 +52,7 @@ export const GeoDatabaseItemCreateModeSelector = (
             <ModelSelectButton
               key={index}
               variant="outlined"
+              title={item.tooltip}
               onClick={() => navigate(item.url)}
             >
               <div>{item.name}</div>

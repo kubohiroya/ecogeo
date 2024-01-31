@@ -7,17 +7,10 @@ import {
   calcPriceIndex,
   calcRealWage,
   City,
-  resetCity,
 } from './City';
 import { loop } from '../utils/arrayUtil';
 
-export function startSimulation(sessionState: SessionState) {
-  sessionState.locations.map((target) => {
-    const city = resetCity(target);
-  });
-}
-
-export function equalize(locations: City[]) {
+function equalize(locations: City[]) {
   const sum = locations
     .map((target) => target.manufactureShare)
     .reduce((a, b) => {
@@ -28,11 +21,13 @@ export function equalize(locations: City[]) {
   });
 }
 
+const NUM_CALIBRATION_LOOP = 50;
+
 export function tickSimulator(
   sessionState: SessionState,
   transportationCostMatrix: number[][],
 ) {
-  loop(50).forEach(() => {
+  loop(NUM_CALIBRATION_LOOP).forEach(() => {
     sessionState.locations.forEach((location, index) => {
       backupPreviousValues(location);
     });

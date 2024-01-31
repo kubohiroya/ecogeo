@@ -1,5 +1,4 @@
 import { Link, useLoaderData, useNavigate } from 'react-router-dom';
-import { GeoDatabaseType } from '../../services/database/GeoDatabaseType';
 import React, { useCallback } from 'react';
 import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
 import {
@@ -12,12 +11,13 @@ import {
 } from '@mui/material';
 import { createSimulatorLink } from '../../../createSimulatorLink';
 import dexie from 'dexie';
+import { ProjectType } from '../../services/database/ProjectType';
 
 export const DeleteDatabaseItemDialog = () => {
   const { uuid, type, name, description, coordinate, zoom } =
     useLoaderData() as {
       uuid: string;
-      type: GeoDatabaseType;
+      type: ProjectType;
       name: string | undefined;
       coordinate: [number, number];
       zoom: number;
@@ -28,16 +28,16 @@ export const DeleteDatabaseItemDialog = () => {
 
   const goHome = () => {
     switch (type) {
-      case GeoDatabaseType.racetrack:
-      case GeoDatabaseType.graph:
-      case GeoDatabaseType.realWorld:
+      case ProjectType.racetrack:
+      case ProjectType.graph:
+      case ProjectType.realWorld:
         navigate('/projects', { replace: true });
         break;
-      case GeoDatabaseType.resource:
+      case ProjectType.resource:
         navigate('/resources', { replace: true });
         break;
       default:
-        throw new Error(`Unknown GeoDatabaseType: ${type}`);
+        throw new Error(`Unknown ProjectType: ${type}`);
     }
   };
 

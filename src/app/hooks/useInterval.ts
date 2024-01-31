@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 
 const useInterval = <T>(props: {
   tick: () => T;
-  isFinished: (result: T) => boolean;
+  isStopped: (result: T) => boolean;
   onStarted: () => void;
   onReset: () => void;
-  onFinished: (result: T) => void;
+  onStopped: (result: T) => void;
   interval: number;
 }) => {
   const [interval, setIntervalValue] = useState<number>(props.interval);
@@ -44,10 +44,10 @@ const useInterval = <T>(props: {
       intervalRef.current = setInterval(() => {
         const tickResult = props.tick();
 
-        if (props.isFinished(tickResult)) {
+        if (props.isStopped(tickResult)) {
           setResult(tickResult);
           setIsStarted(false);
-          props.onFinished(tickResult);
+          props.onStopped(tickResult);
         } else {
           setCounter((prevCounter) => prevCounter + 1);
         }

@@ -6,8 +6,8 @@ function useIntervalExpScale<T>(props: {
   onStarted: () => void;
   tick: () => T;
   onReset: () => void;
-  isFinished: (result: T) => boolean;
-  onFinished: (result: T) => void;
+  isStopped: (result: T) => boolean;
+  onStopped: (result: T) => void;
   minInterval: number;
   maxInterval: number;
   initialIntervalScale: number;
@@ -26,8 +26,8 @@ function useIntervalExpScale<T>(props: {
       onStarted: props.onStarted,
       onReset: props.onReset,
       tick: props.tick,
-      isFinished: props.isFinished,
-      onFinished: props.onFinished,
+      isStopped: props.isStopped,
+      onStopped: props.onStopped,
       interval,
     });
 

@@ -1,209 +1,62 @@
 import React from 'react';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
-import { Box, Button } from '@mui/material';
-import {
-  Flag,
-  FolderOpen,
-  Hexagon,
-  Home,
-  Layers,
-  LocationCity,
-  Route,
-  Square,
-} from '@mui/icons-material';
-import { TreeView } from '@mui/x-tree-view';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { StyledTreeItem } from '../../../components/TreeView/StyledTreeItem';
-import { DesktopComponent } from './DesktopComponent';
 import MapComponent from '../../components/SessionPanel/MapPanel/deckgl/MapComponent';
 import { useLoaderData } from 'react-router-dom';
-import { GridItemType } from '../../models/GridItemType';
-import useWindowDimensions from '../../hooks/useWindowDimenstions';
+import { useWindowDimensions } from '../../hooks/useWindowDimenstions';
 import { MapCopyright } from '../../../components/MapCopyright/MapCopyright';
+import { SessionState } from '../../models/SessionState';
+import { SimLoaderResult } from './SimLoader';
+import { SimComponent } from './SimComponent';
+import { UIState } from '../../models/UIState';
+import { AppMatrices } from '../../models/AppMatrices';
+import { ViewportCenter } from '../../models/ViewportCenter';
+import { ProjectType } from '../../services/database/ProjectType';
 
 const NUM_HORIZONTAL_GRIDS = 32;
 const NUM_VERTICAL_GRIDS = 20;
 const ROW_HEIGHT = 32;
 
 export const RealWorldSimPage = () => {
-  const params = useLoaderData() as { uuid: string };
+  const { type, uuid, x, y, zoom } = useLoaderData() as SimLoaderResult;
   const { width, height } = useWindowDimensions();
   return (
-    <DesktopComponent
-      initialLayouts={[
-        {
-          i: 'Background',
-          x: 0,
-          y: 0,
-          w: 1,
-          h: 1,
-          resizeHandles: [],
-          static: true,
-        },
-        {
-          i: 'HomeButton',
-          x: 0,
-          y: 0,
-          w: 1,
-          h: 1,
-          resizeHandles: [],
-          isDraggable: true,
-          isResizable: false,
-        },
-        {
-          i: 'InputOutputButton',
-          x: 0,
-          y: 1,
-          w: 1,
-          h: 1,
-          resizeHandles: [],
-          isDraggable: true,
-          isResizable: false,
-        },
-        {
-          i: 'LayersButton',
-          x: 0,
-          y: 2,
-          w: 1,
-          h: 1,
-          isDraggable: true,
-          isResizable: false,
-          resizeHandles: [],
-        },
-        {
-          i: 'InputOutput',
-          x: 5,
-          y: 5,
-          w: 10,
-          h: 5,
-          resizeHandles: ['se'],
-          isDraggable: true,
-          isResizable: true,
-        },
-        {
-          i: 'Layers',
-          x: 5,
-          y: 10,
-          w: 10,
-          h: 10,
-          isDraggable: true,
-          isResizable: true,
-          resizeHandles: ['se'],
-        },
-      ]}
-      resources={{
-        Background: {
-          id: 'Background',
-          type: GridItemType.Background,
-          children: (
-            <MapComponent
-              uuid={params.uuid!}
-              map="openstreetmap"
-              width={width}
-              height={height}
-            ></MapComponent>
-          ),
-          shown: true,
-          enabled: true,
-        },
-        HomeButton: {
-          id: 'HomeButton',
-          type: GridItemType.FloatingButton,
-          tooltip: 'Home',
-          icon: <Home />,
-          navigateTo: '/',
-          shown: true,
-          enabled: true,
-        },
-        InputOutputButton: {
-          id: 'InputOutputButton',
-          type: GridItemType.FloatingButton,
-          bindToPanelId: 'InputOutput',
-          tooltip: 'Open Input/Output Panel',
-          icon: <FolderOpen />,
-          shown: true,
-          enabled: true,
-        },
-        LayersButton: {
-          id: 'LayersButton',
-          type: GridItemType.FloatingButton,
-          bindToPanelId: 'Layers',
-          tooltip: 'Open Layers Panel',
-          icon: <Layers />,
-          shown: true,
-          enabled: true,
-        },
-        InputOutput: {
-          id: 'InputOutput',
-          bindToButtonId: 'InputOutputButton',
-          type: GridItemType.FloatingPanel,
-          title: 'Input/Output Panel',
-          icon: <FolderOpen />,
-          titleBarMode: 'win',
-          rowHeight: ROW_HEIGHT,
-          shown: false,
-          children: (
-            <Box style={{ display: 'flex', gap: '10px' }}>
-              <Button variant={'contained'}>Import...</Button>
-              <Button variant={'contained'}>Export...</Button>
-            </Box>
-          ),
-        },
-        Layers: {
-          id: 'Layers',
-          bindToButtonId: 'LayersButton',
-          type: GridItemType.FloatingPanel,
-          title: 'Layers Panel',
-          icon: <Layers />,
-          titleBarMode: 'win',
-          rowHeight: ROW_HEIGHT,
-          shown: false,
-          children: (
-            <TreeView
-              defaultCollapseIcon={<ExpandMoreIcon />}
-              defaultExpandIcon={<ChevronRightIcon />}
-              defaultExpanded={['1', '2']}
-            >
-              <StyledTreeItem
-                nodeId="1"
-                level={1}
-                labelText="Country Shapes"
-                labelIcon={Flag}
-              >
-                <StyledTreeItem
-                  nodeId="1-1"
-                  level={2}
-                  labelText="Region1 Shapes"
-                  labelIcon={Hexagon}
-                >
-                  <StyledTreeItem
-                    nodeId="1-1-1"
-                    level={3}
-                    labelText="Region2 Shapes"
-                    labelIcon={Square}
-                  />
-                </StyledTreeItem>
-              </StyledTreeItem>
-              <StyledTreeItem
-                nodeId="2"
-                level={1}
-                labelText="Cities"
-                labelIcon={LocationCity}
-              />
-              <StyledTreeItem
-                nodeId="3"
-                level={1}
-                labelText="Routes"
-                labelIcon={Route}
-              />
-            </TreeView>
-          ),
-        },
-      }}
-    >
-      <MapCopyright />
-    </DesktopComponent>
+    <SimComponent
+      type={ProjectType.realWorld}
+      {...{ uuid, x, y, zoom }}
+      backgroundPanel={(params: {
+        width: number;
+        height: number;
+        sessionState: SessionState;
+        uiState: UIState;
+        matrices: AppMatrices;
+        onDragStart: (x: number, y: number, index: number) => void;
+        onDragEnd: (diffX: number, diffY: number, index: number) => void;
+        onDrag: (diffX: number, diffY: number, index: number) => void;
+        onFocus: (focusIndices: number[]) => void;
+        onUnfocus: (unfocusIndices: number[]) => void;
+        onPointerUp: (x: number, y: number, index: number) => void;
+        onClearSelection: () => void;
+        overrideViewportCenter: (viewportCenter: ViewportCenter) => void;
+        onMoved: ({
+          zoom,
+          y,
+          x,
+        }: {
+          x: number;
+          y: number;
+          zoom: number;
+        }) => void;
+      }) => (
+        <MapComponent
+          uuid={uuid}
+          map="openstreetmap"
+          width={width}
+          height={height}
+        >
+          <MapCopyright />
+        </MapComponent>
+      )}
+    />
   );
 };

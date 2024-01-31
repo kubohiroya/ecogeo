@@ -102,10 +102,10 @@ export const FloatingPanel = forwardRef<HTMLDivElement, FloatingPanelProps>(
     return (
       <FloatingCard
         id={id}
+        ref={ref}
         key={key}
         style={{ ...style, borderRadius: '8px' }}
-        ref={ref}
-        onMouseDown={(ev) => {
+        onMouseDown={(ev: MouseEvent) => {
           const rect = document.getElementById(id)!.getBoundingClientRect();
           if (
             titleBarMarginRight < rect.right - ev.clientX &&

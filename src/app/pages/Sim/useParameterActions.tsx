@@ -1,7 +1,8 @@
 import { SessionState } from '../../models/SessionState';
 import { useCallback } from 'react';
+import { CASE_ARRAY } from '../../models/CaseArray';
 
-const useParameterActions = ({
+export const useParameterActions = ({
   sessionState,
   setSessionState,
   onAddBulkLocations,
@@ -16,8 +17,23 @@ const useParameterActions = ({
   onAddBulkLocations: (numLocations: number, commit?: boolean) => void;
   onRemoveBulkLocations: (numLocations: number, commit?: boolean) => void;
 }) => {
+  const onCaseChange = useCallback(
+    (caseId: string) => {
+      setSessionState(
+        (sessionState) => {
+          sessionState.parameterSet =
+            CASE_ARRAY.find((item) => item.caseId === caseId) ||
+            sessionState.parameterSet;
+          return sessionState;
+        },
+        true,
+        'changeCase',
+      );
+    },
+    [setSessionState],
+  );
   const setManufactureShare = useCallback(
-    (manufactureShare: number, commit?: boolean) => {
+    (manufactureShare: number, commit: boolean) => {
       setSessionState(
         (draft) => {
           draft.parameterSet.manufactureShare = manufactureShare;
@@ -34,7 +50,7 @@ const useParameterActions = ({
     ],
   );
   const setTransportationCost = useCallback(
-    (transportationCost: number, commit?: boolean) => {
+    (transportationCost: number, commit: boolean) => {
       setSessionState(
         (draft) => {
           draft.parameterSet.transportationCost = transportationCost;
@@ -47,12 +63,11 @@ const useParameterActions = ({
       sessionState?.locations,
       sessionState?.edges,
       sessionState?.parameterSet,
-      ,
       setSessionState,
     ],
   );
   const setElasticitySubstitution = useCallback(
-    (elasticitySubstitution: number, commit?: boolean) => {
+    (elasticitySubstitution: number, commit: boolean) => {
       setSessionState(
         (draft) => {
           draft.parameterSet.elasticitySubstitution = elasticitySubstitution;
@@ -75,9 +90,15 @@ const useParameterActions = ({
         onRemoveBulkLocations(numLocations, commit);
       } else if (sessionState.locations.length < numLocations) {
         onAddBulkLocations(numLocations, commit);
-      } else {
       }
     },
     [],
   );
+  return {
+    onParameterSetChange: onCaseChange,
+    setManufactureShare,
+    setTransportationCost,
+    setElasticitySubstitution,
+    setNumLocations,
+  };
 };

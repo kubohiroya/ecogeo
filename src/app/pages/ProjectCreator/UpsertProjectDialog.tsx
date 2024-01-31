@@ -15,17 +15,17 @@ import {
 import * as React from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GeoDatabaseType } from '../../services/database/GeoDatabaseType';
+import { ProjectType } from '../../services/database/ProjectType';
 import { DOCUMENT_TITLE } from '../../Constants';
 
 type UpsertProjectDialogProps = {
   uuid: string | undefined;
-  type: GeoDatabaseType;
+  type: ProjectType;
   name: string | undefined;
   description: string | undefined;
   onSubmit: (values: {
     uuid: string | undefined;
-    type: GeoDatabaseType;
+    type: ProjectType;
     name: string;
     description: string;
   }) => Promise<void>;
@@ -42,12 +42,15 @@ export const UpsertProjectDialog = ({
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const navigate = useNavigate();
-  const onCancel = () => navigate('/projects');
+
+  const urlPrefix = type === ProjectType.resource ? '/resources' : '/projects';
+
+  const onCancel = () => navigate(urlPrefix);
 
   useEffect(() => {
     document.title =
-      DOCUMENT_TITLE + `: ${uuid ? 'Update ' : 'Create New'} ${type} Project`;
-  }, []);
+      DOCUMENT_TITLE + `- ${uuid ? 'Update ' : 'Create New'} ${type}`;
+  }, [uuid, type]);
 
   return (
     <Dialog

@@ -1,7 +1,6 @@
 import { City } from '../../models/City';
 import { UIState } from '../../models/UIState';
 import { useCallback, useLayoutEffect } from 'react';
-import { ViewportCenter } from '../../models/ViewportCenter';
 import { calcBoundingRect } from '../../components/SessionPanel/MapPanel/calcBoundingRect';
 import { createViewportCenter } from '../../components/SessionPanel/MapPanel/CreateViewportCenter';
 import { PADDING_MARGIN_RATIO } from '../../components/SessionPanel/MapPanel/Constatns';
@@ -19,15 +18,6 @@ export const useViewportActions = ({
   uiState: UIState;
   setUIState: (func: (draft: UIState) => void) => void;
 }) => {
-  const setSessionViewportCenter = useCallback(
-    (viewportCenter: ViewportCenter) => {
-      setUIState((draft) => {
-        draft.viewportCenter = viewportCenter;
-      });
-    },
-    [setUIState],
-  );
-
   const doCreateViewportCenter = (uiState: UIState, locations: City[]) => {
     if (locations?.length > 1) {
       const boundingRect = calcBoundingRect(locations);
@@ -62,5 +52,5 @@ export const useViewportActions = ({
     }
   }, []);
 
-  return { onFit, setSessionViewportCenter };
+  return { onFit };
 };

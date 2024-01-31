@@ -1,7 +1,7 @@
-import { GeoDatabaseType } from './GeoDatabaseType';
+import { ProjectType } from './ProjectType';
 
 export interface GeoDatabaseSource {
-  type: GeoDatabaseType;
+  type: ProjectType;
   name: string;
   description: string;
   version: number;

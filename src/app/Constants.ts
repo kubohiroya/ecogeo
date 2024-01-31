@@ -1,4 +1,4 @@
-export const DOCUMENT_TITLE = 'Eco-Geo:';
+export const DOCUMENT_TITLE = 'Eco-Geo';
 export const INITIAL_VIEW_STATE = {
   latitude: 47.65,
   longitude: 7,

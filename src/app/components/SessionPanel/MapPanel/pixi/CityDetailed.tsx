@@ -1,10 +1,10 @@
 import { City } from '../../../../models/City';
-import * as PIXI from 'pixi.js';
 import { Container, Graphics, Sprite, Text } from '@pixi/react';
 import React from 'react';
 import { CITY_SVGDATA_URL } from '../CitySvgUrl';
 import { fontStyle } from './FontStyles';
 import { BACKGROUND_COLOR } from '../Constatns';
+import * as PIXI from 'pixi.js';
 
 type CityDetailedProps = {
   index: number;

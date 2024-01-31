@@ -1,18 +1,14 @@
 import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
-import { GeoDatabaseType } from '../../services/database/GeoDatabaseType';
+import { ProjectType } from '../../services/database/ProjectType';
 
 export async function GeoDatabaseItemLoader(request: any) {
   const resources = await GeoDatabaseTable.getSingleton()
     .databases.where('type')
-    .equals(GeoDatabaseType.resource)
+    .equals(ProjectType.resource)
     .toArray();
   const projects = await GeoDatabaseTable.getSingleton()
     .databases.where('type')
-    .anyOf([
-      GeoDatabaseType.racetrack,
-      GeoDatabaseType.graph,
-      GeoDatabaseType.realWorld,
-    ])
+    .anyOf([ProjectType.racetrack, ProjectType.graph, ProjectType.realWorld])
     .toArray();
 
   return {

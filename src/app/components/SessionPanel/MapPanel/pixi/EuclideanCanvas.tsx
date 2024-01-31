@@ -18,7 +18,7 @@ import { getById } from '../../../../utils/arrayUtil';
 import { SessionState } from '../../../../models/SessionState';
 import { AppMatrices } from '../../../../models/AppMatrices';
 import { isInfinity } from '../../../../utils/mathUtil';
-import { ZoomedEvent } from 'pixi-viewport/dist/types';
+import { MovedEvent, ZoomedEvent } from 'pixi-viewport/dist/types';
 import { CheckerBackground } from './CheckerBackground';
 
 const cityTexture = PIXI.Texture.from(CITY_SVGDATA_URL);
@@ -33,7 +33,7 @@ export type GraphCanvasProps = {
     bottom: number;
     paddingMarginRatio: number;
   };
-  setViewportCenter: (viewportCenter: ViewportCenter) => void;
+  overrideViewportCenter: (viewportCenter: ViewportCenter) => void;
   onDragStart: (x: number, y: number, index: number) => void;
   onDragEnd: (x: number, y: number, index: number) => void;
   onDrag: (diffX: number, diffY: number, index: number) => void;
@@ -41,7 +41,7 @@ export type GraphCanvasProps = {
   onUnfocus: (indices: number[]) => void;
   onPointerUp: (x: number, y: number, index: number) => void;
   onClearSelection: () => void;
-  onMoved: (centerX: number, centerY: number, scale: number) => void;
+  onMoved: ({ x, y, zoom }: { x: number; y: number; zoom: number }) => void;
   draggingIndex: number | null;
   sessionState: SessionState;
   focusedIndices: number[];
@@ -105,7 +105,7 @@ export const EuclideanCanvas = React.memo((props: GraphCanvasProps) => {
         props.onFocus([index]);
       }
     },
-    [props.onFocus]
+    [props.onFocus],
   );
 
   const onPointerLeave = useCallback(
@@ -115,12 +115,12 @@ export const EuclideanCanvas = React.memo((props: GraphCanvasProps) => {
         props.onUnfocus([index]);
       }
     },
-    [props.onUnfocus]
+    [props.onUnfocus],
   );
 
   const onPointerDown = useCallback(
     (event: FederatedPointerEvent, index: number) => {},
-    []
+    [],
   );
 
   const onPointerUp = useCallback(
@@ -129,11 +129,13 @@ export const EuclideanCanvas = React.memo((props: GraphCanvasProps) => {
       divRef.current!.style.cursor = 'default';
       props.onPointerUp(event.clientX, event.clientY, index);
     },
-    [props.onPointerUp]
+    [props.onPointerUp],
   );
 
-  const onPointerMove = useCallback((event: PIXI.FederatedPointerEvent) => {},
-  []);
+  const onPointerMove = useCallback(
+    (event: PIXI.FederatedPointerEvent) => {},
+    [],
+  );
 
   const clearSelection = useCallback(() => {
     props.onClearSelection();
@@ -145,16 +147,16 @@ export const EuclideanCanvas = React.memo((props: GraphCanvasProps) => {
     focusedIndices.length > 0
       ? focusedIndices[0]
       : props.draggingIndex && props.draggingIndex >= 0
-      ? props.draggingIndex
-      : selectedIndices.length > 0
-      ? selectedIndices[0]
-      : -1;
+        ? props.draggingIndex
+        : selectedIndices.length > 0
+          ? selectedIndices[0]
+          : -1;
 
   const onSetViewportCenter = useCallback(
-    (viewporCenter: ViewportCenter) => {
-      props.setViewportCenter(viewporCenter);
+    (viewportCenter: ViewportCenter) => {
+      props.overrideViewportCenter(viewportCenter);
     },
-    [props.setViewportCenter]
+    [props.overrideViewportCenter],
   );
 
   const onDragStart = useCallback(() => {
@@ -162,14 +164,10 @@ export const EuclideanCanvas = React.memo((props: GraphCanvasProps) => {
     divRef.current!.style.cursor = 'grabbing';
   }, []);
 
-  const onDragEnd = useCallback(
-    (ev: any) => {
-      props.onMoved(ev.viewport.x, ev.viewport.y, ev.viewport.scale.x);
-      setBackgroundDisabled();
-      divRef.current!.style.cursor = 'default';
-    },
-    [props.viewportCenter]
-  );
+  const onDragEnd = useCallback(() => {
+    setBackgroundDisabled();
+    divRef.current!.style.cursor = 'default';
+  }, [props.viewportCenter]);
 
   const setDefaultCursor = useCallback(() => {
     divRef.current!.style.cursor = 'default';
@@ -179,8 +177,12 @@ export const EuclideanCanvas = React.memo((props: GraphCanvasProps) => {
     setBackgroundEnabled();
   }, []);
 
-  const onMoved = useCallback((ev: any) => {
-    props.onMoved(ev.viewport.x, ev.viewport.y, ev.viewport.scale.x);
+  const onMoved = useCallback((ev: MovedEvent) => {
+    props.onMoved({
+      x: ev.viewport.center.x,
+      y: ev.viewport.center.y,
+      zoom: ev.viewport.scale.x,
+    });
   }, []);
 
   return (
@@ -235,7 +237,7 @@ export const EuclideanCanvas = React.memo((props: GraphCanvasProps) => {
             !isInfinity(
               props.matrices.distanceMatrix[focusedIndices[0]][
                 focusedIndices[1]
-              ]
+              ],
             ) && (
               <FocusedEdgeEffects
                 edges={edges}
@@ -252,7 +254,7 @@ export const EuclideanCanvas = React.memo((props: GraphCanvasProps) => {
             !isInfinity(
               props.matrices.distanceMatrix![selectedIndices[0]][
                 selectedIndices[1]
-              ]
+              ],
             ) && (
               <FocusedEdgeEffects
                 edges={edges}
@@ -293,7 +295,7 @@ export const EuclideanCanvas = React.memo((props: GraphCanvasProps) => {
           <CityDetailed
             index={targetIndex}
             city={targetLocation}
-            x={95}
+            x={140}
             y={props.height - 155}
           />
         )}

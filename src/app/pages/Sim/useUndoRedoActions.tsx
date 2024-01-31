@@ -1,25 +1,22 @@
 import { SessionState } from '../../models/SessionState';
 import { UIState } from '../../models/UIState';
 import { useUndoRedo } from '../../hooks/useUndoRedo';
-import { undoRedoSessionStateAtom } from './RaceTrackSimLoader';
-import { useCallback, useState } from 'react';
+import { undoRedoSessionStateAtom } from './SimLoader';
+import { useCallback } from 'react';
 import useHotkeys from '@reecelucas/react-use-hotkeys';
 
-const useUndoRedoActions = ({
+export const useUndoRedoActions = ({
+  openSnackBar,
+  closeSnackBar,
   uiState,
   setUIState,
 }: {
-  sessionState: SessionState;
-  setSessionState: (
-    func: (draft: SessionState) => void,
-    commit: boolean,
-    label: string,
-  ) => void;
+  openSnackBar: (message: string) => void;
+  closeSnackBar: () => void;
   uiState: UIState;
   setUIState: (func: (draft: UIState) => void) => void;
 }) => {
   const {
-    set: setSessionState,
     undo: undoSessionState,
     redo: redoSessionState,
     current: sessionState,
@@ -68,33 +65,10 @@ const useUndoRedoActions = ({
       locations: sessionState.locations,
       selectedIndices: uiState.selectedIndices,
     });
-    console.log({ history, staging, future });
+    console.log({ sessionState, history, staging, future });
     //console.log({ uiState });
   });
   useHotkeys(['e'], () => {
     console.log(JSON.stringify(sessionState.edges, null, ' '));
   });
-
-  const [snackBarState, setSnackBarState] = useState<{
-    open: boolean;
-    vertical: 'top' | 'bottom';
-    horizontal: 'left' | 'center' | 'right';
-    message: string;
-  }>({
-    open: false,
-    vertical: 'top',
-    horizontal: 'center',
-    message: '',
-  });
-
-  const openSnackBar = useCallback(
-    (message: string) => {
-      setSnackBarState({ ...snackBarState, open: true, message });
-    },
-    [snackBarState, setSnackBarState],
-  );
-
-  const closeSnackBar = useCallback(() => {
-    setSnackBarState({ ...snackBarState, open: false });
-  }, [snackBarState, setSnackBarState]);
 };

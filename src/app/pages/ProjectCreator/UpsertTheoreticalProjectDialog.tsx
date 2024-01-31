@@ -1,19 +1,19 @@
 import { useLoaderData } from 'react-router-dom';
 import { UpsertProjectDialog } from './UpsertProjectDialog';
 import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
-import { GeoDatabaseType } from '../../services/database/GeoDatabaseType';
+import { ProjectType } from '../../services/database/ProjectType';
 
 export const UpsertTheoreticalProjectDialog = () => {
   const { uuid, type, name, description } = useLoaderData() as {
     uuid: string | undefined;
-    type: GeoDatabaseType;
+    type: ProjectType;
     name: string | undefined;
     description: string | undefined;
   };
 
   const onSubmit = async (value: {
     uuid: string | undefined;
-    type: GeoDatabaseType;
+    type: ProjectType;
     name: string;
     description: string;
   }) => {

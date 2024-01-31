@@ -14,13 +14,20 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import { Link, useLoaderData, useNavigate } from 'react-router-dom';
+import {
+  Link,
+  useLoaderData,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom';
 import { DatabaseItemMenu } from '../DatabaseItemMenu/DatabaseItemMenu';
 import { GeoDatabaseEntity } from '../../services/database/GeoDatabaseEntity';
 
 import { createSimulatorLink } from '../../../createSimulatorLink';
-import { GeoDatabaseType } from '../../services/database/GeoDatabaseType';
+import { ProjectType } from '../../services/database/ProjectType';
 import SourceIcon from '@mui/icons-material/Source';
+// import { HeadCell } from "../../../../../../SortableTable/SortableTable";
+import { DOCUMENT_TITLE } from '../../Constants';
 
 export const ProjectItemsComponent = () => {
   const { projects } = useLoaderData() as {
@@ -30,46 +37,81 @@ export const ProjectItemsComponent = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('projects', location.pathname);
-    if (
-      location.pathname.startsWith('/projects') &&
-      !location.pathname.endsWith('/projects-new') &&
-      projects.length == 0
-    ) {
-      return navigate('/projects-new');
+    if (document.location.pathname.startsWith('/projects')) {
+      document.title = DOCUMENT_TITLE + ` - Projects`;
+    }
+    if (document.location.pathname.startsWith('/resource')) {
+      document.title = DOCUMENT_TITLE + ` - Resources`;
+    }
+  }, []);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname.endsWith('/projects') && projects.length == 0) {
+      return navigate('/projects/new');
     }
   }, []);
 
   const typeToIcon = {
-    [GeoDatabaseType.resource]: <SourceIcon />,
-    [GeoDatabaseType.realWorld]: <Public />,
-    [GeoDatabaseType.graph]: <Share />,
-    [GeoDatabaseType.racetrack]: <PanoramaFishEye />,
+    [ProjectType.resource]: <SourceIcon />,
+    [ProjectType.realWorld]: <Public />,
+    [ProjectType.graph]: <Share />,
+    [ProjectType.racetrack]: <PanoramaFishEye />,
   };
 
   const speedDialActions = [
     {
-      icon: typeToIcon[GeoDatabaseType.racetrack],
-      name: GeoDatabaseType.racetrack,
+      icon: typeToIcon[ProjectType.racetrack],
+      name: ProjectType.racetrack,
       onClick: () => {
-        return navigate(`/create/${GeoDatabaseType.racetrack}`);
+        return navigate(`/create/${ProjectType.racetrack}`);
       },
     },
     {
-      icon: typeToIcon[GeoDatabaseType.graph],
-      name: GeoDatabaseType.graph,
+      icon: typeToIcon[ProjectType.graph],
+      name: ProjectType.graph,
       onClick: () => {
-        return navigate(`/create/${GeoDatabaseType.graph}`);
+        return navigate(`/create/${ProjectType.graph}`);
       },
     },
     {
-      icon: typeToIcon[GeoDatabaseType.realWorld],
-      name: GeoDatabaseType.realWorld,
+      icon: typeToIcon[ProjectType.realWorld],
+      name: ProjectType.realWorld,
       onClick: () => {
-        return navigate(`/create/${GeoDatabaseType.realWorld}`);
+        return navigate(`/create/${ProjectType.realWorld}`);
       },
     },
   ];
+
+  /*
+  const headCells: readonly HeadCell<GeoDatabaseEntity>[] = [
+    {
+      id: "type",
+      numeric: false,
+      disablePadding: true,
+      label: "type"
+    },
+    {
+      id: "name",
+      numeric: false,
+      disablePadding: true,
+      label: "name"
+    },
+    {
+      id: "description",
+      numeric: false,
+      disablePadding: true,
+      label: "description"
+    },
+    {
+      id: "updatedAt",
+      numeric: true,
+      disablePadding: true,
+      label: "updateAt"
+    }
+  ];
+   */
 
   return (
     <Box>

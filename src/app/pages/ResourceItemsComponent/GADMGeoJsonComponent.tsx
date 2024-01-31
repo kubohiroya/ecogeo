@@ -42,7 +42,8 @@ import {
   GADMResourceSelectorFunctions,
 } from './GADMResourceSelector';
 import { LinearProgressWithLabel } from '../../../components/LinearProgressWithLabel/LinearProgressWithLabel';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { DOCUMENT_TITLE } from '../../Constants';
 
 type Step = {
   label: string;
@@ -61,11 +62,15 @@ enum StepStatus {
 const NUM_STEPS = 5;
 
 export const GADMGeoJsonComponent = () => {
-  const navigete = useNavigate();
+  const navigate = useNavigate();
   const [stepIndex, setStepIndex] = React.useState(0);
   const [stepStatus, setStepStatus] = React.useState<StepStatus[]>(
     new Array<StepStatus>(NUM_STEPS),
   );
+
+  useEffect(() => {
+    document.title = DOCUMENT_TITLE + ' - Setup GADM maps';
+  }, []);
 
   const [countries, setCountries] = useState<null | GADMCountryMetadata[]>(
     null,
@@ -173,7 +178,11 @@ export const GADMGeoJsonComponent = () => {
             }}
           >
             <Button variant={'outlined'} onClick={() => enterTo(1)}>
-              <a href="https://gadm.org/license.html" target="_blank">
+              <a
+                href="https://gadm.org/license.html"
+                target="_blank"
+                rel="noreferrer"
+              >
                 See the license
                 <InlineIcon>
                   <Launch />
@@ -427,43 +436,38 @@ export const GADMGeoJsonComponent = () => {
         <Box>
           <div>
             {allStepsCompleted() ? (
-              <>
-                <Typography sx={{ mt: 2, mb: 1 }}>
-                  All steps completed - you&apos;re finished
-                </Typography>
-              </>
+              <Typography sx={{ mt: 2, mb: 1 }}>
+                All steps completed - you&apos;re finished
+              </Typography>
             ) : (
-              <>
-                <Card>
-                  <CardContent>
-                    <Typography
-                      sx={{
-                        fontSize: '18px',
-                        fontStyle: 'bold',
-                      }}
-                    >
-                      {steps[stepIndex].label}
-                    </Typography>
+              <Card>
+                <CardContent>
+                  <Typography
+                    sx={{
+                      fontSize: '18px',
+                      fontStyle: 'bold',
+                    }}
+                  >
+                    {steps[stepIndex].label}
+                  </Typography>
 
-                    {steps[stepIndex].contents}
-                  </CardContent>
-                  <CardActionArea></CardActionArea>
-                </Card>
-              </>
+                  {steps[stepIndex].contents}
+                </CardContent>
+                <CardActionArea></CardActionArea>
+              </Card>
             )}
           </div>
         </Box>
       </DialogContent>
       <DialogActions sx={{ margin: '10px' }}>
-        <IconButton
-          size="large"
-          sx={{ position: 'absolute', top: '16px', right: '16px' }}
-          onClick={() => {
-            navigete('/resources', { replace: true });
-          }}
-        >
-          <Close />
-        </IconButton>
+        <Link to="/resources">
+          <IconButton
+            size="large"
+            sx={{ position: 'absolute', top: '16px', right: '16px' }}
+          >
+            <Close />
+          </IconButton>
+        </Link>
         <Button
           size="large"
           style={{ padding: '16px 48px 16px 48px' }}

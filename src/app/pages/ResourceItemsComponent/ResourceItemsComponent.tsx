@@ -26,8 +26,8 @@ export const ResourceItemsComponent = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (location.pathname.startsWith('/resources') && resources.length == 0) {
-      return navigate('/resources-new');
+    if (location.pathname.endsWith('/resources') && resources.length == 0) {
+      return navigate('/resources/new');
     }
   }, []);
 

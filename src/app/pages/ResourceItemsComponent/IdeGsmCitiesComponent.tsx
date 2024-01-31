@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Dialog,
   DialogActions,
@@ -10,8 +10,13 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { Close } from '@mui/icons-material';
+import { DOCUMENT_TITLE } from '../../Constants';
 
 export const IdeGsmCitiesComponent = () => {
+  useEffect(() => {
+    document.title = DOCUMENT_TITLE + ' - IDE GSM Cities';
+  }, []);
+
   const navigate = useNavigate();
   return (
     <Dialog open={true} fullScreen>

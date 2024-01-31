@@ -1,10 +1,10 @@
-import styled from "@emotion/styled";
-import React from "react";
-import { Slider, Tooltip, Typography } from "@mui/material";
+import styled from '@emotion/styled';
+import React, { ReactNode } from 'react';
+import { Slider, Tooltip, Typography } from '@mui/material';
 
 export interface LabelSliderProps {
   title: string;
-  icon: any;
+  icon: ReactNode;
   label: string;
   step: number;
   marks: {
@@ -17,32 +17,33 @@ export interface LabelSliderProps {
   onChange: (event: Event, newValue: number | number[]) => void;
   onChangeCommitted: (
     event: React.SyntheticEvent | Event,
-    newValue: number | number[]
+    newValue: number | number[],
   ) => void;
 }
 
 const SliderWithLabel = styled.div`
-    display: flex;
-    gap: 10px;
-    align-content: center;
-    align-items: center;
+  display: flex;
+  gap: 10px;
+  align-content: center;
+  align-items: center;
 `;
 
 const KeyValuePair = styled.div`
-    display: flex;
-    gap: 4px;
-    margin-top: -5px;
-    vertical-align: top;
+  display: flex;
+  gap: 4px;
+  margin-top: -5px;
+  vertical-align: top;
 `;
 
 const SliderLabel = styled.div`
-    padding-top: 5px;
-    text-align: center;
-    width: 65px;
+  padding-top: 4px;
+  margin-left: 10px;
+  text-align: center;
+  width: 100px;
 `;
 
 const StyledSlider = styled(Slider)`
-    margin-top: 2px;
+  margin-top: 2px;
 `;
 
 export function LabelSlider(props: LabelSliderProps) {

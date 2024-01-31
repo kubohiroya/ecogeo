@@ -7,11 +7,16 @@ import {
   IconButton,
   Typography,
 } from '@mui/material';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Close } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { DOCUMENT_TITLE } from '../../Constants';
 
 export const IdeGsmRoutesComponent = () => {
+  useEffect(() => {
+    document.title = DOCUMENT_TITLE + ' - IDE GSM Routes';
+  }, []);
+
   const navigate = useNavigate();
   return (
     <Dialog open={true} fullScreen>

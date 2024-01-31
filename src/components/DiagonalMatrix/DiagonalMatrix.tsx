@@ -46,10 +46,7 @@ const MatrixContainer = styled.div`
 
 const HeaderWithIcon = styled.h3`
   display: flex;
-  text-align: center;
-  justify-content: center;
   gap: 10px;
-  align-content: center;
   align-items: center;
   margin-top: 0;
   margin-bottom: 10px;

@@ -11,8 +11,7 @@ import {
 } from '../../components/SessionPanel/MapPanel/GraphHandlers';
 import { isInfinity } from '../../utils/mathUtil';
 import { calculateDistanceByLocations } from '../../apsp/calculateDistanceByLocations';
-import { isSpherical } from './IsSpherical';
-import { globalPixelToTileXYZ } from '../../utils/mortonNumberUtil';
+import { isSpherical } from '../../models/IsSpherical';
 import { arrayXOR, convertIdToIndex } from '../../utils/arrayUtil';
 
 export const useGraphEditActions = ({
@@ -318,20 +317,6 @@ export const useGraphEditActions = ({
     });
   }, []);
 
-  const [XYZ, setXYZ] = useState<{ x: number; y: number; z: number }>({
-    x: -122.45,
-    y: 37.78,
-    z: 10,
-  }); // FIXME! this in obsolete state
-
-  const onMoved = useCallback(
-    (centerX: number, centerY: number, zoom: number) => {
-      const xyz = globalPixelToTileXYZ({ x: centerX, y: centerY }, zoom);
-      setXYZ(xyz);
-    },
-    [],
-  );
-
   const onDragStart = useCallback(
     (x: number, y: number, index: number) => {
       setDragStartPosition({ x, y });
@@ -513,8 +498,6 @@ export const useGraphEditActions = ({
     onRemoveBulkLocations,
     onAddEdge,
     onRemoveEdge,
-    onMoved,
-    XYZ,
     onDragStart,
     onDrag,
     onDragEnd,

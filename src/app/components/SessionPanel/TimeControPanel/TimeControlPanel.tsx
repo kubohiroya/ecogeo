@@ -45,8 +45,8 @@ const TimeCounter = styled.div`
 const SpeedSlider = styled(Slider)``;
 const TimeSliderContainer = styled.div`
   display: flex;
-  width: 90%;
-  gap: 5px;
+  width: 95%;
+  gap: 15px;
   align-content: center;
   align-items: center;
 `;
@@ -57,15 +57,15 @@ export interface TimeControlPanelProps {
   counter: number;
   intervalScale: number;
   changeIntervalScale: (newValue: number) => void;
-  onStart: () => void;
-  onReset: () => void;
-  onStop: () => void;
+  start: () => void;
+  reset: () => void;
+  stop: () => void;
 }
 
 const buttonAnimation = (speed: number) => ({
   animation: `blinking ${
-    1.1 - speed
-  }s ease-in-out infinite alternate; @keyframes blinking { 0% { background-color: rgb(35,138,230);} 100% { background-color: rgb(135,188,230); }}`,
+    1.5 - speed
+  }s ease-in-out infinite alternate; @keyframes blinking { 0% { background-color: rgb(230,138,35);} 100% { background-color: rgb(180,88,25); }}`,
   color: '#444',
 });
 
@@ -80,7 +80,7 @@ export function TimeControlPanel(props: TimeControlPanelProps) {
           <StyledButton
             variant="contained"
             color="primary"
-            onClick={props.onStart}
+            onClick={props.start}
             disabled={props.isStarted}
             startIcon={<PlayCircle />}
           >
@@ -89,7 +89,7 @@ export function TimeControlPanel(props: TimeControlPanelProps) {
           <StyledButton
             variant="contained"
             color="primary"
-            onClick={props.onStop}
+            onClick={props.stop}
             disabled={!props.isStarted}
             sx={{
               ...(props.isStarted ? buttonAnimation(props.intervalScale) : {}),
@@ -101,7 +101,7 @@ export function TimeControlPanel(props: TimeControlPanelProps) {
         </StyledButtonGroup>
 
         <StyledButton
-          onClick={props.onReset}
+          onClick={props.reset}
           variant="contained"
           color="primary"
           sx={{
@@ -141,7 +141,7 @@ export function TimeControlPanel(props: TimeControlPanelProps) {
             valueLabelDisplay="auto"
             sx={{
               '& .MuiSlider-markLabel': {
-                fontSize: '90%',
+                fontSize: '70%',
               },
             }}
           />

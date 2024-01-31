@@ -42,6 +42,7 @@ export type GraphCanvasProps = {
   onPointerUp: (x: number, y: number, index: number) => void;
   onClearSelection: () => void;
   onMoved: ({ x, y, zoom }: { x: number; y: number; zoom: number }) => void;
+  onMovedEnd: ({ x, y, zoom }: { x: number; y: number; zoom: number }) => void;
   draggingIndex: number | null;
   sessionState: SessionState;
   focusedIndices: number[];
@@ -83,6 +84,7 @@ export const EuclideanCanvas = React.memo((props: GraphCanvasProps) => {
     setBackgroundAlpha(0);
   }, []);
 
+  /*
   function cancelWheelAndTouchMoveEvent(element: HTMLDivElement) {
     function cancelEvent(event: Event) {
       event.preventDefault();
@@ -97,6 +99,7 @@ export const EuclideanCanvas = React.memo((props: GraphCanvasProps) => {
       element.removeEventListener('touchmove', cancelEvent);
     };
   }
+   */
 
   const onPointerEnter = useCallback(
     (event: PIXI.FederatedPointerEvent, index: number) => {
@@ -185,6 +188,17 @@ export const EuclideanCanvas = React.memo((props: GraphCanvasProps) => {
     });
   }, []);
 
+  const onMovedEnd = useCallback(
+    ({ x, y, zoom }: { x: number; y: number; zoom: number }) => {
+      props.onMovedEnd({
+        x,
+        y,
+        zoom,
+      });
+    },
+    [],
+  );
+
   return (
     <div ref={divRef} style={{ zIndex: 100 }}>
       <Stage
@@ -211,6 +225,7 @@ export const EuclideanCanvas = React.memo((props: GraphCanvasProps) => {
           onZoomedEnd={setBackgroundDisabled}
           onMouseUp={setDefaultCursor}
           onMoved={onMoved}
+          onMovedEnd={onMovedEnd}
         >
           <CheckerBackground
             backgroundAlpha={backgroundAlpha}

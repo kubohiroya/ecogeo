@@ -2,7 +2,7 @@ import { useState } from 'react';
 import useInterval from './useInterval';
 import { expScale } from '../utils/mathUtil';
 
-function useIntervalExpScale<T>(props: {
+export function _useIntervalExpScale<T>(props: {
   onStarted: () => void;
   tick: () => T;
   onReset: () => void;
@@ -49,5 +49,3 @@ function useIntervalExpScale<T>(props: {
     intervalScale,
   };
 }
-
-export default useIntervalExpScale;

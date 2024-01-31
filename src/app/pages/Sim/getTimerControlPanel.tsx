@@ -9,7 +9,7 @@ export function getTimerControlPanel(): FloatingPanelItem {
     layout: {
       i: 'TimerControl',
       x: 1,
-      y: 12,
+      y: 9,
       w: 8,
       h: 4,
       minW: 8,

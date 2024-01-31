@@ -6,9 +6,8 @@ import { Container } from 'pixi.js';
 import { ViewportCenter } from '../../../../models/ViewportCenter';
 import { createViewportCenter } from '../CreateViewportCenter';
 import { BoundingBox } from '../../../../models/BoundingBox';
-import { ZoomedEvent } from 'pixi-viewport/dist/types';
+import { MovedEvent, ZoomedEvent } from 'pixi-viewport/dist/types';
 import PixiViewportDragEvent = GlobalMixins.PixiVieportDragEvent;
-import PixiViewportMovedEvent = GlobalMixins.PixiVieportMovedEvent;
 
 export interface ViewportBaseProps {
   pause: boolean;
@@ -30,7 +29,8 @@ export interface ViewportBaseProps {
   onZoomedEnd?: () => void;
   onMouseUp: () => void;
 
-  onMoved?: (ev: PixiViewportMovedEvent) => void;
+  onMoved?: (ev: MovedEvent) => void;
+  onMovedEnd?: (xyz: { x: number; y: number; zoom: number }) => void;
 }
 
 export interface ViewportAppProps extends ViewportBaseProps {
@@ -82,7 +82,16 @@ const createPixiViewport = (props: ViewportAppProps) => {
   props.onMouseUp && viewport.on('mouseup', props.onMouseUp);
 
   props.onMoved && viewport.on('moved', props.onMoved);
-
+  //props.onMovedEnd && viewport.on('moved-end', props.onMovedEnd);
+  props.onMovedEnd &&
+    viewport.on('moved-end', (ev: PixiViewport) => {
+      props.onMovedEnd &&
+        props.onMovedEnd({
+          x: ev.center.x,
+          y: ev.center.y,
+          zoom: ev.lastViewport!.scaleX,
+        });
+    });
   return viewport;
 };
 
@@ -145,7 +154,8 @@ export const Viewport = (props: ViewportBaseProps) => {
   const PixiComponentViewport = PixiComponent('Viewport', {
     create: (props: ViewportAppProps) => {
       const viewport = createPixiViewport(props);
-      viewport.options.events.domElement = props.app.renderer.view as any;
+      viewport.options.events.domElement = props.app.renderer
+        .view as HTMLCanvasElement;
       return viewport;
     },
     didMount(viewport: PixiViewport, parent: Container) {

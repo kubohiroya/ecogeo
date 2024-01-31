@@ -1,4 +1,5 @@
-import useIntervalExpScale from '../../hooks/useIntervalExpScape';
+import { useIntervalExpScale } from '../../hooks/timerAtom';
+import { AppSimulation } from '../../models/AppSimulation';
 
 export const useSimulator = ({
   startSimulation,
@@ -10,24 +11,16 @@ export const useSimulator = ({
   resetSimulation: () => void;
   tickSimulation: () => void;
   stopSimulation: () => void;
-}) => {
-  /*
-  const { set: setSessionState } = useUndoRedo<SessionState>(
-    undoRedoSessionStateAtom,
-  );
-   */
-  return useIntervalExpScale<boolean>({
+}): AppSimulation => {
+  return useIntervalExpScale({
     onStarted: () => {
       requestAnimationFrame(() => {
         startSimulation();
-        //setSessionState(startSimulation, false, 'simulationStart');
       });
     },
     onReset: () => {
       requestAnimationFrame(() => {
         resetSimulation();
-        //setSessionState((draft) => {}, true, 'simulationReset0');
-        //setSessionState(resetSimulation, true, 'simulationReset1');
       });
     },
     onStopped: () => {
@@ -36,15 +29,10 @@ export const useSimulator = ({
     tick: () => {
       requestAnimationFrame(() => {
         tickSimulation();
-        //setSessionState(tickSimulation, false, 'simulationTick');
       });
-      return true;
     },
-    isStopped: (result: boolean): boolean => {
-      return false;
-    },
-    minInterval: 10,
-    maxInterval: 3000,
+    minInterval: 5,
+    maxInterval: 2000,
     initialIntervalScale: 0.5,
   });
 };

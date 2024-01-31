@@ -47,6 +47,15 @@ export const RealWorldSimPage = () => {
           y: number;
           zoom: number;
         }) => void;
+        onMovedEnd: ({
+          zoom,
+          y,
+          x,
+        }: {
+          x: number;
+          y: number;
+          zoom: number;
+        }) => void;
       }) => (
         <MapComponent
           uuid={uuid}

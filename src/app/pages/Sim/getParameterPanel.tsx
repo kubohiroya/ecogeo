@@ -9,7 +9,7 @@ export function getParameterPanel(): FloatingPanelItem {
     layout: {
       i: 'Parameters',
       x: 1,
-      y: 3,
+      y: 0,
       w: 9,
       h: 9,
       minW: 9,

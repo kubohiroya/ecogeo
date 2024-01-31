@@ -21,6 +21,7 @@ export function BackgroundPane({
   onUnfocus,
   onPointerUp,
   onClearSelection,
+  onMovedEnd,
   onMoved,
 }: {
   width: number;
@@ -30,13 +31,14 @@ export function BackgroundPane({
   matrices: AppMatrices;
   overrideViewportCenter: (viewportCenter: ViewportCenter) => void;
   onDragStart: (x: number, y: number, index: number) => void;
-  onDragEnd: (x: number, y: number, index: number) => void;
   onDrag: (dx: number, dy: number, index: number) => void;
   onFocus: (indices: number[]) => void;
   onUnfocus: (indices: number[]) => void;
   onPointerUp: (x: number, y: number, index: number) => void;
   onClearSelection: () => void;
+  onDragEnd: (x: number, y: number, index: number) => void;
   onMoved: ({ x, y, zoom }: { x: number; y: number; zoom: number }) => void;
+  onMovedEnd: ({ x, y, zoom }: { x: number; y: number; zoom: number }) => void;
 }) {
   return (
     <EuclideanCanvas
@@ -47,13 +49,14 @@ export function BackgroundPane({
         paddingMarginRatio: PADDING_MARGIN_RATIO,
       }}
       onDragStart={onDragStart}
-      onDragEnd={onDragEnd}
       onDrag={onDrag}
+      onMoved={onMoved}
+      onMovedEnd={onMovedEnd}
+      onDragEnd={onDragEnd}
       onFocus={onFocus}
       onUnfocus={onUnfocus}
       onPointerUp={onPointerUp}
       onClearSelection={onClearSelection}
-      onMoved={onMoved}
       draggingIndex={uiState.draggingIndex}
       sessionState={sessionState}
       viewportCenter={uiState.viewportCenter}

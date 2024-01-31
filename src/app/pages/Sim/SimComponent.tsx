@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { City, resetCity } from '../../models/City';
@@ -25,7 +25,6 @@ import { ViewportCenter } from '../../models/ViewportCenter';
 import { ProjectType } from '../../services/database/ProjectType';
 import { useSnackBar } from './useSnackBar';
 import { useUndoRedoActions } from './useUndoRedoActions';
-import { AppSimulation } from '../../models/AppSimulation';
 
 enablePatches();
 
@@ -49,6 +48,15 @@ type SimComponentProps = {
     onPointerUp: (x: number, y: number, index: number) => void;
     onClearSelection: () => void;
     onMoved: ({ zoom, y, x }: { x: number; y: number; zoom: number }) => void;
+    onMovedEnd: ({
+      zoom,
+      y,
+      x,
+    }: {
+      x: number;
+      y: number;
+      zoom: number;
+    }) => void;
     overrideViewportCenter: (viewportCenter: ViewportCenter) => void;
   }) => ReactNode;
 };
@@ -94,40 +102,42 @@ export const SimComponent = (props: SimComponentProps) => {
   };
 
   function startSimulation() {
-    console.log('start!');
     setSessionState((draft) => {}, true, 'simulationStart');
   }
 
   function stopSimulation() {
-    console.log('stop!');
     setSessionState((draft) => {}, true, 'simulationStop');
   }
 
   function resetSimulation() {
-    console.log('reset!');
-    setSessionState((draft) => {
-      draft.locations.forEach((city) =>
-        resetCity(city, draft.locations.length),
-      );
-      resetToCaseDefault();
-    });
+    setSessionState(
+      (draft) => {
+        draft.locations.forEach((city) =>
+          resetCity(city, draft.locations.length),
+        );
+        resetToCaseDefault();
+      },
+      true,
+      'resetSimulation',
+    );
   }
 
   function tickSimulation() {
-    console.log('tick');
-    setSessionState((draft) => {
-      tickSimulator(draft, matrices.transportationCostMatrix!);
-    });
+    setSessionState(
+      (draft) => {
+        tickSimulator(draft, matrices.transportationCostMatrix!);
+      },
+      false,
+      'tick',
+    );
   }
 
-  const [simulation] = useState<AppSimulation>(
-    useSimulator({
-      startSimulation,
-      stopSimulation,
-      resetSimulation,
-      tickSimulation,
-    }),
-  );
+  const simulation = useSimulator({
+    startSimulation,
+    stopSimulation,
+    resetSimulation,
+    tickSimulation,
+  });
 
   const matrixEngine = useMatrixEngine(
     sessionState?.locations?.length,

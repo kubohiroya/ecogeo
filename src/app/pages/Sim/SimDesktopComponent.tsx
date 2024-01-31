@@ -87,6 +87,15 @@ type SimDesktopComponentProps = {
     onPointerUp: (x: number, y: number, index: number) => void;
     onClearSelection: () => void;
     onMoved: ({ zoom, y, x }: { x: number; y: number; zoom: number }) => void;
+    onMovedEnd: ({
+      zoom,
+      y,
+      x,
+    }: {
+      x: number;
+      y: number;
+      zoom: number;
+    }) => void;
     overrideViewportCenter: (viewportCenter: ViewportCenter) => void;
   }) => ReactNode;
 };
@@ -132,6 +141,18 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
   >({});
 
   const onMoved = ({ zoom, y, x }: { x: number; y: number; zoom: number }) => {
+    // DO NOTHING
+    // console.log('onmoved');
+  };
+  const onMovedEnd = ({
+    zoom,
+    y,
+    x,
+  }: {
+    x: number;
+    y: number;
+    zoom: number;
+  }) => {
     setUIState((draft) => {
       draft.viewportCenter = { centerX: x, centerY: y, scale: zoom };
     });
@@ -404,7 +425,7 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
       newMap.TimerControl = <TimerControlPane simulation={props.simulation} />;
       return newMap;
     });
-  }, [props.simulation.counter]);
+  }, [props.simulation]);
 
   //
   //const newGridItemChildrenMap = { ...draft };
@@ -441,6 +462,7 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
         onPointerUp,
         onClearSelection,
         onMoved,
+        onMovedEnd,
         overrideViewportCenter,
       })}
     </DesktopComponent>

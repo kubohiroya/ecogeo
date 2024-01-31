@@ -13,7 +13,7 @@ export const DEFAULT_PARAMS_BY_CASE: Record<ProjectType, ParameterSet[]> = {
   [ProjectTypes.racetrack]: [
     {
       caseId: 'RaceTrack-0',
-      title: 'RaceTrack:Base case',
+      title: 'Base case',
       description:
         'Base case (K=12, π=0.2, τ=2, σ=4). All workers usually end up in several(one or more) concentrations.',
       type: 'RaceTrack',

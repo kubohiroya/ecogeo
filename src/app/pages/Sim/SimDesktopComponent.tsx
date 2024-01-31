@@ -398,7 +398,7 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
         />
       ),
     }));
-  }, [sessionState.locations]);
+  }, [sessionState.locations, uiState]);
 
   useEffect(() => {
     setGridItemChildrenMap((draft) => ({
@@ -426,13 +426,6 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
       return newMap;
     });
   }, [props.simulation]);
-
-  //
-  //const newGridItemChildrenMap = { ...draft };
-  //console.log('+');
-  //simulation={props.simulation}
-  //return newGridItemChildrenMap;
-  //});
 
   if (
     layouts.length === 0 ||

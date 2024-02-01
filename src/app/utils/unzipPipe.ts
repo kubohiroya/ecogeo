@@ -45,7 +45,7 @@ export async function extractFromZip(
   for (const fileName in content.files) {
     if (
       // @ts-expect-error
-      content.files.hasOwnProperty(fileName) &&
+      content.files.hasOwn(fileName) &&
       fileName.endsWith(extension)
     ) {
       const fileData = await content.files[fileName].async('uint8array');

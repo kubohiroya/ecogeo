@@ -1,5 +1,5 @@
 export const GridItemTypes = {
-  Background: 'Background',
+  BackgroundPanel: 'BackgroundPanel',
   FloatingButton: 'FloatingButton',
   FloatingPanel: 'FloatingPanel',
 } as const;

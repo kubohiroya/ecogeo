@@ -1,13 +1,13 @@
 export const ProjectTypes = {
-  racetrack: 'Racetrack',
-  graph: 'Graph',
-  realWorld: 'RealWorld',
+  Racetrack: 'Racetrack',
+  Graph: 'Graph',
+  RealWorld: 'RealWorld',
 } as const;
 
 export type ProjectType = (typeof ProjectTypes)[keyof typeof ProjectTypes];
 
 export const DatabaseItemTypes = {
-  resource: 'Resource',
+  Resource: 'Resource',
 } as const;
 
 export type DatabaseItemType =

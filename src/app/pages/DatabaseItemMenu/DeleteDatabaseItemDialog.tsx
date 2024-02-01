@@ -19,12 +19,11 @@ import {
 } from '../../services/database/ProjectType';
 
 export const DeleteDatabaseItemDialog = () => {
-  const { uuid, type, name, coordinate, zoom } = useLoaderData() as {
+  const { uuid, type, name, viewportCenter } = useLoaderData() as {
     uuid: string;
     type: ProjectType & DatabaseItemType;
     name: string | undefined;
-    coordinate: [number, number];
-    zoom: number;
+    viewportCenter: [number, number, number];
     description: string | undefined;
   };
 
@@ -32,12 +31,12 @@ export const DeleteDatabaseItemDialog = () => {
 
   const goHome = () => {
     switch (type) {
-      case ProjectTypes.racetrack:
-      case ProjectTypes.graph:
-      case ProjectTypes.realWorld:
+      case ProjectTypes.Racetrack:
+      case ProjectTypes.Graph:
+      case ProjectTypes.RealWorld:
         navigate('/projects', { replace: true });
         break;
-      case DatabaseItemTypes.resource:
+      case DatabaseItemTypes.Resource:
         navigate('/resources', { replace: true });
         break;
       default:
@@ -66,7 +65,7 @@ export const DeleteDatabaseItemDialog = () => {
         <Typography>
           Are you sure you want to delete the following project?
         </Typography>
-        <Link to={createSimulatorLink({ uuid, type, coordinate, zoom })}>
+        <Link to={createSimulatorLink({ uuid, type, viewportCenter })}>
           {name}
         </Link>
       </DialogContent>

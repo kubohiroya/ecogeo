@@ -34,8 +34,7 @@ export class GeoDatabaseTable extends Dexie {
     name: string;
     description: string;
     version: number;
-    coordinate: [number, number];
-    zoom: number;
+    viewportCenter: [number, number, number];
     createdAt: number;
   }) {
     const uuid = uuidv4();

@@ -8,11 +8,11 @@ import { LoaderFunctionArgs } from 'react-router-dom';
 export async function GeoDatabaseItemLoader(request: LoaderFunctionArgs) {
   const resources = await GeoDatabaseTable.getSingleton()
     .databases.where('type')
-    .equals(DatabaseItemTypes.resource)
+    .equals(DatabaseItemTypes.Resource)
     .toArray();
   const projects = await GeoDatabaseTable.getSingleton()
     .databases.where('type')
-    .anyOf([ProjectTypes.racetrack, ProjectTypes.graph, ProjectTypes.realWorld])
+    .anyOf([ProjectTypes.Racetrack, ProjectTypes.Graph, ProjectTypes.RealWorld])
     .toArray();
 
   return {

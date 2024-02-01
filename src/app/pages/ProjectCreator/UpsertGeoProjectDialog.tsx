@@ -43,8 +43,7 @@ export const UpsertGeoProjectDialog = () => {
           type,
           version: 1,
           createdAt: Date.now(),
-          coordinate: [latitude, longitude],
-          zoom,
+          viewportCenter: [zoom, latitude, longitude],
         });
       } else {
         await GeoDatabaseTable.updateDatabase(uuid, {

@@ -10,7 +10,7 @@ const sigma = parseFloat(params.get('sigma') || '4');
 */
 
 export const DEFAULT_PARAMS_BY_CASE: Record<ProjectType, ParameterSet[]> = {
-  [ProjectTypes.racetrack]: [
+  [ProjectTypes.Racetrack]: [
     {
       caseId: 'RaceTrack-0',
       title: 'Base case',
@@ -60,7 +60,7 @@ export const DEFAULT_PARAMS_BY_CASE: Record<ProjectType, ParameterSet[]> = {
       units: 'kilometers',
     },
   ],
-  [ProjectTypes.graph]: [
+  [ProjectTypes.Graph]: [
     {
       caseId: 'Graph-0',
       title: 'Base case',
@@ -110,7 +110,7 @@ export const DEFAULT_PARAMS_BY_CASE: Record<ProjectType, ParameterSet[]> = {
       units: 'kilometers',
     },
   ],
-  [ProjectTypes.realWorld]: [
+  [ProjectTypes.RealWorld]: [
     {
       caseId: 'RealWorld-0',
       title: 'IDE-GSM 0',

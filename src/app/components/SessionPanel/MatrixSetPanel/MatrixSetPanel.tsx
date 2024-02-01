@@ -140,7 +140,7 @@ export const MatrixSetPanel = forwardRef<
   };
 
   const doMouseDown = (tableRef: HTMLTableElement, indices: number[]) => {
-    const rows = tableRef.rows!;
+    // const rows = tableRef.rows!;
 
     const arr1 = selectedIndices;
     const arr2 = indices

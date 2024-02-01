@@ -42,15 +42,15 @@ type SimComponentProps = {
     onUnfocus: (unfocusIndices: number[]) => void;
     onPointerUp: (x: number, y: number, index: number) => void;
     onClearSelection: () => void;
-    onMoved: ({ zoom, y, x }: { x: number; y: number; zoom: number }) => void;
+    onMoved: ({ zoom, y, x }: { zoom: number; y: number; x: number }) => void;
     onMovedEnd: ({
       zoom,
       y,
       x,
     }: {
-      x: number;
-      y: number;
       zoom: number;
+      y: number;
+      x: number;
     }) => void;
     overrideViewportCenter: (viewportCenter: [number, number, number]) => void;
   }) => ReactNode;
@@ -58,6 +58,7 @@ type SimComponentProps = {
 export const SimComponent = (props: SimComponentProps) => {
   const { type, uuid, backgroundPanel, backgroundColor, viewportCenter } =
     props;
+
   const { set: setSessionState, current: sessionState } =
     useUndoRedo<SessionState>(sessionStateAtom);
   const [uiState, setUIState] = useImmerAtom(uiStateAtom);

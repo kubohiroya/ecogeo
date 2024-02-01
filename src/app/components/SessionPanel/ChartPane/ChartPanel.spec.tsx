@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 import { ChartPane } from './ChartPane';
 import { ChartType } from '../../../models/ChartType';
 
-describe('ChartPanel', () => {
+describe('ChartPanelComponent', () => {
   it('should render successfully', () => {
     const { baseElement } = render(
       <ChartPane

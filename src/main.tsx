@@ -15,15 +15,13 @@ import { GeoDatabaseTableType } from "./app/pages/Home/GeoDatabaseTableType";
 import { Flag, LocationCity, PanoramaFishEye, Public, Route, Share } from "@mui/icons-material";
 import { IdeGsmCitiesComponent } from "./app/pages/ResourceItemsComponent/IdeGsmCitiesComponent";
 import { IdeGsmRoutesComponent } from "./app/pages/ResourceItemsComponent/IdeGsmRoutesComponent";
-import { RealWorldSimPage } from "./app/pages/Sim/RealWorldSimPage";
-import { RaceTrackSimPage } from "./app/pages/Sim/RaceTrackSimPage";
 import { ProjectItemsComponent } from "./app/pages/ProjectItemsComponent/ProjectItemsComponent";
 import { ResourceItemsComponent } from "./app/pages/ResourceItemsComponent/ResourceItemsComponent";
 import { FileDropComponent } from "./components/FileDropComponent/FileDropComponent";
 import { UpsertGeoProjectDialog } from "./app/pages/ProjectCreator/UpsertGeoProjectDialog";
 import { createRoot } from "react-dom/client";
-import { GraphSimPage } from "./app/pages/Sim/GraphSimPage";
 import { SimLoader } from "./app/pages/Sim/SimLoader";
+import { SimPage } from "./app/pages/Sim/SimPage";
 
 const router = createBrowserRouter([
   {
@@ -117,19 +115,19 @@ const router = createBrowserRouter([
                     {
                       icon: <PanoramaFishEye fontSize="large" />,
                       name: "Racetrack Model",
-                      url: `/create/${ProjectTypes.racetrack}`,
+                      url: `/create/${ProjectTypes.Racetrack}`,
                       tooltip: "Paul Krugman's spatial economy model"
                     },
                     {
                       icon: <Share fontSize="large" />,
                       name: "Graph Structured Model",
-                      url: `/create/${ProjectTypes.racetrack}`,
+                      url: `/create/${ProjectTypes.Racetrack}`,
                       tooltip: "Graph structured spatial economy model"
                     },
                     {
                       icon: <Public fontSize="large" />,
                       name: "Real-World Model",
-                      url: `/create/${ProjectTypes.realWorld}`,
+                      url: `/create/${ProjectTypes.RealWorld}`,
                       tooltip: "Full-set simulation model"
                     }
                   ]}
@@ -157,22 +155,9 @@ const router = createBrowserRouter([
     loader: projectLoader()
   },
   {
-    path: "/racetrack/:uuid/:zoom/:y/:x/",
+    path: "/:projectType/:uuid/:zoom/:y/:x/",
     element: (
-      <RaceTrackSimPage />
-    ),
-    loader: SimLoader
-  },
-  {
-    path: "/graph/:uuid/:zoom/:y/:x/",
-    // eslint-disable-next-line react/jsx-no-undef
-    element: <GraphSimPage />,
-    loader: SimLoader
-  },
-  {
-    path: "/realworld/:uuid/:zoom/:y/:x/",
-    element: (
-      <RealWorldSimPage />
+      <SimPage />
     ),
     loader: SimLoader
   }

@@ -23,6 +23,7 @@ import { GeoRequestPayload } from '../../../../services/database/GeoRequestPaylo
 import { GeoResponsePayload } from '../../../../services/database/GeoResponsePayload';
 import { SimLoaderResult } from '../../../../pages/Sim/SimLoader';
 import { ViewStateChangeParameters } from '@deck.gl/core/typed/controllers/controller';
+import { ProjectTypes } from '../../../../services/database/ProjectType';
 
 const MAP_TILER_API_KEY = import.meta.env.VITE_MAP_TILER_API_KEY;
 
@@ -120,6 +121,8 @@ const asyncFunctionManager = new AsyncFunctionManager();
 const MapComponent = (props: MapComponentProps) => {
   const data = useLoaderData() as SimLoaderResult;
 
+  console.log('mapcomponent');
+
   const [viewState, setViewState] = useState<ViewStateType>({
     longitude: data.x,
     latitude: data.y,
@@ -147,7 +150,7 @@ const MapComponent = (props: MapComponentProps) => {
     latitude: number;
     longitude: number;
   }): void => {
-    const url = `/realworld/${data.uuid}/${viewState.zoom.toFixed(2)}/${viewState.latitude.toFixed(4)}/${viewState.longitude.toFixed(4)}/`;
+    const url = `/${ProjectTypes.RealWorld}/${data.uuid}/${viewState.zoom.toFixed(2)}/${viewState.latitude.toFixed(4)}/${viewState.longitude.toFixed(4)}/`;
     asyncFunctionManager.runAsyncFunction(() => {
       navigate(url, { replace: true });
     });
@@ -184,7 +187,7 @@ const MapComponent = (props: MapComponentProps) => {
   }, []);
 
   useEffect(() => {
-    if (worker == null || props.width == 0 || props.height == 0) return;
+    if (worker == null || props.width === 0 || props.height === 0) return;
 
     const { topLeft, bottomRight } = getBounds(
       props.width,
@@ -206,7 +209,7 @@ const MapComponent = (props: MapComponentProps) => {
 
     setMortonNumbers(newMortonNumbers[MAX_ZOOM_LEVEL - 1]);
 
-    if (currentTaskId != -1) worker.terminateTask(currentTaskId);
+    if (currentTaskId !== -1) worker.terminateTask(currentTaskId);
 
     const newTaskId = currentTaskId + 1;
     setCurrentTaskId(newTaskId);
@@ -351,21 +354,14 @@ const MapComponent = (props: MapComponentProps) => {
       const newViewState = evt.viewState as ViewStateType;
       if (0 <= newViewState.zoom && newViewState.zoom < MAX_ZOOM_LEVEL - 1) {
         setViewState(newViewState);
+        updateURL(newViewState);
       }
     },
     [],
   );
 
-  useEffect(() => {
-    updateURL(viewState);
-  }, [viewState]);
-
-  if (!worker || currentTaskId == -1) {
-    /*
-    mortonNumbers.length == 0 ||
-    polygons.length == 0 ||
-    points.length == 0
-    */
+  if (!worker || currentTaskId === -1) {
+    // mortonNumbers.length == 0 || polygons.length == 0 || points.length == 0;
     return <CircularProgress variant="indeterminate" />;
   }
 

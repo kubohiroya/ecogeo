@@ -2,7 +2,7 @@ import React from 'react';
 import { SimLoaderResult } from './SimLoader';
 import { useLoaderData } from 'react-router-dom';
 import { SimComponent } from './SimComponent';
-import { BackgroundPane } from './BackgroundPane';
+import { BackgroundCanvas } from './BackgroundCanvas';
 import { SessionState } from '../../models/SessionState';
 import { UIState } from '../../models/UIState';
 import { AppMatrices } from '../../models/AppMatrices';
@@ -11,12 +11,14 @@ import { ProjectType } from '../../services/database/ProjectType';
 export const RaceTrackSimPage = () => {
   const { uuid, x, y, zoom, type } = useLoaderData() as SimLoaderResult;
 
+  console.log(type);
+
   return (
     <SimComponent
       {...{
         uuid,
         type: type as ProjectType,
-        viewportCenter: [zoom, x, y],
+        viewportCenter: [zoom, y, x],
       }}
       backgroundColor="rgba(255,230,230,0.6)"
       backgroundPanel={(params: {
@@ -53,7 +55,7 @@ export const RaceTrackSimPage = () => {
           y: number;
           zoom: number;
         }) => void;
-      }) => <BackgroundPane {...params} />}
+      }) => <BackgroundCanvas {...params} />}
     />
   );
 };

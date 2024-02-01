@@ -12,7 +12,7 @@ import { ChartTypes } from '../../models/ChartType';
 import { atomWithImmer } from 'jotai-immer';
 import { Draft, enablePatches } from 'immer';
 import { updateAddedSubGraph } from '../../components/SessionPanel/MapPanel/GraphHandlers';
-import { ProjectType, ProjectTypes } from '../../services/database/ProjectType';
+import { ProjectTypes } from '../../services/database/ProjectType';
 import { LoaderFunctionArgs } from 'react-router-dom';
 import { DEFAULT_PARAMS_BY_CASE } from '../../models/DefaultParamByCase';
 import { PrimitiveAtom } from 'jotai';
@@ -31,14 +31,14 @@ export type UIStateAtom = PrimitiveAtom<UIState>;
 export type MatricesAtom = PrimitiveAtom<AppMatrices>;
 
 export type SimLoaderResult = {
-  type: ProjectType;
+  type: string;
   uuid: string;
   x: number;
   y: number;
   zoom: number;
 };
 
-const parameterSet = DEFAULT_PARAMS_BY_CASE[ProjectTypes.racetrack][0];
+const parameterSet = DEFAULT_PARAMS_BY_CASE[ProjectTypes.Racetrack][0];
 
 const graph = updateAddedSubGraph(
   {
@@ -83,7 +83,7 @@ export const uiStateAtom = atom<UIState>({
 export const SimLoader = async function (
   request: LoaderFunctionArgs<{
     params: {
-      type: string;
+      projectType: string;
       uuid: string;
       zoom: string;
       y: string;
@@ -91,13 +91,21 @@ export const SimLoader = async function (
     };
   }>,
 ): Promise<SimLoaderResult> {
-  const pathname = window.location.pathname;
-  const type = pathname.startsWith('/realworld/')
+  /*
+  const pathname = request.context.;
+  const type = pathname.startsWith('/' + ProjectTypes.realWorld)
     ? ProjectTypes.realWorld
-    : pathname.startsWith('/racetrack/')
+    : pathname.startsWith('/' + ProjectTypes.racetrack)
       ? ProjectTypes.racetrack
-      : ProjectTypes.graph;
-  const uuid = request.params.uuid! as ProjectType;
+      : pathname.startsWith('/' + ProjectTypes.graph)
+        ? ProjectTypes.graph
+        : undefined;
+  if (!type) {
+    throw new Error('Invalid project type ' + pathname);
+  }
+   */
+  const type = request.params.projectType!;
+  const uuid = request.params.uuid!;
   const zoom = parseFloat(request.params.zoom!);
   const y = parseFloat(request.params.y!);
   const x = parseFloat(request.params.x!);

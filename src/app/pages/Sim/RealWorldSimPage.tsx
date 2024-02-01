@@ -15,6 +15,7 @@ import { SimLoaderResult } from './SimLoader';
 export const RealWorldSimPage = () => {
   const { uuid, zoom, y, x, type } = useLoaderData() as SimLoaderResult;
   const { width, height } = useWindowDimensions();
+
   return (
     <SimComponent
       {...{

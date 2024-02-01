@@ -44,7 +44,7 @@ export const UpsertProjectDialog = ({
   const navigate = useNavigate();
 
   const urlPrefix =
-    type === DatabaseItemTypes.resource ? '/resources' : '/projects';
+    type === DatabaseItemTypes.Resource ? '/resources' : '/projects';
 
   const onCancel = () => navigate(urlPrefix);
 

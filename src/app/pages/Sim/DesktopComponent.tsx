@@ -84,6 +84,9 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
   >(
     entriesToRecord<string, ButtonState>(
       layouts.map((item) => {
+        if (!props.resources[item.i]) {
+          console.error('ERROR', item.i, props.resources);
+        }
         const shown = props.resources[item.i].shown || false;
         const enabled =
           props.resources[item.i].type === GridItemTypes.FloatingButton
@@ -332,7 +335,7 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
           </FloatingPanel>
         );
       }
-      case 'Background':
+      case 'BackgroundPanel':
       default:
         return <div id={id} key={id}></div>;
     }
@@ -404,12 +407,12 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
         >
           <Box
             sx={{ position: 'absolute', top: '-2px', left: '-8px' }}
-            key={'Background'}
+            key={'BackgroundPanel'}
           >
             {props.children}
           </Box>
           {layouts
-            .filter((layout) => layout.i !== 'Background')
+            .filter((layout) => layout.i !== 'BackgroundPanel')
             .map((layout, index) => gridItemMap[layout.i])}
         </StyledResponsiveGridLayout>
       )}

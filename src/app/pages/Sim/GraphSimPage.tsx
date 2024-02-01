@@ -2,7 +2,7 @@ import React from 'react';
 import { SimLoaderResult } from './SimLoader';
 import { useLoaderData } from 'react-router-dom';
 import { SimComponent } from './SimComponent';
-import { BackgroundPane } from './BackgroundPane';
+import { BackgroundCanvas } from './BackgroundCanvas';
 import { SessionState } from '../../models/SessionState';
 import { UIState } from '../../models/UIState';
 import { AppMatrices } from '../../models/AppMatrices';
@@ -16,7 +16,7 @@ export const GraphSimPage = () => {
       {...{
         uuid,
         type: type as ProjectType,
-        viewportCenter: [zoom, x, y],
+        viewportCenter: [zoom, y, x],
       }}
       backgroundColor="rgba(230,255,230,0.6)"
       backgroundPanel={(params: {
@@ -53,7 +53,7 @@ export const GraphSimPage = () => {
           y: number;
           zoom: number;
         }) => void;
-      }) => <BackgroundPane {...params} />}
+      }) => <BackgroundCanvas {...params} />}
     />
   );
 };

@@ -24,8 +24,7 @@ export const UpsertTheoreticalProjectDialog = () => {
       await GeoDatabaseTable.createDatabase({
         ...values,
         type: type as ProjectType & DatabaseItemType,
-        coordinate: [0, 0],
-        zoom: 1,
+        viewportCenter: [1, 0, 0],
         version: 1,
         createdAt: Date.now(),
       });

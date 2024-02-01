@@ -49,8 +49,8 @@ const createPixiViewport = (props: ViewportAppProps) => {
   });
 
   viewport.moveCenter(
-    props.viewportCenter[1] || 0,
     props.viewportCenter[2] || 0,
+    props.viewportCenter[1] || 0,
   );
   viewport.setZoom(props.viewportCenter[0] || 1, true);
 
@@ -155,7 +155,7 @@ export const Viewport = (props: ViewportBaseProps) => {
       return viewport;
     },
     didMount(viewport: PixiViewport, parent: Container) {
-      fit(props.boundingBox);
+      // fit(props.boundingBox);
     },
     willUnmount: (viewport: PixiViewport) => {
       /*

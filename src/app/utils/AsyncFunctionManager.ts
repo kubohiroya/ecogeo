@@ -12,4 +12,10 @@ export class AsyncFunctionManager {
     const signal = this.controller.signal;
     func();
   }
+
+  async cancelAll() {
+    if (this.controller) {
+      this.controller.abort();
+    }
+  }
 }

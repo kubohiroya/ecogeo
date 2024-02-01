@@ -8,9 +8,8 @@ import { Box } from '@mui/material';
 
 export const HomePage = () => {
   const navigate = useNavigate();
-
   useEffect(() => {
-    if (location.pathname == '/') {
+    if (window.location.pathname == '/') {
       navigate('/projects', { replace: true });
     }
   }, []);

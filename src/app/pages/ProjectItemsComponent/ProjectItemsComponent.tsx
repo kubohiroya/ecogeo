@@ -57,32 +57,32 @@ export const ProjectItemsComponent = () => {
   }, []);
 
   const typeToIcon = {
-    [DatabaseItemTypes.resource]: <SourceIcon />,
-    [ProjectTypes.realWorld]: <Public />,
-    [ProjectTypes.graph]: <Share />,
-    [ProjectTypes.racetrack]: <PanoramaFishEye />,
+    [DatabaseItemTypes.Resource]: <SourceIcon />,
+    [ProjectTypes.RealWorld]: <Public />,
+    [ProjectTypes.Graph]: <Share />,
+    [ProjectTypes.Racetrack]: <PanoramaFishEye />,
   };
 
   const speedDialActions = [
     {
-      icon: typeToIcon[ProjectTypes.racetrack],
-      name: ProjectTypes.racetrack,
+      icon: typeToIcon[ProjectTypes.Racetrack],
+      name: ProjectTypes.Racetrack,
       onClick: () => {
-        return navigate(`/create/${ProjectTypes.racetrack}`);
+        return navigate(`/create/${ProjectTypes.Racetrack}`);
       },
     },
     {
-      icon: typeToIcon[ProjectTypes.graph],
-      name: ProjectTypes.graph,
+      icon: typeToIcon[ProjectTypes.Graph],
+      name: ProjectTypes.Graph,
       onClick: () => {
-        return navigate(`/create/${ProjectTypes.graph}`);
+        return navigate(`/create/${ProjectTypes.Graph}`);
       },
     },
     {
-      icon: typeToIcon[ProjectTypes.realWorld],
-      name: ProjectTypes.realWorld,
+      icon: typeToIcon[ProjectTypes.RealWorld],
+      name: ProjectTypes.RealWorld,
       onClick: () => {
-        return navigate(`/create/${ProjectTypes.realWorld}`);
+        return navigate(`/create/${ProjectTypes.RealWorld}`);
       },
     },
   ];

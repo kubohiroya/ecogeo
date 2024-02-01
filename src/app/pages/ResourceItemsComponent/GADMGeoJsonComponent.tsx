@@ -41,7 +41,7 @@ import {
   GADMResourceSelectorFunctions,
 } from './GADMResourceSelector';
 import { LinearProgressWithLabel } from '../../../components/LinearProgressWithLabel/LinearProgressWithLabel';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { DOCUMENT_TITLE } from '../../Constants';
 
 type Step = {
@@ -119,8 +119,15 @@ export const GADMGeoJsonComponent = () => {
     await enterTo(stepIndex - 1);
   };
 
+  const navigate = useNavigate();
+
   const goNext = async () => {
     await leaveFrom(stepIndex);
+
+    if (stepIndex === steps.length - 1) {
+      return navigate('/resources', { replace: true });
+    }
+
     setStepIndex(stepIndex + 1);
     await enterTo(stepIndex + 1);
   };
@@ -132,7 +139,7 @@ export const GADMGeoJsonComponent = () => {
       return newStepStatus;
     });
 
-    await steps[stepIndex].onLeave();
+    steps[stepIndex] && (await steps[stepIndex].onLeave());
 
     setStepStatus((prevStepStatus) => {
       const newStepStatus = [...prevStepStatus];
@@ -149,7 +156,7 @@ export const GADMGeoJsonComponent = () => {
         return newStepStatus;
       });
 
-      await steps[newStepIndex].onEnter();
+      steps[newStepIndex] && (await steps[newStepIndex].onEnter());
 
       setStepStatus((prevStepStatus) => {
         const newStepStatus = [...prevStepStatus];
@@ -450,10 +457,10 @@ export const GADMGeoJsonComponent = () => {
                       fontStyle: 'bold',
                     }}
                   >
-                    {steps[stepIndex].label}
+                    {steps[stepIndex]?.label}
                   </Typography>
 
-                  {steps[stepIndex].contents}
+                  {steps[stepIndex]?.contents}
                 </CardContent>
                 <CardActionArea></CardActionArea>
               </Card>

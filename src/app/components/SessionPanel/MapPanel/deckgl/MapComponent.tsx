@@ -121,8 +121,6 @@ const asyncFunctionManager = new AsyncFunctionManager();
 const MapComponent = (props: MapComponentProps) => {
   const data = useLoaderData() as SimLoaderResult;
 
-  console.log('mapcomponent');
-
   const [viewState, setViewState] = useState<ViewStateType>({
     longitude: data.x,
     latitude: data.y,

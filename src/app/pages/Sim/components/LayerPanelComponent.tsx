@@ -17,7 +17,7 @@ export const LayersPanelComponent = () => (
     style={{
       height: '300px',
       overflowY: 'scroll',
-      backgroundColor: 'red',
+      // backgroundColor: 'red',
     }}
   >
     <TreeView

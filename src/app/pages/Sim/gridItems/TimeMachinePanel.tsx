@@ -1,33 +1,33 @@
 import { GridItemTypes } from '../../../models/GridItemType';
-import { FolderOpen } from '@mui/icons-material';
+import { History } from '@mui/icons-material';
 import React from 'react';
 import { RESIZE_HANDLES, ROW_HEIGHT } from '../SimDesktopComponent';
 import { FloatingPanelItem } from '../../../models/FloatingPanelItem';
 import { LayoutDefault } from '../LayoutDefault';
 
-export function InputOutput(props?: LayoutDefault): FloatingPanelItem {
+export function TimeMachinePanel(props?: LayoutDefault): FloatingPanelItem {
   return {
     layout: {
-      i: 'InputOutputPanel',
-      x: 1,
-      y: props?.y ?? 0,
-      w: 5,
-      h: 3,
-      minW: 5,
-      minH: 3,
-      resizeHandles: RESIZE_HANDLES,
+      i: 'TimeMachinePanel',
+      x: props?.x ?? 1,
+      y: props?.y ?? 20,
+      w: props?.w ?? 12,
+      h: props?.h ?? 3,
+      minW: 12,
+      minH: 4,
       isDraggable: true,
       isResizable: true,
+      resizeHandles: RESIZE_HANDLES,
     },
     resource: {
-      id: 'InputOutputPanel',
+      id: 'TimeMachinePanel',
       type: GridItemTypes.FloatingPanel,
-      title: 'Input/Output',
-      icon: <FolderOpen />,
+      title: 'Time Machine',
+      icon: <History />,
       titleBarMode: 'win',
       rowHeight: ROW_HEIGHT,
-      shown: props?.shown,
-      bindToButtonId: 'InputOutputButton',
+      shown: props?.shown ?? true,
+      bindToButtonId: 'TimeMachineButton',
     },
   };
 }

@@ -16,9 +16,7 @@ import { FloatingPanel } from '../../../components/FloatingPanel/FloatingPanel';
 import { FloatingButtonResource } from '../../models/FloatingButtonResource';
 import { FloatingPanelResource } from '../../models/FloatingPanelResource';
 import { GridItemTypes } from '../../models/GridItemType';
-
-const NUM_HORIZONTAL_GRIDS = 32;
-const ROW_HEIGHT = 32;
+import { NUM_HORIZONTAL_GRIDS, ROW_HEIGHT } from './DesktopConstants';
 
 const FloatingPanelContent = styled(CardContent)`
   padding: 8px;

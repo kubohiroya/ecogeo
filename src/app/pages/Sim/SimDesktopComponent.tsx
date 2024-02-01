@@ -17,7 +17,7 @@ import { ZoomInButton } from './gridItems/ZoomInButton';
 import { ZoomOutButton } from './gridItems/ZoomOutButton';
 import { FitScreenButton } from './gridItems/FitScreenButton';
 import { InputOutputButton } from './gridItems/InputOutputButton';
-import { InputOutput } from './gridItems/InputOutput';
+import { InputOutputPanel } from './gridItems/InputOutputPanel';
 import { ChartPanel } from './gridItems/ChartPanel';
 import { useWindowDimensions } from '../../hooks/useWindowDimenstions';
 import { useGraphEditActions } from './useGraphEditActions';
@@ -33,7 +33,7 @@ import { InputOutputPanelComponent } from './components/InputOutputPanelComponen
 import { EditPanelComponent } from './components/EditPanelComponent';
 import { BackgroundPanel } from './gridItems/BackgroundPanel';
 import { useParameterActions } from './useParameterActions';
-import { ProjectType } from '../../services/database/ProjectType';
+import { ProjectType, ProjectTypes } from '../../services/database/ProjectType';
 import { sessionStateAtom } from './SimLoader';
 import { useUndoRedo } from '../../hooks/useUndoRedo';
 import { AsyncFunctionManager } from '../../utils/AsyncFunctionManager';
@@ -59,13 +59,29 @@ import { InfoPanel } from './gridItems/InfoPanel';
 import { UndoButton } from './gridItems/UndoButton';
 import { RedoButton } from './gridItems/RedoButton';
 import { EditPanel } from './gridItems/EditPanel';
+import { NUM_HORIZONTAL_GRIDS } from './DesktopConstants';
+import { TimeMachineButton } from './gridItems/TimeMachineButton';
+import { TimeMachinePanel } from './gridItems/TimeMachinePanel';
+import { TimeMachinePanelComponent } from './components/TimeMachinePanelComponent';
 
 export const ROW_HEIGHT = 32;
 export const RESIZE_HANDLES: ResizeHandle[] = ['se', 'sw', 'nw'];
 
 const getRows = (height?: number) =>
   height && height > 0 ? Math.floor(height / ROW_HEIGHT) - 3 : 0;
-
+const getX = (
+  props: { x?: number; width?: number },
+  layoutDefault: LayoutDefault,
+) => {
+  if (props.x) {
+    if (props.x >= 0) {
+      return props.x;
+    } else {
+      return NUM_HORIZONTAL_GRIDS + props.x;
+    }
+  }
+  return 0;
+};
 const getY = (
   props: { y?: number; height?: number },
   layoutDefault: LayoutDefault,
@@ -270,13 +286,13 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
     });
   }, [onFit, replaceURL, setUIState]);
 
-  const gridItemState: Record<string, LayoutDefault> = {
+  const gridItemStateBase: Record<string, LayoutDefault> = {
     BackgroundPanel: {},
     HomeButton: {},
-    InputOutputButton: { enabled: false },
-    InputOutputPanel: { shown: false },
     ChartButton: { enabled: false },
     ChartPanel: {},
+    InputOutputButton: { enabled: false },
+    InputOutputPanel: { shown: false },
     EditButton: { enabled: false },
     EditPanel: { shown: false },
     ParametersButton: { enabled: false },
@@ -287,6 +303,8 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
     MatricesPanel: { height, y: -9 },
     LayersButton: { enabled: false },
     LayersPanel: { shown: false },
+    TimeMachineButton: { enabled: false },
+    TimeMachinePanel: { shown: true, x: -1, y: -4, height, w: 27, h: 3 },
     InfoButton: { shown: false },
     InfoPanel: { shown: false },
     UndoButton: {
@@ -318,6 +336,25 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
     },
   };
 
+  const gridItemStates: Record<ProjectType, Record<string, LayoutDefault>> = {
+    [ProjectTypes.Racetrack]: { ...gridItemStateBase },
+    [ProjectTypes.Graph]: {
+      ...gridItemStateBase,
+      ParametersPanel: { x: 1, y: 0, w: 8, h: 4, shown: true },
+      InputOutputPanel: { x: 1, y: 13, shown: true },
+      EditPanel: { x: 10, y: 0, shown: true },
+    },
+    [ProjectTypes.RealWorld]: {
+      ...gridItemStateBase,
+      ParametersPanel: { x: 1, y: 0, w: 8, h: 4, shown: true },
+      InputOutputPanel: { x: 1, y: 13, shown: true },
+      EditPanel: { x: 10, y: 0, shown: true },
+      LayersPanel: { x: -1, y: 10, shown: true },
+      MatricesButton: { enabled: true },
+      MatricesPanel: { height, y: -9, shown: false },
+    },
+  };
+
   useEffect(() => {
     const newLayouts: ReactGridLayout.Layout[] = [];
     const newResources: Record<
@@ -328,7 +365,7 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
       BackgroundPanel,
       HomeButton,
       InputOutputButton,
-      InputOutput,
+      InputOutputPanel,
       ChartButton,
       ChartPanel,
       EditButton,
@@ -337,6 +374,8 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
       ParametersPanel,
       TimerControlButton,
       TimerControlPanel,
+      TimeMachineButton,
+      TimeMachinePanel,
       MatricesButton,
       MatricesPanel,
       LayersButton,
@@ -349,10 +388,13 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
       ZoomOutButton,
       FitScreenButton,
     ].forEach((func, index) => {
-      const item = gridItemState[func.name] && func(gridItemState[func.name]);
+      const item =
+        gridItemStates[type][func.name] &&
+        func(gridItemStates[type][func.name]);
       if (item) {
         if (item.layout) {
-          item.layout.y = getY(item.layout, gridItemState[func.name]);
+          item.layout.x = getX(item.layout, gridItemStates[type][func.name]);
+          item.layout.y = getY(item.layout, gridItemStates[type][func.name]);
           newLayouts.push({ ...item.layout });
         }
         if (item.resource) {
@@ -389,8 +431,32 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
           }}
         />
       ),
-      InputOutput: <InputOutputPanelComponent />,
-      EditPanel: <EditPanelComponent />,
+      InputOutputPanel: <InputOutputPanelComponent />,
+      EditPanel: (
+        <EditPanelComponent
+          state={{
+            addLocation: false,
+            removeLocation: false,
+            addEdge: false,
+            removeEdge: false,
+            autoGraphLayout: false,
+            undo: false,
+            redo: false,
+          }}
+          onAddLocation={function (): void {
+            throw new Error('Function not implemented.');
+          }}
+          onRemoveLocation={function (): void {
+            throw new Error('Function not implemented.');
+          }}
+          onAddEdge={function (): void {
+            throw new Error('Function not implemented.');
+          }}
+          onRemoveEdge={function (): void {
+            throw new Error('Function not implemented.');
+          }}
+        />
+      ),
       InfoPanel: <InfoPanelComponent />,
       LayersPanel: <LayersPanelComponent />,
       MatricesPanel: (
@@ -514,6 +580,13 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
       return newMap;
     });
   }, [props.simulation]);
+
+  useEffect(() => {
+    setGridItemChildrenMap((draft) => ({
+      ...draft,
+      TimeMachinePanel: <TimeMachinePanelComponent {...{}} />,
+    }));
+  }, [uiState]);
 
   if (
     layouts.length === 0 ||

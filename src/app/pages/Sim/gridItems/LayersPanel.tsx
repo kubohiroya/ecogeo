@@ -9,10 +9,10 @@ export function LayersPanel(props?: LayoutDefault): FloatingPanelItem {
   return {
     layout: {
       i: 'LayersPanel',
-      x: 22,
+      x: props?.x ?? 22,
       y: props?.y ?? 7,
-      w: 10,
-      h: 8,
+      w: props?.w ?? 10,
+      h: props?.h ?? 8,
       isDraggable: true,
       isResizable: true,
       resizeHandles: RESIZE_HANDLES,

@@ -22,7 +22,7 @@ export function TimerControlPanel(props?: LayoutDefault): FloatingPanelItem {
     resource: {
       id: 'TimerControlPanel',
       type: GridItemTypes.FloatingPanel,
-      title: 'TimerControl',
+      title: 'Timer Control',
       icon: <Timer />,
       titleBarMode: 'win',
       rowHeight: ROW_HEIGHT,

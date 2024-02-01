@@ -9,10 +9,10 @@ export function MatricesPanel(props?: LayoutDefault): FloatingPanelItem {
   return {
     layout: {
       i: 'MatricesPanel',
-      x: 10,
+      x: props?.x ?? 10,
       y: props?.y ?? 5,
-      w: 23,
-      h: 9,
+      w: props?.w ?? 23,
+      h: props?.h ?? 9,
       isDraggable: true,
       isResizable: true,
       resizeHandles: RESIZE_HANDLES,
@@ -24,7 +24,7 @@ export function MatricesPanel(props?: LayoutDefault): FloatingPanelItem {
       icon: <GridOn />,
       titleBarMode: 'win',
       rowHeight: ROW_HEIGHT,
-      shown: true,
+      shown: props?.shown ?? true,
       bindToButtonId: 'MatricesButton',
     },
   };

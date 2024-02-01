@@ -1,13 +1,13 @@
 import { render } from '@testing-library/react';
 
 import { ChartPane } from './ChartPane';
-import { ChartType } from '../../../models/ChartType';
+import { ChartTypes } from '../../../models/ChartType';
 
 describe('ChartPanelComponent', () => {
   it('should render successfully', () => {
     const { baseElement } = render(
       <ChartPane
-        chartType={ChartType.ManufactureShare}
+        chartType={ChartTypes.ManufactureShare}
         onChangeChartType={() => {}}
         onChangeScale={() => {}}
         scale={1}

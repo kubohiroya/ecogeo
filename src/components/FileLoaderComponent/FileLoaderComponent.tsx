@@ -72,8 +72,8 @@ export const FileLoaderComponent = () => {
           case FileLoaderResponseType.cancel:
             setLoadingStatus(FileLoadingStatus.idle);
             break;
-          case FileLoaderResponseType.allDone:
-            setLoadingStatus(FileLoadingStatus.allDone);
+          case FileLoaderResponseType.finished:
+            setLoadingStatus(FileLoadingStatus.finished);
             break;
           default:
         }
@@ -137,7 +137,7 @@ export const FileLoaderComponent = () => {
         <input onChange={onFileSelectedHandler} type="file" multiple />
         Drop your CSV file here
         {loadingStatus != FileLoadingStatus.idle &&
-          loadingStatus != FileLoadingStatus.allDone}
+          loadingStatus != FileLoadingStatus.finished}
         <Dialog open={true}>
           <DialogTitle> Processing File </DialogTitle>
 
@@ -176,7 +176,7 @@ export const FileLoaderComponent = () => {
               <Button
                 variant={'contained'}
                 onClick={closeDialog}
-                disabled={loadingStatus != FileLoadingStatus.allDone}
+                disabled={loadingStatus != FileLoadingStatus.finished}
               >
                 Close
               </Button>

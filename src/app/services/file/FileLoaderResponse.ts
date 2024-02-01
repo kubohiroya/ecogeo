@@ -21,9 +21,13 @@ export type LoaderErrorResponse = CsvLoaderBaseResponse & {
 export type LoaderCancelResponse = CsvLoaderBaseResponse & {
   type: FileLoaderResponseType.cancel;
 };
+export type LoaderFinishResponse = CsvLoaderBaseResponse & {
+  type: FileLoaderResponseType.finished;
+};
 
 export type FileLoaderResponse =
   | LoaderStartedResponse
   | LoaderProgressResponse
   | LoaderErrorResponse
-  | LoaderCancelResponse;
+  | LoaderCancelResponse
+  | LoaderFinishResponse;

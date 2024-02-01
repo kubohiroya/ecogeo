@@ -34,6 +34,7 @@
     "@types/workerpool": "^6.4.7",
     "@webgpu/types": "^0.1.40",
     "dexie": "^3.2.4",
+    "dexie-observable": "4.0.1-beta.13",
     "fflate": "^0.8.1",
     "immer": "^10.0.3",
     "jotai": "^2.6.3",

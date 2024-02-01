@@ -109,10 +109,9 @@ export function createGADM41GeoJsonUrlList(
   return urlList;
 }
 
-export const fetchGADMGeoJsonArray = async (
-  countries: GADMCountryMetadata[],
-  selection: boolean[][],
-  notifyDownloadingUrlList: (urlList: string[]) => void,
+export const fetchFiles = async (
+  //countries: GADMCountryMetadata[],
+  urlList: string[],
   notifyStatus: (
     url: string,
     urlStatus: { status: FetchStatus; error?: any; retry?: number },
@@ -122,30 +121,32 @@ export const fetchGADMGeoJsonArray = async (
     index: number;
     total: number;
   }) => void,
-): Promise<any[]> => {
-  const result: any[] = [];
+  notifyFinish: (props: { url: string; data: ArrayBuffer }) => void,
+): Promise<void> => {
   const retry: Record<string, number> = {};
-  const urlList = createGADM41GeoJsonUrlList(countries, selection, true);
 
-  notifyDownloadingUrlList(urlList);
-
-  let index = 0;
+  const index = 0;
   const total = urlList.length;
   notifyProgress({
     progress: 0,
     index: 0,
     total,
   });
-  for (let url of urlList) {
+  for (const url of urlList) {
     try {
       notifyStatus(url, { status: FetchStatus.loading });
       const arrayBuffer = await download(url);
       if (url.endsWith('.zip')) {
         const contents = await extractZip(arrayBuffer);
-        result.push(JSON.parse(contents));
+        notifyFinish({
+          url,
+          data: contents,
+        });
       } else {
-        const json = JSON.parse(new TextDecoder('utf-8').decode(arrayBuffer));
-        result.push(json.contents);
+        notifyFinish({
+          url,
+          data: arrayBuffer,
+        });
       }
       notifyStatus(url, { status: FetchStatus.success });
     } catch (error: any) {
@@ -173,7 +174,11 @@ export const fetchGADMGeoJsonArray = async (
     await delay(100 + Math.random() * 500);
   }
   notifyProgress({ progress: 100, index: total, total });
-  return result;
+  return;
+};
+
+export const proxyUrl = (url: string) => {
+  return url.replace('https://', '/').replace('http://', '/');
 };
 
 export const gadm41JsonUrl = (
@@ -181,12 +186,11 @@ export const gadm41JsonUrl = (
   level: number,
   proxyAccessMode: boolean,
 ) => {
-  return (
-    (proxyAccessMode ? '/' : 'http://') +
-    `geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_${countryCode}_${level}.json${level == 0 ? '' : '.zip'}`
-  );
+  const url = `https://geodata.ucdavis.edu/gadm/gadm4.1/json/gadm41_${countryCode}_${level}.json${level == 0 ? '' : '.zip'}`;
+  return proxyAccessMode ? proxyUrl(url) : url;
 };
 
 export const gadm41IndexUrl = (proxyAccessMode: boolean) => {
-  return (proxyAccessMode ? '/' : 'http://') + 'gadm.org/download_country.html';
+  const url = 'https://gadm.org/download_country.html';
+  return proxyAccessMode ? proxyUrl(url) : url;
 };

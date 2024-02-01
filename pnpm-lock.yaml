@@ -77,6 +77,9 @@ dependencies:
   dexie:
     specifier: ^3.2.4
     version: 3.2.4
+  dexie-observable:
+    specifier: 4.0.1-beta.13
+    version: 4.0.1-beta.13(dexie@3.2.4)
   fflate:
     specifier: ^0.8.1
     version: 0.8.1
@@ -7407,6 +7410,14 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /dexie-observable@4.0.1-beta.13(dexie@3.2.4):
+    resolution: {integrity: sha512-axmgPk7yjoPwj+0DdQIE5s1MBXi+6XcIFIjBKdQAmSGpsLQSth/LHvMOQ3q3Wj6pwIE5hqIxg2GL75sVqQbhEw==}
+    peerDependencies:
+      dexie: ^3.0.2 || ^4.0.1-alpha.5
+    dependencies:
+      dexie: 3.2.4
+    dev: false
 
   /dexie@3.2.4:
     resolution: {integrity: sha512-VKoTQRSv7+RnffpOJ3Dh6ozknBqzWw/F3iqMdsZg958R0AS8AnY9x9d1lbwENr0gzeGJHXKcGhAMRaqys6SxqA==}

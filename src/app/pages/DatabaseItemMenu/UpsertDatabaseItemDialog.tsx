@@ -15,8 +15,9 @@ import {
 import * as React from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DatabaseItemTypes } from '../../services/database/ProjectType';
 import { DOCUMENT_TITLE } from '../../Constants';
+import { ProjectTypes } from '../../services/database/ProjectType';
+import { ResourceTypes } from '../../models/ResourceEntity';
 
 type UpsertProjectDialogProps = {
   uuid: string | undefined;
@@ -31,7 +32,7 @@ type UpsertProjectDialogProps = {
   }) => Promise<void>;
 };
 
-export const UpsertProjectDialog = ({
+export const UpsertDatabaseItemDialog = ({
   uuid,
   type,
   name,
@@ -43,10 +44,24 @@ export const UpsertProjectDialog = ({
 
   const navigate = useNavigate();
 
-  const urlPrefix =
-    type === DatabaseItemTypes.Resource ? '/resources' : '/projects';
+  const goHome = () => {
+    switch (type) {
+      case ProjectTypes.Racetrack:
+      case ProjectTypes.Graph:
+      case ProjectTypes.RealWorld:
+        navigate('/projects', { replace: true });
+        break;
+      case ResourceTypes.gadmShapes:
+      case ResourceTypes.idegsmCities:
+      case ResourceTypes.idegsmRoutes:
+        navigate('/resources', { replace: true });
+        break;
+      default:
+        throw new Error(`Unknown ProjectType: ${type}`);
+    }
+  };
 
-  const onCancel = () => navigate(urlPrefix);
+  const onCancel = () => goHome();
 
   useEffect(() => {
     document.title =
@@ -71,7 +86,7 @@ export const UpsertProjectDialog = ({
             name,
             description,
           });
-          navigate('/projects');
+          goHome();
         },
       }}
     >

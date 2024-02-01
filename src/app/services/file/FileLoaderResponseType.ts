@@ -3,5 +3,5 @@ export enum FileLoaderResponseType {
   progress = 'progress',
   cancel = 'cancel',
   error = 'error',
-  allDone = 'allDone',
+  finished = 'finished',
 }

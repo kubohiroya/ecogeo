@@ -10,7 +10,6 @@ import { DeleteDatabaseItemDialog } from "./app/pages/DatabaseItemMenu/DeleteDat
 import { GeoDatabaseTableComponent } from "./app/pages/Home/GeoDatabaseTableComponent";
 import { HomePage } from "./app/pages/Home/HomePage";
 import { GADMGeoJsonComponent } from "./app/pages/ResourceItemsComponent/GADMGeoJsonComponent";
-import { GeoDatabaseItemLoader } from "./app/pages/ResourceItemsComponent/GeoDatabaseItemLoader";
 import { GeoDatabaseTableType } from "./app/pages/Home/GeoDatabaseTableType";
 import { Flag, LocationCity, PanoramaFishEye, Public, Route, Share } from "@mui/icons-material";
 import { IdeGsmCitiesComponent } from "./app/pages/ResourceItemsComponent/IdeGsmCitiesComponent";
@@ -22,6 +21,8 @@ import { UpsertGeoProjectDialog } from "./app/pages/ProjectCreator/UpsertGeoProj
 import { createRoot } from "react-dom/client";
 import { SimLoader } from "./app/pages/Sim/SimLoader";
 import { SimPage } from "./app/pages/Sim/SimPage";
+import { ProjectItemLoader } from "./app/pages/ProjectItemsComponent/ProjectItemLoader";
+import { ResourceItemLoader } from "./app/pages/ResourceItemsComponent/ResourceItemLoader";
 
 const router = createBrowserRouter([
   {
@@ -36,7 +37,7 @@ const router = createBrowserRouter([
             items={[<ResourceItemsComponent />, <ProjectItemsComponent />]}
           />
         ),
-        loader: GeoDatabaseItemLoader,
+        loader: ResourceItemLoader,
         children: [
           {
             path: "/resources/gadm",
@@ -99,7 +100,7 @@ const router = createBrowserRouter([
             items={[<ResourceItemsComponent />, <ProjectItemsComponent />]}
           />
         ),
-        loader: GeoDatabaseItemLoader
+        loader: ProjectItemLoader
       },
       {
         path: "/projects/new",

@@ -329,7 +329,7 @@ export function simplifyPolygons(
           }
           // ---^^^---
            */
-          return polygonCoordsSimplified.filter((coords) => coords.length > 3);
+          return polygonCoordsSimplified;
         })
         .filter((polygon) => polygon.length > 2);
     })

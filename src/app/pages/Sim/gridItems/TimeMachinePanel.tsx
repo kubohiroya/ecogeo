@@ -14,7 +14,7 @@ export function TimeMachinePanel(props?: LayoutDefault): FloatingPanelItem {
       w: props?.w ?? 12,
       h: props?.h ?? 3,
       minW: 12,
-      minH: 4,
+      minH: 3,
       isDraggable: true,
       isResizable: true,
       resizeHandles: RESIZE_HANDLES,

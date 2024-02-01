@@ -28,6 +28,7 @@ function processFileListsToFiles(fileList: FileList) {
 }
 
 const startedCallback = (fileName: string) => {
+  // eslint-disable-next-line no-restricted-globals
   self.postMessage({
     value: {
       type: FileLoaderResponseType.started,
@@ -37,20 +38,14 @@ const startedCallback = (fileName: string) => {
 };
 
 const progressCallback = (value: LoaderProgressResponse) => {
+  // eslint-disable-next-line no-restricted-globals
   self.postMessage({
     value,
   });
 };
 
-const allDoneCallback = () => {
-  self.postMessage({
-    value: {
-      type: FileLoaderResponseType.allDone,
-    },
-  });
-};
-
 const errorCallback = (fileName: string, errorMessage: string) => {
+  // eslint-disable-next-line no-restricted-globals
   self.postMessage({
     value: {
       type: FileLoaderResponseType.error,
@@ -61,9 +56,20 @@ const errorCallback = (fileName: string, errorMessage: string) => {
 };
 
 const cancelCallback = (fileName: string) => {
+  // eslint-disable-next-line no-restricted-globals
   self.postMessage({
     value: {
       type: FileLoaderResponseType.cancel,
+      fileName,
+    },
+  });
+};
+
+const finishedCallback = (fileName: string) => {
+  // eslint-disable-next-line no-restricted-globals
+  self.postMessage({
+    value: {
+      type: FileLoaderResponseType.finished,
       fileName,
     },
   });
@@ -96,6 +102,7 @@ const loadFileList = async (
             progressCallback,
             errorCallback,
             cancelCallback,
+            finishedCallback,
           }),
         ),
     );
@@ -120,6 +127,7 @@ const loadFileList = async (
           progressCallback,
           errorCallback,
           cancelCallback,
+          finishedCallback,
         });
       }),
   )
@@ -131,6 +139,7 @@ const loadFileList = async (
     });
 };
 
+// eslint-disable-next-line no-restricted-globals
 self.onmessage = async function fileLoaderWorker(
   event: MessageEvent<FileLoaderRequest>,
 ) {
@@ -140,7 +149,7 @@ self.onmessage = async function fileLoaderWorker(
       if (!workerBusy) {
         workerBusy = true;
         const dbName = payload.value.dbName;
-        console.log(dbName);
+        console.log('dbName:', dbName);
         const db = new GeoDatabase(dbName);
         await loadFileList(
           db,

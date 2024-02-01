@@ -4,12 +4,12 @@ export type ResourceEntity = {
   type: ResourceType;
   description: string;
   url: string;
-  downloadedAt: number;
+  updatedAt: number;
 };
 
 export const ResourceTypes = {
-  gadmShapes: 0,
-  idegsmCities: 1,
-  idegsmRoutes: 2,
+  gadmShapes: 'gadmShapes',
+  idegsmCities: 'idegsmCities',
+  idegsmRoutes: 'idegsmRoutes',
 };
 export type ResourceType = (typeof ResourceTypes)[keyof typeof ResourceTypes];

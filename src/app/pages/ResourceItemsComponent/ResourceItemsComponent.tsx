@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Flag, LocationCity, Public, Route } from '@mui/icons-material';
+import { Flag, LocationCity, Route } from '@mui/icons-material';
 import {
   Box,
   IconButton,
@@ -14,19 +14,22 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import {
-  Link,
-  useLoaderData,
-  useLocation,
-  useNavigate,
-} from 'react-router-dom';
+import { useLoaderData, useLocation, useNavigate } from 'react-router-dom';
 import { DatabaseItemMenu } from '../DatabaseItemMenu/DatabaseItemMenu';
-import { ResourceEntity, ResourceTypes } from '../../models/ResourceEntity';
+import { ResourceTypes } from '../../models/ResourceEntity';
+import 'dexie-observable';
+import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
+
+import { ResourceItemLoader } from './ResourceItemLoader';
+import { GeoDatabaseEntity } from '../../services/database/GeoDatabaseEntity';
 
 export const ResourceItemsComponent = () => {
   const { resources } = useLoaderData() as {
-    resources: ResourceEntity[];
+    resources: GeoDatabaseEntity[];
   };
+
+  const [resourceItems, setResourceItems] =
+    React.useState<GeoDatabaseEntity[]>(resources);
 
   const navigate = useNavigate();
 
@@ -36,6 +39,12 @@ export const ResourceItemsComponent = () => {
     if (location.pathname.endsWith('/resources') && resources.length === 0) {
       return navigate('/resources/new');
     }
+  }, []);
+
+  useEffect(() => {
+    GeoDatabaseTable.getSingleton().on('changes', async (changes) => {
+      setResourceItems((await ResourceItemLoader(undefined)).resources);
+    });
   }, []);
 
   const speedDialActions = [
@@ -63,7 +72,7 @@ export const ResourceItemsComponent = () => {
   ];
 
   const typeToIcon = {
-    [ResourceTypes.gadmShapes]: <Public />,
+    [ResourceTypes.gadmShapes]: <Flag />,
     [ResourceTypes.idegsmCities]: <LocationCity />,
     [ResourceTypes.idegsmRoutes]: <Route />,
   };
@@ -77,32 +86,40 @@ export const ResourceItemsComponent = () => {
               <TableCell></TableCell>
               <TableCell>name</TableCell>
               <TableCell>description</TableCell>
+              <TableCell>url</TableCell>
               <TableCell>time</TableCell>
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {resources.map((item) => (
+            {resourceItems.map((item) => (
               <TableRow key={item.uuid}>
                 <TableCell>
                   <IconButton
                     color={'primary'}
                     size={'large'}
-                    onClick={() => navigate(item.url)}
+                    onClick={() => navigate(item.urls[0])}
                   >
                     {typeToIcon[item.type]}
                   </IconButton>
                 </TableCell>
-                <TableCell>
-                  <Link to={item.url}>{item.name}</Link>
-                </TableCell>
+                <TableCell>{item.name}</TableCell>
                 <TableCell>
                   <pre>{item.description}</pre>
                 </TableCell>
                 <TableCell>
-                  <div>
-                    Updated: {new Date(item.downloadedAt).toISOString()}
-                  </div>
+                  <ul>
+                    {item.urls.map((url) => (
+                      <li key={url}>
+                        <a href={url} target={'_blank'}>
+                          {url}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </TableCell>
+                <TableCell>
+                  <div>Updated: {new Date(item.updatedAt).toISOString()}</div>
                 </TableCell>
                 <TableCell>
                   <DatabaseItemMenu item={item} />

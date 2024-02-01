@@ -134,4 +134,5 @@ export const DEFAULT_PARAMS_BY_CASE: Record<ProjectType, ParameterSet[]> = {
       units: 'degrees',
     },
   ],
+  [ProjectTypes.Resource]: [],
 };

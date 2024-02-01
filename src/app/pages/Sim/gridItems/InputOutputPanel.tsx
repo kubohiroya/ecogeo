@@ -14,7 +14,7 @@ export function InputOutputPanel(props?: LayoutDefault): FloatingPanelItem {
       w: props?.w ?? 8,
       h: props?.h ?? 3,
       minW: 5,
-      minH: 3,
+      minH: 2,
       resizeHandles: RESIZE_HANDLES,
       isDraggable: true,
       isResizable: true,

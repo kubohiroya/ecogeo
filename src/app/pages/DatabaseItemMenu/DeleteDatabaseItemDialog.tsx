@@ -9,19 +9,15 @@ import {
   DialogTitle,
   Typography,
 } from '@mui/material';
-import { createSimulatorLink } from '../../../createSimulatorLink';
+import { createProjectLink } from '../../../createProjectLink';
 import dexie from 'dexie';
-import {
-  DatabaseItemType,
-  DatabaseItemTypes,
-  ProjectType,
-  ProjectTypes,
-} from '../../services/database/ProjectType';
+import { ProjectTypes } from '../../services/database/ProjectType';
+import { ResourceTypes } from '../../models/ResourceEntity';
 
 export const DeleteDatabaseItemDialog = () => {
   const { uuid, type, name, viewportCenter } = useLoaderData() as {
     uuid: string;
-    type: ProjectType & DatabaseItemType;
+    type: string;
     name: string | undefined;
     viewportCenter: [number, number, number];
     description: string | undefined;
@@ -36,7 +32,9 @@ export const DeleteDatabaseItemDialog = () => {
       case ProjectTypes.RealWorld:
         navigate('/projects', { replace: true });
         break;
-      case DatabaseItemTypes.Resource:
+      case ResourceTypes.gadmShapes:
+      case ResourceTypes.idegsmCities:
+      case ResourceTypes.idegsmRoutes:
         navigate('/resources', { replace: true });
         break;
       default:
@@ -65,7 +63,7 @@ export const DeleteDatabaseItemDialog = () => {
         <Typography>
           Are you sure you want to delete the following project?
         </Typography>
-        <Link to={createSimulatorLink({ uuid, type, viewportCenter })}>
+        <Link to={createProjectLink({ uuid, type, viewportCenter })}>
           {name}
         </Link>
       </DialogContent>

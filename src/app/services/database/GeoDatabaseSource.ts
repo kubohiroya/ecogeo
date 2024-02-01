@@ -1,10 +1,11 @@
 import { ProjectType } from './ProjectType';
+import { ResourceType } from '../../models/ResourceEntity';
 
 export interface GeoDatabaseSource {
-  type: ProjectType;
+  type: ProjectType | ResourceType;
   name: string;
   description: string;
-  version: number;
+  urls: string[];
   createdAt: number;
   updatedAt: number;
 }

@@ -350,10 +350,8 @@ const MapComponent = (props: MapComponentProps) => {
   const onViewStateChange = useCallback(
     (evt: ViewStateChangeParameters & { viewId: string }) => {
       const newViewState = evt.viewState as ViewStateType;
-      if (0 <= newViewState.zoom && newViewState.zoom < MAX_ZOOM_LEVEL - 1) {
-        setViewState(newViewState);
-        updateURL(newViewState);
-      }
+      setViewState(newViewState);
+      updateURL(newViewState);
     },
     [],
   );

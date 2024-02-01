@@ -1,18 +1,16 @@
 import { useGeolocated } from 'react-geolocated';
 import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
 import { useCallback } from 'react';
-import { UpsertProjectDialog } from './UpsertProjectDialog';
+import { UpsertDatabaseItemDialog } from '../DatabaseItemMenu/UpsertDatabaseItemDialog';
 import { useLoaderData } from 'react-router-dom';
-import {
-  DatabaseItemType,
-  ProjectType,
-} from '../../services/database/ProjectType';
+import { ProjectType } from '../../services/database/ProjectType';
 import { INITIAL_VIEW_STATE } from '../../Constants';
+import { ResourceType } from '../../models/ResourceEntity';
 
 export const UpsertGeoProjectDialog = () => {
   const { uuid, type, name, description } = useLoaderData() as {
     uuid: string | undefined;
-    type: ProjectType & DatabaseItemType;
+    type: ProjectType | ResourceType;
     name: string | undefined;
     description: string | undefined;
   };
@@ -33,7 +31,7 @@ export const UpsertGeoProjectDialog = () => {
   const onSubmit = useCallback(
     async (value: {
       uuid: string | undefined;
-      type: string;
+      type: ProjectType | ResourceType;
       name: string;
       description: string;
     }) => {
@@ -41,6 +39,7 @@ export const UpsertGeoProjectDialog = () => {
         await GeoDatabaseTable.createDatabase({
           ...value,
           type,
+          urls: [],
           version: 1,
           createdAt: Date.now(),
           viewportCenter: [zoom, latitude, longitude],
@@ -55,7 +54,7 @@ export const UpsertGeoProjectDialog = () => {
   );
 
   return (
-    <UpsertProjectDialog
+    <UpsertDatabaseItemDialog
       uuid={uuid}
       type={type}
       name={name}

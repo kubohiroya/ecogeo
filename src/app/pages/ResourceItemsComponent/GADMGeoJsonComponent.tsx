@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useRef, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import {
   Badge,
   Box,
@@ -31,18 +31,28 @@ import {
   ReportProblem,
 } from '@mui/icons-material';
 import {
+  createGADM41GeoJsonUrlList,
+  fetchFiles,
   fetchGADMCountries,
-  fetchGADMGeoJsonArray,
   FetchStatus,
   GADMCountryMetadata,
+  proxyUrl,
 } from '../../services/gadm/fetchGADMCountries';
-import {
-  GADMResourceSelector,
-  GADMResourceSelectorFunctions,
-} from './GADMResourceSelector';
+import { GADMResourceSelector } from './GADMResourceSelector';
 import { LinearProgressWithLabel } from '../../../components/LinearProgressWithLabel/LinearProgressWithLabel';
 import { Link, useNavigate } from 'react-router-dom';
 import { DOCUMENT_TITLE } from '../../Constants';
+import { v4 as uuidv4 } from 'uuid';
+import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
+import { GeoDatabase } from '../../services/database/GeoDatabase';
+import { storeGeoRegions } from '../../services/file/GeoJsonLoaders';
+import { LoaderProgressResponse } from '../../services/file/FileLoaderResponse';
+import { useAtom, useAtomValue } from 'jotai';
+import { atomWithImmer } from 'jotai-immer';
+import { atom } from 'jotai/index';
+import { TextCopyComponent } from '../../../components/TextCopyComponent/TextCopyComponent';
+import { ResourceTypes } from '../../models/ResourceEntity';
+// import { loop } from "../../utils/arrayUtil";
 
 type Step = {
   label: string;
@@ -62,35 +72,73 @@ type StepStatus = (typeof StepStatuses)[keyof typeof StepStatuses];
 
 const NUM_STEPS = 5;
 
+const initialSelectedMatrix: boolean[][] = [];
+
+export const selectedMatrixAtom = atomWithImmer(initialSelectedMatrix);
+
+const selectedDataAtom = atom((get) => {
+  return get(selectedMatrixAtom)
+    .slice(1)
+    .map((row) => row.slice(1));
+});
+
+export const numSelectedAtom = atom((get) => {
+  return get(selectedDataAtom)
+    .flat()
+    .filter((item) => item).length;
+});
+
+const urlListAtom = atom((get) => {
+  return createGADM41GeoJsonUrlList(
+    get(countriesAtom),
+    get(selectedDataAtom),
+    false,
+  );
+});
+
+const urlListToStringAtom = atom((get) => {
+  return get(urlListAtom).join('\n');
+});
+
+const initialCountries: GADMCountryMetadata[] = [];
+
+const initialDownloadStatus: Record<
+  string,
+  { status: FetchStatus; retry?: number }
+> = {};
+
+const countriesAtom = atom(initialCountries);
+const downloadStatusAtom = atom(initialDownloadStatus);
+
 export const GADMGeoJsonComponent = () => {
   const [stepIndex, setStepIndex] = React.useState(0);
   const [stepStatus, setStepStatus] = React.useState<StepStatus[]>(
     new Array<StepStatus>(NUM_STEPS),
   );
+  const [selectionMatrix, setSelectionMatrix] = useAtom(selectedMatrixAtom);
+
+  const urlList = useAtomValue(urlListAtom);
+
+  const [downloadStatus, setDownloadStatus] = useAtom(downloadStatusAtom);
+
+  const urlListToString = useAtomValue(urlListToStringAtom);
+
+  const [countries, setCountries] = useAtom(countriesAtom);
+  const numSelected = useAtomValue(numSelectedAtom);
 
   useEffect(() => {
     document.title = DOCUMENT_TITLE + ' - Setup GADM maps';
   }, []);
 
-  const [countries, setCountries] = useState<null | GADMCountryMetadata[]>(
-    null,
-  );
-  const gadmResourceSelectorRef = useRef<null | GADMResourceSelectorFunctions>(
-    null,
-  );
-  const [selectionMatrix, setSelectionMatrix] = useState<boolean[][]>([]);
   const [, setSimplifyLevel] = useState(3);
-  const [downloadingUrlList, setDownloadingUrlList] = useState<string[] | null>(
-    null,
-  );
-  const [downloadingUrlStatus, setDownloadingUrlStatus] = useState<
-    Record<string, { status: FetchStatus; retry?: number }>
-  >({});
+
   const [loadingProgress, setLoadingProgress] = useState<{
     index: number;
     total: number;
     progress: number;
   } | null>(null);
+
+  const LEVEL_MAX = 4;
 
   /*
   const totalSteps = () => {
@@ -122,14 +170,13 @@ export const GADMGeoJsonComponent = () => {
   const navigate = useNavigate();
 
   const goNext = async () => {
-    await leaveFrom(stepIndex);
-
-    if (stepIndex === steps.length - 1) {
-      return navigate('/resources', { replace: true });
+    if (0 <= stepIndex) {
+      await leaveFrom(stepIndex);
     }
-
-    setStepIndex(stepIndex + 1);
-    await enterTo(stepIndex + 1);
+    if (stepIndex < steps.length) {
+      setStepIndex(stepIndex + 1);
+      await enterTo(stepIndex + 1);
+    }
   };
 
   const leaveFrom = async (stepIndex: number) => {
@@ -167,7 +214,6 @@ export const GADMGeoJsonComponent = () => {
   };
 
   useEffect(() => {
-    setStepIndex(0);
     enterTo(0);
   }, []);
 
@@ -204,9 +250,11 @@ export const GADMGeoJsonComponent = () => {
         </>
       ),
       onEnter: async () => {
-        enterTo(1);
+        console.log('onEnter 1');
       },
-      onLeave: async () => {},
+      onLeave: async () => {
+        console.log('onLeave 1');
+      },
     },
     {
       label: 'Step 2: Download the index file',
@@ -241,11 +289,23 @@ export const GADMGeoJsonComponent = () => {
           </Box>
         </>
       ),
-      onEnter: async () => {},
+      onEnter: async () => {
+        console.log('onEnter 2');
+      },
       onLeave: async () => {
-        setCountries([]);
+        console.log('onLeave 2');
         const countries = await fetchGADMCountries();
+        // console.log(countries);
         setCountries(countries);
+
+        setSelectionMatrix((draft) => {
+          draft[0] = new Array<boolean>(LEVEL_MAX + 2).fill(false);
+          countries.forEach((item, dataIndex) => {
+            draft[dataIndex + 1] = new Array<boolean>(item.level + 2);
+            draft[dataIndex + 1].fill(false);
+          });
+          return draft;
+        });
       },
     },
     {
@@ -253,9 +313,14 @@ export const GADMGeoJsonComponent = () => {
       contents: (
         <FormGroup>
           <DialogContentText>
-            Please select data items to download
+            Please select data items to download :
+            {selectionMatrix &&
+            selectionMatrix.length > 0 &&
+            selectionMatrix[0].length > 0
+              ? selectionMatrix[0][0]
+              : 'undefined'}
           </DialogContentText>
-          {!countries || countries.length == 0 ? (
+          {!countries || countries.length === 0 ? (
             <Box
               style={{
                 display: 'flex',
@@ -266,53 +331,69 @@ export const GADMGeoJsonComponent = () => {
               <CircularProgress variant="indeterminate" />
             </Box>
           ) : (
-            <GADMResourceSelector
-              ref={gadmResourceSelectorRef}
-              countries={countries}
-            />
+            <Box>
+              <GADMResourceSelector
+                countries={countries}
+                levelMax={LEVEL_MAX}
+              />
+              {numSelected > 0 && (
+                <Box
+                  style={{
+                    position: 'absolute',
+                    bottom: '10px',
+                    width: '100vw',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    textAlign: 'center',
+                  }}
+                >
+                  <Typography>
+                    {numSelected +
+                      (numSelected > 1 ? ' files' : ' file') +
+                      ' selected'}{' '}
+                    <InlineIcon>
+                      <TextCopyComponent text={urlListToString} />
+                    </InlineIcon>
+                  </Typography>
+                </Box>
+              )}
+            </Box>
           )}
         </FormGroup>
       ),
       onEnter: async () => {},
-      onLeave: async () => {
-        const selectionMatrix =
-          gadmResourceSelectorRef.current?.getSelectionMatrix();
-        if (!selectionMatrix) throw new Error('selectionMatrix is null');
-        setSelectionMatrix(selectionMatrix);
-      },
+      onLeave: async () => {},
     },
     {
       label: 'Step 4: Download data files',
       contents: (
         <>
-          {downloadingUrlList && downloadingUrlList.length === 0 && (
+          {urlList.length === 0 && (
             <Box>
               <DialogContentText>
-                No data file to download at this time. Skip to next.
+                [{urlList.length}] No data file to download at this time. Skip
+                to next.
               </DialogContentText>
             </Box>
           )}
-          {(downloadingUrlList == null ||
-            (loadingProgress && loadingProgress?.progress < 100)) && (
+          {loadingProgress && loadingProgress?.progress < 100 && (
             <Box>
               <CircularProgress variant="indeterminate" /> downloading...
             </Box>
           )}
-          {downloadingUrlList &&
-            downloadingUrlList.length >= 1 &&
-            loadingProgress && (
-              <LinearProgressWithLabel
-                variant={'determinate'}
-                index={loadingProgress.index}
-                total={loadingProgress.total}
-                value={loadingProgress.progress}
-              />
-            )}
+          {urlList && urlList.length >= 1 && loadingProgress && (
+            <LinearProgressWithLabel
+              variant={'determinate'}
+              index={loadingProgress.index}
+              total={loadingProgress.total}
+              value={loadingProgress.progress}
+            />
+          )}
           <Box style={{ margin: '20px' }}>
             <Stack direction="column" spacing={2}>
-              {downloadingUrlList &&
-                downloadingUrlList.map((url, index) => {
-                  const urlStatus = downloadingUrlStatus[url];
+              {urlList &&
+                urlList.map((url, index) => {
+                  const urlStatus = downloadStatus[url];
                   if (!urlStatus) {
                     return <Chip key={index} label={url} color="primary" />;
                   } else if (urlStatus.status === FetchStatus.loading) {
@@ -345,25 +426,43 @@ export const GADMGeoJsonComponent = () => {
         </>
       ),
       onEnter: async () => {
-        if (!countries) {
-          throw new Error();
+        const uuid = uuidv4();
+        GeoDatabaseTable.getSingleton().databases.add({
+          uuid,
+          name: 'GADM GeoJSON',
+          description: urlList?.join('\n') || '',
+          type: ResourceTypes.gadmShapes,
+          urls: Array.from(urlList),
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+        });
+
+        const database = await GeoDatabaseTable.getSingleton()
+          .databases.where('uuid')
+          .equals(uuid)
+          .last();
+
+        if (!database) {
+          throw new Error('Database not found');
         }
-        setDownloadingUrlList([]);
-        setDownloadingUrlStatus({});
+
+        const databaseName = `database${database.id}`;
+        const db = await GeoDatabase.open(databaseName);
+
+        console.log(databaseName);
+
         requestIdleCallback(async () => {
-          const jsonArray = await fetchGADMGeoJsonArray(
-            countries,
-            selectionMatrix,
-            (urlList: string[]) => {
-              setDownloadingUrlList(urlList);
-            },
+          await fetchFiles(
+            urlList.map((url) => proxyUrl(url)),
             (url: string, urlStatus: { status: FetchStatus }) => {
-              setDownloadingUrlStatus((prev) => {
-                return {
-                  ...prev,
-                  [url]: urlStatus,
-                };
-              });
+              setDownloadStatus(
+                (draft: Record<string, { status: FetchStatus }>) => {
+                  return {
+                    ...draft,
+                    [url]: urlStatus,
+                  };
+                },
+              );
             },
             ({
               progress,
@@ -376,11 +475,43 @@ export const GADMGeoJsonComponent = () => {
             }) => {
               setLoadingProgress({ progress, index, total });
             },
+            async ({ url, data }: { url: string; data: ArrayBuffer }) => {
+              const uint8Array = new Uint8Array(data);
+              const stream = new ReadableStream<Uint8Array>({
+                start(controller) {
+                  controller.enqueue(uint8Array);
+                  controller.close();
+                },
+              });
+
+              await storeGeoRegions({
+                db,
+                stream,
+                fileName: url,
+                fileSize: undefined,
+                cancelCallback(fileName: string): void {
+                  console.warn('*cancel', fileName);
+                },
+                errorCallback(fileName: string, errorMessage: string): void {
+                  console.error('*error', fileName);
+                },
+                progressCallback(value: LoaderProgressResponse): void {
+                  console.log('*progress', value);
+                },
+                startedCallback(fileName: string): void {
+                  console.log('*start', fileName);
+                },
+                finishedCallback(fileName: string): void {
+                  console.log('*finish', fileName);
+                },
+              });
+            },
           );
-          console.log(jsonArray);
         });
       },
-      onLeave: async () => {},
+      onLeave: async () => {
+        setDownloadStatus({});
+      },
     },
     {
       label: 'Step 5: Simplify polygons',
@@ -420,6 +551,18 @@ export const GADMGeoJsonComponent = () => {
       ),
       onEnter: async () => {},
       onLeave: async () => {},
+    },
+    {
+      label: 'Step 6: Finish',
+      contents: (
+        <DialogContentText>
+          Congratulations! You finished the GADM resource preparation.
+        </DialogContentText>
+      ),
+      onEnter: async () => {},
+      onLeave: async () => {
+        return navigate('/resources', { replace: true });
+      },
     },
   ];
 

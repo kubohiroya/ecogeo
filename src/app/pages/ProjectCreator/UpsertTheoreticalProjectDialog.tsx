@@ -1,10 +1,8 @@
 import { useLoaderData } from 'react-router-dom';
-import { UpsertProjectDialog } from './UpsertProjectDialog';
+import { UpsertDatabaseItemDialog } from '../DatabaseItemMenu/UpsertDatabaseItemDialog';
 import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
-import {
-  DatabaseItemType,
-  ProjectType,
-} from '../../services/database/ProjectType';
+import { ProjectType } from '../../services/database/ProjectType';
+import { ResourceType } from '../../models/ResourceEntity';
 
 export const UpsertTheoreticalProjectDialog = () => {
   const { uuid, type, name, description } = useLoaderData() as {
@@ -23,8 +21,9 @@ export const UpsertTheoreticalProjectDialog = () => {
     if (!uuid) {
       await GeoDatabaseTable.createDatabase({
         ...values,
-        type: type as ProjectType & DatabaseItemType,
+        type: type as ProjectType & ResourceType,
         viewportCenter: [1, 0, 0],
+        urls: [],
         version: 1,
         createdAt: Date.now(),
       });
@@ -36,7 +35,7 @@ export const UpsertTheoreticalProjectDialog = () => {
   };
 
   return (
-    <UpsertProjectDialog
+    <UpsertDatabaseItemDialog
       uuid={uuid}
       type={type}
       name={name}

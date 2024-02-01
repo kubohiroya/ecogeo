@@ -2,7 +2,7 @@ import { FileLoaderResponseType } from './FileLoaderResponseType';
 
 export type CsvLoaderBaseResponse = {
   fileName: string;
-  fileSize: number;
+  fileSize?: number;
   index: number;
   total: number;
   unit: string;
@@ -15,9 +15,6 @@ export type LoaderStartedResponse = CsvLoaderBaseResponse & {
 export type LoaderProgressResponse = CsvLoaderBaseResponse & {
   type: FileLoaderResponseType.progress;
 };
-export type LoaderAllDoneResponse = CsvLoaderBaseResponse & {
-  type: FileLoaderResponseType.allDone;
-};
 export type LoaderErrorResponse = CsvLoaderBaseResponse & {
   type: FileLoaderResponseType.error;
 };
@@ -28,6 +25,5 @@ export type LoaderCancelResponse = CsvLoaderBaseResponse & {
 export type FileLoaderResponse =
   | LoaderStartedResponse
   | LoaderProgressResponse
-  | LoaderAllDoneResponse
   | LoaderErrorResponse
   | LoaderCancelResponse;

@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { GeoDatabaseEntity } from './GeoDatabaseEntity';
 import { ProjectType } from './ProjectType';
 import { GeoDatabase } from './GeoDatabase';
+import { ResourceType } from '../../models/ResourceEntity';
 
 const TABLE_NAME = 'databases';
 
@@ -30,9 +31,10 @@ export class GeoDatabaseTable extends Dexie {
   }
 
   static async createDatabase(source: {
-    type: ProjectType;
+    type: ProjectType | ResourceType;
     name: string;
     description: string;
+    urls: [];
     version: number;
     viewportCenter: [number, number, number];
     createdAt: number;

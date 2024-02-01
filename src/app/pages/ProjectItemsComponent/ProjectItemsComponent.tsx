@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import { PanoramaFishEye, Public, Share } from '@mui/icons-material';
 import {
   Box,
@@ -23,19 +23,19 @@ import {
 import { DatabaseItemMenu } from '../DatabaseItemMenu/DatabaseItemMenu';
 import { GeoDatabaseEntity } from '../../services/database/GeoDatabaseEntity';
 
-import { createSimulatorLink } from '../../../createSimulatorLink';
-import {
-  DatabaseItemTypes,
-  ProjectTypes,
-} from '../../services/database/ProjectType';
-import SourceIcon from '@mui/icons-material/Source';
-// import { HeadCell } from "../../../../../../SortableTable/SortableTable";
+import { createProjectLink } from '../../../createProjectLink';
+import { ProjectTypes } from '../../services/database/ProjectType';
 import { DOCUMENT_TITLE } from '../../Constants';
+import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
+import { ResourceItemLoader } from '../ResourceItemsComponent/ResourceItemLoader';
 
 export const ProjectItemsComponent = () => {
   const { projects } = useLoaderData() as {
     projects: GeoDatabaseEntity[];
   };
+
+  const [projectItems, setProjectItems] =
+    React.useState<GeoDatabaseEntity[]>(projects);
 
   const navigate = useNavigate();
 
@@ -56,11 +56,16 @@ export const ProjectItemsComponent = () => {
     }
   }, []);
 
-  const typeToIcon = {
-    [DatabaseItemTypes.Resource]: <SourceIcon />,
-    [ProjectTypes.RealWorld]: <Public />,
-    [ProjectTypes.Graph]: <Share />,
-    [ProjectTypes.Racetrack]: <PanoramaFishEye />,
+  useEffect(() => {
+    GeoDatabaseTable.getSingleton().on('changes', async (changes) => {
+      setProjectItems((await ResourceItemLoader(undefined)).resources);
+    });
+  }, []);
+
+  const typeToIcon: Record<string, ReactNode> = {
+    RealWorld: <Public />,
+    Graph: <Share />,
+    Racetrack: <PanoramaFishEye />,
   };
 
   const speedDialActions = [
@@ -131,32 +136,38 @@ export const ProjectItemsComponent = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {projects.map((item) => (
-                <TableRow key={item.uuid}>
-                  <TableCell>
-                    <IconButton
-                      color={'primary'}
-                      size={'large'}
-                      onClick={() => navigate(createSimulatorLink(item))}
-                    >
-                      {typeToIcon[item.type]}
-                    </IconButton>
-                  </TableCell>
-                  <TableCell>
-                    <Link to={createSimulatorLink(item)}>{item.name}</Link>
-                  </TableCell>
-                  <TableCell>
-                    <pre>{item.description}</pre>
-                  </TableCell>
-                  <TableCell>
-                    <div>Created: {new Date(item.createdAt).toISOString()}</div>
-                    <div>Updated: {new Date(item.updatedAt).toISOString()}</div>
-                  </TableCell>
-                  <TableCell>
-                    <DatabaseItemMenu item={item} />
-                  </TableCell>
-                </TableRow>
-              ))}
+              {projectItems
+                .filter((item) => item.type !== 'Resource')
+                .map((item) => (
+                  <TableRow key={item.uuid}>
+                    <TableCell>
+                      <IconButton
+                        color={'primary'}
+                        size={'large'}
+                        onClick={() => navigate(createProjectLink(item))}
+                      >
+                        {typeToIcon[item.type]}
+                      </IconButton>
+                    </TableCell>
+                    <TableCell>
+                      <Link to={createProjectLink(item)}>{item.name}</Link>
+                    </TableCell>
+                    <TableCell>
+                      <pre>{item.description}</pre>
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        Created: {new Date(item.createdAt).toISOString()}
+                      </div>
+                      <div>
+                        Updated: {new Date(item.updatedAt).toISOString()}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <DatabaseItemMenu item={item} />
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
 

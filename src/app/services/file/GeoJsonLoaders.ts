@@ -40,16 +40,18 @@ export const storeGeoRegions = async ({
   startedCallback,
   progressCallback,
   errorCallback,
+  finishedCallback,
   cancelCallback,
 }: {
   db: GeoDatabase;
   stream: ReadableStream;
   fileName: string;
-  fileSize: number;
+  fileSize?: number;
   startedCallback: (fileName: string) => void;
   progressCallback: (value: LoaderProgressResponse) => void;
   errorCallback: (fileName: string, errorMessage: string) => void;
   cancelCallback: (fileName: string) => void;
+  finishedCallback: (fileName: string) => void;
 }) => {
   const bufferSize = 64;
 
@@ -68,6 +70,7 @@ export const storeGeoRegions = async ({
     entities: T[],
     fileName: string,
   ) => {
+    console.log('bulkAdd', fileName, entities.length);
     table.bulkAdd(entities).catch((error) => {
       errorCallback(fileName, error.message);
       /*
@@ -95,8 +98,6 @@ export const storeGeoRegions = async ({
         const features = (value as any).value;
         total += features.length;
 
-        // console.log(fileName, features);
-
         features.forEach((feature: Feature, featureIndex: number) => {
           const { COUNTRY, NAME_1, NAME_2, GID_0, GID_1, GID_2 } =
             feature.properties;
@@ -104,7 +105,7 @@ export const storeGeoRegions = async ({
             .coordinates as unknown as Coordinate[][][];
 
           const simplifiedCoordinates = simplifyPolygons(
-            `${COUNTRY}\t${NAME_1}\t${NAME_2}`, // FIXME
+            `${COUNTRY}\t${NAME_1}\t${NAME_2}`,
             coordinates,
             SIMPLIFY_TOLERANCE,
             true,
@@ -118,17 +119,19 @@ export const storeGeoRegions = async ({
 
           const boundingBox = getPolygonsBounds(simplifiedCoordinates);
 
+          // console.log(coordinates, simplifiedCoordinates, boundingBox);
+
           for (let zoom = 0; zoom <= MAX_ZOOM_LEVEL; zoom++) {
             const mortonNumbers = getTileMortonNumbers(
               boundingBox.topLeft,
               boundingBox.bottomRight,
               zoom,
             );
-            if (mortonNumbers.length == 0) {
+            if (mortonNumbers.length === 0) {
               mortonNumbersByZoomLevels[`z${zoom}`] =
                 SpecialMortonNumbers.NOT_CONTAINED;
-            } else if (mortonNumbers.length == 1) {
-              if (mortonNumbers[0].length == 1) {
+            } else if (mortonNumbers.length === 1) {
+              if (mortonNumbers[0].length === 1) {
                 mortonNumbersByZoomLevels[`z${zoom}`] = mortonNumbers[0][0];
               } else if (mortonNumbers[0].length >= 2) {
                 mortonNumbersByZoomLevels[`z${zoom}`] =
@@ -136,8 +139,8 @@ export const storeGeoRegions = async ({
               } else {
                 throw new Error();
               }
-            } else if (mortonNumbers.length == 2) {
-              if (mortonNumbers[1].length == 1) {
+            } else if (mortonNumbers.length === 2) {
+              if (mortonNumbers[1].length === 1) {
                 mortonNumbersByZoomLevels[`z${zoom}_`] = mortonNumbers[1][0];
               } else if (mortonNumbers[1].length >= 2) {
                 mortonNumbersByZoomLevels[`z${zoom}_`] =
@@ -187,18 +190,18 @@ export const storeGeoRegions = async ({
               total,
               unit: 'items',
               fileName,
-              fileSize,
+              fileSize: fileSize || -1,
             });
 
-            if (countries.length == bufferSize) {
+            if (countries.length === bufferSize) {
               bulkAdd<GeoRegionEntity>(db.countries, countries, fileName);
               countries = [];
             }
-            if (regions1.length == bufferSize) {
+            if (regions1.length === bufferSize) {
               bulkAdd<GeoRegionEntity>(db.regions1, regions1, fileName);
               regions1 = [];
             }
-            if (regions2.length == bufferSize) {
+            if (regions2.length === bufferSize) {
               bulkAdd<GeoRegionEntity>(db.regions2, regions2, fileName);
               regions2 = [];
             }
@@ -224,6 +227,8 @@ export const storeGeoRegions = async ({
           index: total,
           unit: 'items_end',
         });
+
+        finishedCallback(fileName);
       });
   };
 

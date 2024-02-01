@@ -26,6 +26,7 @@ export const loadCsvFile = async <T>({
   progressCallback,
   errorCallback,
   cancelCallback,
+  finishedCallback,
 }: {
   db: GeoDatabase;
   stream: ReadableStream;
@@ -36,6 +37,7 @@ export const loadCsvFile = async <T>({
   progressCallback: (value: LoaderProgressResponse) => void;
   errorCallback: (fileName: string, message: string) => void;
   cancelCallback: (fileName: string) => void;
+  finishedCallback: (fileName: string) => void;
 }): Promise<void> => {
   let entityItemBuffer: T[] = [];
   const itemBufferLengthMax = 64;
@@ -115,6 +117,7 @@ export const loadCsvFile = async <T>({
   if (entityItemBuffer.length > 0) {
     await selectedLoader.bulkAddEntity(db, entityItemBuffer as any[]);
   }
+  finishedCallback(fileName);
 };
 
 export enum CsvFileTypes {

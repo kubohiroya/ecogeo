@@ -1,7 +1,5 @@
-import { ViewportCenter } from './ViewportCenter';
-
 export type UIState = {
-  viewportCenter: ViewportCenter | null;
+  viewportCenter: [number, number, number];
   focusedIndices: number[];
   selectedIndices: number[];
   draggingIndex: number | null;

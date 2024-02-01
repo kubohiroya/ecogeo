@@ -18,10 +18,12 @@ export const useViewportActions = ({
   uiState: UIState;
   setUIState: (func: (draft: UIState) => void) => void;
 }) => {
-  const doCreateViewportCenter = (uiState: UIState, locations: City[]) => {
+  const doCreateViewportCenter = (
+    uiState: UIState,
+    locations: City[],
+  ): [number, number, number] => {
     if (locations?.length > 1) {
       const boundingRect = calcBoundingRect(locations);
-      // console.log(boundingRect, uiState.splitPanelSizes[0]);
       return createViewportCenter({
         left: boundingRect.left,
         top: boundingRect.top,
@@ -30,7 +32,7 @@ export const useViewportActions = ({
         width,
         height,
         paddingMarginRatio:
-          uiState.viewportCenter && uiState.viewportCenter!.scale < 1.7
+          uiState.viewportCenter && uiState.viewportCenter[0] < 1.7
             ? PADDING_MARGIN_RATIO
             : 0.5,
       });

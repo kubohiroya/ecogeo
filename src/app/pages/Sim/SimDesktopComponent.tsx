@@ -30,7 +30,6 @@ import { getMatricesPanel } from './getMatricesPanel';
 import { useWindowDimensions } from '../../hooks/useWindowDimenstions';
 import { useGraphEditActions } from './useGraphEditActions';
 import { useChartActions } from './useChartActions';
-import { useUndoRedo } from '../../hooks/useUndoRedo';
 import { City } from '../../models/City';
 import { Edge } from '../../models/Graph';
 import { useViewportActions } from './useViewportActions';
@@ -39,7 +38,6 @@ import { getRedoButton } from './getRedoButton';
 import { getInfoButton } from './getInfoButton';
 import { getInfoPanel } from './getInfoPanel';
 import { useNavigate } from 'react-router-dom';
-import { ViewportCenter } from '../../models/ViewportCenter';
 import { ResizeHandle } from 'react-resizable';
 import { getChartButton } from './getChartButton';
 import { ChartPanel } from './ChartPanel';
@@ -54,8 +52,9 @@ import { getBackground } from './getBackground';
 import { useParameterActions } from './useParameterActions';
 import { ProjectType } from '../../services/database/ProjectType';
 import { getEditPanel } from './getEditPanel';
-import { undoRedoSessionStateAtom } from './SimLoader';
 import { TimerControlPane } from './TimerControlPanel';
+import { sessionStateAtom } from './SimLoader';
+import { useUndoRedo } from '../../hooks/useUndoRedo';
 
 export const ROW_HEIGHT = 32;
 export const RESIZE_HANDLES: ResizeHandle[] = ['se', 'sw', 'nw'];
@@ -64,9 +63,6 @@ type SimDesktopComponentProps = {
   type: ProjectType;
   backgroundColor: string;
   uuid: string;
-  x: number;
-  y: number;
-  zoom: number;
   simulation: AppSimulation;
   matrices: AppMatrices;
   setMatrices: (matrices: AppMatrices) => void;
@@ -93,11 +89,11 @@ type SimDesktopComponentProps = {
       y,
       x,
     }: {
-      x: number;
-      y: number;
       zoom: number;
+      y: number;
+      x: number;
     }) => void;
-    overrideViewportCenter: (viewportCenter: ViewportCenter) => void;
+    overrideViewportCenter: (viewportCenter: [number, number, number]) => void;
   }) => ReactNode;
 };
 
@@ -105,28 +101,24 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
   const navigate = useNavigate();
   const { width, height } = useWindowDimensions();
   const {
+    backgroundColor,
+    type,
+    uuid,
+    uiState,
+    setUIState,
+    matrices,
+    preferences,
+    updateAndSetMatrices,
+  } = props;
+
+  const {
     set: setSessionState,
     current: sessionState,
     undo: undoSessionState,
     redo: redoSessionState,
     history,
     future,
-  } = useUndoRedo<SessionState>(undoRedoSessionStateAtom);
-  const {
-    backgroundColor,
-    type,
-    uuid,
-    // x: number,
-    // y,
-    // zoom,
-    // simulation,
-    matrices,
-    // setMatrices,
-    uiState,
-    setUIState,
-    preferences,
-    updateAndSetMatrices,
-  } = props;
+  } = useUndoRedo<SessionState>(sessionStateAtom);
 
   const { setSessionChartScale, setSessionChartType } = useChartActions({
     setUIState,
@@ -155,7 +147,7 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
     zoom: number;
   }) => {
     setUIState((draft) => {
-      draft.viewportCenter = { centerX: x, centerY: y, scale: zoom };
+      draft.viewportCenter = [zoom, y, x];
     });
     navigate(
       `/${type}/${uuid}/${zoom.toFixed(4)}/${y.toFixed(4)}/${x.toFixed(4)}/`,
@@ -172,7 +164,7 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
   });
 
   const overrideViewportCenter = useCallback(
-    (viewportCenter: ViewportCenter) => {
+    (viewportCenter: [number, number, number]) => {
       setUIState((draft) => {
         draft.viewportCenter = viewportCenter;
       });
@@ -223,16 +215,16 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
     (value: number) => {
       if (uiState.viewportCenter) {
         setUIState((draft) => {
-          draft.viewportCenter!.scale += value;
+          draft.viewportCenter[0] += value;
           return draft;
         });
         navigate(
-          `/${type}/${uuid}/${(uiState.viewportCenter.scale + value).toFixed(4)}/${uiState.viewportCenter.centerY.toFixed(4)}/${uiState.viewportCenter.centerX.toFixed(4)}/`,
+          `/${type}/${uuid}/${(uiState.viewportCenter[0] + value).toFixed(4)}/${uiState.viewportCenter[1].toFixed(4)}/${uiState.viewportCenter[2].toFixed(4)}/`,
           { replace: true },
         );
       }
     },
-    [uiState.viewportCenter, uiState.viewportCenter?.scale],
+    [uiState.viewportCenter, uiState.viewportCenter],
   );
 
   const onZoomIn = useCallback(() => onZoom(0.25), [onZoom]);
@@ -309,6 +301,7 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
           {...{
             type: props.type,
             parameterSet: sessionState.parameterSet,
+            sessionStateAtom,
             onParameterSetChange,
           }}
         />
@@ -368,6 +361,7 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
         <ParametersPanel
           {...{
             type: props.type,
+            sessionStateAtom,
             parameterSet: sessionState.parameterSet,
             onParameterSetChange,
             setNumLocations,

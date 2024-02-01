@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import DeckGL from '@deck.gl/react/typed';
 import { Map as ReactMap } from 'react-map-gl/maplibre';
 import { PolygonLayer, ScatterplotLayer } from '@deck.gl/layers/typed';
@@ -21,6 +21,8 @@ import { QueryResponse } from '../../../../services/database/QueryResponse';
 import { AsyncFunctionManager } from '../../../../utils/AsyncFunctionManager';
 import { GeoRequestPayload } from '../../../../services/database/GeoRequestPayload';
 import { GeoResponsePayload } from '../../../../services/database/GeoResponsePayload';
+import { SimLoaderResult } from '../../../../pages/Sim/SimLoader';
+import { ViewStateChangeParameters } from '@deck.gl/core/typed/controllers/controller';
 
 const MAP_TILER_API_KEY = import.meta.env.VITE_MAP_TILER_API_KEY;
 
@@ -29,6 +31,7 @@ type PointSrc = {
   coordinates: [number, number];
 };
 
+/*
 type RouteSegmentSrc = {
   source: number;
   target: number;
@@ -38,7 +41,7 @@ type RouteSegment = {
   source: [number, number];
   target: [number, number];
 };
-/*
+
 const cities: PointSrc[] = [
   { name: 'Tokyo', coordinates: [139.6917, 35.6895] },
   { name: 'Osaka', coordinates: [135.5022, 34.6937] },
@@ -71,6 +74,14 @@ export interface MapComponentProps {
   height: number;
   children?: React.ReactNode;
 }
+
+type ViewStateType = {
+  longitude: number;
+  latitude: number;
+  zoom: number;
+  //maxZoom: number;
+  //minZoom: number;
+};
 
 function lngOffsetPolygon(polygon: number[][], lngOffsets: number[] = [0]) {
   let ret: number[][] = [];
@@ -107,19 +118,12 @@ function extractPolygonLayerData(
 
 const asyncFunctionManager = new AsyncFunctionManager();
 const MapComponent = (props: MapComponentProps) => {
-  const data = useLoaderData() as {
-    uuid: string;
-    latitude: number;
-    longitude: number;
-    zoom: number;
-  };
+  const data = useLoaderData() as SimLoaderResult;
 
-  const [viewState, setViewState] = useState({
-    longitude: data.longitude,
-    latitude: data.latitude,
+  const [viewState, setViewState] = useState<ViewStateType>({
+    longitude: data.x,
+    latitude: data.y,
     zoom: data.zoom,
-    maxZoom: MAX_ZOOM_LEVEL - 1,
-    minZoom: 0,
   });
 
   const [currentTaskId, setCurrentTaskId] = useState<number>(-1);
@@ -143,7 +147,7 @@ const MapComponent = (props: MapComponentProps) => {
     latitude: number;
     longitude: number;
   }): void => {
-    const url = `/map/${data.uuid}/${viewState.zoom.toFixed(2)}/${viewState.latitude.toFixed(4)}/${viewState.longitude.toFixed(4)}/`;
+    const url = `/realworld/${data.uuid}/${viewState.zoom.toFixed(2)}/${viewState.latitude.toFixed(4)}/${viewState.longitude.toFixed(4)}/`;
     asyncFunctionManager.runAsyncFunction(() => {
       navigate(url, { replace: true });
     });
@@ -185,11 +189,11 @@ const MapComponent = (props: MapComponentProps) => {
     const { topLeft, bottomRight } = getBounds(
       props.width,
       props.height,
-      { lng: viewState.longitude, lat: viewState.latitude },
-      viewState.zoom,
+      { lng: viewState.longitude!, lat: viewState.latitude! },
+      viewState.zoom!,
     );
 
-    const zoom = Math.ceil(viewState.zoom);
+    const zoom = Math.ceil(viewState.zoom!);
 
     const newMortonNumbers = getTilesMortonNumbersForAllZooms(
       topLeft,
@@ -212,7 +216,7 @@ const MapComponent = (props: MapComponentProps) => {
       id: newTaskId,
       payload: {
         mortonNumbers: modifyMortonNumbers(newMortonNumbers),
-        zoom: Math.floor(viewState.zoom),
+        zoom: Math.floor(viewState.zoom!),
       },
     });
   }, [
@@ -342,9 +346,15 @@ const MapComponent = (props: MapComponentProps) => {
     );
   };
 
-  const viewStateChange = (evt: any) => {
-    setViewState(evt.viewState);
-  };
+  const onViewStateChange = useCallback(
+    (evt: ViewStateChangeParameters & { viewId: string }) => {
+      const newViewState = evt.viewState as ViewStateType;
+      if (0 <= newViewState.zoom && newViewState.zoom < MAX_ZOOM_LEVEL - 1) {
+        setViewState(newViewState);
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
     updateURL(viewState);
@@ -367,7 +377,7 @@ const MapComponent = (props: MapComponentProps) => {
       controller={true}
       layers={layers}
       viewState={viewState}
-      onViewStateChange={viewStateChange}
+      onViewStateChange={onViewStateChange}
     >
       <ReactMap
         mapStyle={`https://api.maptiler.com/maps/${props.map}/style.json?key=${MAP_TILER_API_KEY}`}

@@ -1,6 +1,6 @@
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
-import { atom } from 'jotai/index';
+import { atom, WritableAtom } from 'jotai/index';
 import { UIState } from '../../models/UIState';
 import { SessionState } from '../../models/SessionState';
 import { AppMatrices } from '../../models/AppMatrices';
@@ -10,17 +10,33 @@ import {
 } from '../../hooks/useUndoRedo';
 import { ChartTypes } from '../../models/ChartType';
 import { atomWithImmer } from 'jotai-immer';
-import { enablePatches } from 'immer';
+import { Draft, enablePatches } from 'immer';
 import { updateAddedSubGraph } from '../../components/SessionPanel/MapPanel/GraphHandlers';
 import { ProjectType, ProjectTypes } from '../../services/database/ProjectType';
 import { LoaderFunctionArgs } from 'react-router-dom';
 import { DEFAULT_PARAMS_BY_CASE } from '../../models/DefaultParamByCase';
+import { PrimitiveAtom } from 'jotai';
 
 enablePatches();
 
-//const graph = updateRaceTrackSubGraph(initialSessionState, numLocations);
+export type SessionStateAtom = WritableAtom<
+  UndoRedoState<SessionState>,
+  [
+    | UndoRedoState<SessionState>
+    | ((draft: Draft<UndoRedoState<SessionState>>) => void),
+  ],
+  void
+>;
+export type UIStateAtom = PrimitiveAtom<UIState>;
+export type MatricesAtom = PrimitiveAtom<AppMatrices>;
 
-export type UndoRedoSessionState = UndoRedoState<SessionState>;
+export type SimLoaderResult = {
+  type: ProjectType;
+  uuid: string;
+  x: number;
+  y: number;
+  zoom: number;
+};
 
 const parameterSet = DEFAULT_PARAMS_BY_CASE[ProjectTypes.racetrack][0];
 
@@ -44,9 +60,8 @@ const initialSessionState: SessionState = {
 
 const initialUndoRedoSessionState =
   createInitialUndoRedoState(initialSessionState);
-export const undoRedoSessionStateAtom = atomWithImmer(
-  initialUndoRedoSessionState,
-);
+
+export const sessionStateAtom = atomWithImmer(initialUndoRedoSessionState);
 
 export const matricesAtom = atom<AppMatrices>({
   adjacencyMatrix: [],
@@ -56,7 +71,7 @@ export const matricesAtom = atom<AppMatrices>({
 });
 
 export const uiStateAtom = atom<UIState>({
-  viewportCenter: null,
+  viewportCenter: [1, 0, 0],
   focusedIndices: [],
   selectedIndices: [],
   draggingIndex: null,
@@ -65,42 +80,32 @@ export const uiStateAtom = atom<UIState>({
   autoLayoutFinished: true,
 });
 
-export type SimLoaderResult = {
-  type: ProjectType;
-  uuid: string;
-  x: number;
-  y: number;
-  zoom: number;
-};
-
-export async function SimLoader(
+export const SimLoader = async function (
   request: LoaderFunctionArgs<{
     params: {
-      type: ProjectType;
+      type: string;
       uuid: string;
       zoom: string;
       y: string;
       x: string;
     };
   }>,
-): Promise<{
-  type: string;
-  uuid: string;
-  y: number;
-  x: number;
-  zoom: number;
-}> {
-  const type = request.params.type!;
-  const uuid = request.params.uuid!;
+): Promise<SimLoaderResult> {
+  const pathname = window.location.pathname;
+  const type = pathname.startsWith('/realworld/')
+    ? ProjectTypes.realWorld
+    : pathname.startsWith('/racetrack/')
+      ? ProjectTypes.racetrack
+      : ProjectTypes.graph;
+  const uuid = request.params.uuid! as ProjectType;
   const zoom = parseFloat(request.params.zoom!);
   const y = parseFloat(request.params.y!);
   const x = parseFloat(request.params.x!);
-  // projectDB: await GeoDatabase.open(request.params.uuid),
   return {
-    type,
     uuid,
+    type,
     y,
     x,
     zoom,
   };
-}
+};

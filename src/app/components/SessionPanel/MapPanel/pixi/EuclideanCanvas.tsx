@@ -12,7 +12,6 @@ import { SelectedLocationEffects } from './SelectedLocationEffects';
 import { Edges } from './Edges';
 import { Locations } from './Locations';
 import { FocusedEdgeEffects } from './FocusedEdgeEffects';
-import { ViewportCenter } from '../../../../models/ViewportCenter';
 import { BACKGROUND_COLOR } from '../Constatns';
 import { getById } from '../../../../utils/arrayUtil';
 import { SessionState } from '../../../../models/SessionState';
@@ -33,7 +32,7 @@ export type GraphCanvasProps = {
     bottom: number;
     paddingMarginRatio: number;
   };
-  overrideViewportCenter: (viewportCenter: ViewportCenter) => void;
+  overrideViewportCenter: (viewportCenter: [number, number, number]) => void;
   onDragStart: (x: number, y: number, index: number) => void;
   onDragEnd: (x: number, y: number, index: number) => void;
   onDrag: (diffX: number, diffY: number, index: number) => void;
@@ -47,7 +46,7 @@ export type GraphCanvasProps = {
   sessionState: SessionState;
   focusedIndices: number[];
   selectedIndices: number[];
-  viewportCenter: ViewportCenter | null;
+  viewportCenter: [number, number, number];
   matrices: AppMatrices;
 };
 
@@ -156,7 +155,7 @@ export const EuclideanCanvas = React.memo((props: GraphCanvasProps) => {
           : -1;
 
   const onSetViewportCenter = useCallback(
-    (viewportCenter: ViewportCenter) => {
+    (viewportCenter: [number, number, number]) => {
       props.overrideViewportCenter(viewportCenter);
     },
     [props.overrideViewportCenter],

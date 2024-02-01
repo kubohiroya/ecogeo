@@ -12,8 +12,8 @@ import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { useUndoRedo } from '../../../hooks/useUndoRedo';
 import { SessionState } from '../../../models/SessionState';
 import { ProjectType } from '../../../services/database/ProjectType';
-import { undoRedoSessionStateAtom } from '../../../pages/Sim/SimLoader';
 import { ParameterSet } from '../../../models/ParameterSet';
+import { sessionStateAtom } from '../../../pages/Sim/SimLoader';
 
 /* eslint-disable-next-line */
 export interface ParameterConfigPanelProps {
@@ -33,8 +33,7 @@ export const ParameterConfigPanel = forwardRef<
   ParameterConfigPanelProps
 >((props: ParameterConfigPanelProps, ref) => {
   const { set: setSessionState, current: sessionState } =
-    useUndoRedo<SessionState>(undoRedoSessionStateAtom);
-  // const parameterSet = props.parameterSet;
+    useUndoRedo<SessionState>(sessionStateAtom);
 
   useImperativeHandle(ref, () => ({
     resetToDefault() {
@@ -55,6 +54,8 @@ export const ParameterConfigPanel = forwardRef<
       );
     },
   }));
+
+  const cases = DEFAULT_PARAMS_BY_CASE[props.type];
 
   const onNumLocationsChange = useCallback(
     (event: Event | SyntheticEvent, value: number | number[]) => {
@@ -174,7 +175,7 @@ export const ParameterConfigPanel = forwardRef<
           marginBottom: '8px',
         }}
       >
-        {DEFAULT_PARAMS_BY_CASE[props.type].map((c, index) => (
+        {cases.map((c, index) => (
           <ToggleButton
             size="small"
             key={index}

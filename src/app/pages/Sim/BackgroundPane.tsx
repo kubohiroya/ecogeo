@@ -1,7 +1,6 @@
 import { SessionState } from '../../models/SessionState';
 import { UIState } from '../../models/UIState';
 import { AppMatrices } from '../../models/AppMatrices';
-import { ViewportCenter } from '../../models/ViewportCenter';
 import { EuclideanCanvas } from '../../components/SessionPanel/MapPanel/pixi/EuclideanCanvas';
 import { calcBoundingRect } from '../../components/SessionPanel/MapPanel/calcBoundingRect';
 import { PADDING_MARGIN_RATIO } from '../../components/SessionPanel/MapPanel/Constatns';
@@ -29,7 +28,7 @@ export function BackgroundPane({
   sessionState: SessionState;
   uiState: UIState;
   matrices: AppMatrices;
-  overrideViewportCenter: (viewportCenter: ViewportCenter) => void;
+  overrideViewportCenter: (viewportCenter: [number, number, number]) => void;
   onDragStart: (x: number, y: number, index: number) => void;
   onDrag: (dx: number, dy: number, index: number) => void;
   onFocus: (indices: number[]) => void;

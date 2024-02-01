@@ -3,7 +3,6 @@ import { PixiComponent, useApp } from '@pixi/react';
 import { Viewport as PixiViewport } from 'pixi-viewport';
 import * as PIXI from 'pixi.js';
 import { Container } from 'pixi.js';
-import { ViewportCenter } from '../../../../models/ViewportCenter';
 import { createViewportCenter } from '../CreateViewportCenter';
 import { BoundingBox } from '../../../../models/BoundingBox';
 import { MovedEvent, ZoomedEvent } from 'pixi-viewport/dist/types';
@@ -12,8 +11,8 @@ import PixiViewportDragEvent = GlobalMixins.PixiVieportDragEvent;
 export interface ViewportBaseProps {
   pause: boolean;
   boundingBox: BoundingBox;
-  viewportCenter: ViewportCenter | null;
-  onSetViewportCenter: (viewportWindow: ViewportCenter) => void;
+  viewportCenter: [number, number, number];
+  onSetViewportCenter: (viewportWindow: [number, number, number]) => void;
   screenWidth: number;
   screenHeight: number;
   children?: React.ReactNode;
@@ -50,10 +49,10 @@ const createPixiViewport = (props: ViewportAppProps) => {
   });
 
   viewport.moveCenter(
-    props.viewportCenter?.centerX || 0,
-    props.viewportCenter?.centerY || 0,
+    props.viewportCenter[1] || 0,
+    props.viewportCenter[2] || 0,
   );
-  viewport.setZoom(props.viewportCenter?.scale || 1, true);
+  viewport.setZoom(props.viewportCenter[0] || 1, true);
 
   viewport
     .drag({
@@ -105,7 +104,7 @@ export const Viewport = (props: ViewportBaseProps) => {
     bottom,
     paddingMarginRatio,
   }: BoundingBox) => {
-    if (props.screenWidth == 0) return;
+    if (props.screenWidth === 0) return;
 
     const viewport = app.stage.getChildAt(0) as PixiViewport;
 
@@ -119,8 +118,8 @@ export const Viewport = (props: ViewportBaseProps) => {
       paddingMarginRatio,
     });
 
-    viewport.moveCenter(viewportCenter.centerX, viewportCenter.centerY);
-    viewport.setZoom(viewportCenter.scale, true);
+    viewport.moveCenter(viewportCenter[2], viewportCenter[1]);
+    viewport.setZoom(viewportCenter[0], true);
 
     requestAnimationFrame(() => {
       props.onSetViewportCenter(viewportCenter);
@@ -132,11 +131,8 @@ export const Viewport = (props: ViewportBaseProps) => {
       const viewport = app.stage.getChildAt(0) as PixiViewport;
       if (props.screenWidth > 0 && props.screenHeight > 0) {
         if (props.viewportCenter) {
-          viewport.moveCenter(
-            props.viewportCenter.centerX,
-            props.viewportCenter.centerY,
-          );
-          viewport.setZoom(props.viewportCenter.scale, true);
+          viewport.moveCenter(props.viewportCenter[2], props.viewportCenter[1]);
+          viewport.setZoom(props.viewportCenter[0], true);
         } else {
           fit(props.boundingBox);
         }

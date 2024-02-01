@@ -68,7 +68,7 @@ function removeRedundantPatches(src: PatchPair[]): PatchPair | null {
     }
   }
 
-  if (filteredPatch.length == 0 && inverseFilteredPatch.length == 0) {
+  if (filteredPatch.length === 0 && inverseFilteredPatch.length === 0) {
     return null;
   }
 
@@ -80,7 +80,7 @@ function removeRedundantPatches(src: PatchPair[]): PatchPair | null {
 }
 
 export const useUndoRedo = <T extends Objectish>(
-  undoRedoAtom: PrimitiveAtom<UndoRedoState<T>>, //initialState: T,
+  undoRedoAtom: PrimitiveAtom<UndoRedoState<T>>,
   maxHistoryLength = 30,
 ) => {
   const [{ history, future, current, staging }, setUndoRedo] =

@@ -6,20 +6,22 @@ import { useLoaderData } from 'react-router-dom';
 import { useWindowDimensions } from '../../hooks/useWindowDimenstions';
 import { MapCopyright } from '../../../components/MapCopyright/MapCopyright';
 import { SessionState } from '../../models/SessionState';
-import { SimLoaderResult } from './SimLoader';
 import { SimComponent } from './SimComponent';
 import { UIState } from '../../models/UIState';
 import { AppMatrices } from '../../models/AppMatrices';
-import { ViewportCenter } from '../../models/ViewportCenter';
-import { ProjectTypes } from '../../services/database/ProjectType';
+import { ProjectType } from '../../services/database/ProjectType';
+import { SimLoaderResult } from './SimLoader';
 
 export const RealWorldSimPage = () => {
-  const { uuid, x, y, zoom } = useLoaderData() as SimLoaderResult;
+  const { uuid, zoom, y, x, type } = useLoaderData() as SimLoaderResult;
   const { width, height } = useWindowDimensions();
   return (
     <SimComponent
-      type={ProjectTypes.realWorld}
-      {...{ uuid, x, y, zoom }}
+      {...{
+        uuid,
+        type: type as ProjectType,
+        viewportCenter: [zoom, y, x],
+      }}
       backgroundColor="rgba(230,230,230,0.6)"
       backgroundPanel={(params: {
         width: number;
@@ -34,7 +36,9 @@ export const RealWorldSimPage = () => {
         onUnfocus: (unfocusIndices: number[]) => void;
         onPointerUp: (x: number, y: number, index: number) => void;
         onClearSelection: () => void;
-        overrideViewportCenter: (viewportCenter: ViewportCenter) => void;
+        overrideViewportCenter: (
+          viewportCenter: [number, number, number],
+        ) => void;
         onMoved: ({
           zoom,
           y,

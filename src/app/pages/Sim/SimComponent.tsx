@@ -7,11 +7,6 @@ import { SessionState } from '../../models/SessionState';
 import { enablePatches } from 'immer';
 import { useUndoRedo } from '../../hooks/useUndoRedo';
 import { AppMatrices } from '../../models/AppMatrices';
-import {
-  matricesAtom,
-  uiStateAtom,
-  undoRedoSessionStateAtom,
-} from './SimLoader';
 import { useImmerAtom } from 'jotai-immer';
 import { useAtom, useAtomValue } from 'jotai';
 import { preferencesAtom } from '../../models/AppPreference';
@@ -20,21 +15,19 @@ import { useMatrixEngine } from './useMatrixEngine';
 import { SimDesktopComponent } from './SimDesktopComponent';
 import { useSimulator } from './useSimulator';
 import { UIState } from '../../models/UIState';
-import { ViewportCenter } from '../../models/ViewportCenter';
 import { ProjectType } from '../../services/database/ProjectType';
 import { useSnackBar } from './useSnackBar';
 import { useUndoRedoActions } from './useUndoRedoActions';
 import { DEFAULT_PARAMS_BY_CASE } from '../../models/DefaultParamByCase';
 import { ParameterSet } from '../../models/ParameterSet';
+import { matricesAtom, sessionStateAtom, uiStateAtom } from './SimLoader';
 
 enablePatches();
 
 type SimComponentProps = {
   type: ProjectType;
-  x: number;
-  y: number;
-  zoom: number;
   uuid: string;
+  viewportCenter: [number, number, number];
   backgroundColor: string;
   backgroundPanel: (params: {
     width: number;
@@ -59,33 +52,34 @@ type SimComponentProps = {
       y: number;
       zoom: number;
     }) => void;
-    overrideViewportCenter: (viewportCenter: ViewportCenter) => void;
+    overrideViewportCenter: (viewportCenter: [number, number, number]) => void;
   }) => ReactNode;
 };
 export const SimComponent = (props: SimComponentProps) => {
-  const { type, uuid, x, y, zoom, backgroundPanel, backgroundColor } = props;
-
+  const { type, uuid, backgroundPanel, backgroundColor, viewportCenter } =
+    props;
   const { set: setSessionState, current: sessionState } =
-    useUndoRedo<SessionState>(undoRedoSessionStateAtom);
+    useUndoRedo<SessionState>(sessionStateAtom);
   const [uiState, setUIState] = useImmerAtom(uiStateAtom);
 
   const { openSnackBar, closeSnackBar } = useSnackBar();
-  useUndoRedoActions({ uiState, setUIState, openSnackBar, closeSnackBar });
 
+  useUndoRedoActions({
+    uiState,
+    setUIState,
+    openSnackBar,
+    closeSnackBar,
+    sessionStateAtom,
+  });
   const preferences = useAtomValue(preferencesAtom);
   const [matrices, setMatrices] = useAtom(matricesAtom);
 
   useEffect(() => {
-    if (x !== undefined && y !== undefined && zoom !== undefined) {
-      setUIState((draft) => {
-        draft.viewportCenter = {
-          centerX: x,
-          centerY: y,
-          scale: zoom,
-        };
-      });
-    }
-  }, [setUIState, x, y, zoom]);
+    setUIState((draft) => {
+      draft.viewportCenter = viewportCenter;
+      return draft;
+    });
+  }, [setUIState, viewportCenter]);
 
   //const diagonalMatrixSetPanelRef = useRef<DiagonalMatrixSetPanelHandle>(null);
 
@@ -196,9 +190,6 @@ export const SimComponent = (props: SimComponentProps) => {
         backgroundColor,
         type,
         uuid,
-        x,
-        y,
-        zoom,
         simulation,
         matrices,
         setMatrices,

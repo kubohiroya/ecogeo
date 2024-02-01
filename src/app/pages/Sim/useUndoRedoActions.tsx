@@ -1,16 +1,18 @@
 import { SessionState } from '../../models/SessionState';
 import { UIState } from '../../models/UIState';
 import { useUndoRedo } from '../../hooks/useUndoRedo';
-import { undoRedoSessionStateAtom } from './SimLoader';
 import { useCallback } from 'react';
 import useHotkeys from '@reecelucas/react-use-hotkeys';
+import { SessionStateAtom } from './SimLoader';
 
 export const useUndoRedoActions = ({
+  sessionStateAtom,
   openSnackBar,
   closeSnackBar,
   uiState,
   setUIState,
 }: {
+  sessionStateAtom: SessionStateAtom;
   openSnackBar: (message: string) => void;
   closeSnackBar: () => void;
   uiState: UIState;
@@ -23,7 +25,7 @@ export const useUndoRedoActions = ({
     history,
     future,
     staging,
-  } = useUndoRedo<SessionState>(undoRedoSessionStateAtom);
+  } = useUndoRedo<SessionState>(sessionStateAtom);
 
   const undo = useCallback(() => {
     requestAnimationFrame(() => {

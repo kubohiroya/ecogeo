@@ -2,8 +2,7 @@
 // @ts-ignore
 import React, { StrictMode } from "react";
 
-import { createBrowserRouter, LoaderFunctionArgs, RouterProvider } from "react-router-dom";
-import { GeoDatabase } from "./app/services/database/GeoDatabase";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { GeoDatabaseItemCreateModeSelector } from "./app/pages/Home/GeoDatabaseItemCreateModeSelector";
 import { projectLoader } from "./app/pages/ProjectCreator/projectLoader";
 import { ProjectTypes } from "./app/services/database/ProjectType";
@@ -24,14 +23,15 @@ import { FileDropComponent } from "./components/FileDropComponent/FileDropCompon
 import { UpsertGeoProjectDialog } from "./app/pages/ProjectCreator/UpsertGeoProjectDialog";
 import { createRoot } from "react-dom/client";
 import { GraphSimPage } from "./app/pages/Sim/GraphSimPage";
+import { SimLoader } from "./app/pages/Sim/SimLoader";
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <HomePage />,
     children: [
       {
-        path: '/resources',
+        path: "/resources",
         element: (
           <GeoDatabaseTableComponent
             type={GeoDatabaseTableType.resources}
@@ -41,23 +41,23 @@ const router = createBrowserRouter([
         loader: GeoDatabaseItemLoader,
         children: [
           {
-            path: '/resources/gadm',
-            element: <GADMGeoJsonComponent />,
+            path: "/resources/gadm",
+            element: <GADMGeoJsonComponent />
           },
           {
-            path: '/resources/cities',
-            element: <IdeGsmCitiesComponent />,
+            path: "/resources/cities",
+            element: <IdeGsmCitiesComponent />
           },
           {
-            path: '/resources/routes',
-            element: <IdeGsmRoutesComponent />,
-          },
-        ],
+            path: "/resources/routes",
+            element: <IdeGsmRoutesComponent />
+          }
+        ]
       },
       {
-        path: '/resources/new',
+        path: "/resources/new",
         element: (
-          <FileDropComponent acceptableSuffixes={['.json', '.csv', '.csv.zip']}>
+          <FileDropComponent acceptableSuffixes={[".json", ".csv", ".csv.zip"]}>
             <GeoDatabaseTableComponent
               type={GeoDatabaseTableType.resources}
               items={[
@@ -66,47 +66,47 @@ const router = createBrowserRouter([
                   items={[
                     {
                       icon: <Flag fontSize="large" />,
-                      name: 'GADM GeoJSON',
+                      name: "GADM GeoJSON",
                       url: `/resources/gadm`,
                       tooltip:
-                        'GADM Country(Level 0),Region and Subregion shape files',
+                        "GADM Country(Level 0),Region and Subregion shape files"
                     },
                     {
                       icon: <LocationCity fontSize="large" />,
-                      name: 'IDE-GSM Cities',
+                      name: "IDE-GSM Cities",
                       url: `/resources/cities`,
                       tooltip:
-                        'IDE-GSM data file includes city information, GDP, population, etc.',
+                        "IDE-GSM data file includes city information, GDP, population, etc."
                     },
                     {
                       icon: <Route fontSize="large" />,
-                      name: 'IDE-GSM Routes',
+                      name: "IDE-GSM Routes",
                       url: `/resources/routes`,
                       tooltip:
-                        'IDE-GSM data file includes route information, start, end, distance, etc.',
-                    },
+                        "IDE-GSM data file includes route information, start, end, distance, etc."
+                    }
                   ]}
                 />,
-                <>dummy</>,
+                <>dummy</>
               ]}
             />
           </FileDropComponent>
-        ),
+        )
       },
       {
-        path: '/projects',
+        path: "/projects",
         element: (
           <GeoDatabaseTableComponent
             type={GeoDatabaseTableType.projects}
             items={[<ResourceItemsComponent />, <ProjectItemsComponent />]}
           />
         ),
-        loader: GeoDatabaseItemLoader,
+        loader: GeoDatabaseItemLoader
       },
       {
-        path: '/projects/new',
+        path: "/projects/new",
         element: (
-          <FileDropComponent acceptableSuffixes={['.json', '.csv', '.csv.zip']}>
+          <FileDropComponent acceptableSuffixes={[".json", ".csv", ".csv.zip"]}>
             <GeoDatabaseTableComponent
               type={GeoDatabaseTableType.projects}
               items={[
@@ -116,105 +116,77 @@ const router = createBrowserRouter([
                   items={[
                     {
                       icon: <PanoramaFishEye fontSize="large" />,
-                      name: 'Racetrack Model',
+                      name: "Racetrack Model",
                       url: `/create/${ProjectTypes.racetrack}`,
-                      tooltip: "Paul Krugman's spatial economy model",
+                      tooltip: "Paul Krugman's spatial economy model"
                     },
                     {
                       icon: <Share fontSize="large" />,
-                      name: 'Graph Structured Model',
+                      name: "Graph Structured Model",
                       url: `/create/${ProjectTypes.racetrack}`,
-                      tooltip: 'Graph structured spatial economy model',
+                      tooltip: "Graph structured spatial economy model"
                     },
                     {
                       icon: <Public fontSize="large" />,
-                      name: 'Real-World Model',
+                      name: "Real-World Model",
                       url: `/create/${ProjectTypes.realWorld}`,
-                      tooltip: 'Full-set simulation model',
-                    },
+                      tooltip: "Full-set simulation model"
+                    }
                   ]}
-                />,
+                />
               ]}
             />
           </FileDropComponent>
-        ),
-      },
-    ],
+        )
+      }
+    ]
   },
   {
     path: `/delete/:type/:uuid`,
     element: <DeleteDatabaseItemDialog />,
-    loader: projectLoader(),
+    loader: projectLoader()
   },
   {
     path: `/create/:type`,
     element: <UpsertGeoProjectDialog />,
-    loader: projectLoader(),
+    loader: projectLoader()
   },
   {
     path: `/update/:type/:uuid`,
     element: <UpsertGeoProjectDialog />,
-    loader: projectLoader(),
+    loader: projectLoader()
   },
   {
-    path: '/racetrack/:uuid/:zoom/:y/:x/',
+    path: "/racetrack/:uuid/:zoom/:y/:x/",
     element: (
-      <div
-        style={{
-          overscrollBehavior: 'none',
-          overflow: 'hidden',
-          width: '100vw',
-          height: '100vh',
-        }}
-      >
-        <RaceTrackSimPage />
-      </div>
+      <RaceTrackSimPage />
     ),
-
-    loader: async (
-      request: LoaderFunctionArgs<{
-        params: { uuid: string; x: string; y: string; zoom: string };
-      }>,
-    ) => ({
-      uuid: request.params.uuid,
-      x: parseFloat(request.params.x!),
-      y: parseFloat(request.params.y!),
-      zoom: parseFloat(request.params.zoom!),
-      projectDB: await GeoDatabase.open(request.params.uuid!),
-    }),
+    loader: SimLoader
   },
   {
-    path: '/graph/:uuid/:zoom/:y/:x/',
+    path: "/graph/:uuid/:zoom/:y/:x/",
     // eslint-disable-next-line react/jsx-no-undef
     element: <GraphSimPage />,
-    loader: async (
-      request: LoaderFunctionArgs<{
-        params: { uuid: string; x: string; y: string; zoom: string };
-      }>,
-    ) => ({
-      uuid: request.params.uuid,
-      x: parseFloat(request.params.x!),
-      y: parseFloat(request.params.y!),
-      zoom: parseFloat(request.params.zoom!),
-      projectDB: await GeoDatabase.open(request.params.uuid!),
-    }),
+    loader: SimLoader
   },
   {
-    path: '/map/:uuid/:zoom/:latitude/:longitude/',
+    path: "/realworld/:uuid/:zoom/:y/:x/",
     element: (
-      <div
-        style={{
-          overscrollBehavior: 'none',
-          overflow: 'hidden',
-          width: '100vw',
-          height: '100vh',
-        }}
-      >
-        <RealWorldSimPage />
-      </div>
+      <RealWorldSimPage />
     ),
+    loader: SimLoader
+  }
+]);
 
-    loader: async (
+const container = document.getElementById("root");
+const root = createRoot(container!);
+root.render(
+  <StrictMode>
+    <RouterProvider router={router} />
+  </StrictMode>
+);
+/*
+async (
       request: LoaderFunctionArgs<{
         params: {
           uuid: string;
@@ -228,15 +200,7 @@ const router = createBrowserRouter([
       latitude: parseFloat(request.params.latitude!),
       longitude: parseFloat(request.params.longitude!),
       zoom: parseFloat(request.params.zoom!),
+      type: request.params.type! as ProjectType,
       projectDB: await GeoDatabase.open(request.params.uuid!),
     }),
-  },
-]);
-
-const container = document.getElementById('root');
-const root = createRoot(container!);
-root.render(
-  <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>,
-);
+ */

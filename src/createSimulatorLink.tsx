@@ -8,7 +8,7 @@ export function createSimulatorLink(item: {
 }) {
   switch (item.type) {
     case ProjectTypes.realWorld:
-      return `/map/${item.uuid}/${item.zoom}/${item.coordinate[0]}/${item.coordinate[1]}/`;
+      return `/realworld/${item.uuid}/${item.zoom}/${item.coordinate[0]}/${item.coordinate[1]}/`;
     case ProjectTypes.racetrack:
       return `/racetrack/${item.uuid}/${item.zoom}/${item.coordinate[0]}/${item.coordinate[1]}/`;
     case ProjectTypes.graph:

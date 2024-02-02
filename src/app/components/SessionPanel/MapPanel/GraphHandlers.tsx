@@ -297,18 +297,14 @@ export const updateAddedSubGraph = (
   selectedIndices: number[],
   numLocations: number,
 ) => {
+  console.log(sessionState);
   switch (sessionState.parameterSet.type) {
-    case 'RaceTrack':
+    case 'Racetrack':
       return updateRaceTrackSubGraph(sessionState, numLocations);
     case 'Graph':
-      return updateRandomSubGraph(
-        //sessionId,
-        sessionState,
-        selectedIndices,
-        numLocations,
-      );
+      return updateRandomSubGraph(sessionState, selectedIndices, numLocations);
     default:
-      throw new Error();
+      return { ...sessionState, addedIndices: [] };
   }
 };
 
@@ -347,7 +343,7 @@ export const removeSubGraph = (
   sessionState: SessionState,
 ) => {
   switch (sessionState.parameterSet.type) {
-    case 'RaceTrack':
+    case 'Racetrack':
       return updateRaceTrackSubGraph(sessionState, numLocations);
     case 'Graph':
       return removeRandomSubGraph(numLocations, sessionState);

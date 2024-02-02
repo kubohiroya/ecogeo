@@ -93,6 +93,7 @@ export const useParameterActions = ({
       if (numLocations < sessionState.locations.length) {
         onRemoveBulkLocations(numLocations, commit);
       } else if (sessionState.locations.length < numLocations) {
+        console.log('onAddBulkLocations', numLocations);
         onAddBulkLocations(numLocations, commit);
       }
     },

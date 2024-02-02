@@ -160,10 +160,14 @@ export const FileDropComponent = (props: FileDropComponentProps) => {
     setIsError(error);
     props.handleFiles && props.handleFiles(files);
     setLoadingFiles(() => ({}));
-    worker!.postMessage({
-      type: FileLoaderRequestType.start,
-      data: files,
-    });
+    for (let i = 0; i < files.length; i++) {
+      worker!.postMessage({
+        type: FileLoaderRequestType.start,
+        payload: {
+          file: files[i],
+        },
+      });
+    }
   };
 
   const handleDrop = useCallback(

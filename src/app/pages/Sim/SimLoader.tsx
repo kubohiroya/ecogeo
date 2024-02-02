@@ -38,7 +38,16 @@ export type SimLoaderResult = {
   zoom: number;
 };
 
-const parameterSet = DEFAULT_PARAMS_BY_CASE[ProjectTypes.Racetrack][0];
+const pathname = window.location.pathname;
+const type = pathname.startsWith('/' + ProjectTypes.Racetrack)
+  ? ProjectTypes.Racetrack
+  : pathname.startsWith('/' + ProjectTypes.Graph)
+    ? ProjectTypes.Graph
+    : pathname.startsWith('/' + ProjectTypes.RealWorld)
+      ? ProjectTypes.RealWorld
+      : ProjectTypes.Racetrack;
+
+const parameterSet = DEFAULT_PARAMS_BY_CASE[type][0];
 
 const graph = updateAddedSubGraph(
   {
@@ -109,6 +118,16 @@ export const SimLoader = async function (
   const zoom = parseFloat(request.params.zoom!);
   const y = parseFloat(request.params.y!);
   const x = parseFloat(request.params.x!);
+
+  const t =
+    type === 'Racetrack'
+      ? ProjectTypes.Racetrack
+      : type === 'RealWorld'
+        ? ProjectTypes.RealWorld
+        : type === 'Graph'
+          ? ProjectTypes.Graph
+          : ProjectTypes.Graph;
+
   return {
     uuid,
     type,

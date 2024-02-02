@@ -19,8 +19,6 @@ import { DatabaseItemMenu } from '../DatabaseItemMenu/DatabaseItemMenu';
 import { ResourceTypes } from '../../models/ResourceEntity';
 import 'dexie-observable';
 import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
-
-import { ResourceItemLoader } from './ResourceItemLoader';
 import { GeoDatabaseEntity } from '../../services/database/GeoDatabaseEntity';
 
 export const ResourceItemsComponent = () => {
@@ -43,7 +41,7 @@ export const ResourceItemsComponent = () => {
 
   useEffect(() => {
     GeoDatabaseTable.getSingleton().on('changes', async (changes) => {
-      setResourceItems((await ResourceItemLoader(undefined)).resources);
+      // setResourceItems((await ResourceItemLoader(undefined)).resources);
     });
   }, []);
 

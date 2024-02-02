@@ -428,6 +428,7 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
             parameterSet: sessionState.parameterSet,
             sessionStateAtom,
             onParameterSetChange,
+            setNumLocations,
           }}
         />
       ),

@@ -128,7 +128,6 @@ export const ChartCanvas = React.memo(
         throw new Error('ERROR ChartTypeKey=' + chartTypeKey);
       }
       if (!locations || locations.length == 0) {
-        console.error('ERROR location == null || location.length == 0');
         return;
       }
 

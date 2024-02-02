@@ -33,7 +33,7 @@ export const loadCsvFile = async <T>({
   fileName: string;
   fileSize: number;
   csvLoaders: CsvLoaders;
-  startedCallback: (fileName: string) => void;
+  startedCallback: (fileName: string, dbName: string) => void;
   progressCallback: (value: LoaderProgressResponse) => void;
   errorCallback: (fileName: string, message: string) => void;
   cancelCallback: (fileName: string) => void;
@@ -43,7 +43,7 @@ export const loadCsvFile = async <T>({
   const itemBufferLengthMax = 64;
   let itemBufferLength = 0;
 
-  startedCallback(fileName);
+  startedCallback(fileName, db.name);
 
   let chunkText = '';
   let selectedLoader = null;

@@ -47,7 +47,7 @@ export const storeGeoRegions = async ({
   stream: ReadableStream;
   fileName: string;
   fileSize?: number;
-  startedCallback: (fileName: string) => void;
+  startedCallback: (fileName: string, dbName: string) => void;
   progressCallback: (value: LoaderProgressResponse) => void;
   errorCallback: (fileName: string, errorMessage: string) => void;
   cancelCallback: (fileName: string) => void;
@@ -84,7 +84,7 @@ export const storeGeoRegions = async ({
 
   let total = 0;
   const processJSONReader = async (reader: ReadableStream<Uint8Array>) => {
-    startedCallback(fileName);
+    startedCallback(fileName, db.name);
 
     reader
       .getReader()

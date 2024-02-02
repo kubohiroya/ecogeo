@@ -351,7 +351,7 @@ const MapComponent = (props: MapComponentProps) => {
     (evt: ViewStateChangeParameters & { viewId: string }) => {
       const newViewState = evt.viewState as ViewStateType;
       setViewState(newViewState);
-      updateURL(newViewState);
+      //updateURL(newViewState);
     },
     [],
   );

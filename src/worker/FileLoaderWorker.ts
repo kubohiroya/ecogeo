@@ -27,12 +27,15 @@ function processFileListsToFiles(fileList: FileList) {
   return files;
 }
 
-const startedCallback = (fileName: string) => {
+const startedCallback = (fileName: string, dbName: string) => {
   // eslint-disable-next-line no-restricted-globals
   self.postMessage({
     value: {
       type: FileLoaderResponseType.started,
-      fileName,
+      value: {
+        dbName,
+        fileName,
+      },
     },
   });
 };

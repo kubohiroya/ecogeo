@@ -12,11 +12,11 @@ const sigma = parseFloat(params.get('sigma') || '4');
 export const DEFAULT_PARAMS_BY_CASE: Record<ProjectType, ParameterSet[]> = {
   [ProjectTypes.Racetrack]: [
     {
-      caseId: 'RaceTrack-0',
+      caseId: 'Racetrack-0',
       title: 'Base case',
       description:
         'Base case (K=12, π=0.2, τ=2, σ=4). All workers usually end up in several(one or more) concentrations.',
-      type: 'RaceTrack',
+      type: 'Racetrack',
       numLocations: 12,
       manufactureShare: 0.2,
       transportationCost: 2,
@@ -24,11 +24,11 @@ export const DEFAULT_PARAMS_BY_CASE: Record<ProjectType, ParameterSet[]> = {
       units: 'kilometers',
     },
     {
-      caseId: 'RaceTrack-1',
+      caseId: 'Racetrack-1',
       title: 'Case i',
       description:
         'Less differentiated products (K=12, π=0.2, τ=2, σ=2). In this case (in which firms have more market power, and in which the equilibrium degree of scale economies is also larger), all runs produced only a single location.',
-      type: 'RaceTrack',
+      type: 'Racetrack',
       numLocations: 12,
       manufactureShare: 0.2,
       transportationCost: 2,
@@ -36,11 +36,11 @@ export const DEFAULT_PARAMS_BY_CASE: Record<ProjectType, ParameterSet[]> = {
       units: 'kilometers',
     },
     {
-      caseId: 'RaceTrack-2',
+      caseId: 'Racetrack-2',
       title: 'Case ii',
       description:
         'A larger manufacturing share (K=12, π=0.4, τ=2, σ=4). In this case, in which one would expect the backward and forward linkages driving agglomeration to be stronger, we also consistently get only a single location.',
-      type: 'RaceTrack',
+      type: 'Racetrack',
       numLocations: 12,
       manufactureShare: 0.4,
       transportationCost: 2,
@@ -48,11 +48,11 @@ export const DEFAULT_PARAMS_BY_CASE: Record<ProjectType, ParameterSet[]> = {
       units: 'kilometers',
     },
     {
-      caseId: 'RaceTrack-3',
+      caseId: 'Racetrack-3',
       title: 'Case iii',
       description:
         'Lower transport costs (K=12, π=0.2, τ=1, σ=4). In this case we would expect there to be less incentive to set up multiple urban centers, and again all ten runs produce only a single location.',
-      type: 'RaceTrack',
+      type: 'Racetrack',
       numLocations: 12,
       manufactureShare: 0.2,
       transportationCost: 1,
@@ -134,5 +134,4 @@ export const DEFAULT_PARAMS_BY_CASE: Record<ProjectType, ParameterSet[]> = {
       units: 'degrees',
     },
   ],
-  [ProjectTypes.Resource]: [],
 };

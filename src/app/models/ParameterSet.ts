@@ -1,10 +1,12 @@
+import { ProjectType } from '../services/database/ProjectType';
+
 export interface ParameterSet {
   /* a country has her locations in this vector */
   caseId: string;
   title: string;
   description: string;
 
-  type: string;
+  type: ProjectType;
   numLocations: number;
 
   /*  ratio of workers */

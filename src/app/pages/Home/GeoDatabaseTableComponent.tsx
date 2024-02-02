@@ -55,10 +55,10 @@ export const GeoDatabaseTableComponent = (props: DatabaseItemIndexPros) => {
         </Tabs>
       </Box>
       <TabPanel value={props.type} index={0}>
-        {props.items[0]}
+        {props.type == 0 && props.items[0]}
       </TabPanel>
       <TabPanel value={props.type} index={1}>
-        {props.items[1]}
+        {props.type == 1 && props.items[1]}
       </TabPanel>
       <Outlet />
     </Box>

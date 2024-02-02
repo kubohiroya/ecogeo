@@ -14,12 +14,7 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import {
-  Link,
-  useLoaderData,
-  useLocation,
-  useNavigate,
-} from 'react-router-dom';
+import { useLoaderData, useLocation, useNavigate } from 'react-router-dom';
 import { DatabaseItemMenu } from '../DatabaseItemMenu/DatabaseItemMenu';
 import { GeoDatabaseEntity } from '../../services/database/GeoDatabaseEntity';
 
@@ -27,7 +22,6 @@ import { createProjectLink } from '../../../createProjectLink';
 import { ProjectTypes } from '../../services/database/ProjectType';
 import { DOCUMENT_TITLE } from '../../Constants';
 import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
-import { ResourceItemLoader } from '../ResourceItemsComponent/ResourceItemLoader';
 
 export const ProjectItemsComponent = () => {
   const { projects } = useLoaderData() as {
@@ -58,7 +52,7 @@ export const ProjectItemsComponent = () => {
 
   useEffect(() => {
     GeoDatabaseTable.getSingleton().on('changes', async (changes) => {
-      setProjectItems((await ResourceItemLoader(undefined)).resources);
+      // setProjectItems((await ResourceItemLoader(undefined)).resources);
     });
   }, []);
 
@@ -141,16 +135,16 @@ export const ProjectItemsComponent = () => {
                 .map((item) => (
                   <TableRow key={item.uuid}>
                     <TableCell>
-                      <IconButton
-                        color={'primary'}
-                        size={'large'}
-                        onClick={() => navigate(createProjectLink(item))}
-                      >
-                        {typeToIcon[item.type]}
-                      </IconButton>
+                      <a href={createProjectLink(item)} target="_blank">
+                        <IconButton color={'primary'} size={'large'}>
+                          {typeToIcon[item.type]}
+                        </IconButton>
+                      </a>
                     </TableCell>
                     <TableCell>
-                      <Link to={createProjectLink(item)}>{item.name}</Link>
+                      <a href={createProjectLink(item)} target="_blank">
+                        {item.name}
+                      </a>
                     </TableCell>
                     <TableCell>
                       <pre>{item.description}</pre>

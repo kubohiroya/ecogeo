@@ -5,7 +5,7 @@ export type FileLoaderRequest =
       type: FileLoaderRequestType.start;
       value: {
         dbName: string;
-        fileList: FileList;
+        file: File;
       };
     }
   | {

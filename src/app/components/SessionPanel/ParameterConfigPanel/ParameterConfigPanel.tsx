@@ -19,6 +19,7 @@ import { sessionStateAtom } from '../../../pages/Sim/SimLoader';
 export interface ParameterConfigPanelProps {
   type: ProjectType;
   onParameterSetChange: (caseId: string, commit: boolean) => void;
+  setNumLocations: (numLocations: number, commit: boolean) => void;
 }
 
 const StyledParameterConfigPanel = styled.div`
@@ -59,6 +60,8 @@ export const ParameterConfigPanel = forwardRef<
 
   const onNumLocationsChange = useCallback(
     (event: Event | SyntheticEvent, value: number | number[]) => {
+      props.setNumLocations(value as number, false);
+      /*
       setSessionState(
         (draft) => {
           draft.parameterSet.numLocations = value as number;
@@ -66,11 +69,14 @@ export const ParameterConfigPanel = forwardRef<
         false,
         'set parameter',
       );
+       */
     },
     [setSessionState],
   );
   const onNumLocationsChangeCommitted = useCallback(
     (event: Event | SyntheticEvent, value: number | number[]) => {
+      props.setNumLocations(value as number, true);
+      /*
       setSessionState(
         (draft) => {
           draft.parameterSet.numLocations = value as number;
@@ -78,6 +84,7 @@ export const ParameterConfigPanel = forwardRef<
         true,
         'set parameter',
       );
+       */
     },
     [setSessionState],
   );

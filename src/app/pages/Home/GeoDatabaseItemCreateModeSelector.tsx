@@ -40,7 +40,7 @@ export const GeoDatabaseItemCreateModeSelector = (
   useEffect(() => {
     document.title =
       DOCUMENT_TITLE +
-      (props.type == GeoDatabaseTableType.resources
+      (props.type === GeoDatabaseTableType.resources
         ? ' - Select Resource Type'
         : ' - Select Project Type');
   }, []);

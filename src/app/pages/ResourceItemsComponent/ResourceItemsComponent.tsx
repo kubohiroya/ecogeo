@@ -14,12 +14,7 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import {
-  Link,
-  useLoaderData,
-  useLocation,
-  useNavigate,
-} from 'react-router-dom';
+import { Link, useLoaderData, useNavigate } from 'react-router-dom';
 import { DatabaseItemMenu } from '../DatabaseItemMenu/DatabaseItemMenu';
 import { ResourceTypes } from '../../models/ResourceEntity';
 import 'dexie-observable';
@@ -30,26 +25,19 @@ export const ResourceItemsComponent = () => {
     resources: GeoDatabaseEntity[];
   };
 
-  //const [resourceItems, setResourceItems] =
-  //  React.useState<GeoDatabaseEntity[]>(resources);
-
   const navigate = useNavigate();
 
-  const location = useLocation();
+  console.log(
+    `hash=${window.location.hash}`,
+    window.location.hash.endsWith('/resources'),
+    resources.length === 0,
+  );
 
   useEffect(() => {
-    if (location.hash.endsWith('/resources') && resources.length === 0) {
+    if (window.location.hash.endsWith('/resources') && resources.length === 0) {
       return navigate('/resources/new');
     }
-  }, []);
-
-  /*
-  useEffect(() => {
-    GeoDatabaseTable.getSingleton().on('changes', async (changes) => {
-      // setResourceItems((await ResourceItemLoader(undefined)).resources);
-    });
-  }, []);
-   */
+  }, [window.location.hash, navigate, resources.length]);
 
   const speedDialActions = [
     {

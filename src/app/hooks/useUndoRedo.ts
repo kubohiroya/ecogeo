@@ -107,7 +107,7 @@ export const useUndoRedo = <T extends Objectish>(
         staging.length > 0 ? staging : [newPathPairItem],
       );
 
-      if (newPatchPair == null) {
+      if (newPatchPair === null) {
         return;
       }
 

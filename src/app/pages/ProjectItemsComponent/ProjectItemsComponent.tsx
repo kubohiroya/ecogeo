@@ -33,8 +33,8 @@ export const ProjectItemsComponent = () => {
     projects: GeoDatabaseEntity[];
   };
 
-  const [projectItems, setProjectItems] =
-    React.useState<GeoDatabaseEntity[]>(projects);
+  //const [projectItems, setProjectItems] =
+  //  React.useState<GeoDatabaseEntity[]>(projects);
 
   const navigate = useNavigate();
 
@@ -50,10 +50,10 @@ export const ProjectItemsComponent = () => {
   const location = useLocation();
 
   useEffect(() => {
-    if (location.hash.endsWith('/projects') && projects.length == 0) {
+    if (location.hash.endsWith('/projects') && projects.length === 0) {
       return navigate('/projects/new');
     }
-  }, []);
+  }, [location.hash, navigate, projects.length]);
 
   useEffect(() => {
     GeoDatabaseTable.getSingleton().on('changes', async (changes) => {
@@ -135,7 +135,7 @@ export const ProjectItemsComponent = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {projectItems
+              {projects
                 .filter((item) => item.type !== 'Resource')
                 .map((item) => (
                   <TableRow key={item.uuid}>

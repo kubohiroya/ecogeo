@@ -39,7 +39,7 @@ const useInterval = <T>(props: {
       intervalRef.current = null;
     }
 
-    if (isStarted && currentInterval.current != interval) {
+    if (isStarted && currentInterval.current !== interval) {
       currentInterval.current = interval;
       intervalRef.current = setInterval(() => {
         const tickResult = props.tick();

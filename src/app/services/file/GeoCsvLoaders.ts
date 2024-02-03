@@ -78,13 +78,13 @@ export const loadCsvFile = async <T>({
             return true;
           }
         }) || [null, null];
-        if (loader == null) {
+        if (loader === null) {
           throw new Error('loader not found:' + line);
         }
         selectedLoader = loader;
         continue;
       }
-      if (selectedLoader == null) {
+      if (selectedLoader === null) {
         throw new Error('loader not selected');
       }
       const entity = (await selectedLoader.createEntity(db, line)) as T | null;
@@ -111,7 +111,7 @@ export const loadCsvFile = async <T>({
       });
     }
   }
-  if (selectedLoader == null) {
+  if (selectedLoader === null) {
     throw new Error('loader not selected');
   }
   if (entityItemBuffer.length > 0) {

@@ -21,7 +21,7 @@ fn main(@builtin(global_invocation_id) global_id: vec3<u32>) {
     for (var i: u32 = start; i < end; i++) {
         let rowIndex = i / numVertices;
         let colIndex = i % numVertices;
-        if (rowIndex == colIndex) {
+        if (rowIndex === colIndex) {
            adjacencyMatrix[i] = f32(0); // 対角要素には0をセット
         } else {
             adjacencyMatrix[i] = f32(1e10); // 辺を持たない要素には1e10をセット
@@ -160,7 +160,7 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>, @builtin(local_inv
     // 配列の各要素を処理
     for (var i: u32 = 0; i < arrayLength(&distanceMatrix); i = i + 1) {
         let value = distanceMatrix[i];
-        if (value != 1e10 && value > max_value) {
+        if (value !== 1e10 && value > max_value) {
             max_value = value;
         }
     }
@@ -303,7 +303,7 @@ export const updateGPUResources = (
   },
   vertices: City[],
   edges: Edge[],
-  transportationCost: number
+  transportationCost: number,
 ) => {
   const verticesMap = new Map<number, number>();
   vertices.forEach((vertex, index) => {
@@ -320,27 +320,27 @@ export const updateGPUResources = (
       const source = verticesMap.get(e.source);
       const target = verticesMap.get(e.target);
       return [
-        source != undefined ? source : -1,
-        target != undefined ? target : -1,
+        source !== undefined ? source : -1,
+        target !== undefined ? target : -1,
       ];
-    })
+    }),
   );
   device.queue.writeBuffer(vertexBuffer, 0, vertexDataF32);
   device.queue.writeBuffer(edgeBuffer, 0, edgeDataU32);
 
-  if (transportationCost != undefined) {
+  if (transportationCost !== undefined) {
     const logTransportationCost = Math.log(transportationCost);
     device.queue.writeBuffer(
       transportationCostBuffer,
       0,
-      new Float32Array([logTransportationCost])
+      new Float32Array([logTransportationCost]),
     );
   }
 };
 
 export const createGPUResources = async (
   numVertices: number,
-  numEdges: number
+  numEdges: number,
 ) => {
   const device = await getGPUDevice();
   const bindGroupLayout = createBindGroupLayout(device);
@@ -373,7 +373,7 @@ export const createGPUResources = async (
   device.queue.writeBuffer(
     numVerticesBuffer,
     0,
-    new Uint32Array([numVertices])
+    new Uint32Array([numVertices]),
   );
   const numEdgesBuffer = device.createBuffer({
     size: 4,
@@ -575,7 +575,7 @@ const createCommandEncoder = (
   computePipeline: GPUComputePipeline,
   workgroupCountX: number,
   workgroupCountY?: number,
-  workgroupCountZ?: number
+  workgroupCountZ?: number,
 ) => {
   const commandEncoder = device.createCommandEncoder();
   const passEncoder = commandEncoder.beginComputePass();
@@ -584,7 +584,7 @@ const createCommandEncoder = (
   passEncoder.dispatchWorkgroups(
     workgroupCountX,
     workgroupCountY,
-    workgroupCountZ
+    workgroupCountZ,
   );
   passEncoder.end();
   return commandEncoder;
@@ -592,7 +592,7 @@ const createCommandEncoder = (
 
 // -------------------------------------------- //
 export const prepareAdjacencyMatrix = (
-  resources: GPUResourcesType
+  resources: GPUResourcesType,
 ): {
   adjacencyMatrixReadBuffer: GPUBuffer;
   gpuCommandBuffers: GPUCommandBuffer[];
@@ -603,14 +603,14 @@ export const prepareAdjacencyMatrix = (
       0,
       resources.bindGroup,
       resources.initializeAdjacencyMatrixPipeline,
-      Math.ceil(resources.matrixSize / 64)
+      Math.ceil(resources.matrixSize / 64),
     ),
     createCommandEncoder(
       resources.device,
       0,
       resources.bindGroup,
       resources.createAdjacencyMatrixPipeline,
-      Math.max(1, Math.ceil(resources.numEdges / 64))
+      Math.max(1, Math.ceil(resources.numEdges / 64)),
     ),
   ];
 
@@ -625,7 +625,7 @@ export const prepareAdjacencyMatrix = (
     0,
     adjacencyMatrixReadBuffer, // データをコピーする読み取り用バッファ
     0,
-    resources.matrixSize // コピーするデータのサイズ
+    resources.matrixSize, // コピーするデータのサイズ
   );
 
   return {
@@ -636,23 +636,23 @@ export const prepareAdjacencyMatrix = (
 
 export const readAdjacencyMatrix = async (
   adjacencyMatrixReadBuffer: GPUBuffer,
-  numVertices: number
+  numVertices: number,
 ): Promise<number[][]> => {
   await adjacencyMatrixReadBuffer.mapAsync(GPUMapMode.READ);
   const adjacencyArray = new Float32Array(
-    adjacencyMatrixReadBuffer.getMappedRange()
+    adjacencyMatrixReadBuffer.getMappedRange(),
   );
   // 距離行列を2次元配列に変換
   const adjacencyMatrix: number[][] = create2DArray(
     numVertices,
-    (i: number, j: number) => adjacencyArray[i * numVertices + j]
+    (i: number, j: number) => adjacencyArray[i * numVertices + j],
   );
   adjacencyMatrixReadBuffer.unmap();
   return adjacencyMatrix;
 };
 
 export const calculateAdjacencyMatrix = async (
-  resources: GPUResourcesType
+  resources: GPUResourcesType,
 ): Promise<number[][]> => {
   const { adjacencyMatrixReadBuffer, gpuCommandBuffers } =
     await prepareAdjacencyMatrix(resources);
@@ -663,7 +663,7 @@ export const calculateAdjacencyMatrix = async (
 // -------------------------------------- //
 
 export const prepareDistanceAndPredecessorMatrix = (
-  resources: GPUResourcesType
+  resources: GPUResourcesType,
 ): {
   distanceMatrixReadBuffer: GPUBuffer;
   predecessorMatrixReadBuffer: GPUBuffer;
@@ -674,7 +674,7 @@ export const prepareDistanceAndPredecessorMatrix = (
     0,
     resources.bindGroup,
     resources.createDistanceAndPredecessorMatrixPipeline,
-    Math.ceil(resources.numVertices / 64)
+    Math.ceil(resources.numVertices / 64),
   );
 
   const distanceMatrixReadBuffer = resources.device.createBuffer({
@@ -692,14 +692,14 @@ export const prepareDistanceAndPredecessorMatrix = (
     0,
     distanceMatrixReadBuffer, // ここを書き換え
     0,
-    resources.matrixSize // ここを書き換え
+    resources.matrixSize, // ここを書き換え
   );
   commandEncoder.copyBufferToBuffer(
     resources.predecessorMatrixBuffer, // ここを書き換え
     0,
     predecessorMatrixReadBuffer, // ここを書き換え
     0,
-    resources.matrixSize // ここを書き換え
+    resources.matrixSize, // ここを書き換え
   );
 
   const gpuCommandBuffer = commandEncoder.finish();
@@ -713,16 +713,16 @@ export const prepareDistanceAndPredecessorMatrix = (
 
 export const readDistanceMatrix = async (
   distanceMatrixReadBuffer: GPUBuffer,
-  numVertices: number
+  numVertices: number,
 ): Promise<number[][]> => {
   await distanceMatrixReadBuffer.mapAsync(GPUMapMode.READ);
   const distanceArray = new Float32Array(
-    distanceMatrixReadBuffer.getMappedRange()
+    distanceMatrixReadBuffer.getMappedRange(),
   );
   // 距離行列を2次元配列に変換
   const distanceMatrix: number[][] = create2DArray(
     numVertices,
-    (i: number, j: number) => distanceArray[i * numVertices + j]
+    (i: number, j: number) => distanceArray[i * numVertices + j],
   );
   distanceMatrixReadBuffer.unmap();
   return distanceMatrix;
@@ -730,16 +730,16 @@ export const readDistanceMatrix = async (
 
 export const readPredecessorMatrix = async (
   predecessorMatrixReadBuffer: GPUBuffer,
-  numVertices: number
+  numVertices: number,
 ): Promise<number[][]> => {
   await predecessorMatrixReadBuffer.mapAsync(GPUMapMode.READ);
   const predecessorArray = new Int32Array(
-    predecessorMatrixReadBuffer.getMappedRange()
+    predecessorMatrixReadBuffer.getMappedRange(),
   );
   // 距離行列を2次元配列に変換
   const predecessorMatrix: number[][] = create2DArray(
     numVertices,
-    (i: number, j: number) => predecessorArray[i * numVertices + j]
+    (i: number, j: number) => predecessorArray[i * numVertices + j],
   );
   predecessorMatrixReadBuffer.unmap();
   return predecessorMatrix;
@@ -755,11 +755,11 @@ export const calculateDistanceMatrix = (resources: GPUResourcesType) => {
   return {
     distanceMatrix: readDistanceMatrix(
       distanceMatrixReadBuffer,
-      resources.numVertices
+      resources.numVertices,
     ),
     predecessorMatrix: readPredecessorMatrix(
       predecessorMatrixReadBuffer,
-      resources.numVertices
+      resources.numVertices,
     ),
   };
 };
@@ -767,7 +767,7 @@ export const calculateDistanceMatrix = (resources: GPUResourcesType) => {
 // -------------------------------------- //
 
 export const prepareFindMaxValue = (
-  resources: GPUResourcesType
+  resources: GPUResourcesType,
 ): {
   maxValueReadBuffer: GPUBuffer;
   gpuCommandBuffer: GPUCommandBuffer;
@@ -777,7 +777,7 @@ export const prepareFindMaxValue = (
     0,
     resources.bindGroup,
     resources.findMaxValuePipeline,
-    1
+    1,
   );
 
   // データをコピーするための読み取り用のバッファを作成
@@ -791,7 +791,7 @@ export const prepareFindMaxValue = (
     0,
     maxValueReadBuffer, // データをコピーする読み取り用バッファ
     0,
-    4 // コピーするデータのサイズ
+    4, // コピーするデータのサイズ
   );
 
   const gpuCommandBuffer = commandEncoder.finish();
@@ -803,7 +803,7 @@ export const prepareFindMaxValue = (
 };
 
 export const readMaxValue = async (
-  maxValueReadBuffer: GPUBuffer
+  maxValueReadBuffer: GPUBuffer,
 ): Promise<number> => {
   await maxValueReadBuffer.mapAsync(GPUMapMode.READ);
   const maxValueArray = new Float32Array(maxValueReadBuffer.getMappedRange());
@@ -822,7 +822,7 @@ export const findMaxValue = (resources: GPUResourcesType): Promise<number> => {
 // -------------------------------------- //
 
 export const prepareTransportationCostMatrix = (
-  resources: GPUResourcesType
+  resources: GPUResourcesType,
 ): {
   transportationCostMatrixReadBuffer: GPUBuffer;
   gpuCommandBuffer: GPUCommandBuffer;
@@ -832,7 +832,7 @@ export const prepareTransportationCostMatrix = (
     0,
     resources.bindGroup,
     resources.createTransportationCostMatrixPipeline,
-    Math.ceil((resources.numVertices * resources.numVertices) / 64)
+    Math.ceil((resources.numVertices * resources.numVertices) / 64),
   );
 
   // データをコピーするための読み取り用のバッファを作成
@@ -846,7 +846,7 @@ export const prepareTransportationCostMatrix = (
     0,
     transportationCostMatrixReadBuffer, // データをコピーする読み取り用バッファ
     0,
-    resources.matrixSize // コピーするデータのサイズ
+    resources.matrixSize, // コピーするデータのサイズ
   );
 
   const gpuCommandBuffer = commandEncoder.finish();
@@ -859,23 +859,24 @@ export const prepareTransportationCostMatrix = (
 
 export const readTransportationCostMatrix = async (
   transportationCostMatrixReadBuffer: GPUBuffer,
-  numVertices: number
+  numVertices: number,
 ): Promise<number[][]> => {
   await transportationCostMatrixReadBuffer.mapAsync(GPUMapMode.READ);
   const transportationCostMatrixArray = new Float32Array(
-    transportationCostMatrixReadBuffer.getMappedRange()
+    transportationCostMatrixReadBuffer.getMappedRange(),
   );
   // 距離行列を2次元配列に変換
   const transportationCostMatrix: number[][] = create2DArray(
     numVertices,
-    (i: number, j: number) => transportationCostMatrixArray[i * numVertices + j]
+    (i: number, j: number) =>
+      transportationCostMatrixArray[i * numVertices + j],
   );
   transportationCostMatrixReadBuffer.unmap();
   return transportationCostMatrix;
 };
 
 export const calculateTransportationCostMatrix = (
-  resources: GPUResourcesType
+  resources: GPUResourcesType,
 ): Promise<number[][]> => {
   const { transportationCostMatrixReadBuffer, gpuCommandBuffer } =
     prepareTransportationCostMatrix(resources);
@@ -884,7 +885,7 @@ export const calculateTransportationCostMatrix = (
 
   return readTransportationCostMatrix(
     transportationCostMatrixReadBuffer,
-    resources.numVertices
+    resources.numVertices,
   );
 };
 
@@ -898,8 +899,8 @@ export class GPUMatrixEngine extends AbstractMatrixEngine {
   async update(locations: City[], edges: Edge[], transportationCost: number) {
     if (
       !this.resources ||
-      this.resources.numVertices != locations.length ||
-      this.resources.numEdges != edges.length
+      this.resources.numVertices !== locations.length ||
+      this.resources.numEdges !== edges.length
     ) {
       this.resources = await createGPUResources(locations.length, edges.length);
     }
@@ -910,7 +911,7 @@ export class GPUMatrixEngine extends AbstractMatrixEngine {
   async createAdjacencyMatrix(
     locations: City[],
     edges: Edge[],
-    transportationCost: number
+    transportationCost: number,
   ) {
     const resources = await this.update(locations, edges, transportationCost);
 
@@ -923,7 +924,7 @@ export class GPUMatrixEngine extends AbstractMatrixEngine {
 
     const adjacencyMatrix = await readAdjacencyMatrix(
       adjacencyMatrixReadBuffer,
-      resources.numVertices
+      resources.numVertices,
     );
 
     return (this.adjacencyMatrix = adjacencyMatrix);
@@ -932,7 +933,7 @@ export class GPUMatrixEngine extends AbstractMatrixEngine {
   async createDistanceAndPredecessorMatrix(
     locations: City[],
     edges: Edge[],
-    transportationCost: number
+    transportationCost: number,
   ): Promise<[number[][], number[][]]> {
     const resources = await this.update(locations, edges, transportationCost);
 
@@ -950,20 +951,20 @@ export class GPUMatrixEngine extends AbstractMatrixEngine {
     } = prepareDistanceAndPredecessorMatrix(resources);
 
     resources.device.queue.submit(
-      adjacencyCommands.concat(distanceMatrixAndPredecessorMatrixCommands)
+      adjacencyCommands.concat(distanceMatrixAndPredecessorMatrixCommands),
     );
 
     const adjacencyMatrix = await readAdjacencyMatrix(
       adjacencyMatrixReadBuffer,
-      resources.numVertices
+      resources.numVertices,
     );
     const distanceMatrix = await readDistanceMatrix(
       distanceMatrixReadBuffer,
-      resources.numVertices
+      resources.numVertices,
     );
     const predecessorMatrix = await readPredecessorMatrix(
       predecessorMatrixReadBuffer,
-      resources.numVertices
+      resources.numVertices,
     );
 
     this.adjacencyMatrix = adjacencyMatrix;
@@ -976,7 +977,7 @@ export class GPUMatrixEngine extends AbstractMatrixEngine {
   async createTransportationCostMatrix(
     locations: City[],
     edges: Edge[],
-    transportationCost: number
+    transportationCost: number,
   ) {
     const resources = await this.update(locations, edges, transportationCost);
 
@@ -1002,24 +1003,24 @@ export class GPUMatrixEngine extends AbstractMatrixEngine {
     resources.device.queue.submit(
       adjacencyCommands
         .concat(distanceMatrixAndPredecessorMatrixCommands)
-        .concat([maxValueCommands, transportationCostCommands])
+        .concat([maxValueCommands, transportationCostCommands]),
     );
 
     const adjacencyMatrix = await readAdjacencyMatrix(
       adjacencyMatrixReadBuffer,
-      resources.numVertices
+      resources.numVertices,
     );
     const distanceMatrix = await readDistanceMatrix(
       distanceMatrixReadBuffer,
-      resources.numVertices
+      resources.numVertices,
     );
     const predecessorMatrix = await readPredecessorMatrix(
       predecessorMatrixReadBuffer,
-      resources.numVertices
+      resources.numVertices,
     );
     const transportationCostMatrix = await readTransportationCostMatrix(
       transportationCostMatrixReadBuffer,
-      resources.numVertices
+      resources.numVertices,
     );
 
     this.adjacencyMatrix = adjacencyMatrix;

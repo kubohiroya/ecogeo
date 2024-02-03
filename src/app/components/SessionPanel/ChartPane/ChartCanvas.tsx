@@ -92,7 +92,7 @@ export const ChartCanvas = React.memo(
         y: number;
       } | null,
     ): number | null => {
-      if (!locations || locations.length == 0) {
+      if (!locations || locations.length === 0) {
         return null;
       }
 
@@ -127,7 +127,7 @@ export const ChartCanvas = React.memo(
       if (!config) {
         throw new Error('ERROR ChartTypeKey=' + chartTypeKey);
       }
-      if (!locations || locations.length == 0) {
+      if (!locations || locations.length === 0) {
         return;
       }
 
@@ -248,7 +248,7 @@ export const ChartCanvas = React.memo(
         function drawBar() {
           const isSelected = selectedIndices.includes(index);
           const barValue = config.bar ? config.bar(location) : null;
-          if (barValue != null) {
+          if (barValue !== null) {
             const style =
               barValue < 0 ? '#88e' : isSelected ? '#ff8' : 'rgb(25,118,210)';
             //ctx.fillStyle =  ? '#ff3' : 'rgb(25,118,210)';
@@ -267,11 +267,11 @@ export const ChartCanvas = React.memo(
         ctx.beginPath();
         locations.forEach((location, index) => {
           const lineValue = config.line ? config.line(location) : null;
-          if (lineValue != null) {
+          if (lineValue !== null) {
             const y = canvas.height - labelHeight - convertY(lineValue);
             ctx.strokeStyle = '#88e';
             ctx.lineWidth = 2;
-            if (index == 0) {
+            if (index === 0) {
               ctx.moveTo(labelWidth + (index + 0.5) * wScale, y);
             } else {
               ctx.lineTo(labelWidth + (index + 0.5) * wScale, y);
@@ -343,9 +343,9 @@ export const ChartCanvas = React.memo(
 
       function drawFocusedItemTooltip(index: number | null) {
         if (
-          index != null &&
+          index !== null &&
           focusedIndices.includes(index) &&
-          pointerPosition != null
+          pointerPosition !== null
         ) {
           ctx.fillStyle = 'rgb(10,10,10,0.3)';
           ctx.fillRect(
@@ -371,7 +371,7 @@ export const ChartCanvas = React.memo(
       (event: MouseEvent) => {
         const canvas = canvasRef.current!;
         const focusedIndex = getIndex({ x: event.offsetX, y: event.offsetY });
-        if (focusedIndex == null) {
+        if (focusedIndex === null) {
           onUnfocus(focusedIndices);
         } else if (!focusedIndices.includes(focusedIndex)) {
           canvas.style.cursor = 'pointer';
@@ -400,7 +400,7 @@ export const ChartCanvas = React.memo(
       (event: MouseEvent) => {
         const canvas = canvasRef.current!;
         const selectedIndex = getIndex({ x: event.offsetX, y: event.offsetY });
-        if (selectedIndex != null) {
+        if (selectedIndex !== null) {
           if (selectedIndices.includes(selectedIndex)) {
             onUnselect(selectedIndices, [selectedIndex]);
           } else {

@@ -7,7 +7,7 @@ import { computeShortestPaths } from './floydWarshall';
 
 export function createAdjacencyMatrix(locations: City[], edges: Edge[]) {
   const matrix = create2DArray(locations.length, (i, j) =>
-    i != j ? Number.POSITIVE_INFINITY : 0.0,
+    i !== j ? Number.POSITIVE_INFINITY : 0.0,
   );
 
   const locationMap = new Map<number, number>(
@@ -24,7 +24,7 @@ export function createAdjacencyMatrix(locations: City[], edges: Edge[]) {
       ));
     const sourceIndex = locationMap.get(edge.source);
     const targetIndex = locationMap.get(edge.target);
-    if (sourceIndex != undefined && targetIndex != undefined) {
+    if (sourceIndex !== undefined && targetIndex !== undefined) {
       matrix[sourceIndex][targetIndex] = distance;
       matrix[targetIndex][sourceIndex] = distance;
     }
@@ -35,7 +35,7 @@ export function createAdjacencyMatrix(locations: City[], edges: Edge[]) {
 
 export function createTransportationCostMatrix(
   distanceMatrix: number[][],
-  transportationCost: number
+  transportationCost: number,
 ): number[][] {
   const numLocations = distanceMatrix.length;
   let max = 0;
@@ -43,7 +43,7 @@ export function createTransportationCostMatrix(
     if (distanceMatrix && i < distanceMatrix.length) {
       for (let j = 0; j < numLocations; j++) {
         if (j < distanceMatrix[i].length) {
-          if (distanceMatrix[i][j] != Number.POSITIVE_INFINITY) {
+          if (distanceMatrix[i][j] !== Number.POSITIVE_INFINITY) {
             max = Math.max(distanceMatrix[i][j], max);
           }
         }
@@ -52,10 +52,10 @@ export function createTransportationCostMatrix(
   }
 
   const matrix = create2DArray(numLocations, (i, j) =>
-    i != j ? Number.POSITIVE_INFINITY : 0.0
+    i !== j ? Number.POSITIVE_INFINITY : 0.0,
   );
 
-  if (max == 0) {
+  if (max === 0) {
     return matrix;
   }
 
@@ -65,10 +65,10 @@ export function createTransportationCostMatrix(
     if (distanceMatrix && i < distanceMatrix.length) {
       for (let j = i; j < numLocations; j++) {
         if (j < distanceMatrix[i].length) {
-          if (distanceMatrix[i][j] != Number.POSITIVE_INFINITY) {
+          if (distanceMatrix[i][j] !== Number.POSITIVE_INFINITY) {
             const dist = distanceMatrix[i][j] / max;
             matrix[j][i] = matrix[i][j] = Math.exp(
-              logTransportationCost * dist
+              logTransportationCost * dist,
             );
           } else {
             matrix[j][i] = matrix[i][j] = Number.POSITIVE_INFINITY;
@@ -83,17 +83,17 @@ export function createTransportationCostMatrix(
 export class CPUMatrixEngine extends AbstractMatrixEngine {
   createAdjacencyMatrix(locations: City[], edges: Edge[]) {
     return Promise.resolve(
-      (this.adjacencyMatrix = createAdjacencyMatrix(locations, edges))
+      (this.adjacencyMatrix = createAdjacencyMatrix(locations, edges)),
     );
   }
 
   async createDistanceAndPredecessorMatrix(
     locations: City[],
     edges: Edge[],
-    transportationCost: number
+    transportationCost: number,
   ): Promise<[number[][], number[][]]> {
     const [distanceMatrix, predecessorMatrix] = computeShortestPaths(
-      await this.getAdjacencyMatrix(locations, edges, transportationCost)
+      await this.getAdjacencyMatrix(locations, edges, transportationCost),
     );
     this.distanceMatrix = distanceMatrix;
     this.predecessorMatrix = predecessorMatrix;
@@ -103,11 +103,11 @@ export class CPUMatrixEngine extends AbstractMatrixEngine {
   async createTransportationCostMatrix(
     locations: City[],
     edges: Edge[],
-    transportationCost: number
+    transportationCost: number,
   ) {
     const transportationCostMatrix = createTransportationCostMatrix(
       await this.getDistanceMatrix(locations, edges, transportationCost),
-      transportationCost
+      transportationCost,
     );
     this.transportationCostMatrix = transportationCostMatrix;
     return Promise.resolve(transportationCostMatrix);
@@ -116,14 +116,14 @@ export class CPUMatrixEngine extends AbstractMatrixEngine {
   async createMatrices(
     locations: City[],
     edges: Edge[],
-    transportationCost: number
+    transportationCost: number,
   ) {
     const adjacencyMatrix = createAdjacencyMatrix(locations, edges);
     const [distanceMatrix, predecessorMatrix] =
       computeShortestPaths(adjacencyMatrix);
     const transportationCostMatrix = createTransportationCostMatrix(
       distanceMatrix,
-      transportationCost
+      transportationCost,
     );
     this.adjacencyMatrix = adjacencyMatrix;
     this.distanceMatrix = distanceMatrix;

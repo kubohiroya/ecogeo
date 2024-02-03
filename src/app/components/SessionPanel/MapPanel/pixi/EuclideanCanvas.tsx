@@ -62,7 +62,7 @@ export const EuclideanCanvas = React.memo((props: GraphCanvasProps) => {
   const selectedIndices = props.selectedIndices;
 
   const draggingLocation =
-    props.draggingIndex != null
+    props.draggingIndex !== null
       ? sessionState.locations[props.draggingIndex]
       : null;
 
@@ -243,7 +243,7 @@ export const EuclideanCanvas = React.memo((props: GraphCanvasProps) => {
             width={props.width}
             height={props.height}
           />
-          {focusedIndices.length == 2 &&
+          {focusedIndices.length === 2 &&
             props.matrices.distanceMatrix &&
             focusedIndices[0] < props.matrices.distanceMatrix.length &&
             focusedIndices[1] <
@@ -264,7 +264,7 @@ export const EuclideanCanvas = React.memo((props: GraphCanvasProps) => {
                 predecessorMatrix={props.matrices.predecessorMatrix}
               />
             )}
-          {selectedIndices.length == 2 &&
+          {selectedIndices.length === 2 &&
             !isInfinity(
               props.matrices.distanceMatrix![selectedIndices[0]][
                 selectedIndices[1]

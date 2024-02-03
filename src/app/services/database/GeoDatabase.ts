@@ -66,11 +66,11 @@ export class GeoDatabase extends Dexie {
       targetTables.map(async (db) => {
         const promises: Promise<GeoRegionEntity[]>[] = [];
         for (let z = zoom; z >= 0; z--) {
-          if (mortonNumbers[zoom].length == 1) {
+          if (mortonNumbers[zoom].length === 1) {
             promises.push(
               db.where(`z${zoom}`).anyOf(mortonNumbers[zoom][0]).toArray(),
             );
-            if (mortonNumbers[zoom][0].length == 1) {
+            if (mortonNumbers[zoom][0].length === 1) {
               break;
             }
           } else {
@@ -78,7 +78,7 @@ export class GeoDatabase extends Dexie {
               db
                 .where(`z${zoom}`)
                 .anyOf(
-                  mortonNumbers[zoom].length == 2
+                  mortonNumbers[zoom].length === 2
                     ? mortonNumbers[zoom][0].concat(mortonNumbers[zoom][1])
                     : mortonNumbers[zoom][0],
                 )
@@ -95,11 +95,11 @@ export class GeoDatabase extends Dexie {
     const table = this.points;
     const promises: Promise<GeoPointEntity[]>[] = [];
     for (let z = zoom; z >= 0; z--) {
-      if (mortonNumbers[zoom].length == 1) {
+      if (mortonNumbers[zoom].length === 1) {
         promises.push(
           table.where(`z${zoom}`).anyOf(mortonNumbers[zoom][0]).toArray(),
         );
-        if (mortonNumbers[zoom][0].length == 1) {
+        if (mortonNumbers[zoom][0].length === 1) {
           break;
         }
       } else {
@@ -107,7 +107,7 @@ export class GeoDatabase extends Dexie {
           table
             .where(`z${zoom}`)
             .anyOf(
-              mortonNumbers[zoom].length == 2
+              mortonNumbers[zoom].length === 2
                 ? mortonNumbers[zoom][0].concat(mortonNumbers[zoom][1])
                 : mortonNumbers[zoom][0],
             )
@@ -122,11 +122,11 @@ export class GeoDatabase extends Dexie {
     const table = this.routeSegments;
     const promises: Promise<GeoRouteSegmentEntity[]>[] = [];
     for (let z = zoom; z >= 0; z--) {
-      if (mortonNumbers[zoom].length == 1) {
+      if (mortonNumbers[zoom].length === 1) {
         promises.push(
           table.where(`z${zoom}`).anyOf(mortonNumbers[zoom][0]).toArray(),
         );
-        if (mortonNumbers[zoom][0].length == 1) {
+        if (mortonNumbers[zoom][0].length === 1) {
           break;
         }
       } else {
@@ -134,7 +134,7 @@ export class GeoDatabase extends Dexie {
           table
             .where(`z${zoom}`)
             .anyOf(
-              mortonNumbers[zoom].length == 2
+              mortonNumbers[zoom].length === 2
                 ? mortonNumbers[zoom][0].concat(mortonNumbers[zoom][1])
                 : mortonNumbers[zoom][0],
             )
@@ -175,10 +175,10 @@ export class GeoDatabase extends Dexie {
         });
 
         if (
-          source == undefined ||
-          target == undefined ||
-          source.id == undefined ||
-          target.id == undefined
+          source === undefined ||
+          target === undefined ||
+          source.id === undefined ||
+          target.id === undefined
         )
           throw new Error();
 

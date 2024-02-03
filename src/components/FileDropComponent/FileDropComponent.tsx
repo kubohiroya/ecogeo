@@ -122,9 +122,9 @@ export const FileDropComponent = (props: FileDropComponentProps) => {
       ...loadingFiles,
       [value.fileName]: value,
     }));
-    if (value.progress == 100) {
+    if (value.progress === 100) {
       const allDone = Object.values(loadingFiles).every(
-        (loadingFile) => loadingFile.progress == 100,
+        (loadingFile) => loadingFile.progress === 100,
       );
       if (allDone) {
         setFinished(true);

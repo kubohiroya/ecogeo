@@ -146,7 +146,7 @@ export const GADMGeoJsonComponent = () => {
   };
 
   const completedSteps = () => {
-    return Object.values(stepStatus).filter((task) => task == StepStatus.done)
+    return Object.values(stepStatus).filter((task) => task === StepStatus.done)
       .length;
   };
 

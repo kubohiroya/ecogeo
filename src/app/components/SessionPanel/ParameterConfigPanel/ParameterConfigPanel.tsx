@@ -173,7 +173,7 @@ export const ParameterConfigPanel = forwardRef<
           event: React.MouseEvent<HTMLElement>,
           caseId: string | null,
         ) => {
-          caseId != null && props.onParameterSetChange(caseId, true);
+          caseId !== null && props.onParameterSetChange(caseId, true);
         }}
         sx={{
           display: 'flex',

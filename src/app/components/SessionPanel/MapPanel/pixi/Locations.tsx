@@ -47,7 +47,7 @@ const Location = (props: { index: number } & LocationsProps) => {
   const onPointerMove = useCallback(
     (event: FederatedPointerEvent) => {
       event.preventDefault();
-      if (props.draggingIndex == props.index) {
+      if (props.draggingIndex === props.index) {
         event.currentTarget.cursor = 'grabbing';
         const viewport = event.currentTarget.parent!.parent as Viewport;
         const localPosition = event.getLocalPosition(viewport);
@@ -114,7 +114,7 @@ const Location = (props: { index: number } & LocationsProps) => {
         width={20}
         height={20}
         anchor={{ x: 0.5, y: 0.5 }}
-        alpha={props.draggingIndex == props.index ? 0.3 : 1.0}
+        alpha={props.draggingIndex === props.index ? 0.3 : 1.0}
         interactive={true}
         eventMode={'static'}
         onpointerdown={onDragStart}
@@ -130,7 +130,7 @@ const Location = (props: { index: number } & LocationsProps) => {
         anchor={{ x: 0.5, y: 0.5 }}
         style={StyleSize14}
       />
-      {focusingIndex == props.index && (
+      {focusingIndex === props.index && (
         <Text
           text={location.label}
           position={{ x: -10, y: 45 }}

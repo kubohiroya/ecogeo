@@ -161,7 +161,7 @@ function valueToStyle(
         valueString: '♾️',
       };
     }
-  } else if (value == 0.0) {
+  } else if (value === 0.0) {
     if (selected) {
       return {
         style: {
@@ -213,7 +213,7 @@ const onMouseEnter = (
     columnIndex: number,
   ) => void,
 ) => {
-  if (columnIndex - 1 == maxLength || rowIndex - 1 == maxLength) return;
+  if (columnIndex - 1 === maxLength || rowIndex - 1 === maxLength) return;
   onMouseEnterCallback(matrixId, rowIndex, columnIndex);
 };
 
@@ -228,7 +228,7 @@ const onMouseLeave = (
     columnIndex: number,
   ) => void,
 ) => {
-  if (columnIndex - 1 == maxLength || rowIndex - 1 == maxLength) return;
+  if (columnIndex - 1 === maxLength || rowIndex - 1 === maxLength) return;
   onMouseLeaveCallback(matrixId, rowIndex, columnIndex);
 };
 
@@ -243,7 +243,7 @@ const onMouseDown = (
     columnIndex: number,
   ) => void,
 ) => {
-  if (columnIndex - 1 == maxLength || rowIndex - 1 == maxLength) return;
+  if (columnIndex - 1 === maxLength || rowIndex - 1 === maxLength) return;
   onMouseDownCallback(matrixId, rowIndex, columnIndex);
 };
 
@@ -266,7 +266,7 @@ export const DiagonalMatrix = (props: MatrixProps) => {
         ? 'selected'
         : '',
     ]
-      .filter((value) => value != '')
+      .filter((value) => value !== '')
       .join(' ');
   }
 
@@ -276,7 +276,7 @@ export const DiagonalMatrix = (props: MatrixProps) => {
         {props.icon}
         {props.title}
       </HeaderWithIcon>
-      {props.data == null ? (
+      {props.data === null ? (
         <StyledBox>
           <CircularProgress />
         </StyledBox>
@@ -330,7 +330,7 @@ export const DiagonalMatrix = (props: MatrixProps) => {
                             }
                             className={getClassName([index])}
                           >
-                            {index == props.maxRowColLength ? '...' : index}
+                            {index === props.maxRowColLength ? '...' : index}
                           </th>
                         ),
                     )}
@@ -376,7 +376,7 @@ export const DiagonalMatrix = (props: MatrixProps) => {
                             }
                             className={getClassName([rowIndex])}
                           >
-                            {rowIndex == props.maxRowColLength
+                            {rowIndex === props.maxRowColLength
                               ? '...'
                               : rowIndex}
                           </th>

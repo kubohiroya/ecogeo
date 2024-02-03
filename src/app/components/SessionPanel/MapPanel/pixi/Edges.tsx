@@ -53,14 +53,14 @@ const EdgeItem = (props: EdgesProps & { edge: Edge; index: number }) => {
     <Container key={props.index}>
       <Graphics draw={draw} />
       {!(
-        props.focusedIndices.length == 2 &&
-        sourceIndex == props.focusedIndices[0] &&
-        targetIndex == props.focusedIndices[1]
+        props.focusedIndices.length === 2 &&
+        sourceIndex === props.focusedIndices[0] &&
+        targetIndex === props.focusedIndices[1]
       ) &&
         !(
-          props.selectedIndices.length == 2 &&
-          sourceIndex == props.selectedIndices[0] &&
-          targetIndex == props.selectedIndices[1]
+          props.selectedIndices.length === 2 &&
+          sourceIndex === props.selectedIndices[0] &&
+          targetIndex === props.selectedIndices[1]
         ) && (
           <Text
             text={props.edge.distance!.toFixed(2)}

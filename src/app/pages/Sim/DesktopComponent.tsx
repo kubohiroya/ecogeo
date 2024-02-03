@@ -68,7 +68,7 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
         .filter(
           (item) =>
             props.resources[item.i] &&
-            props.resources[item.i].type == GridItemType.FloatingPanel &&
+            props.resources[item.i].type === GridItemType.FloatingPanel &&
             !props.resources[item.i].shown,
         )
         .map((item) => [item.i, item]),
@@ -366,7 +366,7 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
         border: 'none',
       }}
     >
-      {width === 0 || layouts.length === 0 || gridItemMap == null ? (
+      {width === 0 || layouts.length === 0 || gridItemMap === null ? (
         <Box
           sx={{
             display: 'flex',

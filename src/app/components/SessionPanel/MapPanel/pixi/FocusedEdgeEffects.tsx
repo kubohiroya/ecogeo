@@ -45,9 +45,13 @@ export const FocusedEdgeEffects = (props: EdgesProps) => {
     y: number;
   }[] = [];
 
-  for (let i = 0; prevIndex != targetIndex && i < props.locations.length; i++) {
+  for (
+    let i = 0;
+    prevIndex !== targetIndex && i < props.locations.length;
+    i++
+  ) {
     const nextIndex = props.predecessorMatrix[prevIndex][targetIndex];
-    if (nextIndex == -1) break;
+    if (nextIndex === -1) break;
     const nextLocation = props.locations[nextIndex];
     if (!nextLocation) continue;
 
@@ -75,7 +79,7 @@ export const FocusedEdgeEffects = (props: EdgesProps) => {
       prevLocation &&
       props.distanceMatrix &&
       props.predecessorMatrix &&
-      props.predecessorMatrix[sourceIndex][targetIndex] != -1 &&
+      props.predecessorMatrix[sourceIndex][targetIndex] !== -1 &&
       sourceIndex < props.locations.length &&
       targetIndex < props.locations.length
     ) {

@@ -21,7 +21,7 @@ export abstract class GraphLayout {
   ): GraphLayoutTickResult {
     let maximumVelocity = Number.POSITIVE_INFINITY;
 
-    if (adjacencyMatrix == null) {
+    if (adjacencyMatrix === null) {
       return {
         points: locations.map((location) => [
           location.point[0],

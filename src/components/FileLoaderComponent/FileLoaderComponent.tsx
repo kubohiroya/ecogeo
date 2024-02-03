@@ -136,8 +136,8 @@ export const FileLoaderComponent = () => {
         <Typography>[Status:{loadingStatus}]</Typography>
         <input onChange={onFileSelectedHandler} type="file" multiple />
         Drop your CSV file here
-        {loadingStatus != FileLoadingStatus.idle &&
-          loadingStatus != FileLoadingStatus.finished}
+        {loadingStatus !== FileLoadingStatus.idle &&
+          loadingStatus !== FileLoadingStatus.finished}
         <Dialog open={true}>
           <DialogTitle> Processing File </DialogTitle>
 
@@ -158,7 +158,7 @@ export const FileLoaderComponent = () => {
                   variant="determinate"
                   value={loadingFiles[filename].progress}
                 />
-                {loadingStatus == FileLoadingStatus.loading ? (
+                {loadingStatus === FileLoadingStatus.loading ? (
                   <LinearProgress variant="indeterminate" />
                 ) : (
                   <LinearProgress variant="determinate" value={100} />
@@ -169,14 +169,14 @@ export const FileLoaderComponent = () => {
               <Button
                 variant={'contained'}
                 onClick={cancelTask}
-                disabled={loadingStatus != FileLoadingStatus.loading}
+                disabled={loadingStatus !== FileLoadingStatus.loading}
               >
                 Cancel
               </Button>
               <Button
                 variant={'contained'}
                 onClick={closeDialog}
-                disabled={loadingStatus != FileLoadingStatus.finished}
+                disabled={loadingStatus !== FileLoadingStatus.finished}
               >
                 Close
               </Button>

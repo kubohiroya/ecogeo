@@ -185,7 +185,7 @@ export const MatrixSetPanel = forwardRef<
         <DiagonalMatrix
           matrixId={'adjacencyMatrix'}
           locations={props.locations}
-          focused={focusedTableId == 'adjacencyMatrix'}
+          focused={focusedTableId === 'adjacencyMatrix'}
           tableRef={refs[0]}
           icon={<TrendingFlat />}
           title={'Adjacency distances'}
@@ -208,7 +208,7 @@ export const MatrixSetPanel = forwardRef<
         <DiagonalMatrix
           matrixId={'distanceMatrix'}
           locations={props.locations}
-          focused={focusedTableId == 'distanceMatrix'}
+          focused={focusedTableId === 'distanceMatrix'}
           tableRef={refs[1]}
           icon={<Route />}
           title={'Path distances'}
@@ -231,7 +231,7 @@ export const MatrixSetPanel = forwardRef<
         <DiagonalMatrix
           matrixId={'transportationCostMatrix'}
           locations={props.locations}
-          focused={focusedTableId == 'transportationCostMatrix'}
+          focused={focusedTableId === 'transportationCostMatrix'}
           tableRef={refs[2]}
           icon={<LocalShipping />}
           title={'Transportation costs'}

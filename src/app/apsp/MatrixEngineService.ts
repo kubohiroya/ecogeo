@@ -13,7 +13,7 @@ export type MatrixEngineKeyType =
 
 export const defaultMatrixEngineType = MatrixEngineKeyTypes.CPUMatrixEngine;
 
-const params = new URLSearchParams(location.search);
+const params = new URLSearchParams(window.location.search);
 //const matrixEngineType = params.get('engine') || 'CPU:FloydWarshall';
 const matrixEngineType = params.get('engine') || defaultMatrixEngineType;
 

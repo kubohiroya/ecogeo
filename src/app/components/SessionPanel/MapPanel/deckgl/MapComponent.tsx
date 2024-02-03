@@ -185,7 +185,7 @@ const MapComponent = (props: MapComponentProps) => {
   }, []);
 
   useEffect(() => {
-    if (worker == null || props.width === 0 || props.height === 0) return;
+    if (worker === null || props.width === 0 || props.height === 0) return;
 
     const { topLeft, bottomRight } = getBounds(
       props.width,
@@ -357,7 +357,7 @@ const MapComponent = (props: MapComponentProps) => {
   );
 
   if (!worker || currentTaskId === -1) {
-    // mortonNumbers.length == 0 || polygons.length == 0 || points.length == 0;
+    // mortonNumbers.length === 0 || polygons.length === 0 || points.length === 0;
     return <CircularProgress variant="indeterminate" />;
   }
 

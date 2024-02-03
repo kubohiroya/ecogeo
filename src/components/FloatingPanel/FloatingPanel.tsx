@@ -133,7 +133,7 @@ export const FloatingPanel = forwardRef<HTMLDivElement, FloatingPanelProps>(
                 marginLeft: '8px',
               }}
             >
-              {titleBarMode == 'mac' && (
+              {titleBarMode === 'mac' && (
                 <>
                   <MiniWindowControlButton
                     size="small"
@@ -167,7 +167,7 @@ export const FloatingPanel = forwardRef<HTMLDivElement, FloatingPanelProps>(
                   {title}
                 </Typography>
               </RowBox>
-              {titleBarMode == 'win' && (
+              {titleBarMode === 'win' && (
                 <>
                   {maximized ? (
                     <IconButton

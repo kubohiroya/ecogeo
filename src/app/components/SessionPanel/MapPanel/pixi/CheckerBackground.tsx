@@ -43,8 +43,8 @@ export const CheckerBackground = (props: BackgroundProps) => {
         onmouseup={(event: FederatedPointerEvent) => {
           if (
             mouseDownPosition &&
-            event.clientX == mouseDownPosition[0] &&
-            event.clientY == mouseDownPosition[1]
+            event.clientX === mouseDownPosition[0] &&
+            event.clientY === mouseDownPosition[1]
           ) {
             setMouseDownPosition(null);
             props.clearSelection();

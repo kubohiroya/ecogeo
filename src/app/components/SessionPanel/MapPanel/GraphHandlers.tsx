@@ -23,7 +23,7 @@ export function updateRaceTrackSubGraph(
     const x = radius * Math.cos(radian);
     const y = radius * Math.sin(radian);
 
-    if (index == 0 && numLocations == 1) {
+    if (index === 0 && numLocations === 1) {
       const city = sessionState.locations[0];
       return {
         ...city,
@@ -49,13 +49,13 @@ export function updateRaceTrackSubGraph(
       });
     }
   });
-  const spherical = sessionState.parameterSet.units == 'degrees';
+  const spherical = sessionState.parameterSet.units === 'degrees';
   const edges =
-    numLocations == 1
+    numLocations === 1
       ? []
       : loop(numLocations).map((index) => {
           const [source, target] =
-            index != numLocations - 1
+            index !== numLocations - 1
               ? [newLocations[index], newLocations[index + 1]]
               : [newLocations[0], newLocations[numLocations - 1]];
           return {
@@ -149,14 +149,14 @@ function createRandomEdges(
     negativeVerticesIdSet.delete(edge.target);
   });
 
-  if (negativeVerticesIdSet.size == 0) {
+  if (negativeVerticesIdSet.size === 0) {
     throw new Error();
   }
 
   const supportedEdges = [...negativeVerticesIdSet]
     .map((id: number) => {
       const nearest = locations
-        .filter((location) => location.id != id)
+        .filter((location) => location.id !== id)
         .map((location) => ({
           location,
           distance: calculateDistanceByLocations(
@@ -209,7 +209,7 @@ export function updateRandomSubGraph(
   _numLocations?: number,
 ) {
   const numLocations =
-    _numLocations != undefined
+    _numLocations !== undefined
       ? _numLocations
       : sessionState.locations.length + 1;
   const seedRandom = new SeedRandom(sessionState.locations.length);
@@ -230,7 +230,7 @@ export function updateRandomSubGraph(
     direction += (2 * Math.PI * (seedRandom.random() - 0.5)) / 2;
     velocity = Math.min(50, Math.max(400, velocity + acceleration));
     const { x, y } =
-      sessionState.locations.length == 0 && i == 0
+      sessionState.locations.length === 0 && i === 0
         ? { x: 0, y: 0 }
         : i < sessionState.locations.length
           ? {
@@ -268,9 +268,9 @@ export function updateRandomSubGraph(
   }
 
   const newLocations = [...cities, ...addingCities];
-  const spherical = sessionState.parameterSet.units == 'degrees';
+  const spherical = sessionState.parameterSet.units === 'degrees';
   const addingEdges =
-    _numLocations == undefined
+    _numLocations === undefined
       ? createEdges(
           newLocations,
           sessionState.edges,

@@ -112,8 +112,8 @@ export const storeGeoRegions = async ({
             combinedValueMap,
           );
 
-          //NAME_1 == 'Kagawa' && console.log({ NAME_1, coordinates });
-          //NAME_1 == 'Tokushima' && console.log({ NAME_1, coordinates });
+          //NAME_1 === 'Kagawa' && console.log({ NAME_1, coordinates });
+          //NAME_1 === 'Tokushima' && console.log({ NAME_1, coordinates });
 
           const mortonNumbersByZoomLevels: Record<string, number> = {};
 

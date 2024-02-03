@@ -2,7 +2,7 @@
 // @ts-ignore
 import React, { StrictMode } from "react";
 
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createHashRouter, RouterProvider } from "react-router-dom";
 import { GeoDatabaseItemCreateModeSelector } from "./app/pages/Home/GeoDatabaseItemCreateModeSelector";
 import { projectLoader } from "./app/pages/ProjectCreator/projectLoader";
 import { ProjectTypes } from "./app/services/database/ProjectType";
@@ -24,9 +24,10 @@ import { SimPage } from "./app/pages/Sim/SimPage";
 import { ProjectItemLoader } from "./app/pages/ProjectItemsComponent/ProjectItemLoader";
 import { ResourceItemLoader } from "./app/pages/ResourceItemsComponent/ResourceItemLoader";
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: '/',
+
     element: <HomePage />,
     children: [
       {

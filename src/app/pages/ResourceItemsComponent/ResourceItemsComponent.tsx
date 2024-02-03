@@ -14,11 +14,15 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import { useLoaderData, useLocation, useNavigate } from 'react-router-dom';
+import {
+  Link,
+  useLoaderData,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom';
 import { DatabaseItemMenu } from '../DatabaseItemMenu/DatabaseItemMenu';
 import { ResourceTypes } from '../../models/ResourceEntity';
 import 'dexie-observable';
-import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
 import { GeoDatabaseEntity } from '../../services/database/GeoDatabaseEntity';
 
 export const ResourceItemsComponent = () => {
@@ -26,24 +30,26 @@ export const ResourceItemsComponent = () => {
     resources: GeoDatabaseEntity[];
   };
 
-  const [resourceItems, setResourceItems] =
-    React.useState<GeoDatabaseEntity[]>(resources);
+  //const [resourceItems, setResourceItems] =
+  //  React.useState<GeoDatabaseEntity[]>(resources);
 
   const navigate = useNavigate();
 
   const location = useLocation();
 
   useEffect(() => {
-    if (location.pathname.endsWith('/resources') && resources.length === 0) {
+    if (location.hash.endsWith('/resources') && resources.length === 0) {
       return navigate('/resources/new');
     }
   }, []);
 
+  /*
   useEffect(() => {
     GeoDatabaseTable.getSingleton().on('changes', async (changes) => {
       // setResourceItems((await ResourceItemLoader(undefined)).resources);
     });
   }, []);
+   */
 
   const speedDialActions = [
     {
@@ -90,7 +96,7 @@ export const ResourceItemsComponent = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {resourceItems.map((item) => (
+            {resources.map((item) => (
               <TableRow key={item.uuid}>
                 <TableCell>
                   <IconButton
@@ -109,9 +115,9 @@ export const ResourceItemsComponent = () => {
                   <ul>
                     {item.urls.map((url) => (
                       <li key={url}>
-                        <a href={url} target={'_blank'}>
+                        <Link to={url} target={'_blank'}>
                           {url}
-                        </a>
+                        </Link>
                       </li>
                     ))}
                   </ul>

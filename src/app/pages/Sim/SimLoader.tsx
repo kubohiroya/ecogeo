@@ -38,12 +38,12 @@ export type SimLoaderResult = {
   zoom: number;
 };
 
-const pathname = window.location.pathname;
-const type = pathname.startsWith('/' + ProjectTypes.Racetrack)
+const hash = window.location.hash;
+const type = hash.startsWith('/' + ProjectTypes.Racetrack)
   ? ProjectTypes.Racetrack
-  : pathname.startsWith('/' + ProjectTypes.Graph)
+  : hash.startsWith('/' + ProjectTypes.Graph)
     ? ProjectTypes.Graph
-    : pathname.startsWith('/' + ProjectTypes.RealWorld)
+    : hash.startsWith('/' + ProjectTypes.RealWorld)
       ? ProjectTypes.RealWorld
       : ProjectTypes.Racetrack;
 

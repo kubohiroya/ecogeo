@@ -1,12 +1,15 @@
 {
+  "homepage": "https://kubohiroya.github.io/ecogeo/",
+  "version": "0.1.0",
   "name": "@ecogeo/source",
-  "version": "0.0.0",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
     "build": "nx build",
     "test": "nx test",
-    "wc": "find src -name '*.ts*' | xargs wc -l"
+    "wc": "find src -name '*.ts*' | xargs wc -l",
+    "predeploy": "nx build",
+    "deploy": "gh-pages -d dists/ecogeo"
   },
   "private": true,
   "dependencies": {
@@ -36,6 +39,7 @@
     "dexie": "^3.2.4",
     "dexie-observable": "4.0.1-beta.13",
     "fflate": "^0.8.1",
+    "gh-pages": "^6.1.1",
     "immer": "^10.0.3",
     "jotai": "^2.6.3",
     "jotai-immer": "^0.3.0",

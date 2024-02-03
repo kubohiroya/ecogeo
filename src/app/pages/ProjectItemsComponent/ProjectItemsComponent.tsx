@@ -14,7 +14,12 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import { useLoaderData, useLocation, useNavigate } from 'react-router-dom';
+import {
+  Link,
+  useLoaderData,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom';
 import { DatabaseItemMenu } from '../DatabaseItemMenu/DatabaseItemMenu';
 import { GeoDatabaseEntity } from '../../services/database/GeoDatabaseEntity';
 
@@ -34,10 +39,10 @@ export const ProjectItemsComponent = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (document.location.pathname.startsWith('/projects')) {
+    if (document.location.hash.startsWith('/projects')) {
       document.title = DOCUMENT_TITLE + ` - Projects`;
     }
-    if (document.location.pathname.startsWith('/resource')) {
+    if (document.location.hash.startsWith('/resource')) {
       document.title = DOCUMENT_TITLE + ` - Resources`;
     }
   }, []);
@@ -45,7 +50,7 @@ export const ProjectItemsComponent = () => {
   const location = useLocation();
 
   useEffect(() => {
-    if (location.pathname.endsWith('/projects') && projects.length == 0) {
+    if (location.hash.endsWith('/projects') && projects.length == 0) {
       return navigate('/projects/new');
     }
   }, []);
@@ -135,16 +140,16 @@ export const ProjectItemsComponent = () => {
                 .map((item) => (
                   <TableRow key={item.uuid}>
                     <TableCell>
-                      <a href={createProjectLink(item)} target="_blank">
+                      <Link to={createProjectLink(item)} target="_blank">
                         <IconButton color={'primary'} size={'large'}>
                           {typeToIcon[item.type]}
                         </IconButton>
-                      </a>
+                      </Link>
                     </TableCell>
                     <TableCell>
-                      <a href={createProjectLink(item)} target="_blank">
+                      <Link to={createProjectLink(item)} target="_blank">
                         {item.name}
-                      </a>
+                      </Link>
                     </TableCell>
                     <TableCell>
                       <pre>{item.description}</pre>

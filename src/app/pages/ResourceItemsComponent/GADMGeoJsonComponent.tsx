@@ -38,7 +38,7 @@ import {
   GADMCountryMetadata,
   proxyUrl,
 } from '../../services/gadm/fetchGADMCountries';
-import { GADMResourceSelector } from './GADMResourceSelector';
+import { GADMGeoJsonSelector } from './GADMGeoJsonSelector';
 import { LinearProgressWithLabel } from '../../../components/LinearProgressWithLabel/LinearProgressWithLabel';
 import { Link, useNavigate } from 'react-router-dom';
 import { DOCUMENT_TITLE } from '../../Constants';
@@ -163,6 +163,9 @@ export const GADMGeoJsonComponent = () => {
 
   const goBack = async () => {
     await leaveFrom(stepIndex);
+    if (stepIndex === 0) {
+      return navigate('/resources', { replace: true });
+    }
     setStepIndex(stepIndex - 1);
     await enterTo(stepIndex - 1);
   };
@@ -332,10 +335,7 @@ export const GADMGeoJsonComponent = () => {
             </Box>
           ) : (
             <Box>
-              <GADMResourceSelector
-                countries={countries}
-                levelMax={LEVEL_MAX}
-              />
+              <GADMGeoJsonSelector countries={countries} levelMax={LEVEL_MAX} />
               {numSelected > 0 && (
                 <Box
                   style={{
@@ -615,9 +615,13 @@ export const GADMGeoJsonComponent = () => {
         <Link to="/resources">
           <IconButton
             size="large"
-            sx={{ position: 'absolute', top: '16px', right: '16px' }}
+            sx={{
+              position: 'absolute',
+              top: '4px',
+              right: '4px',
+            }}
           >
-            <Close />
+            <Close style={{ width: '40px', height: '40px' }} />
           </IconButton>
         </Link>
         <Button
@@ -625,13 +629,10 @@ export const GADMGeoJsonComponent = () => {
           style={{ padding: '16px 48px 16px 48px' }}
           variant={'contained'}
           color="inherit"
-          disabled={
-            stepIndex === 0 ||
-            stepStatus[stepIndex] === StepStatuses.onEnterTask
-          }
+          disabled={stepStatus[stepIndex] === StepStatuses.onEnterTask}
           onClick={goBack}
         >
-          Back
+          {stepIndex === 0 ? 'Cancel' : 'Back'}
         </Button>
         <Box sx={{ flex: '1 1 auto' }} />
         <Button

@@ -19,7 +19,7 @@ interface GADMResourceSelectorProps {
   levelMax: number;
 }
 
-export const GADMResourceSelector = memo(
+export const GADMGeoJsonSelector = memo(
   ({ levelMax, countries }: GADMResourceSelectorProps) => {
     const [selectionMatrix, setSelectionMatrix] = useAtom(selectedMatrixAtom);
     const LEVELS = loop(levelMax);

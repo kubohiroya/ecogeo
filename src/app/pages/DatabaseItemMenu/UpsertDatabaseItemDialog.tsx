@@ -133,7 +133,7 @@ export const UpsertDatabaseItemDialog = ({
             </Button>
 
             <Button variant={'contained'} type="submit">
-              Create
+              {uuid ? 'Update' : 'Create'}
             </Button>
           </Box>
         </DialogActions>

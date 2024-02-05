@@ -1,6 +1,9 @@
 import { Link, useLoaderData, useNavigate } from 'react-router-dom';
 import React, { useCallback } from 'react';
-import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
+import {
+  GeoDatabaseTable,
+  getCurrentDatabaseTableType,
+} from '../../services/database/GeoDatabaseTable';
 import {
   Button,
   Dialog,
@@ -11,68 +14,67 @@ import {
 } from '@mui/material';
 import { createProjectLink } from '../../../createProjectLink';
 import dexie from 'dexie';
-import { ProjectTypes } from '../../services/database/ProjectType';
-import { ResourceTypes } from '../../models/ResourceEntity';
+import { DatabaseTableTypes } from '../../services/database/GeoDatabaseTableType';
 
-export const DeleteDatabaseItemDialog = () => {
-  const { uuid, type, name, viewportCenter } = useLoaderData() as {
+type DeleteDatabaseItemDialogProps = {
+  tableType: string;
+};
+export const DeleteDatabaseItemDialog = ({
+  tableType,
+}: DeleteDatabaseItemDialogProps) => {
+  const { uuid, type, name } = useLoaderData() as {
     uuid: string;
     type: string;
     name: string | undefined;
-    viewportCenter: [number, number, number];
     description: string | undefined;
   };
 
   const navigate = useNavigate();
 
-  const goHome = () => {
-    switch (type) {
-      case ProjectTypes.Racetrack:
-      case ProjectTypes.Graph:
-      case ProjectTypes.RealWorld:
+  const goHome = useCallback(() => {
+    switch (tableType) {
+      case DatabaseTableTypes.projects:
         navigate('/projects', { replace: true });
         break;
-      case ResourceTypes.gadmShapes:
-      case ResourceTypes.idegsmCities:
-      case ResourceTypes.idegsmRoutes:
+      case DatabaseTableTypes.resources:
         navigate('/resources', { replace: true });
         break;
       default:
-        throw new Error(`Unknown ProjectType: ${type}`);
+        throw new Error(`Unknown Type: ${tableType}`);
     }
-  };
+  }, [navigate, tableType]);
 
   const handleDelete = useCallback(async () => {
-    await GeoDatabaseTable.getSingleton()
-      .databases.where('uuid')
+    await GeoDatabaseTable.getTableByTableType(getCurrentDatabaseTableType())
+      .where('uuid')
       .equals(uuid)
       .delete();
-
     await dexie.delete(uuid);
     goHome();
-  }, [uuid]);
+  }, [goHome, uuid]);
 
   const handleCancel = useCallback(() => {
     goHome();
-  }, []);
+  }, [goHome]);
 
   return (
     <Dialog open={true}>
-      <DialogTitle>Delete Project Confirmation</DialogTitle>
+      <DialogTitle>
+        Delete
+        {tableType === DatabaseTableTypes.projects ? ' project' : ' resource'}
+      </DialogTitle>
       <DialogContent dividers>
         <Typography>
-          Are you sure you want to delete the following project?
+          Are you sure you want to delete the following item?
         </Typography>
-        <Link to={createProjectLink({ uuid, type, viewportCenter })}>
-          {name}
-        </Link>
+        <Link to={createProjectLink({ uuid, type })}>{name}</Link>
       </DialogContent>
       <DialogActions>
         <Button variant={'contained'} autoFocus onClick={handleCancel}>
           Cancel
         </Button>
         <Button variant={'outlined'} onClick={handleDelete}>
-          DELETE
+          Delete
         </Button>
       </DialogActions>
     </Dialog>

@@ -59,8 +59,8 @@ function checkAcceptableFileList(
 
 // 背景色が変わるコンポーネントのスタイルを定義
 const DropZone = styled.div<DropZoneProps>`
-  height: calc(100vh - 20px);
-  // border: 10px dashed gray;
+  margin-top: 40px;
+  border: 10px dashed #eee;
   align-items: center;
   justify-content: center;
   background-color: ${(props) =>
@@ -77,9 +77,6 @@ const PromptMessageBox = styled.div`
 const ErrorMessageBox = styled.div`
   color: red;
 `;
-const StatusBox = styled.div`
-  color: grey;
-`;
 
 const ProgressDialogContent = styled(DialogContent)`
   padding: 30px;
@@ -87,7 +84,6 @@ const ProgressDialogContent = styled(DialogContent)`
 
 const ProgressBox = styled.div`
   flex: 1;
-  height: calc(100% - 50px);
   overflow: scroll;
 `;
 

@@ -20,7 +20,10 @@ import {
   FileLoaderResponse,
   LoaderProgressResponse,
 } from '../../app/services/file/FileLoaderResponse';
-import { FileLoadingStatus } from '../../app/services/file/FileLoadingStatus';
+import {
+  FileLoadingStatusType,
+  FileLoadingStatusTypes,
+} from '../../app/services/file/FileLoadingStatusType';
 import { FileLoaderResponseType } from '../../app/services/file/FileLoaderResponseType';
 import styled from '@emotion/styled';
 
@@ -50,8 +53,8 @@ export const FileLoaderComponent = () => {
   const [loadingFiles, setLoadingFiles] = useState<
     Record<string, LoaderProgressResponse>
   >({});
-  const [loadingStatus, setLoadingStatus] = useState<FileLoadingStatus>(
-    FileLoadingStatus.idle,
+  const [loadingStatus, setLoadingStatus] = useState<FileLoadingStatusType>(
+    FileLoadingStatusTypes.idle,
   );
 
   const handleFiles = useCallback(
@@ -61,7 +64,7 @@ export const FileLoaderComponent = () => {
         const response = event.data as any;
         switch (event.data.type) {
           case FileLoaderResponseType.started:
-            setLoadingStatus(FileLoadingStatus.started);
+            setLoadingStatus(FileLoadingStatusTypes.started);
             break;
           case FileLoaderResponseType.progress:
             setLoadingFiles({
@@ -70,10 +73,10 @@ export const FileLoaderComponent = () => {
             });
             break;
           case FileLoaderResponseType.cancel:
-            setLoadingStatus(FileLoadingStatus.idle);
+            setLoadingStatus(FileLoadingStatusTypes.idle);
             break;
           case FileLoaderResponseType.finished:
-            setLoadingStatus(FileLoadingStatus.finished);
+            setLoadingStatus(FileLoadingStatusTypes.finished);
             break;
           default:
         }
@@ -136,8 +139,8 @@ export const FileLoaderComponent = () => {
         <Typography>[Status:{loadingStatus}]</Typography>
         <input onChange={onFileSelectedHandler} type="file" multiple />
         Drop your CSV file here
-        {loadingStatus !== FileLoadingStatus.idle &&
-          loadingStatus !== FileLoadingStatus.finished}
+        {loadingStatus !== FileLoadingStatusTypes.idle &&
+          loadingStatus !== FileLoadingStatusTypes.finished}
         <Dialog open={true}>
           <DialogTitle> Processing File </DialogTitle>
 
@@ -158,7 +161,7 @@ export const FileLoaderComponent = () => {
                   variant="determinate"
                   value={loadingFiles[filename].progress}
                 />
-                {loadingStatus === FileLoadingStatus.loading ? (
+                {loadingStatus === FileLoadingStatusTypes.loading ? (
                   <LinearProgress variant="indeterminate" />
                 ) : (
                   <LinearProgress variant="determinate" value={100} />
@@ -169,14 +172,14 @@ export const FileLoaderComponent = () => {
               <Button
                 variant={'contained'}
                 onClick={cancelTask}
-                disabled={loadingStatus !== FileLoadingStatus.loading}
+                disabled={loadingStatus !== FileLoadingStatusTypes.loading}
               >
                 Cancel
               </Button>
               <Button
                 variant={'contained'}
                 onClick={closeDialog}
-                disabled={loadingStatus !== FileLoadingStatus.finished}
+                disabled={loadingStatus !== FileLoadingStatusTypes.finished}
               >
                 Close
               </Button>

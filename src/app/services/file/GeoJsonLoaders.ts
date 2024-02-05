@@ -70,7 +70,6 @@ export const storeGeoRegions = async ({
     entities: T[],
     fileName: string,
   ) => {
-    console.log('bulkAdd', fileName, entities.length);
     table.bulkAdd(entities).catch((error) => {
       errorCallback(fileName, error.message);
       /*

@@ -9,7 +9,7 @@ import { SessionState } from '../../models/SessionState';
 import { SimComponent } from './SimComponent';
 import { UIState } from '../../models/UIState';
 import { AppMatrices } from '../../models/AppMatrices';
-import { ProjectType } from '../../services/database/ProjectType';
+import { ProjectType } from '../../models/ProjectType';
 import { SimLoaderResult } from './SimLoader';
 
 export const RealWorldSimPage = () => {

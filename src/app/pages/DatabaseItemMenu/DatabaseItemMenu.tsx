@@ -12,15 +12,20 @@ import {
 import React, { useCallback, useRef } from 'react';
 import Menu from '@mui/icons-material/Menu';
 import { ContentCopy, Delete, Edit } from '@mui/icons-material';
-import { GeoDatabaseEntity } from '../../services/database/GeoDatabaseEntity';
+import { GeoDatabaseEntity } from '../../models/GeoDatabaseEntity';
 import { useNavigate } from 'react-router-dom';
 import { ResourceEntity } from '../../models/ResourceEntity';
+import { GeoDatabaseTableType } from '../../services/database/GeoDatabaseTableType';
 
 interface DatabaseItemMenuProps {
+  tableType: GeoDatabaseTableType;
   item: GeoDatabaseEntity | ResourceEntity;
 }
 
-export const DatabaseItemMenu = ({ item }: DatabaseItemMenuProps) => {
+export const DatabaseItemMenu = ({
+  tableType,
+  item,
+}: DatabaseItemMenuProps) => {
   const ref = useRef(null);
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
@@ -36,11 +41,12 @@ export const DatabaseItemMenu = ({ item }: DatabaseItemMenuProps) => {
   );
 
   const handleEdit = useCallback(() => {
-    navigate(`/update/${item.type}/${item.uuid}`);
-  }, []);
+    navigate(`/${tableType}/update/${item.type}/${item.uuid}`);
+  }, [item.type, item.uuid, navigate, tableType]);
+
   const handleDelete = useCallback(() => {
-    navigate(`/delete/${item.type}/${item.uuid}`);
-  }, []);
+    navigate(`/${tableType}/delete/${item.type}/${item.uuid}`);
+  }, [item.type, item.uuid, navigate, tableType]);
 
   return (
     <>

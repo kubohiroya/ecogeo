@@ -1,6 +1,6 @@
 import { SimLoaderResult } from './SimLoader';
 import { useLoaderData } from 'react-router-dom';
-import { ProjectTypes } from '../../services/database/ProjectType';
+import { ProjectTypes } from '../../models/ProjectType';
 import React from 'react';
 import { GraphSimPage } from './GraphSimPage';
 import { RealWorldSimPage } from './RealWorldSimPage';

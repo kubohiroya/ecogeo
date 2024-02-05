@@ -1,5 +1,5 @@
 // dexieWorker.js
-import { GeoRequestPayload } from '../app/services/database/GeoRequestPayload';
+import { GeoRequestPayload } from '../app/models/GeoRequestPayload';
 import { GeoDatabase } from '../app/services/database/GeoDatabase';
 
 async function processQueue(

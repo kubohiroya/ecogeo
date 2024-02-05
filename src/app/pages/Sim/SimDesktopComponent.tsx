@@ -33,7 +33,7 @@ import { InputOutputPanelComponent } from './components/InputOutputPanelComponen
 import { EditPanelComponent } from './components/EditPanelComponent';
 import { BackgroundPanel } from './gridItems/BackgroundPanel';
 import { useParameterActions } from './useParameterActions';
-import { ProjectType, ProjectTypes } from '../../services/database/ProjectType';
+import { ProjectType, ProjectTypes } from '../../models/ProjectType';
 import { sessionStateAtom } from './SimLoader';
 import { useUndoRedo } from '../../hooks/useUndoRedo';
 import { AsyncFunctionManager } from '../../utils/AsyncFunctionManager';

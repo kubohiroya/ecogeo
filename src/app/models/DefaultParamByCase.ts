@@ -1,5 +1,5 @@
 import { ParameterSet } from './ParameterSet';
-import { ProjectType, ProjectTypes } from '../services/database/ProjectType';
+import { ProjectType, ProjectTypes } from './ProjectType';
 
 /*
 const params = new URLSearchParams(location.search);

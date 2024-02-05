@@ -3,7 +3,7 @@ import { Box, LinearProgress, LinearProgressProps } from '@mui/material';
 
 export function LinearProgressWithLabel(
   props: LinearProgressProps & {
-    index: number;
+    loaded: number;
     total: number;
   },
 ) {
@@ -12,9 +12,9 @@ export function LinearProgressWithLabel(
       <Box sx={{ width: '100%', mr: 1 }}>
         <LinearProgress variant="determinate" {...props} />
       </Box>
-      <Box sx={{ minWidth: 130 }}>
+      <Box sx={{ minWidth: 180 }}>
         {props.total > 0 &&
-          `${props.index} / ${props.total} (${Math.round((100 * props.index) / props.total)} %)`}
+          `${props.loaded} / ${props.total} (${Math.round((100 * props.loaded) / props.total)} %)`}
       </Box>
     </Box>
   );

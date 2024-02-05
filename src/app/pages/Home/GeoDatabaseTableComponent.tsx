@@ -1,14 +1,21 @@
 import React, { ReactNode } from 'react';
 import { Box, Tab, Tabs } from '@mui/material';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { GeoDatabaseTableType } from './GeoDatabaseTableType';
+import {
+  DatabaseTableTypes,
+  GeoDatabaseTableType,
+} from '../../services/database/GeoDatabaseTableType';
 
-type DatabaseItemIndexPros = {
+type GeoDatabaseTableComponentProps = {
   type: GeoDatabaseTableType;
   items: [ReactNode, ReactNode];
 };
 
-const TabPanel = (props: any) => {
+const TabPanel = (props: {
+  children: ReactNode;
+  value: number;
+  index: number;
+}) => {
   const { children, value, index, ...other } = props;
   return (
     <div
@@ -30,12 +37,14 @@ function a11yProps(index: number) {
   };
 }
 
-export const GeoDatabaseTableComponent = (props: DatabaseItemIndexPros) => {
+export const GeoDatabaseTableComponent = (
+  props: GeoDatabaseTableComponentProps,
+) => {
   const navigate = useNavigate();
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     navigate(newValue === 0 ? '/resources' : '/projects', { replace: true });
   };
-
+  const value = props.type === DatabaseTableTypes.resources ? 0 : 1;
   return (
     <Box>
       <Box
@@ -46,7 +55,7 @@ export const GeoDatabaseTableComponent = (props: DatabaseItemIndexPros) => {
       >
         <Tabs
           variant="fullWidth"
-          value={props.type}
+          value={value}
           onChange={handleChange}
           aria-label="tabs"
         >
@@ -54,11 +63,11 @@ export const GeoDatabaseTableComponent = (props: DatabaseItemIndexPros) => {
           <Tab label="Projects" {...a11yProps(1)} />
         </Tabs>
       </Box>
-      <TabPanel value={props.type} index={0}>
-        {props.type === 0 && props.items[0]}
+      <TabPanel value={value} index={0}>
+        {props.items[0]}
       </TabPanel>
-      <TabPanel value={props.type} index={1}>
-        {props.type === 1 && props.items[1]}
+      <TabPanel value={value} index={1}>
+        {props.items[1]}
       </TabPanel>
       <Outlet />
     </Box>

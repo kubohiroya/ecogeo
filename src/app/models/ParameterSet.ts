@@ -1,4 +1,4 @@
-import { ProjectType } from '../services/database/ProjectType';
+import { ProjectType } from './ProjectType';
 
 export interface ParameterSet {
   /* a country has her locations in this vector */

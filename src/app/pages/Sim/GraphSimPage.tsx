@@ -6,7 +6,7 @@ import { BackgroundCanvas } from './BackgroundCanvas';
 import { SessionState } from '../../models/SessionState';
 import { UIState } from '../../models/UIState';
 import { AppMatrices } from '../../models/AppMatrices';
-import { ProjectType, ProjectTypes } from '../../services/database/ProjectType';
+import { ProjectType, ProjectTypes } from '../../models/ProjectType';
 import { useAtom } from 'jotai';
 import { DEFAULT_PARAMS_BY_CASE } from '../../models/DefaultParamByCase';
 import { updateAddedSubGraph } from '../../components/SessionPanel/MapPanel/GraphHandlers';

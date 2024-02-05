@@ -3,158 +3,116 @@
 import React, { StrictMode } from "react";
 
 import { createHashRouter, RouterProvider } from "react-router-dom";
-import { GeoDatabaseItemCreateModeSelector } from "./app/pages/Home/GeoDatabaseItemCreateModeSelector";
-import { projectLoader } from "./app/pages/ProjectCreator/projectLoader";
-import { ProjectTypes } from "./app/services/database/ProjectType";
+import { databaseItemLoader } from "./app/pages/ProjectCreator/databaseItemLoader";
 import { DeleteDatabaseItemDialog } from "./app/pages/DatabaseItemMenu/DeleteDatabaseItemDialog";
 import { GeoDatabaseTableComponent } from "./app/pages/Home/GeoDatabaseTableComponent";
 import { HomePage } from "./app/pages/Home/HomePage";
-import { GADMGeoJsonComponent } from "./app/pages/ResourceItemsComponent/GADMGeoJsonComponent";
-import { GeoDatabaseTableType } from "./app/pages/Home/GeoDatabaseTableType";
-import { Flag, LocationCity, PanoramaFishEye, Public, Route, Share } from "@mui/icons-material";
-import { IdeGsmCitiesComponent } from "./app/pages/ResourceItemsComponent/IdeGsmCitiesComponent";
-import { IdeGsmRoutesComponent } from "./app/pages/ResourceItemsComponent/IdeGsmRoutesComponent";
-import { ProjectItemsComponent } from "./app/pages/ProjectItemsComponent/ProjectItemsComponent";
-import { ResourceItemsComponent } from "./app/pages/ResourceItemsComponent/ResourceItemsComponent";
-import { FileDropComponent } from "./components/FileDropComponent/FileDropComponent";
-import { UpsertGeoProjectDialog } from "./app/pages/ProjectCreator/UpsertGeoProjectDialog";
+import { GADMGeoJsonDialog } from "./app/pages/ResourceEntitiesComponent/GADMGeoJsonDialog";
+import { DatabaseTableTypes } from "./app/services/database/GeoDatabaseTableType";
+import { IdeGsmCitiesComponent } from "./app/pages/ResourceEntitiesComponent/IdeGsmCitiesComponent";
+import { IdeGsmRoutesComponent } from "./app/pages/ResourceEntitiesComponent/IdeGsmRoutesComponent";
+import { ProjectEntitiesComponent } from "./app/pages/ProjectEntitiesComponent/ProjectEntitiesComponent";
+import { ResourceEntitiesComponent } from "./app/pages/ResourceEntitiesComponent/ResourceEntitiesComponent";
 import { createRoot } from "react-dom/client";
 import { SimLoader } from "./app/pages/Sim/SimLoader";
 import { SimPage } from "./app/pages/Sim/SimPage";
-import { ProjectItemLoader } from "./app/pages/ProjectItemsComponent/ProjectItemLoader";
-import { ResourceItemLoader } from "./app/pages/ResourceItemsComponent/ResourceItemLoader";
+import { UpsertResourceDialog } from "./app/pages/ProjectCreator/UpsertResourceDialog";
+import { UpsertProjectDialog } from "./app/pages/ProjectCreator/UpsertProjectDialog";
+import { NewResourceEntitySelector } from "./app/pages/ResourceEntitiesComponent/NewResourceEntitySelector";
+import { NewProjectEntitySelector } from "./app/pages/ProjectEntitiesComponent/NewProjectEntitySelector";
+import { ResourceEntitiesLoader } from "./app/pages/ResourceEntitiesComponent/ResourceEntitiesLoader";
+import { ProjectEntitiesLoader } from "./app/pages/ProjectEntitiesComponent/ProjectEntitiesLoader";
 
 const router = createHashRouter([
   {
     path: '/',
-
     element: <HomePage />,
     children: [
       {
         path: '/resources',
         element: (
           <GeoDatabaseTableComponent
-            type={GeoDatabaseTableType.resources}
-            items={[<ResourceItemsComponent />, <ProjectItemsComponent />]}
+            type={DatabaseTableTypes.resources}
+            items={[
+              <ResourceEntitiesComponent />,
+              <ProjectEntitiesComponent />,
+            ]}
           />
         ),
-        loader: ResourceItemLoader,
+        loader: ResourceEntitiesLoader,
         children: [
           {
-            path: '/resources/gadm',
-            element: <GADMGeoJsonComponent />,
+            path: '/resources/new',
+            element: <NewResourceEntitySelector />,
           },
           {
-            path: '/resources/cities',
+            path: '/resources/create/gadm',
+            element: <GADMGeoJsonDialog />,
+          },
+          {
+            path: '/resources/create/cities',
             element: <IdeGsmCitiesComponent />,
           },
           {
-            path: '/resources/routes',
+            path: '/resources/create/routes',
             element: <IdeGsmRoutesComponent />,
           },
+
+          {
+            path: `/resources/delete/:type/:uuid`,
+            element: (
+              <DeleteDatabaseItemDialog
+                tableType={DatabaseTableTypes.resources}
+              />
+            ),
+            loader: databaseItemLoader,
+          },
+          {
+            path: `/resources/update/:type/:uuid`,
+            element: <UpsertResourceDialog />,
+            loader: databaseItemLoader,
+          },
         ],
-      },
-      {
-        path: '/resources/new',
-        element: (
-          <FileDropComponent acceptableSuffixes={['.json', '.csv', '.csv.zip']}>
-            <GeoDatabaseTableComponent
-              type={GeoDatabaseTableType.resources}
-              items={[
-                <GeoDatabaseItemCreateModeSelector
-                  type={GeoDatabaseTableType.resources}
-                  items={[
-                    {
-                      icon: <Flag fontSize="large" />,
-                      name: 'GADM GeoJSON',
-                      url: `/resources/gadm`,
-                      tooltip:
-                        'GADM Country(Level 0),Region and Subregion shape files',
-                    },
-                    {
-                      icon: <LocationCity fontSize="large" />,
-                      name: 'IDE-GSM Cities',
-                      url: `/resources/cities`,
-                      tooltip:
-                        'IDE-GSM data file includes city information, GDP, population, etc.',
-                    },
-                    {
-                      icon: <Route fontSize="large" />,
-                      name: 'IDE-GSM Routes',
-                      url: `/resources/routes`,
-                      tooltip:
-                        'IDE-GSM data file includes route information, start, end, distance, etc.',
-                    },
-                  ]}
-                />,
-                <>dummy</>,
-              ]}
-            />
-          </FileDropComponent>
-        ),
       },
       {
         path: '/projects',
         element: (
           <GeoDatabaseTableComponent
-            type={GeoDatabaseTableType.projects}
-            items={[<ResourceItemsComponent />, <ProjectItemsComponent />]}
+            type={DatabaseTableTypes.projects}
+            items={[
+              <ResourceEntitiesComponent />,
+              <ProjectEntitiesComponent />,
+            ]}
           />
         ),
-        loader: ProjectItemLoader,
-      },
-      {
-        path: '/projects/new',
-        element: (
-          <FileDropComponent acceptableSuffixes={['.json', '.csv', '.csv.zip']}>
-            <GeoDatabaseTableComponent
-              type={GeoDatabaseTableType.projects}
-              items={[
-                <>dummy</>,
-                <GeoDatabaseItemCreateModeSelector
-                  type={GeoDatabaseTableType.projects}
-                  items={[
-                    {
-                      icon: <PanoramaFishEye fontSize="large" />,
-                      name: 'Racetrack Model',
-                      url: `/create/${ProjectTypes.Racetrack}`,
-                      tooltip: "Paul Krugman's spatial economy model",
-                    },
-                    {
-                      icon: <Share fontSize="large" />,
-                      name: 'Graph Structured Model',
-                      url: `/create/${ProjectTypes.Racetrack}`,
-                      tooltip: 'Graph structured spatial economy model',
-                    },
-                    {
-                      icon: <Public fontSize="large" />,
-                      name: 'Real-World Model',
-                      url: `/create/${ProjectTypes.RealWorld}`,
-                      tooltip: 'Full-set simulation model',
-                    },
-                  ]}
-                />,
-              ]}
-            />
-          </FileDropComponent>
-        ),
+        loader: ProjectEntitiesLoader,
+        children: [
+          {
+            path: '/projects/new',
+            element: <NewProjectEntitySelector />,
+          },
+          {
+            path: `/projects/delete/:type/:uuid`,
+            element: (
+              <DeleteDatabaseItemDialog
+                tableType={DatabaseTableTypes.projects}
+              />
+            ),
+            loader: databaseItemLoader,
+          },
+          {
+            path: `/projects/create/:type`,
+            element: <UpsertProjectDialog />,
+            loader: databaseItemLoader,
+          },
+          {
+            path: `/projects/update/:type/:uuid`,
+            element: <UpsertProjectDialog />,
+            loader: databaseItemLoader,
+          },
+        ],
       },
     ],
-  },
-  {
-    path: `/delete/:type/:uuid`,
-    element: <DeleteDatabaseItemDialog />,
-    loader: projectLoader(),
-  },
-  {
-    path: `/create/:type`,
-    element: <UpsertGeoProjectDialog />,
-    loader: projectLoader(),
-  },
-  {
-    path: `/update/:type/:uuid`,
-    element: <UpsertGeoProjectDialog />,
-    loader: projectLoader(),
   },
   {
     path: '/:projectType/:uuid/:zoom/:y/:x/',

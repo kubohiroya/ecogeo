@@ -1,4 +1,4 @@
-import { WorkerTaskRequest } from '../../../worker/WorkerPool';
+import { WorkerTaskRequest } from '../../worker/WorkerPool';
 
 export interface QueryRequest<T> extends WorkerTaskRequest {
   payload: T;

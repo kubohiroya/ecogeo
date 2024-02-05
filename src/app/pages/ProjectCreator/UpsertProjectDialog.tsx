@@ -1,16 +1,15 @@
 import { useGeolocated } from 'react-geolocated';
 import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
 import { useCallback } from 'react';
-import { UpsertDatabaseItemDialog } from '../DatabaseItemMenu/UpsertDatabaseItemDialog';
+import { UpsertDatabaseEntityDialog } from '../DatabaseItemMenu/UpsertDatabaseEntityDialog';
 import { useLoaderData } from 'react-router-dom';
-import { ProjectType } from '../../services/database/ProjectType';
 import { INITIAL_VIEW_STATE } from '../../Constants';
-import { ResourceType } from '../../models/ResourceEntity';
+import { DatabaseTableTypes } from '../../services/database/GeoDatabaseTableType';
 
-export const UpsertGeoProjectDialog = () => {
+export const UpsertProjectDialog = () => {
   const { uuid, type, name, description } = useLoaderData() as {
     uuid: string | undefined;
-    type: ProjectType | ResourceType;
+    type: string;
     name: string | undefined;
     description: string | undefined;
   };
@@ -31,31 +30,34 @@ export const UpsertGeoProjectDialog = () => {
   const onSubmit = useCallback(
     async (value: {
       uuid: string | undefined;
-      type: ProjectType | ResourceType;
+      type: string;
       name: string;
       description: string;
     }) => {
       if (!uuid) {
-        await GeoDatabaseTable.createDatabase({
+        const viewportCenter: [number, number, number] =
+          type === 'RealWorld' ? [zoom, latitude, longitude] : [1, 0, 0];
+
+        await GeoDatabaseTable.createProject({
           ...value,
           type,
-          urls: [],
+          viewportCenter,
           version: 1,
           createdAt: Date.now(),
-          viewportCenter: [zoom, latitude, longitude],
         });
       } else {
-        await GeoDatabaseTable.updateDatabase(uuid, {
+        await GeoDatabaseTable.updateProject(uuid, {
           ...value,
         });
       }
     },
-    [],
+    [latitude, longitude, type, uuid, zoom],
   );
 
   return (
-    <UpsertDatabaseItemDialog
+    <UpsertDatabaseEntityDialog
       uuid={uuid}
+      tableType={DatabaseTableTypes.projects}
       type={type}
       name={name}
       description={description}

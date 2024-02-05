@@ -12,10 +12,9 @@ import { ChartTypes } from '../../models/ChartType';
 import { atomWithImmer } from 'jotai-immer';
 import { Draft, enablePatches } from 'immer';
 import { updateAddedSubGraph } from '../../components/SessionPanel/MapPanel/GraphHandlers';
-import { ProjectTypes } from '../../services/database/ProjectType';
 import { LoaderFunctionArgs } from 'react-router-dom';
-import { DEFAULT_PARAMS_BY_CASE } from '../../models/DefaultParamByCase';
 import { PrimitiveAtom } from 'jotai';
+import { parameterSet } from './TypeToCategory';
 
 enablePatches();
 
@@ -37,17 +36,6 @@ export type SimLoaderResult = {
   y: number;
   zoom: number;
 };
-
-const hash = window.location.hash;
-const type = hash.startsWith('/' + ProjectTypes.Racetrack)
-  ? ProjectTypes.Racetrack
-  : hash.startsWith('/' + ProjectTypes.Graph)
-    ? ProjectTypes.Graph
-    : hash.startsWith('/' + ProjectTypes.RealWorld)
-      ? ProjectTypes.RealWorld
-      : ProjectTypes.Racetrack;
-
-const parameterSet = DEFAULT_PARAMS_BY_CASE[type][0];
 
 const graph = updateAddedSubGraph(
   {
@@ -80,7 +68,7 @@ export const matricesAtom = atom<AppMatrices>({
 });
 
 export const uiStateAtom = atom<UIState>({
-  viewportCenter: [1, 0, 0],
+  viewportCenter: [3, 0, 0],
   focusedIndices: [],
   selectedIndices: [],
   draggingIndex: null,
@@ -100,33 +88,11 @@ export const SimLoader = async function (
     };
   }>,
 ): Promise<SimLoaderResult> {
-  /*
-  const pathname = request.context.;
-  const type = pathname.startsWith('/' + ProjectTypes.realWorld)
-    ? ProjectTypes.realWorld
-    : pathname.startsWith('/' + ProjectTypes.racetrack)
-      ? ProjectTypes.racetrack
-      : pathname.startsWith('/' + ProjectTypes.graph)
-        ? ProjectTypes.graph
-        : undefined;
-  if (!type) {
-    throw new Error('Invalid project type ' + pathname);
-  }
-   */
   const type = request.params.projectType!;
   const uuid = request.params.uuid!;
   const zoom = parseFloat(request.params.zoom!);
   const y = parseFloat(request.params.y!);
   const x = parseFloat(request.params.x!);
-
-  const t =
-    type === 'Racetrack'
-      ? ProjectTypes.Racetrack
-      : type === 'RealWorld'
-        ? ProjectTypes.RealWorld
-        : type === 'Graph'
-          ? ProjectTypes.Graph
-          : ProjectTypes.Graph;
 
   return {
     uuid,

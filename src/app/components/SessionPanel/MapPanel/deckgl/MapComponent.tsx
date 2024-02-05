@@ -16,14 +16,14 @@ import DexieQueryWorker from '../../../../../worker/DexieQueryWorker?worker';
 import { CircularProgress } from '@mui/material';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { PathStyleExtension } from '@deck.gl/extensions/typed';
-import { QueryRequest } from '../../../../services/database/QueryRequest';
-import { QueryResponse } from '../../../../services/database/QueryResponse';
+import { QueryRequest } from '../../../../models/QueryRequest';
+import { QueryResponse } from '../../../../models/QueryResponse';
 import { AsyncFunctionManager } from '../../../../utils/AsyncFunctionManager';
-import { GeoRequestPayload } from '../../../../services/database/GeoRequestPayload';
-import { GeoResponsePayload } from '../../../../services/database/GeoResponsePayload';
+import { GeoRequestPayload } from '../../../../models/GeoRequestPayload';
+import { GeoResponsePayload } from '../../../../models/GeoResponsePayload';
 import { SimLoaderResult } from '../../../../pages/Sim/SimLoader';
 import { ViewStateChangeParameters } from '@deck.gl/core/typed/controllers/controller';
-import { ProjectTypes } from '../../../../services/database/ProjectType';
+import { ProjectTypes } from '../../../../models/ProjectType';
 
 const MAP_TILER_API_KEY = import.meta.env.VITE_MAP_TILER_API_KEY;
 

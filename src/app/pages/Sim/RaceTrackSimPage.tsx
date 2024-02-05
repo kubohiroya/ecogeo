@@ -6,7 +6,7 @@ import { BackgroundCanvas } from './BackgroundCanvas';
 import { SessionState } from '../../models/SessionState';
 import { UIState } from '../../models/UIState';
 import { AppMatrices } from '../../models/AppMatrices';
-import { ProjectType } from '../../services/database/ProjectType';
+import { ProjectType } from '../../models/ProjectType';
 
 export const RaceTrackSimPage = () => {
   const { uuid, x, y, zoom, type } = useLoaderData() as SimLoaderResult;

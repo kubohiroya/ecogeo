@@ -9,15 +9,18 @@ const PromptBox = styled.div`
   justify-content: center;
   align-items: center;
   text-align: center;
-  margin-top: 40px;
+  margin-top: 10px;
   font-size: 20px;
   gap: 10px;
+  padding: 10px;
 `;
 
 export function FileUploadPrompt() {
   return (
     <PromptBox>
-      <Typography>
+      <Typography
+        style={{ color: '#bbb', marginLeft: '30px', marginRight: '30px' }}
+      >
         If you already have some local files of the types described above, Drag
         and Drop them here!
       </Typography>

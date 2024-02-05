@@ -9,15 +9,10 @@ import { Box } from '@mui/material';
 export const HomePage = () => {
   const navigate = useNavigate();
   useEffect(() => {
-    console.log(
-      'window.location.hash',
-      window.location.pathname,
-      window.location.hash,
-    );
     if (window.location.hash === '' || window.location.hash === '#/') {
       navigate('/projects', { replace: true });
     }
-  }, []);
+  }, [navigate]);
 
   return (
     <FullScreenBox>

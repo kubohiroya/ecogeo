@@ -7,21 +7,41 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import React, { memo, useMemo } from 'react';
 import { useAtom } from 'jotai';
-import { selectedMatrixAtom } from './GADMGeoJsonComponent';
 import { loop } from '../../utils/arrayUtil';
+import styled from '@emotion/styled';
+import {
+  Domain,
+  Flag,
+  LocationCity,
+  Villa,
+  VillaOutlined,
+} from '@mui/icons-material';
+import { GADMGeoJsonCountryMetadata } from '../../models/GADMGeoJsonCountryMetadata';
+import { selectedCheckboxMatrixAtom } from './GADMGeoJsonServiceAtoms';
+import { createGADMCountryUrl, createGADMRegionUrl } from './CreateGADMUrl';
 
 interface GADMResourceSelectorProps {
-  readonly countries: Array<{ code: string; name: string; level: number }>;
+  readonly countryMetadataList: GADMGeoJsonCountryMetadata[];
   levelMax: number;
+  onChange: () => void;
 }
 
+const SelectorTable = styled(Table)`
+  & > tbody > tr > td {
+    background-color: rgba(245, 245, 245);
+  }
+`;
+
 export const GADMGeoJsonSelector = memo(
-  ({ levelMax, countries }: GADMResourceSelectorProps) => {
-    const [selectionMatrix, setSelectionMatrix] = useAtom(selectedMatrixAtom);
+  ({ levelMax, countryMetadataList, onChange }: GADMResourceSelectorProps) => {
+    const [selectionMatrix, setSelectionMatrix] = useAtom(
+      selectedCheckboxMatrixAtom,
+    );
     const LEVELS = loop(levelMax);
 
     const getColumnMixedState = (columnIndex: number) => {
@@ -46,27 +66,21 @@ export const GADMGeoJsonSelector = memo(
     };
 
     // 行のチェック状態を集計する関数
-    const getRowMixedState = (rowIndex: number) => {
-      let numCell = 0;
+    const isIndeterminateRow = (rowIndex: number) => {
       let numTrue = 0;
       let numFalse = 0;
-      for (
-        let level = 0;
-        level + 1 < selectionMatrix[rowIndex].length;
-        level++
-      ) {
-        numCell++;
+      const maxLevel = selectionMatrix[rowIndex].length - 1;
+      for (let level = 0; level <= maxLevel; level++) {
         if (selectionMatrix[rowIndex][level + 1]) {
           numTrue++;
         } else {
           numFalse++;
         }
-        if (numCell === numTrue || numCell === numFalse) {
-          continue;
-        }
-        return true;
       }
-      return false;
+      return !(
+        (numTrue === maxLevel + 1 && numFalse === 0) ||
+        (numFalse === maxLevel + 1 && numTrue === 0)
+      );
     };
 
     // チェックボックスの状態を更新する関数
@@ -75,6 +89,7 @@ export const GADMGeoJsonSelector = memo(
         draft[rowIndex][columnIndex] = !draft[rowIndex][columnIndex];
         return draft;
       });
+      onChange();
     };
 
     // 行見出しまたは列見出しのチェックボックスを更新する関数
@@ -91,6 +106,7 @@ export const GADMGeoJsonSelector = memo(
         }
         return draft;
       });
+      onChange();
     };
 
     const handleColumnHeaderCheckboxChange = (columnIndex: number) => {
@@ -104,6 +120,7 @@ export const GADMGeoJsonSelector = memo(
         }
         return draft;
       });
+      onChange();
     };
 
     const handleAllCheckboxChange = () => {
@@ -120,6 +137,7 @@ export const GADMGeoJsonSelector = memo(
         }
         return draft;
       });
+      onChange();
     };
 
     // テーブルの見出し行のチェックボックスをレンダリングする関数
@@ -127,7 +145,7 @@ export const GADMGeoJsonSelector = memo(
       return (
         Object.keys(selectionMatrix).length > 0 && (
           <>
-            <TableCell component="th" scope="row">
+            <TableCell key="-1" component="th" scope="row">
               <Checkbox
                 checked={selectionMatrix[0][0]}
                 indeterminate={selectionMatrix[0][0] === undefined}
@@ -146,9 +164,26 @@ export const GADMGeoJsonSelector = memo(
                   onChange={() => handleColumnHeaderCheckboxChange(level + 1)}
                   name={`${level}`}
                 />
-                <Typography sx={{ fontStyle: 'bold' }}>
-                  Level {level}
-                </Typography>
+                <Tooltip
+                  title={`Level ${level}: ${level === 0 ? 'Country' : level === 1 ? 'Division' : level === 2 ? 'Subdivision' : level === 3 ? 'Subsubdivision' : ''}`}
+                >
+                  <Typography sx={{ fontStyle: 'bold' }}>
+                    {level === 0 ? (
+                      <Flag />
+                    ) : level === 1 ? (
+                      <LocationCity />
+                    ) : level === 2 ? (
+                      <Domain />
+                    ) : level === 3 ? (
+                      <Villa />
+                    ) : level === 4 ? (
+                      <VillaOutlined />
+                    ) : (
+                      ''
+                    )}
+                    Level {level}
+                  </Typography>
+                </Tooltip>
               </TableCell>
             ))}
           </>
@@ -160,26 +195,26 @@ export const GADMGeoJsonSelector = memo(
     const renderRows = useMemo(() => {
       return (
         selectionMatrix.length > 0 &&
-        countries.map((item, dataIndex) => (
+        countryMetadataList.map((item, dataIndex) => (
           <TableRow key={dataIndex}>
             <TableCell component="th" scope="row">
               <Checkbox
                 checked={selectionMatrix[dataIndex + 1][0]}
-                indeterminate={getRowMixedState(dataIndex + 1)}
+                indeterminate={isIndeterminateRow(dataIndex + 1)}
                 onChange={() => handleRowHeaderCheckboxChange(dataIndex + 1)}
                 name={`${dataIndex + 1}`}
               />
               <a
-                href={`https://gadm.org/maps/${item.code}.html`}
+                href={`https://gadm.org/maps/${item.countryCode}.html`}
                 target="_blank"
                 rel="noreferrer"
               >
-                {item.name}({item.code})
+                {item.countryName}({item.countryCode})
               </a>
             </TableCell>
             {LEVELS.map((level: number) => (
               <TableCell key={level}>
-                {level <= item.level && (
+                {level <= item.maxLevel && (
                   <>
                     <Checkbox
                       checked={selectionMatrix[dataIndex + 1][level + 1]}
@@ -190,7 +225,7 @@ export const GADMGeoJsonSelector = memo(
                     />
                     {level === 0 && (
                       <a
-                        href={`https://gadm.org/maps/${item.code}.html`}
+                        href={createGADMCountryUrl(item.countryCode)}
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -199,7 +234,7 @@ export const GADMGeoJsonSelector = memo(
                     )}
                     {level === 1 && (
                       <a
-                        href={`https://gadm.org/maps/${item.code}_${level}.html`}
+                        href={createGADMRegionUrl(item.countryCode, level)}
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -213,7 +248,7 @@ export const GADMGeoJsonSelector = memo(
           </TableRow>
         ))
       );
-    }, [countries, selectionMatrix]);
+    }, [countryMetadataList, selectionMatrix]);
 
     if (Object.keys(selectionMatrix).length === 0)
       return (
@@ -230,12 +265,12 @@ export const GADMGeoJsonSelector = memo(
 
     return (
       <Box>
-        <Table stickyHeader size="small">
+        <SelectorTable stickyHeader size="small">
           <TableHead>
             <TableRow>{renderHeaderCheckboxes}</TableRow>
           </TableHead>
           <TableBody>{renderRows}</TableBody>
-        </Table>
+        </SelectorTable>
       </Box>
     );
   },

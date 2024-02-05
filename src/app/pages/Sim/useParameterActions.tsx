@@ -1,7 +1,7 @@
 import { SessionState } from '../../models/SessionState';
 import { useCallback } from 'react';
 import { DEFAULT_PARAMS_BY_CASE } from '../../models/DefaultParamByCase';
-import { ProjectType } from '../../services/database/ProjectType';
+import { ProjectType } from '../../models/ProjectType';
 
 export const useParameterActions = ({
   type,

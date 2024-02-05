@@ -15,7 +15,7 @@ import { useMatrixEngine } from './useMatrixEngine';
 import { SimDesktopComponent } from './SimDesktopComponent';
 import { useSimulator } from './useSimulator';
 import { UIState } from '../../models/UIState';
-import { ProjectType } from '../../services/database/ProjectType';
+import { ProjectType } from '../../models/ProjectType';
 import { useSnackBar } from './useSnackBar';
 import { useUndoRedoActions } from './useUndoRedoActions';
 import { DEFAULT_PARAMS_BY_CASE } from '../../models/DefaultParamByCase';

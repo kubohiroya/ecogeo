@@ -11,7 +11,7 @@ import { DEFAULT_PARAMS_BY_CASE } from '../../../models/DefaultParamByCase';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { useUndoRedo } from '../../../hooks/useUndoRedo';
 import { SessionState } from '../../../models/SessionState';
-import { ProjectType } from '../../../services/database/ProjectType';
+import { ProjectType } from '../../../models/ProjectType';
 import { ParameterSet } from '../../../models/ParameterSet';
 import { sessionStateAtom } from '../../../pages/Sim/SimLoader';
 

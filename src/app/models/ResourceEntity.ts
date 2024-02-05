@@ -1,15 +1,12 @@
-export type ResourceEntity = {
-  uuid: string;
-  name: string;
-  type: ResourceType;
-  description: string;
+import { GeoDatabaseEntity } from './GeoDatabaseEntity';
+
+export type ResourceItems = {
   url: string;
-  updatedAt: number;
+  countryName: string;
+  countryCode: string;
+  level: number;
 };
 
-export const ResourceTypes = {
-  gadmShapes: 'gadmShapes',
-  idegsmCities: 'idegsmCities',
-  idegsmRoutes: 'idegsmRoutes',
+export type ResourceEntity = GeoDatabaseEntity & {
+  items: ResourceItems[];
 };
-export type ResourceType = (typeof ResourceTypes)[keyof typeof ResourceTypes];

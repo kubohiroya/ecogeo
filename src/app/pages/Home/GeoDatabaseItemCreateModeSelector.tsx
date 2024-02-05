@@ -1,21 +1,25 @@
 import React, { useEffect } from 'react';
-import { Button } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import styled from '@emotion/styled';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { DOCUMENT_TITLE } from '../../Constants';
 import { FileUploadPrompt } from './FileUploadPrompt';
-import { GeoDatabaseTableType } from './GeoDatabaseTableType';
+import {
+  DatabaseTableTypes,
+  GeoDatabaseTableType,
+} from '../../services/database/GeoDatabaseTableType';
+import { FileDropComponent } from '../../../components/FileDropComponent/FileDropComponent';
 
 const ModelSelectorBox = styled.div`
   display: flex;
   gap: 40px;
-  margin-bottom: 60px;
+  margin-bottom: 5px;
   justify-content: center;
   align-items: center;
 `;
 const ModelSelectButton = styled(Button)`
-  margin-top: 40px;
-  padding: 40px;
+  margin-top: 5px;
+  padding: 15px;
   display: block;
 `;
 const IconBox = styled.div`
@@ -33,6 +37,10 @@ type GeoDatabaseItemCreateModeSelectorProps = {
   items: GeoDatabaseItemCreateModeSelectorItem[];
 };
 
+const StyledBox = styled.div`
+  padding: 80px;
+`;
+
 export const GeoDatabaseItemCreateModeSelector = (
   props: GeoDatabaseItemCreateModeSelectorProps,
 ) => {
@@ -40,12 +48,17 @@ export const GeoDatabaseItemCreateModeSelector = (
   useEffect(() => {
     document.title =
       DOCUMENT_TITLE +
-      (props.type === GeoDatabaseTableType.resources
+      (props.type === DatabaseTableTypes.resources
         ? ' - Select Resource Type'
         : ' - Select Project Type');
-  }, []);
+  }, [props.type]);
   return (
-    <div>
+    <StyledBox>
+      <Typography
+        style={{ textAlign: 'center', paddingBottom: '16px', color: '#888' }}
+      >
+        Please choose type:
+      </Typography>
       <ModelSelectorBox>
         {props.items.map(
           (item: GeoDatabaseItemCreateModeSelectorItem, index: number) => (
@@ -62,11 +75,10 @@ export const GeoDatabaseItemCreateModeSelector = (
         )}
       </ModelSelectorBox>
 
-      <hr />
-
-      <Outlet />
-
-      <FileUploadPrompt />
-    </div>
+      <FileDropComponent acceptableSuffixes={['.json', '.csv', '.csv.zip']}>
+        <Outlet />
+        <FileUploadPrompt />
+      </FileDropComponent>
+    </StyledBox>
   );
 };

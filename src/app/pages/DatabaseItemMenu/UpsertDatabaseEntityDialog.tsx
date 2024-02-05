@@ -16,11 +16,14 @@ import * as React from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DOCUMENT_TITLE } from '../../Constants';
-import { ProjectTypes } from '../../services/database/ProjectType';
-import { ResourceTypes } from '../../models/ResourceEntity';
+import {
+  DatabaseTableTypes,
+  GeoDatabaseTableType,
+} from '../../services/database/GeoDatabaseTableType';
 
-type UpsertProjectDialogProps = {
+type UpsertDatabaseEntityDialogProps = {
   uuid: string | undefined;
+  tableType: GeoDatabaseTableType;
   type: string;
   name: string | undefined;
   description: string | undefined;
@@ -32,32 +35,29 @@ type UpsertProjectDialogProps = {
   }) => Promise<void>;
 };
 
-export const UpsertDatabaseItemDialog = ({
+export const UpsertDatabaseEntityDialog = ({
   uuid,
+  tableType,
   type,
   name,
   description,
   onSubmit,
-}: UpsertProjectDialogProps) => {
+}: UpsertDatabaseEntityDialogProps) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const navigate = useNavigate();
 
   const goHome = () => {
-    switch (type) {
-      case ProjectTypes.Racetrack:
-      case ProjectTypes.Graph:
-      case ProjectTypes.RealWorld:
+    switch (tableType) {
+      case DatabaseTableTypes.projects:
         navigate('/projects', { replace: true });
         break;
-      case ResourceTypes.gadmShapes:
-      case ResourceTypes.idegsmCities:
-      case ResourceTypes.idegsmRoutes:
+      case DatabaseTableTypes.resources:
         navigate('/resources', { replace: true });
         break;
       default:
-        throw new Error(`Unknown ProjectType: ${type}`);
+        throw new Error(`Unknown ProjectType: ${tableType}`);
     }
   };
 
@@ -65,8 +65,8 @@ export const UpsertDatabaseItemDialog = ({
 
   useEffect(() => {
     document.title =
-      DOCUMENT_TITLE + `- ${uuid ? 'Update ' : 'Create New'} ${type}`;
-  }, [uuid, type]);
+      DOCUMENT_TITLE + `- ${uuid ? 'Update ' : 'Create New'} ${tableType}`;
+  }, [uuid, tableType]);
 
   return (
     <Dialog
@@ -91,7 +91,8 @@ export const UpsertDatabaseItemDialog = ({
       }}
     >
       <DialogTitle>
-        {uuid ? 'Edit' : 'Create New'} {type} Project
+        {uuid ? 'Edit' : 'Create New'}{' '}
+        {tableType === DatabaseTableTypes.projects ? 'project' : 'resource'}
       </DialogTitle>
       <DialogContent>
         <DialogContentText>

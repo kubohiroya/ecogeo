@@ -9,7 +9,7 @@
     "test": "nx test",
     "wc": "find src -name '*.ts*' | xargs wc -l",
     "predeploy": "nx build",
-    "deploy": "gh-pages -d dists/ecogeo"
+    "deploy": "gh-pages -d dists/ecogeo/"
   },
   "private": true,
   "dependencies": {

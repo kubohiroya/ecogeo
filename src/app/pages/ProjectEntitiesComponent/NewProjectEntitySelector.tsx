@@ -1,5 +1,5 @@
 import { GeoDatabaseItemCreateModeSelector } from '../Home/GeoDatabaseItemCreateModeSelector';
-import { DatabaseTableTypes } from '../../services/database/GeoDatabaseTableType';
+import { GeoDatabaseTableTypes } from '../../services/database/GeoDatabaseTableType';
 import React, { useState } from 'react';
 import { Close, PanoramaFishEye, Public, Share } from '@mui/icons-material';
 import { ProjectTypes } from '../../models/ProjectType';
@@ -11,7 +11,7 @@ export function NewProjectEntitySelector() {
   return (
     <Dialog open={open} hideBackdrop={false} onClick={() => setOpen(false)}>
       <GeoDatabaseItemCreateModeSelector
-        type={DatabaseTableTypes.projects}
+        type={GeoDatabaseTableTypes.projects}
         items={[
           {
             icon: <PanoramaFishEye fontSize="large" />,

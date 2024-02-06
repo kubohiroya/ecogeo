@@ -5,8 +5,8 @@ import { ResourceType } from '../../models/ResourceType';
 import { ProjectEntity } from '../../models/ProjectEntity';
 import { ResourceEntity, ResourceItems } from '../../models/ResourceEntity';
 import {
-  DatabaseTableTypes,
   GeoDatabaseTableType,
+  GeoDatabaseTableTypes,
 } from './GeoDatabaseTableType';
 
 const TABLE_NAME = 'databases';
@@ -43,9 +43,9 @@ export class GeoDatabaseTable extends Dexie {
 
   static getTableByTableType(type: GeoDatabaseTableType) {
     switch (type) {
-      case DatabaseTableTypes.projects:
+      case GeoDatabaseTableTypes.projects:
         return GeoDatabaseTable.getSingleton().projects;
-      case DatabaseTableTypes.resources:
+      case GeoDatabaseTableTypes.resources:
         return GeoDatabaseTable.getSingleton().resources;
       default:
         throw new Error(`Unknown Type: ${type}`);
@@ -131,10 +131,10 @@ export class GeoDatabaseTable extends Dexie {
 
 export function getCurrentDatabaseTableType() {
   if (document.location.hash.startsWith('#/projects')) {
-    return DatabaseTableTypes.projects;
+    return GeoDatabaseTableTypes.projects;
   }
   if (document.location.hash.startsWith('#/resources')) {
-    return DatabaseTableTypes.resources;
+    return GeoDatabaseTableTypes.resources;
   }
   throw new Error('Unrecognizable Type: ' + document.location.hash);
 }

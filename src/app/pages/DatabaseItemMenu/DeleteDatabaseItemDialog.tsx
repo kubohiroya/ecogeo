@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { createProjectLink } from '../../../createProjectLink';
 import dexie from 'dexie';
-import { DatabaseTableTypes } from '../../services/database/GeoDatabaseTableType';
+import { GeoDatabaseTableTypes } from '../../services/database/GeoDatabaseTableType';
 
 type DeleteDatabaseItemDialogProps = {
   tableType: string;
@@ -33,10 +33,10 @@ export const DeleteDatabaseItemDialog = ({
 
   const goHome = useCallback(() => {
     switch (tableType) {
-      case DatabaseTableTypes.projects:
+      case GeoDatabaseTableTypes.projects:
         navigate('/projects', { replace: true });
         break;
-      case DatabaseTableTypes.resources:
+      case GeoDatabaseTableTypes.resources:
         navigate('/resources', { replace: true });
         break;
       default:
@@ -61,7 +61,9 @@ export const DeleteDatabaseItemDialog = ({
     <Dialog open={true}>
       <DialogTitle>
         Delete
-        {tableType === DatabaseTableTypes.projects ? ' project' : ' resource'}
+        {tableType === GeoDatabaseTableTypes.projects
+          ? ' project'
+          : ' resource'}
       </DialogTitle>
       <DialogContent dividers>
         <Typography>

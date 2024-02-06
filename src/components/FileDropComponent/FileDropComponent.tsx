@@ -24,8 +24,10 @@ import { FileLoaderRequestType } from '../../app/services/file/FileLoaderRequest
 import { FileLoaderResponseType } from '../../app/services/file/FileLoaderResponseType';
 import { atom } from 'jotai/index';
 import { useAtom } from 'jotai';
+import { GeoDatabaseTableType } from '../../app/services/database/GeoDatabaseTableType';
 
 interface FileDropComponentProps {
+  type: GeoDatabaseTableType;
   acceptableSuffixes: string[];
   handleFiles?: (fileList: FileList) => void;
   onFinish?: (lastUpdated: number) => void;

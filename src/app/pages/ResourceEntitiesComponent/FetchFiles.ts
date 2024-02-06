@@ -2,18 +2,44 @@ import JSZip from 'jszip';
 import { readAllChunks } from '../../utils/readerUtil';
 import { proxyUrl } from './ProxyUrl';
 
-export const download = async (url: string) => {
-  const proxyMode = window.location.hostname === 'localhost';
-  const realUrl = proxyMode ? proxyUrl(url) : url;
-  const res = await fetch(realUrl, {
-    method: 'GET',
-  }).catch((error) => {
+export const downloadTextData = async (url: string) => {
+  const localProxyMode = window.location.hostname === 'localhost';
+  const res = await fetch(proxyUrl(url, localProxyMode)).catch((error) => {
     throw error;
   });
-  return await readAllChunks(res.body!.getReader());
+  if (localProxyMode) {
+    const contents = res.body!.getReader();
+    const arrayBuffer = await readAllChunks(contents);
+    return new TextDecoder('utf-8').decode(arrayBuffer);
+  } else {
+    const contents = (await res.json()).contents as string;
+    if (url.endsWith('.zip')) {
+      return extractStringFromZip(contents);
+    } else {
+      return contents; // new TextEncoder().encode(contents);
+    }
+  }
 };
 
-async function extractZip(arrayBuffer: ArrayBuffer): Promise<any> {
+async function extractStringFromZip(base64Zip: string): Promise<any> {
+  // base64エンコードされたZIPデータをデコード
+  const zipData = atob(base64Zip.split('base64,')[1]);
+  const zip = new JSZip();
+
+  // ZIPアーカイブを読み込む
+  const loadedZip = await zip.loadAsync(zipData, { base64: false });
+
+  // ZIPアーカイブ内のファイル名を取得
+  const fileNames = Object.keys(loadedZip.files);
+  if (fileNames.length !== 1) {
+    throw new Error('ZIPアーカイブは1つのファイルのみを含む必要があります');
+  }
+
+  // ZIPアーカイブ内のファイル内容を取得
+  return await loadedZip.file(fileNames[0])!.async('string');
+}
+
+async function unzip(arrayBuffer: ArrayBuffer): Promise<any> {
   const zip = new JSZip();
   const loadedZip = await zip.loadAsync(arrayBuffer);
 
@@ -70,19 +96,11 @@ export const fetchFiles = async ({
   for (const url of urlList) {
     try {
       notifyStatusByURL(url, { status: FetchStatus.loading });
-      const arrayBuffer = await download(url);
-      if (url.endsWith('.zip')) {
-        const contents = await extractZip(arrayBuffer);
-        notifyFinishedByUrl({
-          url,
-          data: contents,
-        });
-      } else {
-        notifyFinishedByUrl({
-          url,
-          data: arrayBuffer,
-        });
-      }
+      const arrayBuffer = await downloadTextData(url);
+      notifyFinishedByUrl({
+        url,
+        data: arrayBuffer,
+      });
       notifyStatusByURL(url, { status: FetchStatus.success });
 
       index++;

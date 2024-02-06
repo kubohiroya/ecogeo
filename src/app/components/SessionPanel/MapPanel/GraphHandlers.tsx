@@ -150,7 +150,7 @@ function createRandomEdges(
   });
 
   if (negativeVerticesIdSet.size === 0) {
-    throw new Error();
+    // throw new Error('negativeVerticesIdSet.size === 0');// FIXME
   }
 
   const supportedEdges = [...negativeVerticesIdSet]
@@ -348,6 +348,6 @@ export const removeSubGraph = (
     case 'Graph':
       return removeRandomSubGraph(numLocations, sessionState);
     default:
-      throw new Error();
+      throw new Error('invalid type: ' + sessionState.parameterSet.type);
   }
 };

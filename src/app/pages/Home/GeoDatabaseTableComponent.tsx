@@ -2,8 +2,8 @@ import React, { ReactNode } from 'react';
 import { Box, Tab, Tabs } from '@mui/material';
 import { Outlet, useNavigate } from 'react-router-dom';
 import {
-  DatabaseTableTypes,
   GeoDatabaseTableType,
+  GeoDatabaseTableTypes,
 } from '../../services/database/GeoDatabaseTableType';
 
 type GeoDatabaseTableComponentProps = {
@@ -44,7 +44,7 @@ export const GeoDatabaseTableComponent = (
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     navigate(newValue === 0 ? '/resources' : '/projects', { replace: true });
   };
-  const value = props.type === DatabaseTableTypes.resources ? 0 : 1;
+  const value = props.type === GeoDatabaseTableTypes.resources ? 0 : 1;
   return (
     <Box>
       <Box

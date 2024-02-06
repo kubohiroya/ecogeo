@@ -20,7 +20,7 @@ import 'dexie-observable';
 import { ResourceEntity } from '../../models/ResourceEntity';
 import { GADMGeoJsonComponent } from './GADMGeoJsonComponent';
 import { useDocumentTitle } from '../Home/useDocumentTitle';
-import { DatabaseTableTypes } from '../../services/database/GeoDatabaseTableType';
+import { GeoDatabaseTableTypes } from '../../services/database/GeoDatabaseTableType';
 import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
 import { ResourceEntitiesLoader } from './ResourceEntitiesLoader';
 import styled from '@emotion/styled';
@@ -146,7 +146,7 @@ export const ResourceEntitiesComponent = () => {
               <TableCell>
                 <DatabaseItemMenu
                   item={resource}
-                  tableType={DatabaseTableTypes.resources}
+                  tableType={GeoDatabaseTableTypes.resources}
                 />
               </TableCell>
             </Row>

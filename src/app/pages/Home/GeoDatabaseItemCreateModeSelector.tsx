@@ -5,8 +5,8 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { DOCUMENT_TITLE } from '../../Constants';
 import { FileUploadPrompt } from './FileUploadPrompt';
 import {
-  DatabaseTableTypes,
   GeoDatabaseTableType,
+  GeoDatabaseTableTypes,
 } from '../../services/database/GeoDatabaseTableType';
 import { FileDropComponent } from '../../../components/FileDropComponent/FileDropComponent';
 
@@ -48,7 +48,7 @@ export const GeoDatabaseItemCreateModeSelector = (
   useEffect(() => {
     document.title =
       DOCUMENT_TITLE +
-      (props.type === DatabaseTableTypes.resources
+      (props.type === GeoDatabaseTableTypes.resources
         ? ' - Select Resource Type'
         : ' - Select Project Type');
   }, [props.type]);
@@ -57,7 +57,11 @@ export const GeoDatabaseItemCreateModeSelector = (
       <Typography
         style={{ textAlign: 'center', paddingBottom: '16px', color: '#888' }}
       >
-        Please choose type:
+        Create a new{' '}
+        {props.type === GeoDatabaseTableTypes.resources
+          ? 'resource'
+          : 'project'}{' '}
+        :
       </Typography>
       <ModelSelectorBox>
         {props.items.map(
@@ -75,9 +79,12 @@ export const GeoDatabaseItemCreateModeSelector = (
         )}
       </ModelSelectorBox>
 
-      <FileDropComponent acceptableSuffixes={['.json', '.csv', '.csv.zip']}>
+      <FileDropComponent
+        acceptableSuffixes={['.json', '.csv', '.csv.zip']}
+        type={props.type}
+      >
         <Outlet />
-        <FileUploadPrompt />
+        <FileUploadPrompt type={props.type} />
       </FileDropComponent>
     </StyledBox>
   );

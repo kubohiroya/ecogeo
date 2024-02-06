@@ -20,7 +20,7 @@ import { createProjectLink } from '../../../createProjectLink';
 import { ProjectTypes } from '../../models/ProjectType';
 import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
 import { useDocumentTitle } from '../Home/useDocumentTitle';
-import { DatabaseTableTypes } from '../../services/database/GeoDatabaseTableType';
+import { GeoDatabaseTableTypes } from '../../services/database/GeoDatabaseTableType';
 import { ProjectEntity } from '../../models/ProjectEntity';
 import { ProjectEntitiesLoader } from './ProjectEntitiesLoader';
 
@@ -152,7 +152,7 @@ export const ProjectEntitiesComponent = () => {
               <TableCell>
                 <DatabaseItemMenu
                   item={item}
-                  tableType={DatabaseTableTypes.projects}
+                  tableType={GeoDatabaseTableTypes.projects}
                 />
               </TableCell>
             </TableRow>

@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { UpsertDatabaseEntityDialog } from '../DatabaseItemMenu/UpsertDatabaseEntityDialog';
 import { useLoaderData } from 'react-router-dom';
 import { INITIAL_VIEW_STATE } from '../../Constants';
-import { DatabaseTableTypes } from '../../services/database/GeoDatabaseTableType';
+import { GeoDatabaseTableTypes } from '../../services/database/GeoDatabaseTableType';
 
 export const UpsertProjectDialog = () => {
   const { uuid, type, name, description } = useLoaderData() as {
@@ -57,7 +57,7 @@ export const UpsertProjectDialog = () => {
   return (
     <UpsertDatabaseEntityDialog
       uuid={uuid}
-      tableType={DatabaseTableTypes.projects}
+      tableType={GeoDatabaseTableTypes.projects}
       type={type}
       name={name}
       description={description}

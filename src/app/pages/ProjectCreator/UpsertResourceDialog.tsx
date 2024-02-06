@@ -1,7 +1,7 @@
 import { useLoaderData } from 'react-router-dom';
 import { UpsertDatabaseEntityDialog } from '../DatabaseItemMenu/UpsertDatabaseEntityDialog';
 import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
-import { DatabaseTableTypes } from '../../services/database/GeoDatabaseTableType';
+import { GeoDatabaseTableTypes } from '../../services/database/GeoDatabaseTableType';
 import { useCallback } from 'react';
 
 export const UpsertResourceDialog = () => {
@@ -39,7 +39,7 @@ export const UpsertResourceDialog = () => {
   return (
     <UpsertDatabaseEntityDialog
       uuid={uuid}
-      tableType={DatabaseTableTypes.resources}
+      tableType={GeoDatabaseTableTypes.resources}
       type={type}
       name={name}
       description={description}

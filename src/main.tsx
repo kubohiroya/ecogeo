@@ -3,26 +3,27 @@
 import React, { StrictMode } from "react";
 
 import { createHashRouter, RouterProvider } from "react-router-dom";
-import { databaseItemLoader } from "./app/pages/ProjectCreator/databaseItemLoader";
-import { DeleteDatabaseItemDialog } from "./app/pages/DatabaseItemMenu/DeleteDatabaseItemDialog";
-import { GeoDatabaseTableComponent } from "./app/pages/Home/GeoDatabaseTableComponent";
-import { HomePage } from "./app/pages/Home/HomePage";
-import { GADMGeoJsonDialog } from "./app/pages/ResourceEntitiesComponent/GADMGeoJsonDialog";
-import { DatabaseTableTypes } from "./app/services/database/GeoDatabaseTableType";
-import { IdeGsmCitiesComponent } from "./app/pages/ResourceEntitiesComponent/IdeGsmCitiesComponent";
-import { IdeGsmRoutesComponent } from "./app/pages/ResourceEntitiesComponent/IdeGsmRoutesComponent";
-import { ProjectEntitiesComponent } from "./app/pages/ProjectEntitiesComponent/ProjectEntitiesComponent";
-import { ResourceEntitiesComponent } from "./app/pages/ResourceEntitiesComponent/ResourceEntitiesComponent";
 import { createRoot } from "react-dom/client";
 import { SimLoader } from "./app/pages/Sim/SimLoader";
 import { SimPage } from "./app/pages/Sim/SimPage";
-import { UpsertResourceDialog } from "./app/pages/ProjectCreator/UpsertResourceDialog";
-import { UpsertProjectDialog } from "./app/pages/ProjectCreator/UpsertProjectDialog";
-import { NewResourceEntitySelector } from "./app/pages/ResourceEntitiesComponent/NewResourceEntitySelector";
-import { NewProjectEntitySelector } from "./app/pages/ProjectEntitiesComponent/NewProjectEntitySelector";
+import { HomePage } from "./app/pages/Home/HomePage";
+import { GeoDatabaseTableComponent } from "./app/pages/Home/GeoDatabaseTableComponent";
+import { GeoDatabaseTableTypes } from "./app/services/database/GeoDatabaseTableType";
+import { ResourceEntitiesComponent } from "./app/pages/ResourceEntitiesComponent/ResourceEntitiesComponent";
+import { ProjectEntitiesComponent } from "./app/pages/ProjectEntitiesComponent/ProjectEntitiesComponent";
 import { ResourceEntitiesLoader } from "./app/pages/ResourceEntitiesComponent/ResourceEntitiesLoader";
+import { NewResourceEntitySelector } from "./app/pages/ResourceEntitiesComponent/NewResourceEntitySelector";
+import { GADMGeoJsonDialog } from "./app/pages/ResourceEntitiesComponent/GADMGeoJsonDialog";
+import { IdeGsmCitiesComponent } from "./app/pages/ResourceEntitiesComponent/IdeGsmCitiesComponent";
+import { IdeGsmRoutesComponent } from "./app/pages/ResourceEntitiesComponent/IdeGsmRoutesComponent";
+import { DeleteDatabaseItemDialog } from "./app/pages/DatabaseItemMenu/DeleteDatabaseItemDialog";
+import { databaseItemLoader } from "./app/pages/ProjectCreator/databaseItemLoader";
+import { UpsertResourceDialog } from "./app/pages/ProjectCreator/UpsertResourceDialog";
 import { ProjectEntitiesLoader } from "./app/pages/ProjectEntitiesComponent/ProjectEntitiesLoader";
+import { NewProjectEntitySelector } from "./app/pages/ProjectEntitiesComponent/NewProjectEntitySelector";
+import { UpsertProjectDialog } from "./app/pages/ProjectCreator/UpsertProjectDialog";
 
+console.log('built: 2024-02-06 15:49');
 const router = createHashRouter([
   {
     path: '/',
@@ -32,7 +33,7 @@ const router = createHashRouter([
         path: '/resources',
         element: (
           <GeoDatabaseTableComponent
-            type={DatabaseTableTypes.resources}
+            type={GeoDatabaseTableTypes.resources}
             items={[
               <ResourceEntitiesComponent />,
               <ProjectEntitiesComponent />,
@@ -62,7 +63,7 @@ const router = createHashRouter([
             path: `/resources/delete/:type/:uuid`,
             element: (
               <DeleteDatabaseItemDialog
-                tableType={DatabaseTableTypes.resources}
+                tableType={GeoDatabaseTableTypes.resources}
               />
             ),
             loader: databaseItemLoader,
@@ -78,7 +79,7 @@ const router = createHashRouter([
         path: '/projects',
         element: (
           <GeoDatabaseTableComponent
-            type={DatabaseTableTypes.projects}
+            type={GeoDatabaseTableTypes.projects}
             items={[
               <ResourceEntitiesComponent />,
               <ProjectEntitiesComponent />,
@@ -95,7 +96,7 @@ const router = createHashRouter([
             path: `/projects/delete/:type/:uuid`,
             element: (
               <DeleteDatabaseItemDialog
-                tableType={DatabaseTableTypes.projects}
+                tableType={GeoDatabaseTableTypes.projects}
               />
             ),
             loader: databaseItemLoader,

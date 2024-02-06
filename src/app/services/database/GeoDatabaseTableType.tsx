@@ -1,6 +1,6 @@
-export const DatabaseTableTypes = {
+export const GeoDatabaseTableTypes = {
   resources: 'resources',
   projects: 'projects',
 };
 export type GeoDatabaseTableType =
-  (typeof DatabaseTableTypes)[keyof typeof DatabaseTableTypes];
+  (typeof GeoDatabaseTableTypes)[keyof typeof GeoDatabaseTableTypes];

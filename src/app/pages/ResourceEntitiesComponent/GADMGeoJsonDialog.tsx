@@ -157,15 +157,16 @@ export const GADMGeoJsonDialog = () => {
     [],
   );
 
-  const updateStepStatus = (stepIndex: number) => {
+  const updateStepStatus = (stepIndex: number, status?: StepStatus) => {
     setStepStatus((prevStepStatus) => {
       const newStepStatus = [...prevStepStatus];
-      newStepStatus[stepIndex] = StepStatuses.done;
+      newStepStatus[stepIndex] = status ? status : StepStatuses.done;
       return newStepStatus;
     });
   };
 
   const downloadIndexFile = useCallback(async () => {
+    updateStepStatus(1, StepStatuses.processing);
     const countryMetadataList: GADMGeoJsonCountryMetadata[] =
       await downloadGeoJsonIndexFile();
     setCountryMetadataList(countryMetadataList);

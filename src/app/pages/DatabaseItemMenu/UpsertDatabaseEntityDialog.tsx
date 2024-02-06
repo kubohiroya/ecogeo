@@ -17,8 +17,8 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DOCUMENT_TITLE } from '../../Constants';
 import {
-  DatabaseTableTypes,
   GeoDatabaseTableType,
+  GeoDatabaseTableTypes,
 } from '../../services/database/GeoDatabaseTableType';
 
 type UpsertDatabaseEntityDialogProps = {
@@ -50,10 +50,10 @@ export const UpsertDatabaseEntityDialog = ({
 
   const goHome = () => {
     switch (tableType) {
-      case DatabaseTableTypes.projects:
+      case GeoDatabaseTableTypes.projects:
         navigate('/projects', { replace: true });
         break;
-      case DatabaseTableTypes.resources:
+      case GeoDatabaseTableTypes.resources:
         navigate('/resources', { replace: true });
         break;
       default:
@@ -92,7 +92,7 @@ export const UpsertDatabaseEntityDialog = ({
     >
       <DialogTitle>
         {uuid ? 'Edit' : 'Create New'}{' '}
-        {tableType === DatabaseTableTypes.projects ? 'project' : 'resource'}
+        {tableType === GeoDatabaseTableTypes.projects ? 'project' : 'resource'}
       </DialogTitle>
       <DialogContent>
         <DialogContentText>
@@ -103,7 +103,7 @@ export const UpsertDatabaseEntityDialog = ({
             name="name"
             autoComplete="off"
             defaultValue={name}
-            label="Project Name"
+            label="Name"
             autoFocus
             required
             fullWidth
@@ -113,7 +113,7 @@ export const UpsertDatabaseEntityDialog = ({
             autoComplete="off"
             name={'description'}
             defaultValue={description}
-            label="Project Description"
+            label="Description"
             multiline={true}
             rows={8}
             fullWidth

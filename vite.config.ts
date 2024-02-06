@@ -5,6 +5,7 @@ import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import { fileURLToPath, URL } from 'node:url';
 
 export default defineConfig({
+  base: '/ecogeo/',
   cacheDir: './node_modules/.vite/ecogeo',
 
   server: {

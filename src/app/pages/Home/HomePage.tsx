@@ -22,7 +22,7 @@ export const HomePage = () => {
           size={64}
         />
         <AppHeader startIcon={<Share fontSize={'large'} />}>
-          Geo-Eco: Graph Structured Economy Model Simulator
+          Eco-Geo: Graph Structured Economy Model Simulator
         </AppHeader>
         <Outlet />
       </Box>

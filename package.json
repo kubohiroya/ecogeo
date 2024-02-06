@@ -1,5 +1,5 @@
 {
-  "homepage": "https://kubohiroya.github.io/ecogeo/",
+  "homepage": "https://kubohiroya.github.io/ecogeo",
   "version": "0.1.0",
   "name": "@ecogeo/source",
   "license": "MIT",
@@ -8,8 +8,7 @@
     "build": "nx build",
     "test": "nx test",
     "wc": "find src -name '*.ts*' | xargs wc -l",
-    "predeploy": "nx build",
-    "deploy": "gh-pages -d dists/ecogeo/"
+    "deploy": "vite build && gh-pages -d dist"
   },
   "private": true,
   "dependencies": {

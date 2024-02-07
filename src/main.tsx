@@ -9,19 +9,19 @@ import { SimPage } from "./app/pages/Sim/SimPage";
 import { HomePage } from "./app/pages/Home/HomePage";
 import { GeoDatabaseTableComponent } from "./app/pages/Home/GeoDatabaseTableComponent";
 import { GeoDatabaseTableTypes } from "./app/services/database/GeoDatabaseTableType";
-import { ResourceEntitiesComponent } from "./app/pages/ResourceEntitiesComponent/ResourceEntitiesComponent";
-import { ProjectEntitiesComponent } from "./app/pages/ProjectEntitiesComponent/ProjectEntitiesComponent";
-import { ResourceEntitiesLoader } from "./app/pages/ResourceEntitiesComponent/ResourceEntitiesLoader";
-import { NewResourceEntitySelector } from "./app/pages/ResourceEntitiesComponent/NewResourceEntitySelector";
-import { GADMGeoJsonDialog } from "./app/pages/ResourceEntitiesComponent/GADMGeoJsonDialog";
-import { IdeGsmCitiesComponent } from "./app/pages/ResourceEntitiesComponent/IdeGsmCitiesComponent";
-import { IdeGsmRoutesComponent } from "./app/pages/ResourceEntitiesComponent/IdeGsmRoutesComponent";
-import { DeleteDatabaseItemDialog } from "./app/pages/DatabaseItemMenu/DeleteDatabaseItemDialog";
-import { databaseItemLoader } from "./app/pages/ProjectCreator/databaseItemLoader";
-import { UpsertResourceDialog } from "./app/pages/ProjectCreator/UpsertResourceDialog";
-import { ProjectEntitiesLoader } from "./app/pages/ProjectEntitiesComponent/ProjectEntitiesLoader";
-import { NewProjectEntitySelector } from "./app/pages/ProjectEntitiesComponent/NewProjectEntitySelector";
-import { UpsertProjectDialog } from "./app/pages/ProjectCreator/UpsertProjectDialog";
+import { ResourceEntitiesComponent } from "./app/pages/Home/ResourceEntitiesComponent/ResourceEntitiesComponent";
+import { ProjectEntitiesComponent } from "./app/pages/Home/ProjectEntitiesComponent/ProjectEntitiesComponent";
+import { ResourceEntitiesLoader } from "./app/pages/Home/ResourceEntitiesComponent/ResourceEntitiesLoader";
+import { NewResourceEntitySelector } from "./app/pages/Home/ResourceEntitiesComponent/NewResourceEntitySelector";
+import { GADMGeoJsonDialog } from "./app/pages/Home/ResourceEntitiesComponent/GADMGeoJsonDialog";
+import { IdeGsmCitiesComponent } from "./app/pages/Home/ResourceEntitiesComponent/IdeGsmCitiesComponent";
+import { IdeGsmRoutesComponent } from "./app/pages/Home/ResourceEntitiesComponent/IdeGsmRoutesComponent";
+import { GeoDatabaseEntityDeleteDialog } from "./app/pages/Home/GeoDatabaseEntityDeleteDialog";
+import { databaseItemLoader } from "./app/pages/Home/databaseItemLoader";
+import { ResourceUpsertDialog } from "./app/pages/Home/ResourceUpsertDialog";
+import { ProjectEntitiesLoader } from "./app/pages/Home/ProjectEntitiesComponent/ProjectEntitiesLoader";
+import { NewProjectEntitySelector } from "./app/pages/Home/ProjectEntitiesComponent/NewProjectEntitySelector";
+import { ProjectUpsertDialog } from "./app/pages/Home/ProjectUpsertDialog";
 
 console.log('built: 2024-02-06 15:49');
 const router = createHashRouter([
@@ -62,7 +62,7 @@ const router = createHashRouter([
           {
             path: `/resources/delete/:type/:uuid`,
             element: (
-              <DeleteDatabaseItemDialog
+              <GeoDatabaseEntityDeleteDialog
                 tableType={GeoDatabaseTableTypes.resources}
               />
             ),
@@ -70,7 +70,7 @@ const router = createHashRouter([
           },
           {
             path: `/resources/update/:type/:uuid`,
-            element: <UpsertResourceDialog />,
+            element: <ResourceUpsertDialog />,
             loader: databaseItemLoader,
           },
         ],
@@ -95,7 +95,7 @@ const router = createHashRouter([
           {
             path: `/projects/delete/:type/:uuid`,
             element: (
-              <DeleteDatabaseItemDialog
+              <GeoDatabaseEntityDeleteDialog
                 tableType={GeoDatabaseTableTypes.projects}
               />
             ),
@@ -103,12 +103,12 @@ const router = createHashRouter([
           },
           {
             path: `/projects/create/:type`,
-            element: <UpsertProjectDialog />,
+            element: <ProjectUpsertDialog />,
             loader: databaseItemLoader,
           },
           {
             path: `/projects/update/:type/:uuid`,
-            element: <UpsertProjectDialog />,
+            element: <ProjectUpsertDialog />,
             loader: databaseItemLoader,
           },
         ],

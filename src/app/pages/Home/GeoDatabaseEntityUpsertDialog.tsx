@@ -35,7 +35,7 @@ type UpsertDatabaseEntityDialogProps = {
   }) => Promise<void>;
 };
 
-export const UpsertDatabaseEntityDialog = ({
+export const GeoDatabaseEntityUpsertDialog = ({
   uuid,
   tableType,
   type,

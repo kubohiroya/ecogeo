@@ -41,6 +41,20 @@ export class GeoDatabaseTable extends Dexie {
     return GeoDatabaseTable.getSingleton().projects.toArray();
   }
 
+  static async getResource(uuid: string) {
+    return GeoDatabaseTable.getSingleton()
+      .resources.where('uuid')
+      .equals(uuid)
+      .toArray();
+  }
+
+  static async getProject(uuid: string) {
+    return GeoDatabaseTable.getSingleton()
+      .projects.where('uuid')
+      .equals(uuid)
+      .toArray();
+  }
+
   static getTableByTableType(type: GeoDatabaseTableType) {
     switch (type) {
       case GeoDatabaseTableTypes.projects:

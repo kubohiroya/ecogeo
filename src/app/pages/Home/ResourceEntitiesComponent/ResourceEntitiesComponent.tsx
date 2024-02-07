@@ -14,30 +14,16 @@ import {
   TableRow,
 } from '@mui/material';
 import { useLoaderData, useNavigate } from 'react-router-dom';
-import { DatabaseItemMenu } from '../DatabaseItemMenu/DatabaseItemMenu';
-import { ResourceTypes } from '../../models/ResourceType';
+import { GeoDatabaseEntityMenu } from '../GeoDatabaseEntityMenu';
+import { ResourceTypes } from '../../../models/ResourceType';
 import 'dexie-observable';
-import { ResourceEntity } from '../../models/ResourceEntity';
+import { ResourceEntity } from '../../../models/ResourceEntity';
 import { GADMGeoJsonComponent } from './GADMGeoJsonComponent';
-import { useDocumentTitle } from '../Home/useDocumentTitle';
-import { GeoDatabaseTableTypes } from '../../services/database/GeoDatabaseTableType';
-import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
+import { useDocumentTitle } from '../useDocumentTitle';
+import { GeoDatabaseTableTypes } from '../../../services/database/GeoDatabaseTableType';
+import { GeoDatabaseTable } from '../../../services/database/GeoDatabaseTable';
 import { ResourceEntitiesLoader } from './ResourceEntitiesLoader';
-import styled from '@emotion/styled';
-
-const Cell = styled(TableCell)`
-  display: block;
-  max-height: 180px;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  overflow-y: auto;
-  border: none;
-  background-color: '#ccc';
-`;
-const Row = styled(TableRow)`
-  height: 80px;
-  border-bottom: solid #ccc 0.5px;
-`;
+import { Cell, Row } from '../Styles';
 
 export const ResourceEntitiesComponent = () => {
   const { resources: initialResources } = useLoaderData() as {
@@ -48,7 +34,9 @@ export const ResourceEntitiesComponent = () => {
   const navigate = useNavigate();
 
   const updateResources = () => {
-    ResourceEntitiesLoader({}).then((resources) => setResources(resources));
+    ResourceEntitiesLoader({}).then((resources: ResourceEntity[]) =>
+      setResources(resources),
+    );
   };
 
   useEffect(() => {
@@ -107,7 +95,7 @@ export const ResourceEntitiesComponent = () => {
   return (
     <TableContainer
       component={Paper}
-      style={{ overflow: 'scroll', height: 'calc(100vh - 150px)' }}
+      style={{ overflow: 'scroll', maxHeight: 'calc(100vh - 150px)' }}
     >
       <Table>
         <TableHead>
@@ -123,12 +111,12 @@ export const ResourceEntitiesComponent = () => {
         <TableBody>
           {resources?.map((resource, resourceIndex) => (
             <Row key={resource.uuid}>
-              <TableCell>
+              <Cell>
                 <IconButton color={'primary'} size={'large'} onClick={() => {}}>
                   {typeToIcon[resource.type]}
                 </IconButton>
-              </TableCell>
-              <TableCell>{resource.name}</TableCell>
+              </Cell>
+              <Cell>{resource.name}</Cell>
               <Cell>{resource.description}</Cell>
               <Cell>
                 {resource.type === 'gadmShapes' ? (
@@ -140,44 +128,34 @@ export const ResourceEntitiesComponent = () => {
                   <></>
                 )}
               </Cell>
-              <TableCell>
+              <Cell>
                 <div>Updated: {new Date(resource.updatedAt).toISOString()}</div>
-              </TableCell>
-              <TableCell>
-                <DatabaseItemMenu
+              </Cell>
+              <Cell>
+                <GeoDatabaseEntityMenu
                   item={resource}
                   tableType={GeoDatabaseTableTypes.resources}
                 />
-              </TableCell>
+              </Cell>
             </Row>
           ))}
         </TableBody>
       </Table>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          margin: '6px',
-          paddingLeft: '170px',
-        }}
+      <SpeedDial
+        style={{ position: 'fixed', bottom: '20px', right: '20px' }}
+        direction="up"
+        ariaLabel="Create new resource"
+        icon={<SpeedDialIcon />}
       >
-        <SpeedDial
-          style={{ position: 'fixed', bottom: '20px', right: '20px' }}
-          direction="up"
-          ariaLabel="Create new resource"
-          icon={<SpeedDialIcon />}
-        >
-          {speedDialActions.map((action) => (
-            <SpeedDialAction
-              key={action.name}
-              icon={action.icon}
-              tooltipTitle={action.name}
-              onClick={action.onClick}
-            />
-          ))}
-        </SpeedDial>
-      </div>
+        {speedDialActions.map((action) => (
+          <SpeedDialAction
+            key={action.name}
+            icon={action.icon}
+            tooltipTitle={action.name}
+            onClick={action.onClick}
+          />
+        ))}
+      </SpeedDial>
     </TableContainer>
   );
 };

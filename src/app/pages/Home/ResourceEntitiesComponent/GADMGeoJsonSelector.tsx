@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import React, { memo, useMemo } from 'react';
 import { useAtom } from 'jotai';
-import { loop } from '../../utils/arrayUtil';
+import { loop } from '../../../utils/arrayUtil';
 import styled from '@emotion/styled';
 import {
   Domain,
@@ -21,7 +21,7 @@ import {
   Villa,
   VillaOutlined,
 } from '@mui/icons-material';
-import { GADMGeoJsonCountryMetadata } from '../../models/GADMGeoJsonCountryMetadata';
+import { GADMGeoJsonCountryMetadata } from '../../../models/GADMGeoJsonCountryMetadata';
 import { selectedCheckboxMatrixAtom } from './GADMGeoJsonServiceAtoms';
 import { createGADMCountryUrl, createGADMRegionUrl } from './CreateGADMUrl';
 

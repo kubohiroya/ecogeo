@@ -16,7 +16,11 @@ export const ClassicStyleApp = ({ db }: { db: GeoDatabase }) => {
   return (
     <>
       <FileDropComponent
+        type={'projects'}
         acceptableSuffixes={['.zip', '.json', '.csv']}
+        handleFiles={(fileList) => {
+          console.log('fileList: ', fileList);
+        }}
         onFinish={onFinish}
       />
       <GADMFetch />

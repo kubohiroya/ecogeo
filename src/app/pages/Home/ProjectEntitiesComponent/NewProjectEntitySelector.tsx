@@ -1,8 +1,8 @@
-import { GeoDatabaseItemCreateModeSelector } from '../Home/GeoDatabaseItemCreateModeSelector';
-import { GeoDatabaseTableTypes } from '../../services/database/GeoDatabaseTableType';
+import { GeoDatabaseEntityCreateModeSelector } from '../GeoDatabaseEntityCreateModeSelector';
+import { GeoDatabaseTableTypes } from '../../../services/database/GeoDatabaseTableType';
 import React, { useState } from 'react';
 import { Close, PanoramaFishEye, Public, Share } from '@mui/icons-material';
-import { ProjectTypes } from '../../models/ProjectType';
+import { ProjectTypes } from '../../../models/ProjectType';
 import { Dialog, IconButton } from '@mui/material';
 import { Link } from 'react-router-dom';
 
@@ -10,7 +10,7 @@ export function NewProjectEntitySelector() {
   const [open, setOpen] = useState(true);
   return (
     <Dialog open={open} hideBackdrop={false} onClick={() => setOpen(false)}>
-      <GeoDatabaseItemCreateModeSelector
+      <GeoDatabaseEntityCreateModeSelector
         type={GeoDatabaseTableTypes.projects}
         items={[
           {

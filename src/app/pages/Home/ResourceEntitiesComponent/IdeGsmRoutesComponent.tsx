@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react';
 import {
   Dialog,
   DialogActions,
@@ -8,24 +7,25 @@ import {
   IconButton,
   Typography,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
 import { Close } from '@mui/icons-material';
-import { DOCUMENT_TITLE } from '../../Constants';
+import { useNavigate } from 'react-router-dom';
+import { DOCUMENT_TITLE } from '../../../Constants';
 
-export const IdeGsmCitiesComponent = () => {
+export const IdeGsmRoutesComponent = () => {
   useEffect(() => {
-    document.title = DOCUMENT_TITLE + ' - IDE GSM Cities';
+    document.title = DOCUMENT_TITLE + ' - IDE GSM Routes';
   }, []);
 
   const navigate = useNavigate();
   return (
     <Dialog open={true} maxWidth="xl">
       <DialogTitle>
-        <Typography>IDE GSM Cities</Typography>
+        <Typography>IDE GSM Routes</Typography>
       </DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Please upload your local cities.csv files.
+          Please upload your local routes.csv files.
         </DialogContentText>
       </DialogContent>
       <DialogActions sx={{ margin: '10px' }}>

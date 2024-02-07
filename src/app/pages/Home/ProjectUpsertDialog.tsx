@@ -1,12 +1,12 @@
 import { useGeolocated } from 'react-geolocated';
 import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
 import { useCallback } from 'react';
-import { UpsertDatabaseEntityDialog } from '../DatabaseItemMenu/UpsertDatabaseEntityDialog';
+import { GeoDatabaseEntityUpsertDialog } from './GeoDatabaseEntityUpsertDialog';
 import { useLoaderData } from 'react-router-dom';
 import { INITIAL_VIEW_STATE } from '../../Constants';
 import { GeoDatabaseTableTypes } from '../../services/database/GeoDatabaseTableType';
 
-export const UpsertProjectDialog = () => {
+export const ProjectUpsertDialog = () => {
   const { uuid, type, name, description } = useLoaderData() as {
     uuid: string | undefined;
     type: string;
@@ -55,7 +55,7 @@ export const UpsertProjectDialog = () => {
   );
 
   return (
-    <UpsertDatabaseEntityDialog
+    <GeoDatabaseEntityUpsertDialog
       uuid={uuid}
       tableType={GeoDatabaseTableTypes.projects}
       type={type}

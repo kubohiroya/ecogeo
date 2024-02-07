@@ -14,15 +14,16 @@ import {
   TableRow,
 } from '@mui/material';
 import { Link, useLoaderData, useNavigate } from 'react-router-dom';
-import { DatabaseItemMenu } from '../DatabaseItemMenu/DatabaseItemMenu';
+import { GeoDatabaseEntityMenu } from '../GeoDatabaseEntityMenu';
 
-import { createProjectLink } from '../../../createProjectLink';
-import { ProjectTypes } from '../../models/ProjectType';
-import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
-import { useDocumentTitle } from '../Home/useDocumentTitle';
-import { GeoDatabaseTableTypes } from '../../services/database/GeoDatabaseTableType';
-import { ProjectEntity } from '../../models/ProjectEntity';
+import { createProjectLink } from '../../../../createProjectLink';
+import { ProjectTypes } from '../../../models/ProjectType';
+import { GeoDatabaseTable } from '../../../services/database/GeoDatabaseTable';
+import { useDocumentTitle } from '../useDocumentTitle';
+import { GeoDatabaseTableTypes } from '../../../services/database/GeoDatabaseTableType';
+import { ProjectEntity } from '../../../models/ProjectEntity';
 import { ProjectEntitiesLoader } from './ProjectEntitiesLoader';
+import { Cell, Row } from '../Styles';
 
 export const ProjectEntitiesComponent = () => {
   const initialProjectEntities: ProjectEntity[] =
@@ -129,33 +130,33 @@ export const ProjectEntitiesComponent = () => {
         </TableHead>
         <TableBody>
           {projects?.map((item) => (
-            <TableRow key={item.uuid}>
-              <TableCell>
+            <Row key={item.uuid}>
+              <Cell>
                 <Link to={createProjectLink(item)} target="_blank">
                   <IconButton color={'primary'} size={'large'}>
                     {typeToIcon[item.type]}
                   </IconButton>
                 </Link>
-              </TableCell>
-              <TableCell>
+              </Cell>
+              <Cell>
                 <Link to={createProjectLink(item)} target="_blank">
                   {item.name}
                 </Link>
-              </TableCell>
-              <TableCell>
+              </Cell>
+              <Cell>
                 <pre>{item.description}</pre>
-              </TableCell>
-              <TableCell>
+              </Cell>
+              <Cell>
                 <div>Created: {new Date(item.createdAt).toISOString()}</div>
                 <div>Updated: {new Date(item.updatedAt).toISOString()}</div>
-              </TableCell>
-              <TableCell>
-                <DatabaseItemMenu
+              </Cell>
+              <Cell>
+                <GeoDatabaseEntityMenu
                   item={item}
                   tableType={GeoDatabaseTableTypes.projects}
                 />
-              </TableCell>
-            </TableRow>
+              </Cell>
+            </Row>
           ))}
         </TableBody>
       </Table>

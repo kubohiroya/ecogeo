@@ -154,7 +154,7 @@ export const getRouteSegmentMode = (mode: string) => {
   }
 };
 
-export const GeoCsvLoaders: CsvLoaders = {
+export const IdeGsmCsvLoaders: CsvLoaders = {
   [CsvFileTypes.cities]: {
     check: (headerLine: string): boolean => {
       return (

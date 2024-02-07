@@ -22,7 +22,7 @@ interface DatabaseItemMenuProps {
   item: GeoDatabaseEntity | ResourceEntity;
 }
 
-export const DatabaseItemMenu = ({
+export const GeoDatabaseEntityMenu = ({
   tableType,
   item,
 }: DatabaseItemMenuProps) => {

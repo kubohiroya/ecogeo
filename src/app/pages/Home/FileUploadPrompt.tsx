@@ -25,9 +25,9 @@ export function FileUploadPrompt({ type }: { type: GeoDatabaseTableType }) {
       <Typography
         style={{ color: '#bbb', marginLeft: '30px', marginRight: '30px' }}
       >
-        If you have files you previously downloaded locally, drag and drop them
-        here to upload and create a{' '}
-        {type === GeoDatabaseTableTypes.projects ? 'project' : 'resource'}.
+        Otherwise, drag and drop your local data files here to upload and create
+        a new {type === GeoDatabaseTableTypes.projects ? 'project' : 'resource'}
+        .
       </Typography>
 
       <FileUpload fontSize="large" />

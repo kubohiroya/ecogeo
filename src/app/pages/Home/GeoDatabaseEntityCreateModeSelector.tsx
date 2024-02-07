@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import styled from '@emotion/styled';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { DOCUMENT_TITLE } from '../../Constants';
@@ -38,10 +38,13 @@ type GeoDatabaseItemCreateModeSelectorProps = {
 };
 
 const StyledBox = styled.div`
-  padding: 80px;
+  padding: 40px;
+  display: grid;
+  place-items: center;
+  height: 100%;
 `;
 
-export const GeoDatabaseItemCreateModeSelector = (
+export const GeoDatabaseEntityCreateModeSelector = (
   props: GeoDatabaseItemCreateModeSelectorProps,
 ) => {
   const navigate = useNavigate();
@@ -54,38 +57,43 @@ export const GeoDatabaseItemCreateModeSelector = (
   }, [props.type]);
   return (
     <StyledBox>
-      <Typography
-        style={{ textAlign: 'center', paddingBottom: '16px', color: '#888' }}
-      >
-        Create a new{' '}
-        {props.type === GeoDatabaseTableTypes.resources
-          ? 'resource'
-          : 'project'}{' '}
-        :
-      </Typography>
-      <ModelSelectorBox>
-        {props.items.map(
-          (item: GeoDatabaseItemCreateModeSelectorItem, index: number) => (
-            <ModelSelectButton
-              key={index}
-              variant="outlined"
-              title={item.tooltip}
-              onClick={() => navigate(item.url)}
-            >
-              <div>{item.name}</div>
-              <IconBox>{item.icon}</IconBox>
-            </ModelSelectButton>
-          ),
-        )}
-      </ModelSelectorBox>
+      <Box>
+        <Typography
+          style={{ textAlign: 'center', paddingBottom: '16px', color: '#888' }}
+        >
+          Create a new{' '}
+          {props.type === GeoDatabaseTableTypes.resources
+            ? 'resource'
+            : 'project'}{' '}
+          :
+        </Typography>
+        <ModelSelectorBox>
+          {props.items.map(
+            (item: GeoDatabaseItemCreateModeSelectorItem, index: number) => (
+              <ModelSelectButton
+                key={index}
+                variant="outlined"
+                title={item.tooltip}
+                onClick={() => navigate(item.url)}
+              >
+                <div>{item.name}</div>
+                <IconBox>{item.icon}</IconBox>
+              </ModelSelectButton>
+            ),
+          )}
+        </ModelSelectorBox>
 
-      <FileDropComponent
-        acceptableSuffixes={['.json', '.csv', '.csv.zip']}
-        type={props.type}
-      >
-        <Outlet />
-        <FileUploadPrompt type={props.type} />
-      </FileDropComponent>
+        <FileDropComponent
+          type={props.type}
+          acceptableSuffixes={['.json', '.csv', '.csv.zip']}
+          handleFiles={(fileList: FileList) => {
+            console.log('handleFiles', fileList);
+          }}
+        >
+          <Outlet />
+          <FileUploadPrompt type={props.type} />
+        </FileDropComponent>
+      </Box>
     </StyledBox>
   );
 };

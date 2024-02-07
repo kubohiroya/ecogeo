@@ -1,4 +1,4 @@
-import { proxyUrl } from './ProxyUrl';
+import { proxyUrl } from '../../../utils/ProxyUrl';
 
 export const createGADM41JsonUrl = (
   countryCode: string,

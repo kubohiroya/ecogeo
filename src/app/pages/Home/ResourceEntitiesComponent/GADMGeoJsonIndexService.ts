@@ -1,5 +1,5 @@
 import { GADMGeoJsonCountryMetadata } from '../../models/GADMGeoJsonCountryMetadata';
-import { downloadTextData } from './FetchFiles';
+import { downloadTextData } from '../../Sim/FetchFiles';
 import { createGADM41JsonUrl } from './CreateGADM41JsonUrl';
 import { createGADM41IndexUrl } from './CreateGADM41IndexUrl';
 

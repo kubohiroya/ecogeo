@@ -1,5 +1,5 @@
 import { Alert, Box, Button } from '@mui/material';
-import { InlineIcon } from '../../../components/InlineIcon/InlineIcon';
+import { InlineIcon } from '../../../../components/InlineIcon/InlineIcon';
 import { Launch } from '@mui/icons-material';
 import React from 'react';
 

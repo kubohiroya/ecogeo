@@ -6,9 +6,9 @@ import { FileLoaderRequestType } from '../app/services/file/FileLoaderRequestTyp
 import { FileLoaderResponseType } from '../app/services/file/FileLoaderResponseType';
 import {
   CsvLoaders,
-  GeoCsvLoaders,
+  IdeGsmCsvLoaders,
   loadCsvFile,
-} from '../app/services/file/GeoCsvLoaders';
+} from '../app/services/file/IdeGsmCsvLoaders';
 import { GeoPointEntity } from '../app/models/geo/GeoPointEntity';
 import { storeGeoRegions } from '../app/services/file/GeoJsonLoaders';
 import { unzipFileToStream } from '../app/services/file/UnzipFileToStream';
@@ -78,7 +78,7 @@ const finishedCallback = (fileName: string) => {
   });
 };
 
-const loadFileList = async (
+export const loadFileList = async (
   db: GeoDatabase,
   fileList: FileList,
   csvLoaders: CsvLoaders,
@@ -152,12 +152,11 @@ self.onmessage = async function fileLoaderWorker(
       if (!workerBusy) {
         workerBusy = true;
         const dbName = payload.value.dbName;
-        console.log('dbName:', dbName);
         const db = new GeoDatabase(dbName);
         await loadFileList(
           db,
           (event.data as any).data as FileList,
-          GeoCsvLoaders,
+          IdeGsmCsvLoaders,
         );
         workerBusy = false;
       }

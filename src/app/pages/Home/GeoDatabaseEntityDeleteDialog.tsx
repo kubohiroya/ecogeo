@@ -19,7 +19,7 @@ import { GeoDatabaseTableTypes } from '../../services/database/GeoDatabaseTableT
 type DeleteDatabaseItemDialogProps = {
   tableType: string;
 };
-export const DeleteDatabaseItemDialog = ({
+export const GeoDatabaseEntityDeleteDialog = ({
   tableType,
 }: DeleteDatabaseItemDialogProps) => {
   const { uuid, type, name } = useLoaderData() as {

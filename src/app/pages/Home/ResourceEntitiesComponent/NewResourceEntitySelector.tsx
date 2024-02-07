@@ -1,5 +1,5 @@
-import { GeoDatabaseItemCreateModeSelector } from '../Home/GeoDatabaseItemCreateModeSelector';
-import { GeoDatabaseTableTypes } from '../../services/database/GeoDatabaseTableType';
+import { GeoDatabaseEntityCreateModeSelector } from '../../Home/GeoDatabaseEntityCreateModeSelector';
+import { GeoDatabaseTableTypes } from '../../../services/database/GeoDatabaseTableType';
 import { Close, Flag, LocationCity, Route } from '@mui/icons-material';
 import React, { useState } from 'react';
 import { Dialog, IconButton } from '@mui/material';
@@ -9,7 +9,7 @@ export function NewResourceEntitySelector() {
   const [open, setOpen] = useState(true);
   return (
     <Dialog open={open} hideBackdrop={false} onClick={() => setOpen(false)}>
-      <GeoDatabaseItemCreateModeSelector
+      <GeoDatabaseEntityCreateModeSelector
         type={GeoDatabaseTableTypes.resources}
         items={[
           {

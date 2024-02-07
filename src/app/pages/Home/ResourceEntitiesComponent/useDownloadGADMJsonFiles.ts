@@ -3,16 +3,16 @@ import {
   downloadStatusAtom,
   downloadSummaryStatusAtom,
 } from './GADMGeoJsonServiceAtoms';
-import { GADMGeoJsonCountryMetadata } from '../../models/GADMGeoJsonCountryMetadata';
+import { GADMGeoJsonCountryMetadata } from '../../../models/GADMGeoJsonCountryMetadata';
 import { v4 as uuidv4 } from 'uuid';
-import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
-import { ResourceTypes } from '../../models/ResourceType';
-import { GeoDatabase } from '../../services/database/GeoDatabase';
-import { fetchFiles, FetchStatus } from './FetchFiles';
-import { storeGeoRegions } from '../../services/file/GeoJsonLoaders';
-import { LoaderProgressResponse } from '../../services/file/FileLoaderResponse';
-import { LoadingProgress } from '../../services/file/LoadingProgress';
-import { FileLoadingStatusTypes } from '../../services/file/FileLoadingStatusType';
+import { GeoDatabaseTable } from '../../../services/database/GeoDatabaseTable';
+import { ResourceTypes } from '../../../models/ResourceType';
+import { GeoDatabase } from '../../../services/database/GeoDatabase';
+import { fetchFiles, FetchStatus } from '../../Sim/FetchFiles';
+import { storeGeoRegions } from '../../../services/file/GeoJsonLoaders';
+import { LoaderProgressResponse } from '../../../services/file/FileLoaderResponse';
+import { LoadingProgress } from '../../../services/file/LoadingProgress';
+import { FileLoadingStatusTypes } from '../../../services/file/FileLoadingStatusType';
 import { createGADM41JsonUrl } from './CreateGADM41JsonUrl';
 
 export function useDownloadGADMJsonFiles() {
@@ -99,13 +99,9 @@ export function useDownloadGADMJsonFiles() {
             fileSize: undefined,
             cancelCallback(fileName: string): void {},
             errorCallback(fileName: string, errorMessage: string): void {},
-            progressCallback(value: LoaderProgressResponse): void {
-              // console.log(progress, value);
-            },
+            progressCallback(value: LoaderProgressResponse): void {},
             startedCallback(fileName: string): void {},
-            finishedCallback(fileName: string): void {
-              //console.log(fileName);
-            },
+            finishedCallback(fileName: string): void {},
           });
         },
       });

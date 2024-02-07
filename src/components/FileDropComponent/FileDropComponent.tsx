@@ -29,10 +29,9 @@ import { GeoDatabaseTableType } from '../../app/services/database/GeoDatabaseTab
 interface FileDropComponentProps {
   type: GeoDatabaseTableType;
   acceptableSuffixes: string[];
-  handleFiles?: (fileList: FileList) => void;
+  handleFiles: (fileList: FileList) => void;
   onFinish?: (lastUpdated: number) => void;
   children?: React.ReactNode;
-  prompt?: React.ReactNode;
 }
 
 interface DropZoneProps {
@@ -61,10 +60,14 @@ function checkAcceptableFileList(
 
 // 背景色が変わるコンポーネントのスタイルを定義
 const DropZone = styled.div<DropZoneProps>`
-  margin-top: 40px;
-  border: 10px dashed #eee;
   align-items: center;
   justify-content: center;
+
+  height: calc(100vh - 20px);
+
+  border: ${(props) =>
+    props.isDragOver ? '10px dashed #eee' : '10px solid rgba(255,255,255,0)'};
+
   background-color: ${(props) =>
     props.isError
       ? '#ff000040'
@@ -272,10 +275,7 @@ export const FileDropComponent = (props: FileDropComponentProps) => {
       onDrop={handleDrop}
       isError={isError}
     >
-      <div>
-        {props.children}
-        {props.prompt}
-      </div>
+      <div>{props.children}</div>
 
       <div>
         <Tooltip

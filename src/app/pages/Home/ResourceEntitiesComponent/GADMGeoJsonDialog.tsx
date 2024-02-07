@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
-import { DOCUMENT_TITLE } from '../../Constants';
+import { DOCUMENT_TITLE } from '../../../Constants';
 import { useAtom, useAtomValue } from 'jotai';
 import {
   downloadStatusAtom,
@@ -36,7 +36,7 @@ import { Step6DialogContent } from './Step6DialogContent';
 import { Step5DialogContent } from './Step5DialogContent';
 import { Step3DialogContent } from './Step3DialogContent';
 import { downloadGeoJsonIndexFile } from './GADMGeoJsonIndexService';
-import { GADMGeoJsonCountryMetadata } from '../../models/GADMGeoJsonCountryMetadata';
+import { GADMGeoJsonCountryMetadata } from '../../../models/GADMGeoJsonCountryMetadata';
 import { StepStatus, StepStatuses } from './StepStatuses';
 import { Step4DialogContent } from './Step4DialogContent';
 
@@ -193,6 +193,14 @@ export const GADMGeoJsonDialog = () => {
     updateStepStatus(3);
   }, []);
 
+  const isNextButtonDisabled = () => {
+    return (
+      stepIndex !== 4 &&
+      stepIndex !== 5 &&
+      stepStatus[stepIndex] !== StepStatuses.done
+    );
+  };
+
   const steps: Step[] = [
     {
       label: 'Step 1: Read and accept the GADM license',
@@ -257,14 +265,6 @@ export const GADMGeoJsonDialog = () => {
       },
     },
   ];
-
-  const isNextButtonDisabled = () => {
-    return (
-      stepIndex !== 4 &&
-      stepIndex !== 5 &&
-      stepStatus[stepIndex] !== StepStatuses.done
-    );
-  };
 
   return (
     <Dialog open={true} maxWidth="xl">

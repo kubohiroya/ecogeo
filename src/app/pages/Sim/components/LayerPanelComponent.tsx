@@ -2,7 +2,7 @@ import { CardContent } from '@mui/material';
 import { TreeView } from '@mui/x-tree-view';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { StyledTreeItem } from '../../../../components/TreeView/StyledTreeItem';
+import { StyledTreeItem } from 'src/components/TreeView/StyledTreeItem';
 import {
   Flag,
   Hexagon,

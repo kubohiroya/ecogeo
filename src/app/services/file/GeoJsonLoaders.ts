@@ -1,4 +1,4 @@
-import { GeoRegionEntity } from '../../models/geo/GeoRegionEntity';
+import { GeoRegionEntity } from 'src/app//models/geo/GeoRegionEntity';
 import { JSONParser } from '@streamparser/json-whatwg';
 import { FileLoaderResponseType } from './FileLoaderResponseType';
 import { LoaderProgressResponse } from './FileLoaderResponse';
@@ -14,7 +14,7 @@ import {
   Coordinate,
   simplifyPolygons,
 } from '../../utils/simplify';
-import { GeoDatabase } from '../database/GeoDatabase';
+import { GeoDatabase } from 'src/app/services/database/GeoDatabase';
 
 const SIMPLIFY_TOLERANCE = 0.05;
 

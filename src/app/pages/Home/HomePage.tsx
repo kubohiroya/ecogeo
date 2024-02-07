@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react';
-import { FullScreenBox } from '../../../components/FullScreenBox/FullScreenBox';
-import AppHeader from '../../../components/AppHeader/AppHeader';
+import { FullScreenBox } from 'src/components/FullScreenBox/FullScreenBox';
+import AppHeader from 'src/components/AppHeader/AppHeader';
 import { Share } from '@mui/icons-material';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { FileDropComponent } from '../../../components/FileDropComponent/FileDropComponent';
 import GithubCorner from 'react-github-corner';
-import { v4 as uuid_v4 } from 'uuid';
+import { FileDropComponent } from 'src/app/components/FileDropComponent/FileDropComponent';
 
 export const HomePage = () => {
   const navigate = useNavigate();
@@ -22,8 +21,14 @@ export const HomePage = () => {
         acceptableSuffixes={['json.zip', '.json', '.csv']}
         handleFiles={(fileList) => {
           console.log('fileList: ', fileList);
+          /*
           const uuid = uuid_v4();
-          //GeoDatabaseTable.getSingleton(), fileList);
+          storeGeoRegions({
+            fileList,
+            uuid,
+            type: 'projects',
+          });
+           */
         }}
         onFinish={(lastUpdated: number) => {
           console.log('finish loading: ', lastUpdated);

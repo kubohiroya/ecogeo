@@ -1,6 +1,6 @@
 import JSZip from 'jszip';
-import { readAllChunks } from '../../utils/readerUtil';
-import { proxyUrl } from '../../utils/ProxyUrl';
+import { readAllChunks } from 'src/app/utils/readerUtil';
+import { proxyUrl } from 'src/app/utils/ProxyUrl';
 
 export const downloadTextData = async (url: string) => {
   const localProxyMode = window.location.hostname === 'localhost';

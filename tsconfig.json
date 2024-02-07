@@ -17,6 +17,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "src/*": [
+        "./src/*"
+      ],
       "tslib": [
         "node_modules/tslib/tslib.d.ts"
       ]

@@ -5,7 +5,7 @@ import { FileUpload, Quiz } from '@mui/icons-material';
 import {
   GeoDatabaseTableType,
   GeoDatabaseTableTypes,
-} from '../../services/database/GeoDatabaseTableType';
+} from 'src/app/services/database/GeoDatabaseTableType';
 
 const PromptBox = styled.div`
   display: flex;

@@ -1,7 +1,7 @@
 import {
   GeoDatabaseTable,
   getCurrentDatabaseTableType,
-} from '../../services/database/GeoDatabaseTable';
+} from 'src/app/services/database/GeoDatabaseTable';
 
 export const databaseItemLoader = async ({ params }: any) => {
   if (params.uuid === undefined) {

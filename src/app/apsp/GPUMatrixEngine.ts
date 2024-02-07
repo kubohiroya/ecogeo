@@ -1,8 +1,8 @@
-import { Edge, Vertex } from '../models/Graph';
-import { create2DArray } from '../utils/arrayUtil';
-import { City } from '../models/City';
-import { AbstractMatrixEngine } from './MatrixEngine';
-import { DISTANCE_SCALE_FACTOR } from './calculateDistanceByLocations';
+import { Edge, Vertex } from 'src/app/models/Graph';
+import { create2DArray } from 'src/app/utils/arrayUtil';
+import { City } from 'src/app/models/City';
+import { AbstractMatrixEngine } from 'src/app/apsp/MatrixEngine';
+import { DISTANCE_SCALE_FACTOR } from 'src/app/apsp/calculateDistanceByLocations';
 
 const initializeAdjacencyMatrixComputeShaderCode = () => `
 @group(0) @binding(0) var<uniform> numVertices: u32;

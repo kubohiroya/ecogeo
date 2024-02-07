@@ -13,7 +13,7 @@ import { AutoLayoutButton } from './AutoLayoutButton';
 import { LayerSwitchButton } from './LayerSwitchButton';
 import { MapPanelButtonsState } from './MapPanelButtonsState';
 import { OverlayControlButton } from './OverlayControlButton';
-import { ParameterSet } from '../../../models/ParameterSet'; /* eslint-disable-next-line */
+import { ParameterSet } from 'src/app/models/ParameterSet'; /* eslint-disable-next-line */
 
 /* eslint-disable-next-line */
 export interface MapPanelButtonsProps {

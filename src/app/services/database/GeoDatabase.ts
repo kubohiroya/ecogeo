@@ -1,13 +1,18 @@
 import Dexie from 'dexie';
 import * as uuid from 'uuid';
-import { GeoPointEntity } from '../../models/geo/GeoPointEntity';
-import { GeoRegionEntity } from '../../models/geo/GeoRegionEntity';
-import { GeoRouteSegmentEntity } from '../../models/geo/GeoRouteSegmentEntity';
-import { GeoRouteSegmentSource } from '../../models/geo/GeoRouteSegmentSource';
+import { GeoPointEntity } from 'src/app/models/geo/GeoPointEntity';
+import { GeoRegionEntity } from 'src/app/models/geo/GeoRegionEntity';
+import { GeoRouteSegmentEntity } from 'src/app/models/geo/GeoRouteSegmentEntity';
+import { GeoRouteSegmentSource } from 'src/app/models/geo/GeoRouteSegmentSource';
 import {
   getTilesMortonNumbersForAllZoomsMap,
   MAX_ZOOM_LEVEL,
-} from '../../utils/mortonNumberUtil';
+} from 'src/app/utils/mortonNumberUtil';
+import {
+  GeoDatabaseTableType,
+  GeoDatabaseTableTypes,
+} from 'src/app/services/database/GeoDatabaseTableType';
+import { TABLE_DB_NAME } from 'src/app/Constants';
 
 const zoomLevels = 'z0, z1, z2, z3, z4, z5, z6, z7, z8, z9, z10';
 const zoomLevelsExt = 'z0_, z1_, z2_, z3_, z4_, z5_, z6_, z7_, z8_, z9_, z10_';
@@ -50,8 +55,18 @@ export class GeoDatabase extends Dexie {
     this.routeSegments = this.table('routeSegments');
   }
 
-  public static async open(name: string): Promise<GeoDatabase> {
-    return new GeoDatabase(name);
+  public static async openWithUUID(
+    type: GeoDatabaseTableType,
+    uuid: string,
+  ): Promise<GeoDatabase> {
+    switch (type) {
+      case GeoDatabaseTableTypes.resources:
+        return new GeoDatabase(`${TABLE_DB_NAME}-resource-${uuid}`);
+      case GeoDatabaseTableTypes.projects:
+        return new GeoDatabase(`${TABLE_DB_NAME}-project-${uuid}`);
+      default:
+        throw new Error('invalid type:' + type);
+    }
   }
 
   async findAllGeoRegions(mortonNumbers: number[][][], zoom: number) {

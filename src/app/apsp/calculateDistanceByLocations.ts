@@ -1,5 +1,5 @@
-import { City } from '../models/City';
-import { getById } from '../utils/arrayUtil';
+import { City } from 'src/app/models/City';
+import { getById } from 'src/app/utils/arrayUtil';
 import { distance } from '@turf/turf';
 
 export const DISTANCE_SCALE_FACTOR = 0.01;

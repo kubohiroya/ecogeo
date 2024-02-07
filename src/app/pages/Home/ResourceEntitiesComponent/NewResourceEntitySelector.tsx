@@ -1,5 +1,5 @@
 import { GeoDatabaseEntityCreateModeSelector } from '../../Home/GeoDatabaseEntityCreateModeSelector';
-import { GeoDatabaseTableTypes } from '../../../services/database/GeoDatabaseTableType';
+import { GeoDatabaseTableTypes } from 'src/app/services/database/GeoDatabaseTableType';
 import { Close, Flag, LocationCity, Route } from '@mui/icons-material';
 import React, { useState } from 'react';
 import { Dialog, IconButton } from '@mui/material';

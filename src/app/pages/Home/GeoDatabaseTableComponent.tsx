@@ -4,7 +4,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import {
   GeoDatabaseTableType,
   GeoDatabaseTableTypes,
-} from '../../services/database/GeoDatabaseTableType';
+} from 'src/app/services/database/GeoDatabaseTableType';
 
 type GeoDatabaseTableComponentProps = {
   type: GeoDatabaseTableType;

@@ -1,9 +1,9 @@
-import { City } from '../../models/City';
-import { UIState } from '../../models/UIState';
+import { City } from 'src/app/models/City';
+import { UIState } from 'src/app/models/UIState';
 import { useCallback } from 'react';
-import { calcBoundingRect } from '../../components/SessionPanel/MapPanel/calcBoundingRect';
-import { createViewportCenter } from '../../components/SessionPanel/MapPanel/CreateViewportCenter';
-import { PADDING_MARGIN_RATIO } from '../../components/SessionPanel/MapPanel/Constatns';
+import { calcBoundingRect } from 'src/app/components/SessionPanel/MapPanel/calcBoundingRect';
+import { createViewportCenter } from 'src/app/components/SessionPanel/MapPanel/CreateViewportCenter';
+import { PADDING_MARGIN_RATIO } from 'src/app/components/SessionPanel/MapPanel/Constatns';
 
 export const useViewportActions = ({
   width,

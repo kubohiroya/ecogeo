@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import React, { ReactElement, useCallback, useState } from 'react';
-import MapPanelButtons from './MapPanelButtons';
-import { MapPanelButtonsState } from './MapPanelButtonsState';
-import { hasFeatureDetectingHoverEvent } from '../../../utils/browserUtil';
-import { ParameterSet } from '../../../models/ParameterSet';
+import MapPanelButtons from 'src/app/components/SessionPanel/MapPanel/MapPanelButtons';
+import { MapPanelButtonsState } from 'src/app/components/SessionPanel/MapPanel/MapPanelButtonsState';
+import { hasFeatureDetectingHoverEvent } from 'src/app/utils/browserUtil';
+import { ParameterSet } from 'src/app/models/ParameterSet';
 
 /* eslint-disable-next-line */
 export interface MapPanelProps {

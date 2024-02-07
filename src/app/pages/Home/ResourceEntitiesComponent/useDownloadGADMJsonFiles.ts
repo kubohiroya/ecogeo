@@ -3,17 +3,18 @@ import {
   downloadStatusAtom,
   downloadSummaryStatusAtom,
 } from './GADMGeoJsonServiceAtoms';
-import { GADMGeoJsonCountryMetadata } from '../../../models/GADMGeoJsonCountryMetadata';
-import { v4 as uuidv4 } from 'uuid';
-import { GeoDatabaseTable } from '../../../services/database/GeoDatabaseTable';
-import { ResourceTypes } from '../../../models/ResourceType';
-import { GeoDatabase } from '../../../services/database/GeoDatabase';
+import { GADMGeoJsonCountryMetadata } from 'src/app/models/GADMGeoJsonCountryMetadata';
+import { v4 as uuid_v4 } from 'uuid';
+import { GeoDatabaseTable } from 'src/app/services/database/GeoDatabaseTable';
+import { ResourceTypes } from 'src/app/models/ResourceType';
+import { GeoDatabase } from 'src/app/services/database/GeoDatabase';
 import { fetchFiles, FetchStatus } from '../../Sim/FetchFiles';
-import { storeGeoRegions } from '../../../services/file/GeoJsonLoaders';
-import { LoaderProgressResponse } from '../../../services/file/FileLoaderResponse';
-import { LoadingProgress } from '../../../services/file/LoadingProgress';
-import { FileLoadingStatusTypes } from '../../../services/file/FileLoadingStatusType';
+import { storeGeoRegions } from 'src/app/services/file/GeoJsonLoaders';
+import { LoaderProgressResponse } from 'src/app/services/file/FileLoaderResponse';
+import { LoadingProgress } from 'src/app/services/file/LoadingProgress';
+import { FileLoadingStatusTypes } from 'src/app/services/file/FileLoadingStatusType';
 import { createGADM41JsonUrl } from './CreateGADM41JsonUrl';
+import { GeoDatabaseTableTypes } from 'src/app/services/database/GeoDatabaseTableType';
 
 export function useDownloadGADMJsonFiles() {
   const [, setDownloadStatus] = useAtom(downloadStatusAtom);
@@ -29,7 +30,7 @@ export function useDownloadGADMJsonFiles() {
       selectedCheckboxMatrix,
     );
 
-    const uuid = uuidv4();
+    const uuid = uuid_v4();
     const databaseId = await GeoDatabaseTable.getSingleton().resources.add({
       uuid,
       name: 'GADM GeoJSON',
@@ -40,8 +41,10 @@ export function useDownloadGADMJsonFiles() {
       updatedAt: Date.now(),
     });
 
-    const databaseName = `database${databaseId}`;
-    const db = await GeoDatabase.open(databaseName);
+    const db = await GeoDatabase.openWithUUID(
+      GeoDatabaseTableTypes.resources,
+      uuid,
+    );
 
     requestIdleCallback(async () => {
       await fetchFiles({

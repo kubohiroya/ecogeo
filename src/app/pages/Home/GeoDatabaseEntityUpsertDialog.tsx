@@ -15,11 +15,11 @@ import {
 import * as React from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DOCUMENT_TITLE } from '../../Constants';
+import { DOCUMENT_TITLE } from 'src/app/Constants';
 import {
   GeoDatabaseTableType,
   GeoDatabaseTableTypes,
-} from '../../services/database/GeoDatabaseTableType';
+} from 'src/app/services/database/GeoDatabaseTableType';
 
 type UpsertDatabaseEntityDialogProps = {
   uuid: string | undefined;

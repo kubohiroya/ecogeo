@@ -1,8 +1,8 @@
-import { GeoDatabaseEntityCreateModeSelector } from '../GeoDatabaseEntityCreateModeSelector';
-import { GeoDatabaseTableTypes } from '../../../services/database/GeoDatabaseTableType';
+import { GeoDatabaseEntityCreateModeSelector } from 'src/app/pages/Home/GeoDatabaseEntityCreateModeSelector';
+import { GeoDatabaseTableTypes } from 'src/app/services/database/GeoDatabaseTableType';
 import React, { useState } from 'react';
 import { Close, PanoramaFishEye, Public, Share } from '@mui/icons-material';
-import { ProjectTypes } from '../../../models/ProjectType';
+import { ProjectTypes } from 'src/app/models/ProjectType';
 import { Dialog, IconButton } from '@mui/material';
 import { Link } from 'react-router-dom';
 

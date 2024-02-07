@@ -1,9 +1,9 @@
-import { SessionState } from '../../models/SessionState';
-import { UIState } from '../../models/UIState';
-import { AppMatrices } from '../../models/AppMatrices';
-import { EuclideanCanvas } from '../../components/SessionPanel/MapPanel/pixi/EuclideanCanvas';
-import { calcBoundingRect } from '../../components/SessionPanel/MapPanel/calcBoundingRect';
-import { PADDING_MARGIN_RATIO } from '../../components/SessionPanel/MapPanel/Constatns';
+import { SessionState } from 'src/app/models/SessionState';
+import { UIState } from 'src/app/models/UIState';
+import { AppMatrices } from 'src/app/models/AppMatrices';
+import { EuclideanCanvas } from 'src/app/components/SessionPanel/MapPanel/pixi/EuclideanCanvas';
+import { calcBoundingRect } from 'src/app/components/SessionPanel/MapPanel/calcBoundingRect';
+import { PADDING_MARGIN_RATIO } from 'src/app/components/SessionPanel/MapPanel/Constatns';
 import React from 'react';
 
 export function BackgroundCanvas({

@@ -1,4 +1,4 @@
-import { GeoDatabase } from '../database/GeoDatabase';
+import { GeoDatabase } from 'src/app/services/database/GeoDatabase';
 
 export type FileLoaderHandler<T> = {
   check: (headerLine: string) => boolean;

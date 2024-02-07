@@ -1,4 +1,4 @@
-import { LoadingProgress } from '../../../services/file/LoadingProgress';
+import { LoadingProgress } from 'src/app/services/file/LoadingProgress';
 import { FetchStatus } from '../../Sim/FetchFiles';
 import {
   Alert,
@@ -8,8 +8,8 @@ import {
   CircularProgress,
   Stack,
 } from '@mui/material';
-import { FileLoadingStatusTypes } from '../../../services/file/FileLoadingStatusType';
-import { LinearProgressWithLabel } from '../../../../components/LinearProgressWithLabel/LinearProgressWithLabel';
+import { FileLoadingStatusTypes } from 'src/app/services/file/FileLoadingStatusType';
+import { LinearProgressWithLabel } from 'src/components/LinearProgressWithLabel/LinearProgressWithLabel';
 import { Done, Download, ReportProblem } from '@mui/icons-material';
 import React from 'react';
 

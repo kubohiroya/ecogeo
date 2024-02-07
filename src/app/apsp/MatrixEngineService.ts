@@ -1,21 +1,12 @@
-import { GPUMatrixEngine } from './GPUMatrixEngine';
-import { CPUMatrixEngine } from './CPUMatrixEngine';
-import { Edge } from '../models/Graph';
-import { City } from '../models/City';
-import { AbstractMatrixEngine } from './MatrixEngine';
-
-export const MatrixEngineKeyTypes = {
-  GPUMatrixEngine: 'GPUFloydWarshall',
-  CPUMatrixEngine: 'CPUFloydWarshall',
-} as const;
-export type MatrixEngineKeyType =
-  (typeof MatrixEngineKeyTypes)[keyof typeof MatrixEngineKeyTypes];
-
-export const defaultMatrixEngineType = MatrixEngineKeyTypes.CPUMatrixEngine;
-
-const params = new URLSearchParams(window.location.search);
-//const matrixEngineType = params.get('engine') || 'CPU:FloydWarshall';
-const matrixEngineType = params.get('engine') || defaultMatrixEngineType;
+import { GPUMatrixEngine } from 'src/app/apsp/GPUMatrixEngine';
+import { CPUMatrixEngine } from 'src/app/apsp/CPUMatrixEngine';
+import { Edge } from 'src/app/models/Graph';
+import { City } from 'src/app/models/City';
+import { AbstractMatrixEngine } from 'src/app/apsp/MatrixEngine';
+import {
+  MatrixEngineKeyTypes,
+  matrixEngineType,
+} from 'src/app/models/MatrixEngineKeyTypes';
 
 export const createMatrixEngine = (numLocations: number, numEdges: number) =>
   matrixEngineType === MatrixEngineKeyTypes.CPUMatrixEngine

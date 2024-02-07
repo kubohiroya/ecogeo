@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { Box, Button } from '@mui/material';
-import { GeoDatabase } from '../../app/services/database/GeoDatabase';
+import { GeoDatabase } from 'src/app/services/database/GeoDatabase';
 
 export const IndexDBConsole = ({ db }: { db: GeoDatabase }) => {
   const handleDelete = useCallback(() => {

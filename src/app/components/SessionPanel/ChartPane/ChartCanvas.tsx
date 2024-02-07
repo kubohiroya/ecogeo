@@ -1,4 +1,4 @@
-import { City } from '../../../models/City';
+import { City } from 'src/app/models/City';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { chartConfig } from './ChartConfig';
 

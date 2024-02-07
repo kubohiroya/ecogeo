@@ -1,8 +1,8 @@
-import { AppMatrices } from '../../models/AppMatrices';
-import { SessionState } from '../../models/SessionState';
-import { UIState } from '../../models/UIState';
-import { City } from '../../models/City';
-import { Edge } from '../../models/Graph';
+import { AppMatrices } from 'src/app/models/AppMatrices';
+import { SessionState } from 'src/app/models/SessionState';
+import { UIState } from 'src/app/models/UIState';
+import { City } from 'src/app/models/City';
+import { Edge } from 'src/app/models/Graph';
 
 const useAutoGraphLayout = ({
   matrices,

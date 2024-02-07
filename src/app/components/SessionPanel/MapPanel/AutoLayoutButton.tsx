@@ -8,8 +8,8 @@ import {
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { Animation } from '@mui/icons-material';
-import { BACKDROP_TIMEOUT_MILLI_SEC } from './Constatns';
-import { OverlayControlButton } from './OverlayControlButton';
+import { BACKDROP_TIMEOUT_MILLI_SEC } from 'src/app/components/SessionPanel/MapPanel/Constatns';
+import { OverlayControlButton } from 'src/app/components/SessionPanel/MapPanel/OverlayControlButton';
 
 interface AutoLayoutButtonProps {
   autoLayoutStarted: boolean;
@@ -80,7 +80,7 @@ export const AutoLayoutButton = (props: AutoLayoutButtonProps) => {
         onClick={() => {
           setTimeout(
             () => setSumMenuShown(false),
-            BACKDROP_TIMEOUT_MILLI_SEC * 2
+            BACKDROP_TIMEOUT_MILLI_SEC * 2,
           );
           props.onToggleAutoGraphLayout();
         }}

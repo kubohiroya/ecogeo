@@ -1,5 +1,5 @@
-import { DEFAULT_PARAMS_BY_CASE } from '../../models/DefaultParamByCase';
-import { ProjectTypes } from '../../models/ProjectType';
+import { DEFAULT_PARAMS_BY_CASE } from 'src/app/models/DefaultParamByCase';
+import { ProjectTypes } from 'src/app/models/ProjectType';
 
 const hash = window.location.hash;
 

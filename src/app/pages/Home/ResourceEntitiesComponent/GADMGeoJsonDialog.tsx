@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
-import { DOCUMENT_TITLE } from '../../../Constants';
+import { DOCUMENT_TITLE } from 'src/app/Constants';
 import { useAtom, useAtomValue } from 'jotai';
 import {
   downloadStatusAtom,

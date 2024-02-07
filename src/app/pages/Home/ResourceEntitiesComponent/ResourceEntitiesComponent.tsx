@@ -15,15 +15,15 @@ import {
 } from '@mui/material';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { GeoDatabaseEntityMenu } from '../GeoDatabaseEntityMenu';
-import { ResourceTypes } from '../../../models/ResourceType';
+import { ResourceTypes } from 'src/app/models/ResourceType';
 import 'dexie-observable';
-import { ResourceEntity } from '../../../models/ResourceEntity';
+import { ResourceEntity } from 'src/app/models/ResourceEntity';
 import { GADMGeoJsonComponent } from './GADMGeoJsonComponent';
 import { useDocumentTitle } from '../useDocumentTitle';
-import { GeoDatabaseTableTypes } from '../../../services/database/GeoDatabaseTableType';
-import { GeoDatabaseTable } from '../../../services/database/GeoDatabaseTable';
+import { GeoDatabaseTableTypes } from 'src/app/services/database/GeoDatabaseTableType';
+import { GeoDatabaseTable } from 'src/app/services/database/GeoDatabaseTable';
 import { ResourceEntitiesLoader } from './ResourceEntitiesLoader';
-import { Cell, Row } from '../Styles';
+import { Cell } from '../Styles';
 
 export const ResourceEntitiesComponent = () => {
   const { resources: initialResources } = useLoaderData() as {
@@ -110,14 +110,14 @@ export const ResourceEntitiesComponent = () => {
         </TableHead>
         <TableBody>
           {resources?.map((resource, resourceIndex) => (
-            <Row key={resource.uuid}>
-              <Cell>
+            <TableRow key={resource.uuid}>
+              <TableCell>
                 <IconButton color={'primary'} size={'large'} onClick={() => {}}>
                   {typeToIcon[resource.type]}
                 </IconButton>
-              </Cell>
-              <Cell>{resource.name}</Cell>
-              <Cell>{resource.description}</Cell>
+              </TableCell>
+              <TableCell>{resource.name}</TableCell>
+              <TableCell>{resource.description}</TableCell>
               <Cell>
                 {resource.type === 'gadmShapes' ? (
                   <GADMGeoJsonComponent
@@ -128,16 +128,16 @@ export const ResourceEntitiesComponent = () => {
                   <></>
                 )}
               </Cell>
-              <Cell>
+              <TableCell>
                 <div>Updated: {new Date(resource.updatedAt).toISOString()}</div>
-              </Cell>
-              <Cell>
+              </TableCell>
+              <TableCell>
                 <GeoDatabaseEntityMenu
                   item={resource}
                   tableType={GeoDatabaseTableTypes.resources}
                 />
-              </Cell>
-            </Row>
+              </TableCell>
+            </TableRow>
           ))}
         </TableBody>
       </Table>

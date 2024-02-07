@@ -1,4 +1,4 @@
-import { City } from '../../../models/City';
+import { City } from 'src/app/models/City';
 
 export const chartConfig: Record<
   string,

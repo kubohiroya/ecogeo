@@ -1,4 +1,4 @@
-import { UIState } from '../../models/UIState';
+import { UIState } from 'src/app/models/UIState';
 import { useCallback } from 'react';
 
 export const useChartActions = ({

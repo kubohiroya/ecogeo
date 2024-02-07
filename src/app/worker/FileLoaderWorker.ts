@@ -1,18 +1,18 @@
 /// <reference lib="webworker" />
 
-import { LoaderProgressResponse } from '../app/services/file/FileLoaderResponse';
-import { FileLoaderRequest } from '../app/services/file/FileLoaderRequest';
-import { FileLoaderRequestType } from '../app/services/file/FileLoaderRequestType';
-import { FileLoaderResponseType } from '../app/services/file/FileLoaderResponseType';
+import { LoaderProgressResponse } from 'src/app/services/file/FileLoaderResponse';
+import { FileLoaderRequest } from 'src/app/services/file/FileLoaderRequest';
+import { FileLoaderRequestType } from 'src/app/services/file/FileLoaderRequestType';
+import { FileLoaderResponseType } from 'src/app/services/file/FileLoaderResponseType';
 import {
   CsvLoaders,
   IdeGsmCsvLoaders,
   loadCsvFile,
-} from '../app/services/file/IdeGsmCsvLoaders';
-import { GeoPointEntity } from '../app/models/geo/GeoPointEntity';
-import { storeGeoRegions } from '../app/services/file/GeoJsonLoaders';
-import { unzipFileToStream } from '../app/services/file/UnzipFileToStream';
-import { GeoDatabase } from '../app/services/database/GeoDatabase';
+} from 'src/app/services/file/IdeGsmCsvLoaders';
+import { GeoPointEntity } from 'src/app/models/geo/GeoPointEntity';
+import { storeGeoRegions } from 'src/app/services/file/GeoJsonLoaders';
+import { unzipFileToStream } from 'src/app/services/file/UnzipFileToStream';
+import { GeoDatabase } from 'src/app/services/database/GeoDatabase';
 
 let workerBusy: boolean = false;
 

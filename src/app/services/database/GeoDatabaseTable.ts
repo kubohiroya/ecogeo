@@ -1,15 +1,14 @@
 import Dexie from 'dexie';
 import { v4 as uuidv4 } from 'uuid';
 import { GeoDatabase } from './GeoDatabase';
-import { ResourceType } from '../../models/ResourceType';
-import { ProjectEntity } from '../../models/ProjectEntity';
-import { ResourceEntity, ResourceItems } from '../../models/ResourceEntity';
+import { ResourceType } from 'src/app/models/ResourceType';
+import { ProjectEntity } from 'src/app/models/ProjectEntity';
+import { ResourceEntity, ResourceItems } from 'src/app/models/ResourceEntity';
 import {
   GeoDatabaseTableType,
   GeoDatabaseTableTypes,
 } from './GeoDatabaseTableType';
-
-const TABLE_NAME = 'databases';
+import { TABLE_DB_NAME } from 'src/app/Constants';
 
 export class GeoDatabaseTable extends Dexie {
   private static singleton: GeoDatabaseTable;
@@ -17,7 +16,7 @@ export class GeoDatabaseTable extends Dexie {
   public projects: Dexie.Table<ProjectEntity, number>;
 
   public constructor() {
-    super(TABLE_NAME);
+    super(TABLE_DB_NAME);
     this.version(3).stores({
       resources: '++id, &uuid, type, name',
       projects: '++id, &uuid, type, name',
@@ -80,7 +79,10 @@ export class GeoDatabaseTable extends Dexie {
       uuid,
       updatedAt: source.createdAt,
     });
-    const db = await GeoDatabase.open(uuid);
+    const db = await GeoDatabase.openWithUUID(
+      GeoDatabaseTableTypes.resources,
+      uuid,
+    );
     db.close();
   }
 
@@ -98,7 +100,10 @@ export class GeoDatabaseTable extends Dexie {
       uuid,
       updatedAt: source.createdAt,
     });
-    const db = await GeoDatabase.open(uuid);
+    const db = await GeoDatabase.openWithUUID(
+      GeoDatabaseTableTypes.projects,
+      uuid,
+    );
     db.close();
   }
 

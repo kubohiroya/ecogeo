@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { getCurrentDatabaseTableType } from '../../services/database/GeoDatabaseTable';
-import { DOCUMENT_TITLE } from '../../Constants';
+import { getCurrentDatabaseTableType } from 'src/app/services/database/GeoDatabaseTable';
+import { DOCUMENT_TITLE } from 'src/app/Constants';
 
 export function useDocumentTitle() {
   useEffect(() => {

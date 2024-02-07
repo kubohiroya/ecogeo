@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import useInterval from './useInterval';
-import { expScale } from '../utils/mathUtil';
+import { expScale } from 'src/app/utils/mathUtil';
 
 export function _useIntervalExpScale<T>(props: {
   onStarted: () => void;

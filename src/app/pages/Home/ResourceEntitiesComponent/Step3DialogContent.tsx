@@ -1,4 +1,4 @@
-import { GADMGeoJsonCountryMetadata } from '../../../models/GADMGeoJsonCountryMetadata';
+import { GADMGeoJsonCountryMetadata } from 'src/app/models/GADMGeoJsonCountryMetadata';
 import {
   Alert,
   Box,
@@ -7,8 +7,8 @@ import {
   Typography,
 } from '@mui/material';
 import { GADMGeoJsonSelector } from './GADMGeoJsonSelector';
-import { InlineIcon } from '../../../../components/InlineIcon/InlineIcon';
-import { TextCopyComponent } from '../../../../components/TextCopyComponent/TextCopyComponent';
+import { InlineIcon } from 'src/components/InlineIcon/InlineIcon';
+import { TextCopyComponent } from 'src/components/TextCopyComponent/TextCopyComponent';
 import React from 'react';
 
 export function Step3DialogContent(props: {

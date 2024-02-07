@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 
 import { ChartPane } from './ChartPane';
-import { ChartTypes } from '../../../models/ChartType';
+import { ChartTypes } from 'src/app/models/ChartType';
 
 describe('ChartPanelComponent', () => {
   it('should render successfully', () => {

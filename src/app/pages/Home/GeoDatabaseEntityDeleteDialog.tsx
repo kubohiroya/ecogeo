@@ -3,7 +3,7 @@ import React, { useCallback } from 'react';
 import {
   GeoDatabaseTable,
   getCurrentDatabaseTableType,
-} from '../../services/database/GeoDatabaseTable';
+} from 'src/app/services/database/GeoDatabaseTable';
 import {
   Button,
   Dialog,
@@ -12,9 +12,9 @@ import {
   DialogTitle,
   Typography,
 } from '@mui/material';
-import { createProjectLink } from '../../../createProjectLink';
+import { createProjectLink } from 'src/createProjectLink';
 import dexie from 'dexie';
-import { GeoDatabaseTableTypes } from '../../services/database/GeoDatabaseTableType';
+import { GeoDatabaseTableTypes } from 'src/app/services/database/GeoDatabaseTableType';
 
 type DeleteDatabaseItemDialogProps = {
   tableType: string;

@@ -3,27 +3,27 @@ import DeckGL from '@deck.gl/react/typed';
 import { Map as ReactMap } from 'react-map-gl/maplibre';
 import { PolygonLayer, ScatterplotLayer } from '@deck.gl/layers/typed';
 import { MapView, PickingInfo } from '@deck.gl/core/typed';
-import { getBounds } from '../../../../utils/mapUtil';
+import { getBounds } from 'src/app/utils/mapUtil';
 import {
   getTilesMortonNumbersForAllZooms,
   MAX_ZOOM_LEVEL,
   modifyMortonNumbers,
-} from '../../../../utils/mortonNumberUtil';
+} from 'src/app/utils/mortonNumberUtil';
 import { deepEqual } from '@deck.gl/core/src/utils/deep-equal';
-import { GeoRegionEntity } from '../../../../models/geo/GeoRegionEntity';
-import { WorkerPool } from '../../../../../worker/WorkerPool';
-import DexieQueryWorker from '../../../../../worker/DexieQueryWorker?worker';
+import { GeoRegionEntity } from 'src/app/models/geo/GeoRegionEntity';
+import { WorkerPool } from 'src/app/worker/WorkerPool';
+import DexieQueryWorker from 'src/app/worker/DexieQueryWorker?worker';
 import { CircularProgress } from '@mui/material';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { PathStyleExtension } from '@deck.gl/extensions/typed';
-import { QueryRequest } from '../../../../models/QueryRequest';
-import { QueryResponse } from '../../../../models/QueryResponse';
-import { AsyncFunctionManager } from '../../../../utils/AsyncFunctionManager';
-import { GeoRequestPayload } from '../../../../models/GeoRequestPayload';
-import { GeoResponsePayload } from '../../../../models/GeoResponsePayload';
-import { SimLoaderResult } from '../../../../pages/Sim/SimLoader';
+import { QueryRequest } from 'src/app/models/QueryRequest';
+import { QueryResponse } from 'src/app/models/QueryResponse';
+import { AsyncFunctionManager } from 'src/app/utils/AsyncFunctionManager';
+import { GeoRequestPayload } from 'src/app/models/GeoRequestPayload';
+import { GeoResponsePayload } from 'src/app/models/GeoResponsePayload';
+import { SimLoaderResult } from 'src/app/pages/Sim/SimLoader';
 import { ViewStateChangeParameters } from '@deck.gl/core/typed/controllers/controller';
-import { ProjectTypes } from '../../../../models/ProjectType';
+import { ProjectTypes } from 'src/app/models/ProjectType';
 
 const MAP_TILER_API_KEY = import.meta.env.VITE_MAP_TILER_API_KEY;
 

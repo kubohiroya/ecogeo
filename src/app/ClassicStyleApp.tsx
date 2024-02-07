@@ -1,11 +1,11 @@
 import React from 'react';
-import AppHeader from '../components/AppHeader/AppHeader';
+import AppHeader from 'src/components/AppHeader/AppHeader';
 import { Share } from '@mui/icons-material';
 import GithubCorner from 'react-github-corner';
 import ReferenceSection from './components/ReferenceSection/ReferenceSection';
-import { GADMFetch } from '../components/GADMFetch/GADMFetch';
-import { FileDropComponent } from '../components/FileDropComponent/FileDropComponent';
-import { IndexDBConsole } from '../components/IndexDBConsole/IndexDBConsole';
+import { GADMFetch } from 'src/components/GADMFetch/GADMFetch';
+import { FileDropComponent } from 'src/components/FileDropComponent/FileDropComponent';
+import { IndexDBConsole } from 'src/components/IndexDBConsole/IndexDBConsole';
 import { GeoDatabase } from './services/database/GeoDatabase';
 
 const onFinish = (lastUpdated: number) => {

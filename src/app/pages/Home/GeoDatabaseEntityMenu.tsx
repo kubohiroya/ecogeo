@@ -12,10 +12,10 @@ import {
 import React, { useCallback, useRef } from 'react';
 import Menu from '@mui/icons-material/Menu';
 import { ContentCopy, Delete, Edit } from '@mui/icons-material';
-import { GeoDatabaseEntity } from '../../models/GeoDatabaseEntity';
+import { GeoDatabaseEntity } from 'src/app/models/GeoDatabaseEntity';
 import { useNavigate } from 'react-router-dom';
-import { ResourceEntity } from '../../models/ResourceEntity';
-import { GeoDatabaseTableType } from '../../services/database/GeoDatabaseTableType';
+import { ResourceEntity } from 'src/app/models/ResourceEntity';
+import { GeoDatabaseTableType } from 'src/app/services/database/GeoDatabaseTableType';
 
 interface DatabaseItemMenuProps {
   tableType: GeoDatabaseTableType;

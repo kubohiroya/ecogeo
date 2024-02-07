@@ -7,8 +7,8 @@ import { FileUploadPrompt } from './FileUploadPrompt';
 import {
   GeoDatabaseTableType,
   GeoDatabaseTableTypes,
-} from '../../services/database/GeoDatabaseTableType';
-import { FileDropComponent } from '../../../components/FileDropComponent/FileDropComponent';
+} from 'src/app/services/database/GeoDatabaseTableType';
+import { FileDropComponent } from 'src/app/components/FileDropComponent/FileDropComponent';
 
 const ModelSelectorBox = styled.div`
   display: flex;

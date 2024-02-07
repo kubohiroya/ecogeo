@@ -1,13 +1,13 @@
-import { City, createCity } from '../../../models/City';
+import { City, createCity } from 'src/app/models/City';
 import * as uuid from 'uuid';
-import { SeedRandom } from '../../../utils/random';
-import { Edge } from '../../../models/Graph';
+import { SeedRandom } from 'src/app/utils/random';
+import { Edge } from 'src/app/models/Graph';
 import {
   calculateDistanceByLocations,
   DISTANCE_SCALE_FACTOR,
-} from '../../../apsp/calculateDistanceByLocations';
-import { loop, shuffleArray } from '../../../utils/arrayUtil';
-import { SessionState } from '../../../models/SessionState';
+} from 'src/app/apsp/calculateDistanceByLocations';
+import { loop, shuffleArray } from 'src/app/utils/arrayUtil';
+import { SessionState } from 'src/app/models/SessionState';
 
 export function updateRaceTrackSubGraph(
   sessionState: SessionState,

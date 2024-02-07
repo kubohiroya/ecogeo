@@ -1,8 +1,8 @@
 import * as uuid from 'uuid';
-import { GeoPointEntity } from '../../models/geo/GeoPointEntity';
-import { GeoPointTypes } from '../../models/geo/GeoPointType';
-import { GeoRouteSegmentEntity } from '../../models/geo/GeoRouteSegmentEntity';
-import { GeoRouteSegmentModes } from '../../models/geo/GeoRouteSegmentMode';
+import { GeoPointEntity } from 'src/app/models/geo/GeoPointEntity';
+import { GeoPointTypes } from 'src/app/models/geo/GeoPointType';
+import { GeoRouteSegmentEntity } from 'src/app/models/geo/GeoRouteSegmentEntity';
+import { GeoRouteSegmentModes } from 'src/app/models/geo/GeoRouteSegmentMode';
 import { FileLoaderHandler } from './FileLoaderHandler';
 import {
   getTileMortonNumbers,
@@ -11,10 +11,10 @@ import {
   MAX_ZOOM_LEVEL,
   SpecialMortonNumbers,
   tileXYZToMorton,
-} from '../../utils/mortonNumberUtil';
+} from 'src/app/utils/mortonNumberUtil';
 import { FileLoaderResponseType } from './FileLoaderResponseType';
 import { LoaderProgressResponse } from './FileLoaderResponse';
-import { GeoDatabase } from '../database/GeoDatabase';
+import { GeoDatabase } from 'src/app/services/database/GeoDatabase';
 
 export const loadCsvFile = async <T>({
   db,

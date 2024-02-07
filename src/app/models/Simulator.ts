@@ -8,7 +8,8 @@ import {
   calcRealWage,
   City,
 } from './City';
-import { loop } from '../utils/arrayUtil';
+
+// import { loop } from '../utils/arrayUtil';
 
 function equalize(locations: City[]) {
   const sum = locations
@@ -27,7 +28,7 @@ export function tickSimulator(
   sessionState: SessionState,
   transportationCostMatrix: number[][],
 ) {
-  loop(NUM_CALIBRATION_LOOP).forEach(() => {
+  for (let i = 0; i < NUM_CALIBRATION_LOOP; i++) {
     sessionState.locations.forEach((location, index) => {
       backupPreviousValues(location);
     });
@@ -62,8 +63,7 @@ export function tickSimulator(
         location,
       );
     });
-  });
-
+  }
   const avgRealWage = sessionState.locations
     .map((location) => location.realWage * location.manufactureShare)
     .reduce((a, b) => a + b, 0);

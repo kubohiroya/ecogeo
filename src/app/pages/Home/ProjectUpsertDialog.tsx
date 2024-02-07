@@ -1,10 +1,10 @@
 import { useGeolocated } from 'react-geolocated';
-import { GeoDatabaseTable } from '../../services/database/GeoDatabaseTable';
+import { GeoDatabaseTable } from 'src/app/services/database/GeoDatabaseTable';
 import { useCallback } from 'react';
 import { GeoDatabaseEntityUpsertDialog } from './GeoDatabaseEntityUpsertDialog';
 import { useLoaderData } from 'react-router-dom';
-import { INITIAL_VIEW_STATE } from '../../Constants';
-import { GeoDatabaseTableTypes } from '../../services/database/GeoDatabaseTableType';
+import { INITIAL_VIEW_STATE } from 'src/app/Constants';
+import { GeoDatabaseTableTypes } from 'src/app/services/database/GeoDatabaseTableType';
 
 export const ProjectUpsertDialog = () => {
   const { uuid, type, name, description } = useLoaderData() as {

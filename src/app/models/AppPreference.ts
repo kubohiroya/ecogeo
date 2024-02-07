@@ -1,8 +1,8 @@
+import { atom } from 'jotai/index';
 import {
   defaultMatrixEngineType,
   MatrixEngineKeyType,
-} from '../apsp/MatrixEngineService';
-import { atom } from 'jotai/index';
+} from './MatrixEngineKeyTypes';
 
 export type AppPreference = {
   maxRowColLength: number;
@@ -11,7 +11,7 @@ export type AppPreference = {
 
 export const initialAppPreference: AppPreference = {
   maxRowColLength: 30,
-  matrixEngineType: defaultMatrixEngineType
+  matrixEngineType: defaultMatrixEngineType,
 };
 
 export const preferencesAtom = atom(initialAppPreference);

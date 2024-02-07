@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { CircleLayer, Layer, Map, Source } from 'react-map-gl/maplibre';
-//import { CircleLayer } from 'react-map-gl';
 import { FeatureCollection } from '@turf/turf';
 
 export interface MapProps {

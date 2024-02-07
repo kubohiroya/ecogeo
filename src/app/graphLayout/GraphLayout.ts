@@ -1,6 +1,6 @@
-import { City } from '../models/City';
-import { Edge, Vertex } from '../models/Graph';
-import { isInfinity } from '../utils/mathUtil';
+import { City } from 'src/app/models/City';
+import { Edge, Vertex } from 'src/app/models/Graph';
+import { isInfinity } from 'src/app/utils/mathUtil';
 
 export abstract class GraphLayout {
   abstract calculateRepulsion(node1: Vertex, node2: Vertex): number[];

@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { Close } from '@mui/icons-material';
-import { DOCUMENT_TITLE } from '../../../Constants';
+import { DOCUMENT_TITLE } from 'src/app/Constants';
 
 export const IdeGsmCitiesComponent = () => {
   useEffect(() => {

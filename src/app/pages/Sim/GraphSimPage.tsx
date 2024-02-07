@@ -3,13 +3,13 @@ import { sessionStateAtom, SimLoaderResult } from './SimLoader';
 import { useLoaderData } from 'react-router-dom';
 import { SimComponent } from './SimComponent';
 import { BackgroundCanvas } from './BackgroundCanvas';
-import { SessionState } from '../../models/SessionState';
-import { UIState } from '../../models/UIState';
-import { AppMatrices } from '../../models/AppMatrices';
+import { SessionState } from 'src/app/models/SessionState';
+import { UIState } from 'src/app/models/UIState';
+import { AppMatrices } from 'src/app/models/AppMatrices';
 import { ProjectType, ProjectTypes } from '../../models/ProjectType';
 import { useAtom } from 'jotai';
-import { DEFAULT_PARAMS_BY_CASE } from '../../models/DefaultParamByCase';
-import { updateAddedSubGraph } from '../../components/SessionPanel/MapPanel/GraphHandlers';
+import { DEFAULT_PARAMS_BY_CASE } from 'src/app/models/DefaultParamByCase';
+import { updateAddedSubGraph } from 'src/app/components/SessionPanel/MapPanel/GraphHandlers';
 
 export const GraphSimPage = () => {
   const { uuid, x, y, zoom, type } = useLoaderData() as SimLoaderResult;

@@ -8,14 +8,14 @@ import ReactGridLayout, {
   ItemCallback,
   Responsive as ResponsiveGridLayout,
 } from 'react-grid-layout';
-import { useWindowDimensions } from '../../hooks/useWindowDimenstions';
-import { FloatingItemResource } from '../../models/FloatingItemResource';
-import { entriesToRecord } from '../../utils/arrayUtil';
-import { FloatingButton } from '../../../components/FloatingButton/FloatingButton';
-import { FloatingPanel } from '../../../components/FloatingPanel/FloatingPanel';
-import { FloatingButtonResource } from '../../models/FloatingButtonResource';
-import { FloatingPanelResource } from '../../models/FloatingPanelResource';
-import { GridItemTypes } from '../../models/GridItemType';
+import { useWindowDimensions } from 'src/app/hooks/useWindowDimenstions';
+import { FloatingItemResource } from 'src/app/models/FloatingItemResource';
+import { entriesToRecord } from 'src/app/utils/arrayUtil';
+import { FloatingButton } from 'src/components/FloatingButton/FloatingButton';
+import { FloatingPanel } from 'src/components/FloatingPanel/FloatingPanel';
+import { FloatingButtonResource } from 'src/app/models/FloatingButtonResource';
+import { FloatingPanelResource } from 'src/app/models/FloatingPanelResource';
+import { GridItemTypes } from 'src/app/models/GridItemType';
 import { NUM_HORIZONTAL_GRIDS, ROW_HEIGHT } from './DesktopConstants';
 
 const FloatingPanelContent = styled(CardContent)`

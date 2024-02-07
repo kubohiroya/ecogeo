@@ -1,7 +1,7 @@
-import { GADMGeoJsonCountryMetadata } from '../../models/GADMGeoJsonCountryMetadata';
 import { downloadTextData } from '../../Sim/FetchFiles';
 import { createGADM41JsonUrl } from './CreateGADM41JsonUrl';
 import { createGADM41IndexUrl } from './CreateGADM41IndexUrl';
+import { GADMGeoJsonCountryMetadata } from 'src/app/models/GADMGeoJsonCountryMetadata';
 
 export const downloadGeoJsonIndexFile = async (): Promise<
   GADMGeoJsonCountryMetadata[]

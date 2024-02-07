@@ -7,7 +7,7 @@ import React, {
   useState,
 } from 'react';
 import { Box } from '@mui/material';
-import { City } from '../../../models/City';
+import { City } from 'src/app/models/City';
 import { LocalShipping, Route, TrendingFlat } from '@mui/icons-material';
 
 /* eslint-disable-next-line */

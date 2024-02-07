@@ -15,7 +15,7 @@ import { ContentCopy, Delete, Edit } from '@mui/icons-material';
 import { GeoDatabaseEntity } from 'src/app/models/GeoDatabaseEntity';
 import { useNavigate } from 'react-router-dom';
 import { ResourceEntity } from 'src/app/models/ResourceEntity';
-import { GeoDatabaseTableType } from 'src/app/services/database/GeoDatabaseTableType';
+import { GeoDatabaseTableType } from 'src/app/models/GeoDatabaseTableType';
 
 interface DatabaseItemMenuProps {
   tableType: GeoDatabaseTableType;

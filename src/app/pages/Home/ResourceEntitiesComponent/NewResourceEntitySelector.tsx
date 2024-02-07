@@ -1,9 +1,9 @@
 import { GeoDatabaseEntityCreateModeSelector } from '../../Home/GeoDatabaseEntityCreateModeSelector';
-import { GeoDatabaseTableTypes } from 'src/app/services/database/GeoDatabaseTableType';
 import { Close, Flag, LocationCity, Route } from '@mui/icons-material';
 import React, { useState } from 'react';
 import { Dialog, IconButton } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { GeoDatabaseTableTypes } from 'src/app/models/GeoDatabaseTableType';
 
 export function NewResourceEntitySelector() {
   const [open, setOpen] = useState(true);

@@ -1,5 +1,5 @@
 import { LoadingProgress } from 'src/app/services/file/LoadingProgress';
-import { FetchStatus } from '../../Sim/FetchFiles';
+import { FetchStatus } from 'src/app/services/file/FetchFiles';
 import {
   Alert,
   Badge,

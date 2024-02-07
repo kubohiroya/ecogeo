@@ -13,19 +13,9 @@ import { GeoPointEntity } from 'src/app/models/geo/GeoPointEntity';
 import { storeGeoRegions } from 'src/app/services/file/GeoJsonLoaders';
 import { unzipFileToStream } from 'src/app/services/file/UnzipFileToStream';
 import { GeoDatabase } from 'src/app/services/database/GeoDatabase';
+import { convertFileListToFileArray } from 'src/app/utils/fileListUtil';
 
 let workerBusy: boolean = false;
-
-function processFileListsToFiles(fileList: FileList) {
-  const files = [];
-  for (let index = 0; index < fileList.length; index++) {
-    const file = fileList.item(index);
-    if (file) {
-      files.push(file);
-    }
-  }
-  return files;
-}
 
 const startedCallback = (fileName: string, dbName: string) => {
   // eslint-disable-next-line no-restricted-globals
@@ -85,7 +75,7 @@ export const loadFileList = async (
 ) => {
   // loadWorkerStatus = FileLoadingStatus.loading;
 
-  const files = processFileListsToFiles(fileList);
+  const files = convertFileListToFileArray(fileList);
 
   for (const prefix of ['cities', 'routes']) {
     await Promise.all(

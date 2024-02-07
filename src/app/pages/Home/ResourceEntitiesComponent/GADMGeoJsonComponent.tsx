@@ -1,12 +1,13 @@
 //import { ResourceEntity, ResourceItems } from '../../models/ResourceEntity';
 import { GADMGeoJsonResourceChip } from './GADMGeoJsonResourceChip';
-import { ResourceEntity, ResourceItems } from 'src/app/models/ResourceEntity';
+import { ResourceEntity } from 'src/app/models/ResourceEntity';
+import { ResourceItem } from 'src/app/models/ResourceItem';
 
 export type GADMGGeoJsonComponentProps = {
   resource: ResourceEntity;
 };
 export const GADMGeoJsonComponent = (props: GADMGGeoJsonComponentProps) => {
-  const resourceItemsMap: Map<string, ResourceItems[]> = new Map();
+  const resourceItemsMap: Map<string, ResourceItem[]> = new Map();
   const countries: string[] = [];
 
   props.resource.items.forEach((item) => {

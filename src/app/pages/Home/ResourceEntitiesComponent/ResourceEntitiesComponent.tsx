@@ -12,6 +12,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
+  Typography,
 } from '@mui/material';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { GeoDatabaseEntityMenu } from '../GeoDatabaseEntityMenu';
@@ -20,7 +22,7 @@ import 'dexie-observable';
 import { ResourceEntity } from 'src/app/models/ResourceEntity';
 import { GADMGeoJsonComponent } from './GADMGeoJsonComponent';
 import { useDocumentTitle } from '../useDocumentTitle';
-import { GeoDatabaseTableTypes } from 'src/app/services/database/GeoDatabaseTableType';
+import { GeoDatabaseTableTypes } from 'src/app/models/GeoDatabaseTableType';
 import { GeoDatabaseTable } from 'src/app/services/database/GeoDatabaseTable';
 import { ResourceEntitiesLoader } from './ResourceEntitiesLoader';
 import { Cell } from '../Styles';
@@ -116,7 +118,11 @@ export const ResourceEntitiesComponent = () => {
                   {typeToIcon[resource.type]}
                 </IconButton>
               </TableCell>
-              <TableCell>{resource.name}</TableCell>
+              <TableCell>
+                <Tooltip title={resource.uuid}>
+                  <Typography>{resource.name}</Typography>
+                </Tooltip>
+              </TableCell>
               <TableCell>{resource.description}</TableCell>
               <Cell>
                 {resource.type === 'gadmShapes' ? (

@@ -1,5 +1,5 @@
 import { GeoDatabaseEntityCreateModeSelector } from 'src/app/pages/Home/GeoDatabaseEntityCreateModeSelector';
-import { GeoDatabaseTableTypes } from 'src/app/services/database/GeoDatabaseTableType';
+import { GeoDatabaseTableTypes } from 'src/app/models/GeoDatabaseTableType';
 import React, { useState } from 'react';
 import { Close, PanoramaFishEye, Public, Share } from '@mui/icons-material';
 import { ProjectTypes } from 'src/app/models/ProjectType';

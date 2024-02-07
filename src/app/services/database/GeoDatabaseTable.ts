@@ -1,14 +1,15 @@
 import Dexie from 'dexie';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuid_v4 } from 'uuid';
 import { GeoDatabase } from './GeoDatabase';
 import { ResourceType } from 'src/app/models/ResourceType';
 import { ProjectEntity } from 'src/app/models/ProjectEntity';
-import { ResourceEntity, ResourceItems } from 'src/app/models/ResourceEntity';
+import { ResourceEntity } from 'src/app/models/ResourceEntity';
+import { TABLE_DB_NAME } from 'src/app/Constants';
 import {
   GeoDatabaseTableType,
   GeoDatabaseTableTypes,
-} from './GeoDatabaseTableType';
-import { TABLE_DB_NAME } from 'src/app/Constants';
+} from 'src/app/models/GeoDatabaseTableType';
+import { ResourceItem } from 'src/app/models/ResourceItem';
 
 export class GeoDatabaseTable extends Dexie {
   private static singleton: GeoDatabaseTable;
@@ -65,15 +66,21 @@ export class GeoDatabaseTable extends Dexie {
     }
   }
 
+  /*
+  static async create(){
+    const databaseId = GeoDatabaseTable.createProject(uuid,  name, downloadingItems);
+  }
+   */
+
   static async createResource(source: {
     type: ResourceType;
     name: string;
     description: string;
-    items: ResourceItems[];
+    items: ResourceItem[];
     version: number;
     createdAt: number;
   }) {
-    const uuid = uuidv4();
+    const uuid = uuid_v4();
     GeoDatabaseTable.getSingleton().resources.add({
       ...source,
       uuid,
@@ -94,7 +101,7 @@ export class GeoDatabaseTable extends Dexie {
     version: number;
     createdAt: number;
   }) {
-    const uuid = uuidv4();
+    const uuid = uuid_v4();
     GeoDatabaseTable.getSingleton().projects.add({
       ...source,
       uuid,

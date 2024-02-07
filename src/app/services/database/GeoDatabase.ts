@@ -8,11 +8,11 @@ import {
   getTilesMortonNumbersForAllZoomsMap,
   MAX_ZOOM_LEVEL,
 } from 'src/app/utils/mortonNumberUtil';
+import { TABLE_DB_NAME } from 'src/app/Constants';
 import {
   GeoDatabaseTableType,
   GeoDatabaseTableTypes,
-} from 'src/app/services/database/GeoDatabaseTableType';
-import { TABLE_DB_NAME } from 'src/app/Constants';
+} from 'src/app/models/GeoDatabaseTableType';
 
 const zoomLevels = 'z0, z1, z2, z3, z4, z5, z6, z7, z8, z9, z10';
 const zoomLevelsExt = 'z0_, z1_, z2_, z3_, z4_, z5_, z6_, z7_, z8_, z9_, z10_';
@@ -55,18 +55,22 @@ export class GeoDatabase extends Dexie {
     this.routeSegments = this.table('routeSegments');
   }
 
+  public static fileNameOf(type: GeoDatabaseTableType, uuid: string) {
+    switch (type) {
+      case GeoDatabaseTableTypes.resources:
+        return `${TABLE_DB_NAME}-resource-${uuid}`;
+      case GeoDatabaseTableTypes.projects:
+        return `${TABLE_DB_NAME}-project-${uuid}`;
+      default:
+        throw new Error('invalid type:' + type);
+    }
+  }
+
   public static async openWithUUID(
     type: GeoDatabaseTableType,
     uuid: string,
   ): Promise<GeoDatabase> {
-    switch (type) {
-      case GeoDatabaseTableTypes.resources:
-        return new GeoDatabase(`${TABLE_DB_NAME}-resource-${uuid}`);
-      case GeoDatabaseTableTypes.projects:
-        return new GeoDatabase(`${TABLE_DB_NAME}-project-${uuid}`);
-      default:
-        throw new Error('invalid type:' + type);
-    }
+    return new GeoDatabase(this.fileNameOf(type, uuid));
   }
 
   async findAllGeoRegions(mortonNumbers: number[][][], zoom: number) {
@@ -263,7 +267,6 @@ export async function storeGISPoints(
 }
 
 */
-
 
 /*
 Webメルカトル地図で、表示画面のズームレベル、表示領域の中心点の緯度経度、表示領域の幅と高さのピクセル数に応じて、表示されるべきXYZ地図タイルのセットを計算できるようにしている。

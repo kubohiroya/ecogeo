@@ -14,7 +14,8 @@ import {
 } from '@mui/material';
 import { createProjectLink } from 'src/createProjectLink';
 import dexie from 'dexie';
-import { GeoDatabaseTableTypes } from 'src/app/services/database/GeoDatabaseTableType';
+import { GeoDatabaseTableTypes } from 'src/app/models/GeoDatabaseTableType';
+import { GeoDatabase } from 'src/app/services/database/GeoDatabase';
 
 type DeleteDatabaseItemDialogProps = {
   tableType: string;
@@ -49,7 +50,7 @@ export const GeoDatabaseEntityDeleteDialog = ({
       .where('uuid')
       .equals(uuid)
       .delete();
-    await dexie.delete(uuid);
+    await dexie.delete(GeoDatabase.fileNameOf(tableType, uuid));
     goHome();
   }, [goHome, uuid]);
 

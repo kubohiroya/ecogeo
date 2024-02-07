@@ -6,15 +6,16 @@ import {
 import { GADMGeoJsonCountryMetadata } from 'src/app/models/GADMGeoJsonCountryMetadata';
 import { v4 as uuid_v4 } from 'uuid';
 import { GeoDatabaseTable } from 'src/app/services/database/GeoDatabaseTable';
-import { ResourceTypes } from 'src/app/models/ResourceType';
-import { GeoDatabase } from 'src/app/services/database/GeoDatabase';
-import { fetchFiles, FetchStatus } from '../../Sim/FetchFiles';
+import { fetchFiles, FetchStatus } from 'src/app/services/file/FetchFiles';
 import { storeGeoRegions } from 'src/app/services/file/GeoJsonLoaders';
 import { LoaderProgressResponse } from 'src/app/services/file/FileLoaderResponse';
 import { LoadingProgress } from 'src/app/services/file/LoadingProgress';
 import { FileLoadingStatusTypes } from 'src/app/services/file/FileLoadingStatusType';
 import { createGADM41JsonUrl } from './CreateGADM41JsonUrl';
-import { GeoDatabaseTableTypes } from 'src/app/services/database/GeoDatabaseTableType';
+import { ResourceTypes } from 'src/app/models/ResourceType';
+import { GeoDatabaseTableTypes } from 'src/app/models/GeoDatabaseTableType';
+import { GeoDatabase } from 'src/app/services/database/GeoDatabase';
+import { ResourceItem } from 'src/app/models/ResourceItem';
 
 export function useDownloadGADMJsonFiles() {
   const [, setDownloadStatus] = useAtom(downloadStatusAtom);
@@ -24,14 +25,15 @@ export function useDownloadGADMJsonFiles() {
     countryMetadataList: GADMGeoJsonCountryMetadata[],
     selectedCheckboxMatrix: boolean[][],
     onFinish: () => void,
-  ) {
+  ): Promise<string> {
     const downloadingItems = findDownloadingItems(
       countryMetadataList,
       selectedCheckboxMatrix,
     );
 
     const uuid = uuid_v4();
-    const databaseId = await GeoDatabaseTable.getSingleton().resources.add({
+
+    await GeoDatabaseTable.getSingleton().resources.add({
       uuid,
       name: 'GADM GeoJSON',
       description: '',
@@ -49,10 +51,7 @@ export function useDownloadGADMJsonFiles() {
     requestIdleCallback(async () => {
       await fetchFiles({
         urlList: downloadingItems.map((item) => item.url),
-        notifyStatusByURL: (
-          url: string,
-          urlStatus: { status: FetchStatus },
-        ) => {
+        onStatusChange: (url: string, urlStatus: { status: FetchStatus }) => {
           setDownloadStatus(
             (draft: Record<string, { status: FetchStatus }>) => {
               return {
@@ -63,7 +62,7 @@ export function useDownloadGADMJsonFiles() {
           );
         },
 
-        notifyProgressSummary: ({
+        onSummaryChange: ({
           progress,
           loaded,
           total,
@@ -80,13 +79,7 @@ export function useDownloadGADMJsonFiles() {
           });
         },
 
-        notifyFinishedByUrl: async ({
-          url,
-          data,
-        }: {
-          url: string;
-          data: ArrayBuffer;
-        }) => {
+        onLoad: async ({ url, data }: { url: string; data: ArrayBuffer }) => {
           const uint8Array = new Uint8Array(data);
           const stream = new ReadableStream<Uint8Array>({
             start(controller) {
@@ -94,7 +87,6 @@ export function useDownloadGADMJsonFiles() {
               controller.close();
             },
           });
-
           await storeGeoRegions({
             db,
             stream,
@@ -110,23 +102,18 @@ export function useDownloadGADMJsonFiles() {
       });
       onFinish();
     });
+
+    return uuid;
   }
 
   return { downloadGADMGeoJsonFiles };
 }
 
-type DownloadingItem = {
-  countryName: string;
-  countryCode: string;
-  level: number;
-  url: string;
-};
-
 export function findDownloadingItems(
   countryMetadataList: GADMGeoJsonCountryMetadata[],
   selectedCheckboxMatrix: boolean[][],
-): DownloadingItem[] {
-  const downloadingItems: DownloadingItem[] = [];
+): ResourceItem[] {
+  const downloadingItems: ResourceItem[] = [];
 
   for (
     let countryIndex = 0;

@@ -5,9 +5,12 @@ import { Share } from '@mui/icons-material';
 import { Outlet, useNavigate } from 'react-router-dom';
 import GithubCorner from 'react-github-corner';
 import { FileDropComponent } from 'src/app/components/FileDropComponent/FileDropComponent';
+import { useLocalFileHandler } from './useLocalFileHandler';
 
 export const HomePage = () => {
   const navigate = useNavigate();
+  const { handleFiles } = useLocalFileHandler();
+
   useEffect(() => {
     if (window.location.hash === '' || window.location.hash === '#/') {
       navigate('/projects', { replace: true });
@@ -19,17 +22,7 @@ export const HomePage = () => {
       <FileDropComponent
         type={'projects'}
         acceptableSuffixes={['json.zip', '.json', '.csv']}
-        handleFiles={(fileList) => {
-          console.log('fileList: ', fileList);
-          /*
-          const uuid = uuid_v4();
-          storeGeoRegions({
-            fileList,
-            uuid,
-            type: 'projects',
-          });
-           */
-        }}
+        handleFiles={handleFiles}
         onFinish={(lastUpdated: number) => {
           console.log('finish loading: ', lastUpdated);
         }}

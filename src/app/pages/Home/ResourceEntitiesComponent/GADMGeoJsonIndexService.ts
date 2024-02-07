@@ -1,17 +1,19 @@
-import { downloadTextData } from '../../Sim/FetchFiles';
 import { createGADM41JsonUrl } from './CreateGADM41JsonUrl';
 import { createGADM41IndexUrl } from './CreateGADM41IndexUrl';
 import { GADMGeoJsonCountryMetadata } from 'src/app/models/GADMGeoJsonCountryMetadata';
+import { smartDownloadAsUint8Array } from 'src/app/utils/zipUtil';
 
 export const downloadGeoJsonIndexFile = async (): Promise<
   GADMGeoJsonCountryMetadata[]
 > => {
-  const contents = await downloadTextData(createGADM41IndexUrl());
+  const arrayBuffer = await smartDownloadAsUint8Array(createGADM41IndexUrl());
   //const contents = JSON.parse(body);
   const regex = /<option value="([^"]+)_(.+?)_(\d+)">(.+?)<\/option>/g;
 
   const results: GADMGeoJsonCountryMetadata[] = [];
   let match;
+
+  const contents = new TextDecoder('utf-8').decode(arrayBuffer);
 
   while ((match = regex.exec(contents)) !== null) {
     const [_, id, name, level] = match;

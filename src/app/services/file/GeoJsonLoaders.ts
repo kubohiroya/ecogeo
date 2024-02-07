@@ -47,11 +47,11 @@ export const storeGeoRegions = async ({
   stream: ReadableStream;
   fileName: string;
   fileSize?: number;
-  startedCallback: (fileName: string, dbName: string) => void;
-  progressCallback: (value: LoaderProgressResponse) => void;
-  errorCallback: (fileName: string, errorMessage: string) => void;
-  cancelCallback: (fileName: string) => void;
-  finishedCallback: (fileName: string) => void;
+  startedCallback?: (fileName: string, dbName: string) => void;
+  progressCallback?: (value: LoaderProgressResponse) => void;
+  errorCallback?: (fileName: string, errorMessage: string) => void;
+  cancelCallback?: (fileName: string) => void;
+  finishedCallback?: (fileName: string) => void;
 }) => {
   const bufferSize = 64;
 
@@ -71,19 +71,13 @@ export const storeGeoRegions = async ({
     fileName: string,
   ) => {
     table.bulkAdd(entities).catch((error) => {
-      errorCallback(fileName, error.message);
-      /*
-      for (const entity of entities) {
-        const region = entity as GeoRegionEntity;
-        table.add(entity);
-      }
-       */
+      errorCallback && errorCallback(fileName, error.message);
     });
   };
 
   let total = 0;
   const processJSONReader = async (reader: ReadableStream<Uint8Array>) => {
-    startedCallback(fileName, db.name);
+    startedCallback && startedCallback(fileName, db.name);
 
     reader
       .getReader()
@@ -182,15 +176,25 @@ export const storeGeoRegions = async ({
               countries.push({ ...region, name: region.country });
             }
 
-            progressCallback({
-              type: FileLoaderResponseType.progress,
-              progress: (featureIndex / features.length) * 100,
-              index: featureIndex,
-              total,
-              unit: 'items',
-              fileName,
-              fileSize: fileSize || -1,
-            });
+            progressCallback &&
+              progressCallback({
+                type: FileLoaderResponseType.progress,
+                progress: (featureIndex / features.length) * 100,
+                index: featureIndex,
+                total,
+                unit: 'items',
+                fileName,
+                fileSize: fileSize || -1,
+              });
+
+            /*
+            console.log(
+              'loading:',
+              countries.length,
+              regions1.length,
+              regions2.length,
+            );
+             */
 
             if (countries.length === bufferSize) {
               bulkAdd<GeoRegionEntity>(db.countries, countries, fileName);
@@ -217,17 +221,18 @@ export const storeGeoRegions = async ({
           bulkAdd<GeoRegionEntity>(db.regions2, regions2, fileName);
         }
 
-        progressCallback({
-          type: FileLoaderResponseType.progress,
-          fileName,
-          fileSize,
-          progress: 100,
-          total,
-          index: total,
-          unit: 'items_end',
-        });
+        progressCallback &&
+          progressCallback({
+            type: FileLoaderResponseType.progress,
+            fileName,
+            fileSize,
+            progress: 100,
+            total,
+            index: total,
+            unit: 'items_end',
+          });
 
-        finishedCallback(fileName);
+        finishedCallback && finishedCallback(fileName);
       });
   };
 
@@ -235,7 +240,7 @@ export const storeGeoRegions = async ({
     await processJSONReader(stream.pipeThrough(parser));
   } catch (error) {
     console.error(error);
-    errorCallback(fileName, (error as DexieError).message);
+    errorCallback && errorCallback(fileName, (error as DexieError).message);
     return;
   }
 };

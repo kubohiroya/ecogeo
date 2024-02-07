@@ -24,7 +24,7 @@ import { FileLoaderRequestType } from 'src/app/services/file/FileLoaderRequestTy
 import { FileLoaderResponseType } from 'src/app/services/file/FileLoaderResponseType';
 import { atom } from 'jotai/index';
 import { useAtom } from 'jotai';
-import { GeoDatabaseTableType } from 'src/app/services/database/GeoDatabaseTableType';
+import { GeoDatabaseTableType } from 'src/app/models/GeoDatabaseTableType';
 import { FileDroppableArea } from './FileDroppableArea';
 
 type FileLoadProgressDialogProps = {

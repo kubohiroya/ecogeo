@@ -39,6 +39,7 @@ import { downloadGeoJsonIndexFile } from './GADMGeoJsonIndexService';
 import { GADMGeoJsonCountryMetadata } from '../../../models/GADMGeoJsonCountryMetadata';
 import { StepStatus, StepStatuses } from './StepStatuses';
 import { Step4DialogContent } from './Step4DialogContent';
+import { ResourceTypes } from 'src/app/models/ResourceType';
 
 type Step = {
   label: string;
@@ -50,6 +51,7 @@ type Step = {
 const NUM_STEPS = 5;
 
 export const GADMGeoJsonDialog = () => {
+  const [uuid, setUuid] = useState<string>('');
   const [stepIndex, setStepIndex] = React.useState(0);
   const [stepStatus, setStepStatus] = React.useState<StepStatus[]>(
     new Array<StepStatus>(NUM_STEPS),
@@ -242,11 +244,12 @@ export const GADMGeoJsonDialog = () => {
         />
       ),
       onEnter: async () => {
-        await downloadGADMGeoJsonFiles(
+        const uuid = await downloadGADMGeoJsonFiles(
           countryMetadataList,
           selectedCheckboxMatrix,
           onFinishLoadingGeoJsonFiles,
         );
+        setUuid(uuid);
       },
       onLeave: async () => {},
     },
@@ -261,7 +264,10 @@ export const GADMGeoJsonDialog = () => {
       contents: <Step6DialogContent />,
       onEnter: async () => {},
       onLeave: async () => {
-        return navigate('/resources', { replace: true });
+        // return navigate('/resources', { replace: true });
+        return navigate(
+          `/resources/update/${ResourceTypes.gadmShapes}/${uuid}`,
+        );
       },
     },
   ];

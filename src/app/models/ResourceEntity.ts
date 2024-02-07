@@ -1,12 +1,6 @@
 import { GeoDatabaseEntity } from './GeoDatabaseEntity';
-
-export type ResourceItems = {
-  url: string;
-  countryName: string;
-  countryCode: string;
-  level: number;
-};
+import { ResourceItem } from 'src/app/models/ResourceItem';
 
 export type ResourceEntity = GeoDatabaseEntity & {
-  items: ResourceItems[];
+  items: ResourceItem[];
 };

@@ -20,9 +20,9 @@ import { createProjectLink } from 'src/createProjectLink';
 import { ProjectTypes } from 'src/app/models/ProjectType';
 import { GeoDatabaseTable } from 'src/app/services/database/GeoDatabaseTable';
 import { useDocumentTitle } from '../useDocumentTitle';
-import { GeoDatabaseTableTypes } from 'src/app/services/database/GeoDatabaseTableType';
 import { ProjectEntity } from 'src/app/models/ProjectEntity';
 import { ProjectEntitiesLoader } from './ProjectEntitiesLoader';
+import { GeoDatabaseTableTypes } from 'src/app/models/GeoDatabaseTableType';
 
 export const ProjectEntitiesComponent = () => {
   const initialProjectEntities: ProjectEntity[] =
@@ -128,30 +128,34 @@ export const ProjectEntitiesComponent = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {projects?.map((item) => (
-            <TableRow key={item.uuid}>
+          {projects?.map((project) => (
+            <TableRow key={project.uuid}>
               <TableCell>
-                <Link to={createProjectLink(item)} target="_blank">
+                <Link to={createProjectLink(project)} target="_blank">
                   <IconButton color={'primary'} size={'large'}>
-                    {typeToIcon[item.type]}
+                    {typeToIcon[project.type]}
                   </IconButton>
                 </Link>
               </TableCell>
               <TableCell>
-                <Link to={createProjectLink(item)} target="_blank">
-                  {item.name}
+                <Link
+                  to={createProjectLink(project)}
+                  target="_blank"
+                  title={project.uuid}
+                >
+                  {project.name}
                 </Link>
               </TableCell>
               <TableCell>
-                <pre>{item.description}</pre>
+                <pre>{project.description}</pre>
               </TableCell>
               <TableCell>
-                <div>Created: {new Date(item.createdAt).toISOString()}</div>
-                <div>Updated: {new Date(item.updatedAt).toISOString()}</div>
+                <div>Created: {new Date(project.createdAt).toISOString()}</div>
+                <div>Updated: {new Date(project.updatedAt).toISOString()}</div>
               </TableCell>
               <TableCell>
                 <GeoDatabaseEntityMenu
-                  item={item}
+                  item={project}
                   tableType={GeoDatabaseTableTypes.projects}
                 />
               </TableCell>

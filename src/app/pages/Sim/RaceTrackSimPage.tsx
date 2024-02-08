@@ -11,8 +11,6 @@ import { ProjectType } from 'src/app/models/ProjectType';
 export const RaceTrackSimPage = () => {
   const { uuid, x, y, zoom, type } = useLoaderData() as SimLoaderResult;
 
-  console.log(type);
-
   return (
     <SimComponent
       {...{

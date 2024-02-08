@@ -1,8 +1,8 @@
-import { GridItemTypes } from '../../../models/GridItemType';
+import { GridItemTypes } from 'src/app/models/GridItemType';
 import { ZoomOut } from '@mui/icons-material';
 import React from 'react';
-import { FloatingButtonItem } from '../../../models/FloatingButtonItem';
-import { LayoutDefault } from '../LayoutDefault';
+import { FloatingButtonItem } from 'src/app/models/FloatingButtonItem';
+import { LayoutDefault } from 'src/app/pages/Sim/LayoutDefault';
 
 export function ZoomOutButton(props?: LayoutDefault): FloatingButtonItem {
   return {
@@ -24,6 +24,8 @@ export function ZoomOutButton(props?: LayoutDefault): FloatingButtonItem {
       shown: props?.shown ?? true,
       enabled: props?.enabled ?? true,
       onClick: props?.onClick,
+      x: props?.x,
+      y: props?.y,
     },
   };
 }

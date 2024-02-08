@@ -47,17 +47,36 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
   const navigate = useNavigate();
   const { width, height } = useWindowDimensions();
   const numRows = Math.floor((height - 10) / ROW_HEIGHT - 3);
-
   const [forefront, setForefront] = useState<string>('' as string);
   const [layouts, setLayouts] = useState<ReactGridLayout.Layout[]>([
     ...props.initialLayouts.map((layout) => ({
       ...layout,
-      y: !props.resources[layout.i].shown ? layout.y + numRows * 2 : layout.y,
+      y: !props.resources[layout.i].shown ? layout.y - numRows : layout.y,
     })),
   ]);
 
   const [maximizedLayout, setMaximizedLayout] =
     useState<ReactGridLayout.Layout | null>(null);
+
+  console.log({ ini: props.initialLayouts, res: props.resources, layouts });
+
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      setLayouts((draft) => {
+        draft.forEach((layout) => {
+          if (props.resources[layout.i].x && props.resources[layout.i].x! < 0) {
+            layout.x = NUM_HORIZONTAL_GRIDS + props.resources[layout.i].x!;
+          }
+          if (props.resources[layout.i].y && props.resources[layout.i].y! < 0) {
+            const rows = Math.floor(height / ROW_HEIGHT) - 3; //getRows(height);
+            layout.y = rows + props.resources[layout.i].y!;
+          }
+        });
+        console.log({ width, height, draft });
+        return draft;
+      });
+    });
+  }, [width, height]);
 
   /*
   const [removedLayoutsMap, setRemovedLayoutsMap] = useState<
@@ -199,7 +218,7 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
        */
       setLayouts((layouts: ReactGridLayout.Layout[]) => {
         return layouts.map((layout) =>
-          layout.i !== panelId ? layout : { ...layout, y: layout.y + numRows },
+          layout.i !== panelId ? layout : { ...layout, y: layout.y - numRows },
         );
       });
     }

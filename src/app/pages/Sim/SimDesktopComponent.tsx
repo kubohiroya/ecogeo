@@ -392,13 +392,17 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
         gridItemStates[type][func.name] &&
         func(gridItemStates[type][func.name]);
       if (item) {
+        if (item.resource) {
+          newResources[item.resource.id] = {
+            ...item.resource,
+            x: item.layout?.x,
+            y: item.layout?.y,
+          };
+        }
         if (item.layout) {
           item.layout.x = getX(item.layout, gridItemStates[type][func.name]);
           item.layout.y = getY(item.layout, gridItemStates[type][func.name]);
           newLayouts.push({ ...item.layout });
-        }
-        if (item.resource) {
-          newResources[item.resource.id] = item.resource;
         }
       }
     });
@@ -486,28 +490,37 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
   }, []);
 
   useEffect(() => {
+    console.log('height modified', height);
     setResources((draft: Record<string, FloatingItemResource>) => {
       draft.ZoomInButton = ZoomInButton({
+        ...draft.ZoomInButton,
         height,
         onClick: onZoomIn,
       }).resource;
       return draft;
     });
-  }, [onZoomOut]);
+    console.log({ resources, layouts });
+  }, [onZoomIn]);
+
   useEffect(() => {
     setResources((draft) => {
       draft.ZoomOutButton = ZoomOutButton({
+        ...draft.ZoomOutButton,
         height,
         onClick: onZoomOut,
+        //y: gridItemStates[type].ZoomOutButton.y,
       }).resource;
       return draft;
     });
-  }, [onZoomIn]);
+  }, [onZoomOut]);
+
   useEffect(() => {
     setResources((draft: Record<string, FloatingItemResource>) => {
       draft.FitScreenButton = FitScreenButton({
+        ...draft.FitScreenButton,
         height,
         onClick: onFitScreen,
+        //y: gridItemStates[type].FitScreenButton.y,
       }).resource;
       return draft;
     });

@@ -1,9 +1,9 @@
-import { GridItemTypes } from '../../../models/GridItemType';
+import { GridItemTypes } from 'src/app/models/GridItemType';
 import React from 'react';
 import { Redo } from '@mui/icons-material';
 
-import { FloatingButtonItem } from '../../../models/FloatingButtonItem';
-import { LayoutDefault } from '../LayoutDefault';
+import { FloatingButtonItem } from 'src/app/models/FloatingButtonItem';
+import { LayoutDefault } from 'src/app/pages/Sim/LayoutDefault';
 
 export function RedoButton(props?: LayoutDefault): FloatingButtonItem {
   return {
@@ -25,6 +25,8 @@ export function RedoButton(props?: LayoutDefault): FloatingButtonItem {
       shown: props?.shown ?? true,
       enabled: props?.enabled ?? true,
       onClick: props?.onClick,
+      x: props?.x,
+      y: props?.y,
     },
   };
 }

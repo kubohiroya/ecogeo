@@ -1,8 +1,8 @@
-import { GridItemTypes } from '../../../models/GridItemType';
+import { GridItemTypes } from 'src/app/models/GridItemType';
 import { Undo } from '@mui/icons-material';
 import React from 'react';
-import { FloatingButtonItem } from '../../../models/FloatingButtonItem';
-import { LayoutDefault } from '../LayoutDefault';
+import { FloatingButtonItem } from 'src/app/models/FloatingButtonItem';
+import { LayoutDefault } from 'src/app/pages/Sim/LayoutDefault';
 
 export function UndoButton(props?: LayoutDefault): FloatingButtonItem {
   return {
@@ -23,6 +23,8 @@ export function UndoButton(props?: LayoutDefault): FloatingButtonItem {
       icon: <Undo />,
       shown: props?.shown ?? true,
       enabled: props?.enabled ?? true,
+      x: props?.x,
+      y: props?.y,
     },
   };
 }

@@ -1,9 +1,9 @@
-import { GridItemTypes } from '../../../models/GridItemType';
+import { GridItemTypes } from 'src/app/models/GridItemType';
 import { Edit } from '@mui/icons-material';
 import React from 'react';
 import { RESIZE_HANDLES, ROW_HEIGHT } from '../SimDesktopComponent';
 
-import { FloatingPanelItem } from '../../../models/FloatingPanelItem';
+import { FloatingPanelItem } from 'src/app/models/FloatingPanelItem';
 import { LayoutDefault } from '../LayoutDefault';
 
 export function EditPanel(props: LayoutDefault): FloatingPanelItem {

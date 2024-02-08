@@ -1,7 +1,7 @@
-import { GridItemTypes } from '../../../models/GridItemType';
+import { GridItemTypes } from 'src/app/models/GridItemType';
 import { Tune } from '@mui/icons-material';
 import React from 'react';
-import { FloatingButtonItem } from '../../../models/FloatingButtonItem';
+import { FloatingButtonItem } from 'src/app/models/FloatingButtonItem';
 import { LayoutDefault } from '../LayoutDefault';
 
 export function ParametersButton(props?: LayoutDefault): FloatingButtonItem {

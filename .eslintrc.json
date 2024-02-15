@@ -1,14 +1,27 @@
 {
-  "ignorePatterns": ["!**/*"],
+  "ignorePatterns": [
+    "!**/*"
+  ],
   "overrides": [
     {
-      "files": ["*.ts", "*.tsx"],
-      "rules": {}
+      "files": [
+        "*.ts",
+        "*.tsx"
+      ],
+      "rules": {
+        "eslint-disable-next-line": "off"
+      }
     },
     {
-      "files": ["*.js", "*.jsx"],
+      "files": [
+        "*.js",
+        "*.jsx"
+      ],
       "rules": {}
     }
   ],
-  "extends": ["plugin:@nx/react", "./.eslintrc.base.json"]
+  "extends": [
+    "plugin:@nx/react",
+    "./.eslintrc.base.json"
+  ]
 }

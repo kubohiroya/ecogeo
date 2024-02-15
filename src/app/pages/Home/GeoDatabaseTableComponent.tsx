@@ -1,10 +1,7 @@
-import React, { ReactNode } from 'react';
-import { Box, Tab, Tabs } from '@mui/material';
-import { Outlet, useNavigate } from 'react-router-dom';
-import {
-  GeoDatabaseTableType,
-  GeoDatabaseTableTypes,
-} from 'src/app/models/GeoDatabaseTableType';
+import React, { ReactNode } from "react";
+import { Box, Tab, Tabs } from "@mui/material";
+import { Outlet, useNavigate } from "react-router-dom";
+import { GeoDatabaseTableType, GeoDatabaseTableTypes } from "~/app/models/GeoDatabaseTableType";
 
 type GeoDatabaseTableComponentProps = {
   type: GeoDatabaseTableType;

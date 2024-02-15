@@ -1,6 +1,6 @@
-import ParameterConfigPanel from 'src/app/components/SessionPanel/ParameterConfigPanel/ParameterConfigPanel';
-import React from 'react';
-import { ProjectType } from 'src/app/models/ProjectType';
+import ParameterConfigPanel from "~/app/components/SessionPanel/ParameterConfigPanel/ParameterConfigPanel";
+import React from "react";
+import { ProjectType } from "~/app/models/ProjectType";
 
 export function ParametersPanelComponent({
   type,

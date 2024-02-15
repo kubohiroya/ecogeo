@@ -29,21 +29,20 @@ export class WorkerPool<T extends WorkerTaskRequest, R> {
   private addWorkerToPool(workerConstructor: new () => Worker): void {
     const worker = new workerConstructor();
     worker.onerror = (event: ErrorEvent) => {
-      console.log(event);
+      console.error(event);
     };
 
     worker.onmessage = (event: MessageEvent) => {
       const index = this.pool.findIndex((w) => w.worker === worker);
       if (index !== -1) {
         this.pool[index].currentTaskId = null;
-        const result = JSON.parse(event.data) as unknown as R;
+        const result = event.data as unknown as R;
+        console.log(event);
         this.onResult(result);
         this.executeNextTask();
       }
     };
     this.pool.push({ worker, workerConstructor, currentTaskId: null });
-
-    // console.log('worker', worker);
   }
 
   executeTask(task: T): void {

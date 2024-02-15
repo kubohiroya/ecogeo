@@ -1,8 +1,8 @@
-import { GridItemTypes } from 'src/app/models/GridItemType';
-import { FolderOpen } from '@mui/icons-material';
-import React from 'react';
-import { FloatingButtonItem } from 'src/app/models/FloatingButtonItem';
-import { LayoutDefault } from 'src/app/pages/Sim/LayoutDefault';
+import { GridItemTypes } from "~/app/models/GridItemType";
+import { FolderOpen } from "@mui/icons-material";
+import React from "react";
+import { FloatingButtonItem } from "~/app/models/FloatingButtonItem";
+import { LayoutDefault } from "~/app/pages/Sim/LayoutDefault";
 
 export function InputOutputButton(props?: LayoutDefault): FloatingButtonItem {
   return {

@@ -1,10 +1,10 @@
-import { atom } from 'jotai/index';
-import { createGADM41GeoJsonUrlList } from './GADMGeoJsonIndexService';
-import { atomWithImmer } from 'jotai-immer';
-import { GADMGeoJsonCountryMetadata } from 'src/app/models/GADMGeoJsonCountryMetadata';
-import { FetchStatus } from 'src/app/services/file/FetchFiles';
-import { LoadingProgress } from 'src/app/services/file/LoadingProgress';
-import { FileLoadingStatusTypes } from 'src/app/services/file/FileLoadingStatusType';
+import { atom } from "jotai/index";
+import { createGADM41GeoJsonUrlList } from "./GADMGeoJsonIndexService";
+import { atomWithImmer } from "jotai-immer";
+import { GADMGeoJsonCountryMetadata } from "~/app/models/GADMGeoJsonCountryMetadata";
+import { FetchStatus } from "~/app/services/file/FetchFiles";
+import { LoadingProgress } from "~/app/services/file/LoadingProgress";
+import { FileLoadingStatusTypes } from "~/app/services/file/FileLoadingStatusType";
 
 const initialSelectedMatrix: boolean[][] = [];
 export const selectedCheckboxMatrixAtom = atomWithImmer(initialSelectedMatrix);

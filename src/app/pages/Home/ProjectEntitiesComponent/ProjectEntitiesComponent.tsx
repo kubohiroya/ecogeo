@@ -1,5 +1,5 @@
-import React, { ReactNode, useEffect, useState } from 'react';
-import { PanoramaFishEye, Public, Share } from '@mui/icons-material';
+import React, { ReactNode, useEffect, useState } from "react";
+import { PanoramaFishEye, Public, Share } from "@mui/icons-material";
 import {
   IconButton,
   Paper,
@@ -11,18 +11,18 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow,
-} from '@mui/material';
-import { Link, useLoaderData, useNavigate } from 'react-router-dom';
-import { GeoDatabaseEntityMenu } from '../GeoDatabaseEntityMenu';
+  TableRow
+} from "@mui/material";
+import { Link, useLoaderData, useNavigate } from "react-router-dom";
+import { GeoDatabaseEntityMenu } from "../GeoDatabaseEntityMenu";
 
-import { createProjectLink } from 'src/createProjectLink';
-import { ProjectTypes } from 'src/app/models/ProjectType';
-import { GeoDatabaseTable } from 'src/app/services/database/GeoDatabaseTable';
-import { useDocumentTitle } from '../useDocumentTitle';
-import { ProjectEntity } from 'src/app/models/ProjectEntity';
-import { ProjectEntitiesLoader } from './ProjectEntitiesLoader';
-import { GeoDatabaseTableTypes } from 'src/app/models/GeoDatabaseTableType';
+import { createProjectLink } from "src/createProjectLink";
+import { ProjectTypes } from "~/app/models/ProjectType";
+import { GeoDatabaseTable } from "~/app/services/database/GeoDatabaseTable";
+import { useDocumentTitle } from "../useDocumentTitle";
+import { ProjectEntity } from "~/app/models/ProjectEntity";
+import { ProjectEntitiesLoader } from "./ProjectEntitiesLoader";
+import { GeoDatabaseTableTypes } from "~/app/models/GeoDatabaseTableType";
 
 export const ProjectEntitiesComponent = () => {
   const initialProjectEntities: ProjectEntity[] =

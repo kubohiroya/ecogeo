@@ -1,8 +1,8 @@
-import React from 'react';
-import { Box, Typography } from '@mui/material';
-import { VertexChip } from './VertexChip';
-import { City } from 'src/app/models/City';
-import styled from '@emotion/styled';
+import React from "react";
+import { Box, Typography } from "@mui/material";
+import { VertexChip } from "./VertexChip";
+import { City } from "~/app/models/City";
+import styled from "@emotion/styled";
 
 const VertexChipBox = styled(Box)`
   overflow: scroll;

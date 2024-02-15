@@ -1,22 +1,19 @@
-import React, { ReactNode, useEffect, useState } from 'react';
-import 'react-grid-layout/css/styles.css';
-import 'react-resizable/css/styles.css';
-import { Box, CardContent, CircularProgress } from '@mui/material';
-import styled from '@emotion/styled';
-import { useNavigate } from 'react-router-dom';
-import ReactGridLayout, {
-  ItemCallback,
-  Responsive as ResponsiveGridLayout,
-} from 'react-grid-layout';
-import { useWindowDimensions } from 'src/app/hooks/useWindowDimenstions';
-import { FloatingItemResource } from 'src/app/models/FloatingItemResource';
-import { entriesToRecord } from 'src/app/utils/arrayUtil';
-import { FloatingButton } from 'src/components/FloatingButton/FloatingButton';
-import { FloatingPanel } from 'src/components/FloatingPanel/FloatingPanel';
-import { FloatingButtonResource } from 'src/app/models/FloatingButtonResource';
-import { FloatingPanelResource } from 'src/app/models/FloatingPanelResource';
-import { GridItemTypes } from 'src/app/models/GridItemType';
-import { NUM_HORIZONTAL_GRIDS, ROW_HEIGHT } from './DesktopConstants';
+import React, { ReactNode, useEffect, useState } from "react";
+import "react-grid-layout/css/styles.css";
+import "react-resizable/css/styles.css";
+import { Box, CardContent, CircularProgress } from "@mui/material";
+import styled from "@emotion/styled";
+import { useNavigate } from "react-router-dom";
+import ReactGridLayout, { ItemCallback, Responsive as ResponsiveGridLayout } from "react-grid-layout";
+import { useWindowDimensions } from "~/app/hooks/useWindowDimenstions";
+import { FloatingItemResource } from "~/app/models/FloatingItemResource";
+import { entriesToRecord } from "~/app/utils/arrayUtil";
+import { FloatingButton } from "~/components/FloatingButton/FloatingButton";
+import { FloatingPanel } from "~/components/FloatingPanel/FloatingPanel";
+import { FloatingButtonResource } from "~/app/models/FloatingButtonResource";
+import { FloatingPanelResource } from "~/app/models/FloatingPanelResource";
+import { GridItemTypes } from "~/app/models/GridItemType";
+import { NUM_HORIZONTAL_GRIDS, ROW_HEIGHT } from "./DesktopConstants";
 
 const FloatingPanelContent = styled(CardContent)`
   padding: 8px;
@@ -46,7 +43,7 @@ type ButtonState = {
 export const DesktopComponent = (props: DesktopComponentProps) => {
   const navigate = useNavigate();
   const { width, height } = useWindowDimensions();
-  const numRows = Math.floor((height - 10) / ROW_HEIGHT - 3);
+  const numRows = Math.floor(height / ROW_HEIGHT);
   const [forefront, setForefront] = useState<string>('' as string);
   const [layouts, setLayouts] = useState<ReactGridLayout.Layout[]>([
     ...props.initialLayouts.map((layout) => ({
@@ -58,24 +55,21 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
   const [maximizedLayout, setMaximizedLayout] =
     useState<ReactGridLayout.Layout | null>(null);
 
-  console.log({ ini: props.initialLayouts, res: props.resources, layouts });
-
   useEffect(() => {
-    requestAnimationFrame(() => {
-      setLayouts((draft) => {
-        draft.forEach((layout) => {
-          if (props.resources[layout.i].x && props.resources[layout.i].x! < 0) {
-            layout.x = NUM_HORIZONTAL_GRIDS + props.resources[layout.i].x!;
-          }
-          if (props.resources[layout.i].y && props.resources[layout.i].y! < 0) {
-            const rows = Math.floor(height / ROW_HEIGHT) - 3; //getRows(height);
-            layout.y = rows + props.resources[layout.i].y!;
-          }
-        });
-        console.log({ width, height, draft });
-        return draft;
+    // requestAnimationFrame(() => {
+    setLayouts((draft) => {
+      draft.forEach((layout) => {
+        if (props.resources[layout.i].x && props.resources[layout.i].x! < 0) {
+          layout.x = NUM_HORIZONTAL_GRIDS + props.resources[layout.i].x!;
+        }
+        if (props.resources[layout.i].y && props.resources[layout.i].y! < 0) {
+          const rows = Math.floor((height - 100) / ROW_HEIGHT); //getRows(height);
+          layout.y = rows + props.resources[layout.i].y!;
+        }
       });
+      return draft;
     });
+    // });
   }, [width, height]);
 
   /*
@@ -296,7 +290,6 @@ export const DesktopComponent = (props: DesktopComponentProps) => {
   };
 
   const createGridItem = (
-    //layout: ReactGridLayout.Layout,
     id: string,
     resource: FloatingItemResource,
     children: ReactNode,

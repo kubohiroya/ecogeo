@@ -1,10 +1,10 @@
-import { SessionState } from 'src/app/models/SessionState';
-import { UIState } from 'src/app/models/UIState';
-import { AppMatrices } from 'src/app/models/AppMatrices';
-import { EuclideanCanvas } from 'src/app/components/SessionPanel/MapPanel/pixi/EuclideanCanvas';
-import { calcBoundingRect } from 'src/app/components/SessionPanel/MapPanel/calcBoundingRect';
-import { PADDING_MARGIN_RATIO } from 'src/app/components/SessionPanel/MapPanel/Constatns';
-import React, { memo } from 'react';
+import { SessionState } from "~/app/models/SessionState";
+import { UIState } from "~/app/models/UIState";
+import { AppMatrices } from "~/app/models/AppMatrices";
+import { EuclideanCanvas } from "~/app/components/SessionPanel/MapPanel/pixi/EuclideanCanvas";
+import { calcBoundingRect } from "~/app/components/SessionPanel/MapPanel/calcBoundingRect";
+import { PADDING_MARGIN_RATIO } from "~/app/components/SessionPanel/MapPanel/Constatns";
+import React, { memo } from "react";
 
 export const BackgroundCanvas = memo(
   ({

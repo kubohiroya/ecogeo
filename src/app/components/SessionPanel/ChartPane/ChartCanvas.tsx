@@ -1,6 +1,6 @@
-import { City } from 'src/app/models/City';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { chartConfig } from './ChartConfig';
+import { City } from "~/app/models/City";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { chartConfig } from "./ChartConfig";
 
 const topMargin = 32;
 const labelWidth = 48;

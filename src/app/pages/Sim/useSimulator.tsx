@@ -1,5 +1,5 @@
-import { useIntervalExpScale } from 'src/app/hooks/timerAtom';
-import { AppSimulation } from 'src/app/models/AppSimulation';
+import { useIntervalExpScale } from '~/app/hooks/timerAtom';
+import { AppSimulation } from '~/app/models/AppSimulation';
 
 export const useSimulator = ({
   startSimulation,

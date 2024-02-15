@@ -5,13 +5,13 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { SessionState } from 'src/app/models/SessionState';
-import { FloatingItemResource } from 'src/app/models/FloatingItemResource';
+import { SessionState } from '~/app/models/SessionState';
+import { FloatingItemResource } from '~/app/models/FloatingItemResource';
 import { DesktopComponent } from './DesktopComponent';
-import { AppMatrices } from 'src/app/models/AppMatrices';
-import { AppPreference } from 'src/app/models/AppPreference';
-import { UIState } from 'src/app/models/UIState';
-import { AppSimulation } from 'src/app/models/AppSimulation';
+import { AppMatrices } from '~/app/models/AppMatrices';
+import { AppPreference } from '~/app/models/AppPreference';
+import { UIState } from '~/app/models/UIState';
+import { AppSimulation } from '~/app/models/AppSimulation';
 import { HomeButton } from './gridItems/HomeButton';
 import { ZoomInButton } from './gridItems/ZoomInButton';
 import { ZoomOutButton } from './gridItems/ZoomOutButton';
@@ -19,11 +19,11 @@ import { FitScreenButton } from './gridItems/FitScreenButton';
 import { InputOutputButton } from './gridItems/InputOutputButton';
 import { InputOutputPanel } from './gridItems/InputOutputPanel';
 import { ChartPanel } from './gridItems/ChartPanel';
-import { useWindowDimensions } from 'src/app/hooks/useWindowDimenstions';
+import { useWindowDimensions } from '~/app/hooks/useWindowDimenstions';
 import { useGraphEditActions } from './useGraphEditActions';
 import { useChartActions } from './useChartActions';
-import { City } from 'src/app/models/City';
-import { Edge } from 'src/app/models/Graph';
+import { City } from '~/app/models/City';
+import { Edge } from '~/app/models/Graph';
 import { useViewportActions } from './useViewportActions';
 import { useNavigate } from 'react-router-dom';
 import { ResizeHandle } from 'react-resizable';
@@ -33,18 +33,18 @@ import { InputOutputPanelComponent } from './components/InputOutputPanelComponen
 import { EditPanelComponent } from './components/EditPanelComponent';
 import { BackgroundPanel } from './gridItems/BackgroundPanel';
 import { useParameterActions } from './useParameterActions';
-import { ProjectType, ProjectTypes } from 'src/app/models/ProjectType';
+import { ProjectType, ProjectTypes } from '~/app/models/ProjectType';
 import { sessionStateAtom } from './SimLoader';
-import { useUndoRedo } from 'src/app/hooks/useUndoRedo';
-import { AsyncFunctionManager } from 'src/app/utils/AsyncFunctionManager';
+import { useUndoRedo } from '~/app/hooks/useUndoRedo';
+import { AsyncFunctionManager } from '~/app/utils/AsyncFunctionManager';
 import { LayoutDefault } from './LayoutDefault';
 import { InfoPanelComponent } from './components/InfoPanelComponent';
 import { LayersPanelComponent } from './components/LayerPanelComponent';
 import { ParametersPanelComponent } from './components/ParameterPanelComponent';
 import { MatricesPanelComponent } from './components/MatricesPanelComponent';
 import { TimerControlPanelComponent } from './components/TimerControlPanelComponent';
-import { FloatingButtonResource } from 'src/app/models/FloatingButtonResource';
-import { FloatingPanelResource } from 'src/app/models/FloatingPanelResource';
+import { FloatingButtonResource } from '~/app/models/FloatingButtonResource';
+import { FloatingPanelResource } from '~/app/models/FloatingPanelResource';
 import { EditButton } from './gridItems/EditButton';
 import { ParametersButton } from './gridItems/ParametersButton';
 import { ParametersPanel } from './gridItems/ParametersPanel';
@@ -63,6 +63,7 @@ import { NUM_HORIZONTAL_GRIDS } from './DesktopConstants';
 import { TimeMachineButton } from './gridItems/TimeMachineButton';
 import { TimeMachinePanel } from './gridItems/TimeMachinePanel';
 import { TimeMachinePanelComponent } from './components/TimeMachinePanelComponent';
+import { GeoDatabaseTable } from '~/app/services/database/GeoDatabaseTable';
 
 export const ROW_HEIGHT = 32;
 export const RESIZE_HANDLES: ResizeHandle[] = ['se', 'sw', 'nw'];
@@ -356,6 +357,18 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
   };
 
   useEffect(() => {
+    return () => {
+      asyncFunctionManager.cancelAll();
+      GeoDatabaseTable.getSingleton()
+        .projects.where('uuid')
+        .equals(uuid)
+        .modify({
+          viewportCenter: uiState.viewportCenter,
+        });
+    };
+  }, [uiState.viewportCenter, uuid]);
+
+  useEffect(() => {
     const newLayouts: ReactGridLayout.Layout[] = [];
     const newResources: Record<
       string,
@@ -478,19 +491,9 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
         />
       ),
     }));
-
-    return () => {
-      asyncFunctionManager.cancelAll();
-      // TODO: store viewportCenter in DB
-      console.warn(
-        'TODO: store viewportCenter in DB ' +
-          JSON.stringify(uiState.viewportCenter),
-      );
-    };
   }, []);
 
   useEffect(() => {
-    console.log('height modified', height);
     setResources((draft: Record<string, FloatingItemResource>) => {
       draft.ZoomInButton = ZoomInButton({
         ...draft.ZoomInButton,
@@ -499,7 +502,6 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
       }).resource;
       return draft;
     });
-    console.log({ resources, layouts });
   }, [onZoomIn]);
 
   useEffect(() => {

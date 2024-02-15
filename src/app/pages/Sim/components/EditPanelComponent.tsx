@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
-import { AddRoad, DomainAdd, RemoveRoad } from '@mui/icons-material';
-import { Box, IconButton, SvgIcon } from '@mui/material';
-import React from 'react';
-import { MapPanelButtonsState } from 'src/app/components/SessionPanel/MapPanel/MapPanelButtonsState';
+import styled from "@emotion/styled";
+import { AddRoad, DomainAdd, RemoveRoad } from "@mui/icons-material";
+import { Box, IconButton, SvgIcon } from "@mui/material";
+import React from "react";
+import { MapPanelButtonsState } from "~/app/components/SessionPanel/MapPanel/MapPanelButtonsState";
 
 /* eslint-disable-next-line */
 export interface MapPanelButtonsProps {

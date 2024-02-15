@@ -1,14 +1,11 @@
-import React, { useEffect } from 'react';
-import { Box, Button, Typography } from '@mui/material';
-import styled from '@emotion/styled';
-import { Outlet, useNavigate } from 'react-router-dom';
-import { DOCUMENT_TITLE } from '../../Constants';
-import { FileUploadPrompt } from './FileUploadPrompt';
-import {
-  GeoDatabaseTableType,
-  GeoDatabaseTableTypes,
-} from 'src/app/models/GeoDatabaseTableType';
-import { FileDropComponent } from 'src/app/components/FileDropComponent/FileDropComponent';
+import React, { useEffect } from "react";
+import { Box, Button, Typography } from "@mui/material";
+import styled from "@emotion/styled";
+import { Outlet, useNavigate } from "react-router-dom";
+import { DOCUMENT_TITLE } from "../../Constants";
+import { FileUploadPrompt } from "./FileUploadPrompt";
+import { GeoDatabaseTableType, GeoDatabaseTableTypes } from "~/app/models/GeoDatabaseTableType";
+import { FileDropComponent } from "~/app/components/FileDropComponent/FileDropComponent";
 
 const ModelSelectorBox = styled.div`
   display: flex;

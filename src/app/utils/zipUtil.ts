@@ -1,6 +1,6 @@
 import JSZip from 'jszip';
-import { proxyUrl } from 'src/app/utils/ProxyUrl';
-import { readAllChunks } from 'src/app/utils/readerUtil';
+import { proxyUrl } from '~/app/utils/ProxyUrl';
+import { readAllChunks } from '~/app/utils/readerUtil';
 
 export const smartDownloadAsUint8Array = async (url: string) => {
   const localProxyMode = window.location.hostname === 'localhost';

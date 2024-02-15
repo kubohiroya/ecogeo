@@ -1,5 +1,5 @@
-import { City } from 'src/app/models/City';
-import { Edge } from 'src/app/models/Graph';
+import { City } from "~/app/models/City";
+import { Edge } from "~/app/models/Graph";
 
 export interface MatrixEngine {
   getNumLocations: () => number;

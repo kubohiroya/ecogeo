@@ -1,38 +1,37 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import DeckGL from '@deck.gl/react/typed';
-import { Map as ReactMap } from 'react-map-gl/maplibre';
-import { PolygonLayer, ScatterplotLayer } from '@deck.gl/layers/typed';
-import { MapView, PickingInfo } from '@deck.gl/core/typed';
-import { getBounds } from 'src/app/utils/mapUtil';
-import {
-  getTilesMortonNumbersForAllZooms,
-  MAX_ZOOM_LEVEL,
-  modifyMortonNumbers,
-} from 'src/app/utils/mortonNumberUtil';
-import { deepEqual } from '@deck.gl/core/src/utils/deep-equal';
-import { GeoRegionEntity } from 'src/app/models/geo/GeoRegionEntity';
-import { WorkerPool } from 'src/app/worker/WorkerPool';
-import DexieQueryWorker from 'src/app/worker/DexieQueryWorker?worker';
-import { CircularProgress } from '@mui/material';
-import { useLoaderData, useNavigate } from 'react-router-dom';
-import { PathStyleExtension } from '@deck.gl/extensions/typed';
-import { QueryRequest } from 'src/app/models/QueryRequest';
-import { QueryResponse } from 'src/app/models/QueryResponse';
-import { AsyncFunctionManager } from 'src/app/utils/AsyncFunctionManager';
-import { GeoRequestPayload } from 'src/app/models/GeoRequestPayload';
-import { GeoResponsePayload } from 'src/app/models/GeoResponsePayload';
-import { SimLoaderResult } from 'src/app/pages/Sim/SimLoader';
-import { ViewStateChangeParameters } from '@deck.gl/core/typed/controllers/controller';
-import { ProjectTypes } from 'src/app/models/ProjectType';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import DeckGL from "@deck.gl/react/typed";
+import { Map as ReactMap } from "react-map-gl/maplibre";
+import { MapView, PickingInfo } from "@deck.gl/core/typed";
+import { getBounds } from "~/app/utils/mapUtil";
+import { getTilesMortonNumbersForAllZooms, MAX_ZOOM_LEVEL, modifyMortonNumbers } from "~/app/utils/mortonNumberUtil";
+import { deepEqual } from "@deck.gl/core/src/utils/deep-equal";
+import { WorkerPool } from "~/app/worker/WorkerPool";
+import GeoQueryWorker from "../../../../worker/GeoQueryWorker?worker";
+import { CircularProgress } from "@mui/material";
+import { useLoaderData, useNavigate } from "react-router-dom";
+import { QueryRequest } from "~/app/models/QueryRequest";
+import { GeoRequestPayload } from "~/app/models/GeoRequestPayload";
+import { SimLoaderResult } from "~/app/pages/Sim/SimLoader";
+import { ViewStateChangeParameters } from "@deck.gl/core/typed/controllers/controller";
+import { ProjectTypes } from "~/app/models/ProjectType";
+
+import { createLayers } from "~/app/components/SessionPanel/MapPanel/deckgl/createLayers";
+import { throttleDebounce } from "~/app/utils/throttleDebounce";
+import { GeoResponseTransferable } from "~/app/worker/GeoResponseTransferable";
 
 const MAP_TILER_API_KEY = import.meta.env.VITE_MAP_TILER_API_KEY;
 
+/*
 type PointSrc = {
   name: string;
-  coordinates: [number, number];
+  position: [number, number];
+};
+type LineSrc = {
+  name: string;
+  sourcePosition: [number, number];
+  targetPosition: [number, number];
 };
 
-/*
 type RouteSegmentSrc = {
   source: number;
   target: number;
@@ -74,16 +73,17 @@ export interface MapComponentProps {
   width: number;
   height: number;
   children?: React.ReactNode;
+
+  resourceUuid: string[];
 }
 
 type ViewStateType = {
   longitude: number;
   latitude: number;
   zoom: number;
-  //maxZoom: number;
-  //minZoom: number;
 };
 
+/*
 function lngOffsetPolygon(polygon: number[][], lngOffsets: number[] = [0]) {
   let ret: number[][] = [];
   lngOffsets.forEach((lngOffset) => {
@@ -95,7 +95,6 @@ function lngOffsetPolygon(polygon: number[][], lngOffsets: number[] = [0]) {
   });
   return ret;
 }
-
 function extractPolygonLayerData(
   regionSet: GeoRegionEntity[][],
   lngOffsets: number[] = [0],
@@ -116,9 +115,9 @@ function extractPolygonLayerData(
   });
   return ret;
 }
+ */
 
-const asyncFunctionManager = new AsyncFunctionManager();
-const MapComponent = (props: MapComponentProps) => {
+export const MapComponent = (props: MapComponentProps) => {
   const data = useLoaderData() as SimLoaderResult;
 
   const [viewState, setViewState] = useState<ViewStateType>({
@@ -127,53 +126,85 @@ const MapComponent = (props: MapComponentProps) => {
     zoom: data.zoom,
   });
 
-  const [currentTaskId, setCurrentTaskId] = useState<number>(-1);
   const [mortonNumbers, setMortonNumbers] = useState<number[][]>([]);
-  const [hoverInfo, setHoverInfo] = useState<PickingInfo | null>(null);
+  const [hoverInfo /*setHoverInfo*/] = useState<PickingInfo | null>(null);
 
-  const [polygons, setPolygons] = useState<{ polygon: number[][] }[][]>([
-    [],
-    [],
-    [],
-  ]);
-  const [points, setPoints] = useState<
-    { name: string; coordinates: number[] }[]
-  >([]);
+  const [geoResponse, setGeoResponse] =
+    useState<GeoResponseTransferable | null>(null);
 
-  const [worker, setWorker] = useState<any>(null);
+  const [gl, setGl] = useState<WebGLRenderingContext | null>(null);
+
+  const onWebGLInitialized = useCallback((gl: WebGLRenderingContext) => {
+    setGl(gl);
+  }, []);
+
+  const layers = useMemo(() => {
+    if (gl === null || !geoResponse) {
+      return [];
+    }
+    const circlesBuffer = geoResponse[0];
+    const linesBuffer = geoResponse[1];
+    const lineIndices = geoResponse[2];
+    const positions = geoResponse[3];
+    const polygonMetadata = geoResponse[4];
+    const polygonIndices = geoResponse[5];
+    const pathIndices = geoResponse[6];
+    const positionIndices = geoResponse[7];
+
+    console.log({
+      circlesBuffer,
+      linesBuffer,
+      lineIndices,
+      positions,
+      polygonMetadata,
+      polygonIndices,
+      pathIndices,
+      positionIndices,
+    });
+
+    return createLayers(
+      gl,
+      circlesBuffer,
+      linesBuffer,
+      lineIndices,
+      positions,
+      polygonMetadata,
+      polygonIndices,
+      pathIndices,
+      positionIndices,
+    );
+  }, [gl, geoResponse]);
+
+  const [worker, setWorker] = useState<null | WorkerPool<
+    QueryRequest<GeoRequestPayload>,
+    GeoResponseTransferable
+  >>(null);
+
   const navigate = useNavigate();
 
-  const updateURL = (viewState: {
-    zoom: number;
-    latitude: number;
-    longitude: number;
-  }): void => {
-    const url = `/${ProjectTypes.RealWorld}/${data.uuid}/${viewState.zoom.toFixed(2)}/${viewState.latitude.toFixed(4)}/${viewState.longitude.toFixed(4)}/`;
-    asyncFunctionManager.runAsyncFunction(() => {
-      navigate(url, { replace: true });
-    });
-  };
+  const updateURL = useCallback(
+    ({ zoom, latitude, longitude }: ViewStateType): void => {
+      throttleDebounce(
+        () => {
+          const url = `/${ProjectTypes.RealWorld}/${data.uuid}/${zoom.toFixed(2)}/${latitude.toFixed(4)}/${longitude.toFixed(4)}/`;
+          return navigate(url, { replace: true });
+        },
+        100,
+        300,
+      )();
+    },
+    [data.uuid, navigate],
+  );
+
+  const [currentTaskId, setCurrentTaskId] = useState<number>(-1);
 
   useEffect(() => {
     const worker = new WorkerPool<
       QueryRequest<GeoRequestPayload>,
-      QueryResponse<GeoResponsePayload>
-    >(DexieQueryWorker, 10, (response: QueryResponse<GeoResponsePayload>) => {
+      GeoResponseTransferable
+    >(GeoQueryWorker, 10, (response: GeoResponseTransferable) => {
       try {
-        const newPolygons = response.payload.polygons.map((region) =>
-          extractPolygonLayerData(region),
-        );
-        setPolygons(newPolygons);
-
-        const newPoints = response.payload.points
-          .flat(1)
-          .map((geoPointEntity) => {
-            return {
-              name: geoPointEntity.name,
-              coordinates: [geoPointEntity.lng, geoPointEntity.lat],
-            };
-          });
-        setPoints(newPoints);
+        setGeoResponse(response);
       } catch (error) {
         console.log(error, response);
       }
@@ -212,111 +243,25 @@ const MapComponent = (props: MapComponentProps) => {
     const newTaskId = currentTaskId + 1;
     setCurrentTaskId(newTaskId);
     worker.executeTask({
-      dbName: props.uuid,
       type: 'dexie',
       id: newTaskId,
       payload: {
+        uuid: props.resourceUuid,
         mortonNumbers: modifyMortonNumbers(newMortonNumbers),
         zoom: Math.floor(viewState.zoom!),
       },
     });
   }, [
     worker,
+    props.width,
+    props.height,
+    props.resourceUuid,
     viewState.longitude,
     viewState.latitude,
     viewState.zoom,
-    props.width,
-    props.height,
+    mortonNumbers,
+    currentTaskId,
   ]);
-
-  // レイヤーの設定
-  const layers = [
-    new PolygonLayer({
-      id: 'region1-layer',
-      pickable: true,
-      data: polygons[1],
-      stroked: true,
-      filled: true,
-      wireframe: true,
-      lineWidthMinPixels: 1,
-      getPolygon: (d) => d.polygon,
-      //getElevation: (d) => d.population / d.area / 10,
-      getFillColor: (d) => [10, 80, 10, 5],
-      getLineColor: (d) => [40, 100, 40],
-      getLineWidth: 1,
-      getDashArray: [3, 2],
-      dashJustified: true,
-      dashGapPickable: true,
-      extensions: [new PathStyleExtension({ dash: true })],
-      onHover: (info) => setHoverInfo(info),
-    }),
-    new PolygonLayer({
-      id: 'region2-layer',
-      pickable: true,
-      data: polygons[1],
-      stroked: true,
-      filled: true,
-      wireframe: true,
-      lineWidthMinPixels: 1,
-      getPolygon: (d) => d.polygon,
-      //getElevation: (d) => d.population / d.area / 10,
-      //getFillColor: (d) => [d.population / d.area / 60, 140, 0],
-      getFillColor: (d) => [80, 10, 10, 5],
-      getLineColor: (d) => [80, 80, 100],
-      getLineWidth: 1,
-      onHover: (info) => setHoverInfo(info),
-    }),
-    new PolygonLayer({
-      id: 'country-layer',
-      pickable: true,
-      data: polygons[0],
-      stroked: true,
-      filled: true,
-      wireframe: true,
-      lineWidthMinPixels: 1,
-      lineWidthScale: 10,
-      getPolygon: (d) => d.polygon,
-      //getElevation: (d) => d.population / d.area / 10,
-      getFillColor: (d) => [10, 10, 80, 5],
-      getLineColor: (d) => [200, 200, 40],
-      getLineWidth: 1,
-      onHover: (info) => setHoverInfo(info),
-    }),
-
-    new ScatterplotLayer({
-      id: 'scatter-plot-layer',
-      data: points,
-      getPosition: (d: PointSrc) => d.coordinates,
-      getRadius: 2000,
-      getFillColor: [255, 0, 0],
-      pickable: true,
-      onHover: (info) => setHoverInfo(info),
-    }),
-    /*
-    new TextLayer({
-      id: 'text-layer',
-      data: points,
-      getPosition: (d: PointSrc) => [d.coordinates[0], d.coordinates[1] - 0.02],
-      getText: (d: PointSrc) => d.name,
-      getSize: 10,
-      getColor: [255, 0, 0],
-      pickable: true,
-      onHover: (info) => setHoverInfo(info),
-    }
-)*/
-    /*
-    new LineLayer({
-      id: 'line-layer',
-      data: routes,
-      getSourcePosition: (d: RouteSegment) => d.source,
-      getTargetPosition: (d: RouteSegment) => d.target,
-      getColor: [0, 0, 255],
-      getWidth: 2,
-      pickable: true,
-      onHover: (info) => setHoverInfo(info),
-    }),
-     */
-  ];
 
   // ツールチップの表示
   const renderTooltip = () => {
@@ -347,11 +292,21 @@ const MapComponent = (props: MapComponentProps) => {
     );
   };
 
+  const updateURLThrottledDebounced = useCallback(
+    throttleDebounce(updateURL, 100, 200),
+    [updateURL],
+  );
+
+  useEffect(() => {
+    updateURLThrottledDebounced(viewState);
+  }, [viewState]);
+
   const onViewStateChange = useCallback(
     (evt: ViewStateChangeParameters & { viewId: string }) => {
+      if (evt.viewState === undefined || evt.viewState.zoom >= MAX_ZOOM_LEVEL)
+        return;
       const newViewState = evt.viewState as ViewStateType;
       setViewState(newViewState);
-      //updateURL(newViewState);
     },
     [],
   );
@@ -369,6 +324,7 @@ const MapComponent = (props: MapComponentProps) => {
       controller={true}
       layers={layers}
       viewState={viewState}
+      onWebGLInitialized={onWebGLInitialized}
       onViewStateChange={onViewStateChange}
     >
       <ReactMap
@@ -379,5 +335,3 @@ const MapComponent = (props: MapComponentProps) => {
     </DeckGL>
   );
 };
-
-export default MapComponent;

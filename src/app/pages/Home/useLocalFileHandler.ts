@@ -1,13 +1,13 @@
 import { useNavigate } from 'react-router-dom';
-import { uuid_v4 } from 'src/app/utils/uuidUtil';
-import { convertFileListToFileArray } from 'src/app/utils/fileListUtil';
-import { GeoDatabaseTableTypes } from 'src/app/models/GeoDatabaseTableType';
-import { ResourceTypes } from 'src/app/models/ResourceType';
-import { GeoDatabase } from 'src/app/services/database/GeoDatabase';
-import { storeGeoRegions } from 'src/app/services/file/GeoJsonLoaders';
-import { LoaderProgressResponse } from 'src/app/services/file/FileLoaderResponse';
-import { GeoDatabaseTable } from 'src/app/services/database/GeoDatabaseTable';
-import { convertFileNameToResourceItem } from 'src/app/pages/Home/ResourceEntitiesComponent/CreateGADM41JsonUrl';
+import { uuid_v4 } from '~/app/utils/uuidUtil';
+import { convertFileListToFileArray } from '~/app/utils/fileListUtil';
+import { GeoDatabaseTableTypes } from '~/app/models/GeoDatabaseTableType';
+import { ResourceTypes } from '~/app/models/ResourceType';
+import { GeoDatabase } from '~/app/services/database/GeoDatabase';
+import { storeGeoRegions } from '~/app/services/file/GeoJsonLoaders';
+import { LoaderProgressResponse } from '~/app/services/file/FileLoaderResponse';
+import { GeoDatabaseTable } from '~/app/services/database/GeoDatabaseTable';
+import { convertFileNameToResourceItem } from '~/app/pages/Home/ResourceEntitiesComponent/CreateGADM41JsonUrl';
 import JSZip from 'jszip';
 
 function uint8ArrayToReadableStream(uint8Array: Uint8Array) {

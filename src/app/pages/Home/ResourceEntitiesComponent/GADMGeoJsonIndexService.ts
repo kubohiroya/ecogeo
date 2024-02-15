@@ -1,7 +1,7 @@
-import { createGADM41JsonUrl } from './CreateGADM41JsonUrl';
-import { createGADM41IndexUrl } from './CreateGADM41IndexUrl';
-import { GADMGeoJsonCountryMetadata } from 'src/app/models/GADMGeoJsonCountryMetadata';
-import { smartDownloadAsUint8Array } from 'src/app/utils/zipUtil';
+import { createGADM41JsonUrl } from "./CreateGADM41JsonUrl";
+import { createGADM41IndexUrl } from "./CreateGADM41IndexUrl";
+import { GADMGeoJsonCountryMetadata } from "~/app/models/GADMGeoJsonCountryMetadata";
+import { smartDownloadAsUint8Array } from "~/app/utils/zipUtil";
 
 export const downloadGeoJsonIndexFile = async (): Promise<
   GADMGeoJsonCountryMetadata[]

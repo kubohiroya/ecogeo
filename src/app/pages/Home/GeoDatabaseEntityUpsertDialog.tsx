@@ -10,16 +10,13 @@ import {
   FormControl,
   TextField,
   useMediaQuery,
-  useTheme,
-} from '@mui/material';
-import * as React from 'react';
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import {
-  GeoDatabaseTableType,
-  GeoDatabaseTableTypes,
-} from 'src/app/models/GeoDatabaseTableType';
-import { DOCUMENT_TITLE } from 'src/app/Constants';
+  useTheme
+} from "@mui/material";
+import * as React from "react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { GeoDatabaseTableType, GeoDatabaseTableTypes } from "~/app/models/GeoDatabaseTableType";
+import { DOCUMENT_TITLE } from "~/app/Constants";
 
 type UpsertDatabaseEntityDialogProps = {
   uuid: string | undefined;

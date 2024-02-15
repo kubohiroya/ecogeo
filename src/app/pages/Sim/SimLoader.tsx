@@ -1,17 +1,17 @@
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { atom, WritableAtom } from 'jotai/index';
-import { UIState } from 'src/app/models/UIState';
-import { SessionState } from 'src/app/models/SessionState';
-import { AppMatrices } from 'src/app/models/AppMatrices';
+import { UIState } from '~/app/models/UIState';
+import { SessionState } from '~/app/models/SessionState';
+import { AppMatrices } from '~/app/models/AppMatrices';
 import {
   createInitialUndoRedoState,
   UndoRedoState,
-} from 'src/app/hooks/useUndoRedo';
-import { ChartTypes } from 'src/app/models/ChartType';
+} from '~/app/hooks/useUndoRedo';
+import { ChartTypes } from '~/app/models/ChartType';
 import { atomWithImmer } from 'jotai-immer';
 import { Draft, enablePatches } from 'immer';
-import { updateAddedSubGraph } from 'src/app/components/SessionPanel/MapPanel/GraphHandlers';
+import { updateAddedSubGraph } from '~/app/components/SessionPanel/MapPanel/GraphHandlers';
 import { LoaderFunctionArgs } from 'react-router-dom';
 import { PrimitiveAtom } from 'jotai';
 import { parameterSet } from './TypeToCategory';

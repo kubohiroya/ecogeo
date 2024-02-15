@@ -1,20 +1,20 @@
-import * as uuid from 'uuid';
-import { GeoPointEntity } from 'src/app/models/geo/GeoPointEntity';
-import { GeoPointTypes } from 'src/app/models/geo/GeoPointType';
-import { GeoRouteSegmentEntity } from 'src/app/models/geo/GeoRouteSegmentEntity';
-import { GeoRouteSegmentModes } from 'src/app/models/geo/GeoRouteSegmentMode';
-import { FileLoaderHandler } from './FileLoaderHandler';
+import * as uuid from "uuid";
+import { GeoPointEntity } from "~/app/models/geo/GeoPointEntity";
+import { GeoPointTypes } from "~/app/models/geo/GeoPointType";
+import { GeoRouteSegmentEntity } from "~/app/models/geo/GeoRouteSegmentEntity";
+import { GeoRouteSegmentModes } from "~/app/models/geo/GeoRouteSegmentMode";
+import { FileLoaderHandler } from "~/app/services/file/FileLoaderHandler";
 import {
   getTileMortonNumbers,
   globalPixelToTileXYZ,
   latLngToGlobalPixel,
   MAX_ZOOM_LEVEL,
   SpecialMortonNumbers,
-  tileXYZToMorton,
-} from 'src/app/utils/mortonNumberUtil';
-import { FileLoaderResponseType } from './FileLoaderResponseType';
-import { LoaderProgressResponse } from './FileLoaderResponse';
-import { GeoDatabase } from 'src/app/services/database/GeoDatabase';
+  tileXYZToMorton
+} from "~/app/utils/mortonNumberUtil";
+import { FileLoaderResponseType } from "~/app/services/file/FileLoaderResponseType";
+import { LoaderProgressResponse } from "~/app/services/file/FileLoaderResponse";
+import { GeoDatabase } from "~/app/services/database/GeoDatabase";
 
 export const loadCsvFile = async <T>({
   db,

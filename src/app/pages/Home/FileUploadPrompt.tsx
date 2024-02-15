@@ -1,11 +1,8 @@
-import styled from '@emotion/styled';
-import React from 'react';
-import { Typography } from '@mui/material';
-import { FileUpload, Quiz } from '@mui/icons-material';
-import {
-  GeoDatabaseTableType,
-  GeoDatabaseTableTypes,
-} from 'src/app/models/GeoDatabaseTableType';
+import styled from "@emotion/styled";
+import React from "react";
+import { Typography } from "@mui/material";
+import { FileUpload, Quiz } from "@mui/icons-material";
+import { GeoDatabaseTableType, GeoDatabaseTableTypes } from "~/app/models/GeoDatabaseTableType";
 
 const PromptBox = styled.div`
   display: flex;

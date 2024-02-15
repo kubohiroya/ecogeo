@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
-import { FullScreenBox } from 'src/components/FullScreenBox/FullScreenBox';
-import AppHeader from 'src/components/AppHeader/AppHeader';
-import { Share } from '@mui/icons-material';
-import { Outlet, useNavigate } from 'react-router-dom';
-import GithubCorner from 'react-github-corner';
-import { FileDropComponent } from 'src/app/components/FileDropComponent/FileDropComponent';
-import { useLocalFileHandler } from './useLocalFileHandler';
+import React, { useEffect } from "react";
+import { FullScreenBox } from "src/components/FullScreenBox/FullScreenBox";
+import AppHeader from "src/components/AppHeader/AppHeader";
+import { Share } from "@mui/icons-material";
+import { Outlet, useNavigate } from "react-router-dom";
+import GithubCorner from "react-github-corner";
+import { FileDropComponent } from "~/app/components/FileDropComponent/FileDropComponent";
+import { useLocalFileHandler } from "./useLocalFileHandler";
 
 export const HomePage = () => {
   const navigate = useNavigate();

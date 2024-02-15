@@ -1,10 +1,10 @@
-import { GeoDatabaseEntityCreateModeSelector } from 'src/app/pages/Home/GeoDatabaseEntityCreateModeSelector';
-import { GeoDatabaseTableTypes } from 'src/app/models/GeoDatabaseTableType';
-import React, { useState } from 'react';
-import { Close, PanoramaFishEye, Public, Share } from '@mui/icons-material';
-import { ProjectTypes } from 'src/app/models/ProjectType';
-import { Dialog, IconButton } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { GeoDatabaseEntityCreateModeSelector } from "~/app/pages/Home/GeoDatabaseEntityCreateModeSelector";
+import { GeoDatabaseTableTypes } from "~/app/models/GeoDatabaseTableType";
+import React, { useState } from "react";
+import { Close, PanoramaFishEye, Public, Share } from "@mui/icons-material";
+import { ProjectTypes } from "~/app/models/ProjectType";
+import { Dialog, IconButton } from "@mui/material";
+import { Link } from "react-router-dom";
 
 export function NewProjectEntitySelector() {
   const [open, setOpen] = useState(true);

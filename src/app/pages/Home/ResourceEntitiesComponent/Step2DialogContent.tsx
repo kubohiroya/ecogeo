@@ -1,7 +1,7 @@
 import { Alert, Box, Button } from '@mui/material';
 import React from 'react';
 import { StepStatus, StepStatuses } from './StepStatuses';
-import LoadingButton from '@mui/lab/LoadingButton';
+import { Download } from '@mui/icons-material';
 
 export function Step2DialogContent(props: {
   handleClick: () => Promise<void>;
@@ -21,23 +21,20 @@ export function Step2DialogContent(props: {
           margin: '20px',
         }}
       >
-        {props.stepStatus[1] === StepStatuses.processing && (
-          <LoadingButton size="large" variant="outlined" loading={true}>
-            Loading...
-          </LoadingButton>
-        )}
-        {props.stepStatus[1] !== StepStatuses.processing && (
+        {props.stepStatus[1] !== StepStatuses.processing &&
+        props.stepStatus[1] === StepStatuses.display ? (
           <Button
             size="large"
-            variant="outlined"
+            variant="contained"
             onClick={props.handleClick}
             disabled={props.stepStatus[1] !== StepStatuses.display}
+            endIcon={<Download />}
           >
-            {props.stepStatus[1] === StepStatuses.display
-              ? 'Download the Index'
-              : props.stepStatus[1] === StepStatuses.onLeaveTask
-                ? 'download the index file...'
-                : 'finished, go next!'}
+            Download the Index
+          </Button>
+        ) : (
+          <Button size="large" variant="outlined" disabled={true}>
+            finished, go next!
           </Button>
         )}
       </Box>

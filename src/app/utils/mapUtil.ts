@@ -1,8 +1,4 @@
-import {
-  globalPixelToLatLng,
-  LatLng,
-  latLngToGlobalPixel,
-} from './mortonNumberUtil';
+import { globalPixelToLatLng, LatLng, latLngToGlobalPixel } from "./mortonNumberUtil";
 /*
 export function calculateMortonNumber(coordinate: number[]): number {
   let morton = 0;
@@ -101,10 +97,13 @@ export function getPolygonsBounds(polygons: number[][][][]): {
   let latmin = Number.POSITIVE_INFINITY;
   let latmax = Number.NEGATIVE_INFINITY;
   for (const polygonGroup of polygons) {
-    for (const polygon of polygonGroup) {
+    for (let i = 0; i < polygonGroup.length; i += 2) {
+      // 0, 2, 4, 6... : polygons
+      // 1, 3, 5, 7... : polygon holes
+      const polygon = polygonGroup[i];
       for (const vertex of polygon) {
-        let lng = vertex[0];
-        let lat = vertex[1];
+        const lng = vertex[0];
+        const lat = vertex[1];
         if (lng < lngmin) lngmin = lng;
         if (lng > lngmax) lngmax = lng;
         if (lat < latmin) latmin = lat;
@@ -139,7 +138,6 @@ export function getBounds(
     bottomRight: globalPixelToLatLng(bottomRightPx, zoom),
   };
 }
-
 
 /*
 type LatLng = { lat: number; lng: number };

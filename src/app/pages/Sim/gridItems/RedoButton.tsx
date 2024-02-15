@@ -1,9 +1,9 @@
-import { GridItemTypes } from 'src/app/models/GridItemType';
-import React from 'react';
-import { Redo } from '@mui/icons-material';
+import { GridItemTypes } from "~/app/models/GridItemType";
+import React from "react";
+import { Redo } from "@mui/icons-material";
 
-import { FloatingButtonItem } from 'src/app/models/FloatingButtonItem';
-import { LayoutDefault } from 'src/app/pages/Sim/LayoutDefault';
+import { FloatingButtonItem } from "~/app/models/FloatingButtonItem";
+import { LayoutDefault } from "~/app/pages/Sim/LayoutDefault";
 
 export function RedoButton(props?: LayoutDefault): FloatingButtonItem {
   return {

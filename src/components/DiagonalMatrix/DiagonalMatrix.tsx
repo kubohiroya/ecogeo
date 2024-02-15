@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
-import React, { ForwardedRef, ReactNode } from 'react';
-import { isInfinity, round } from 'src/app/utils/mathUtil';
-import { Box, CircularProgress } from '@mui/material';
-import { City } from 'src/app/models/City';
+import styled from "@emotion/styled";
+import React, { ForwardedRef, ReactNode } from "react";
+import { isInfinity, round } from "~/app/utils/mathUtil";
+import { Box, CircularProgress } from "@mui/material";
+import { City } from "~/app/models/City";
 
 /* eslint-disable-next-line */
 export interface MatrixProps {

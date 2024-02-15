@@ -1,4 +1,4 @@
-import { City } from 'src/app/models/City';
+import { City } from "~/app/models/City";
 
 export function calcBoundingRect(locations: City[]) {
   if (!locations || locations.length === 0) {

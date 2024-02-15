@@ -1,5 +1,5 @@
 export type GeoRequestPayload = {
-  dbName: string;
+  uuid: string[];
   mortonNumbers: number[][][];
   zoom: number;
 };

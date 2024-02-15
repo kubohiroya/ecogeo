@@ -3,19 +3,19 @@ import {
   downloadStatusAtom,
   downloadSummaryStatusAtom,
 } from './GADMGeoJsonServiceAtoms';
-import { GADMGeoJsonCountryMetadata } from 'src/app/models/GADMGeoJsonCountryMetadata';
+import { GADMGeoJsonCountryMetadata } from '~/app/models/GADMGeoJsonCountryMetadata';
 import { v4 as uuid_v4 } from 'uuid';
-import { GeoDatabaseTable } from 'src/app/services/database/GeoDatabaseTable';
-import { fetchFiles, FetchStatus } from 'src/app/services/file/FetchFiles';
-import { storeGeoRegions } from 'src/app/services/file/GeoJsonLoaders';
-import { LoaderProgressResponse } from 'src/app/services/file/FileLoaderResponse';
-import { LoadingProgress } from 'src/app/services/file/LoadingProgress';
-import { FileLoadingStatusTypes } from 'src/app/services/file/FileLoadingStatusType';
+import { GeoDatabaseTable } from '~/app/services/database/GeoDatabaseTable';
+import { fetchFiles, FetchStatus } from '~/app/services/file/FetchFiles';
+import { storeGeoRegions } from '~/app/services/file/GeoJsonLoaders';
+import { LoaderProgressResponse } from '~/app/services/file/FileLoaderResponse';
+import { LoadingProgress } from '~/app/services/file/LoadingProgress';
+import { FileLoadingStatusTypes } from '~/app/services/file/FileLoadingStatusType';
 import { createGADM41JsonUrl } from './CreateGADM41JsonUrl';
-import { ResourceTypes } from 'src/app/models/ResourceType';
-import { GeoDatabaseTableTypes } from 'src/app/models/GeoDatabaseTableType';
-import { GeoDatabase } from 'src/app/services/database/GeoDatabase';
-import { ResourceItem } from 'src/app/models/ResourceItem';
+import { ResourceTypes } from '~/app/models/ResourceType';
+import { GeoDatabaseTableTypes } from '~/app/models/GeoDatabaseTableType';
+import { GeoDatabase } from '~/app/services/database/GeoDatabase';
+import { ResourceItem } from '~/app/models/ResourceItem';
 
 export function useDownloadGADMJsonFiles() {
   const [, setDownloadStatus] = useAtom(downloadStatusAtom);

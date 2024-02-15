@@ -1,5 +1,5 @@
-import { GeoDatabaseTable } from 'src/app/services/database/GeoDatabaseTable';
-import { ResourceTypes } from 'src/app/models/ResourceType';
+import { GeoDatabaseTable } from "~/app/services/database/GeoDatabaseTable";
+import { ResourceTypes } from "~/app/models/ResourceType";
 
 export function ResourceEntitiesLoader(request: any) {
   return GeoDatabaseTable.getSingleton()

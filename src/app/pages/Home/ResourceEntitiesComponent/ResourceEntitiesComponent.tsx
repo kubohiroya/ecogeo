@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Flag, LocationCity, Route } from '@mui/icons-material';
+import React, { useEffect, useState } from "react";
+import { Flag, LocationCity, Route } from "@mui/icons-material";
 import {
   IconButton,
   Paper,
@@ -13,19 +13,20 @@ import {
   TableHead,
   TableRow,
   Tooltip,
-  Typography,
-} from '@mui/material';
-import { useLoaderData, useNavigate } from 'react-router-dom';
-import { GeoDatabaseEntityMenu } from '../GeoDatabaseEntityMenu';
-import { ResourceTypes } from 'src/app/models/ResourceType';
-import 'dexie-observable';
-import { ResourceEntity } from 'src/app/models/ResourceEntity';
-import { GADMGeoJsonComponent } from './GADMGeoJsonComponent';
-import { useDocumentTitle } from '../useDocumentTitle';
-import { GeoDatabaseTableTypes } from 'src/app/models/GeoDatabaseTableType';
-import { GeoDatabaseTable } from 'src/app/services/database/GeoDatabaseTable';
-import { ResourceEntitiesLoader } from './ResourceEntitiesLoader';
-import { Cell } from '../Styles';
+  Typography
+} from "@mui/material";
+import { useLoaderData, useNavigate } from "react-router-dom";
+import { GeoDatabaseEntityMenu } from "../GeoDatabaseEntityMenu";
+import { ResourceTypes } from "~/app/models/ResourceType";
+import "dexie-observable";
+import { ResourceEntity } from "~/app/models/ResourceEntity";
+import { GADMGeoJsonComponent } from "./GADMGeoJsonComponent";
+import { useDocumentTitle } from "../useDocumentTitle";
+import { GeoDatabaseTableTypes } from "~/app/models/GeoDatabaseTableType";
+import { GeoDatabaseTable } from "~/app/services/database/GeoDatabaseTable";
+import { ResourceEntitiesLoader } from "./ResourceEntitiesLoader";
+import { Cell } from "../Styles";
+import { MapSvgIcon } from "~/components/SvgIcon/MapSvgIcon";
 
 export const ResourceEntitiesComponent = () => {
   const { resources: initialResources } = useLoaderData() as {
@@ -70,6 +71,13 @@ export const ResourceEntitiesComponent = () => {
       name: 'GADM GeoJSON',
       onClick: () => {
         return navigate(`/resources/create/gadm`);
+      },
+    },
+    {
+      icon: <MapSvgIcon />,
+      name: 'GeoJSON',
+      onClick: () => {
+        return navigate(`/resources/create/geojson`);
       },
     },
     {

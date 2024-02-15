@@ -1,4 +1,4 @@
-import { smartDownloadAsUint8Array } from 'src/app/utils/zipUtil';
+import { smartDownloadAsUint8Array } from "~/app/utils/zipUtil";
 
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));

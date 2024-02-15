@@ -1,8 +1,8 @@
-import { SessionState } from 'src/app/models/SessionState';
-import { UIState } from 'src/app/models/UIState';
-import { ChartPane } from 'src/app/components/SessionPanel/ChartPane/ChartPane';
-import React from 'react';
-import { ChartCanvas } from 'src/app/components/SessionPanel/ChartPane/ChartCanvas';
+import { SessionState } from "~/app/models/SessionState";
+import { UIState } from "~/app/models/UIState";
+import { ChartPane } from "~/app/components/SessionPanel/ChartPane/ChartPane";
+import React from "react";
+import { ChartCanvas } from "~/app/components/SessionPanel/ChartPane/ChartCanvas";
 
 /*
 const VERY_LOW_RANGE = [0, 0.08];

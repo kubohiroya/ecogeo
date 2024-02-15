@@ -1,14 +1,9 @@
-import styled from '@emotion/styled';
-import DiagonalMatrix from '../../../../components/DiagonalMatrix/DiagonalMatrix';
-import React, {
-  forwardRef,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
-import { Box } from '@mui/material';
-import { City } from 'src/app/models/City';
-import { LocalShipping, Route, TrendingFlat } from '@mui/icons-material';
+import styled from "@emotion/styled";
+import DiagonalMatrix from "../../../../components/DiagonalMatrix/DiagonalMatrix";
+import React, { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import { Box } from "@mui/material";
+import { City } from "~/app/models/City";
+import { LocalShipping, Route, TrendingFlat } from "@mui/icons-material";
 
 /* eslint-disable-next-line */
 export interface DiagonalMatrixSetPanelProps {

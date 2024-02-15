@@ -1,7 +1,7 @@
 import { atom } from 'jotai/index';
 import { useEffect, useRef, useState } from 'react';
 import { useImmerAtom } from 'jotai-immer';
-import { expScale } from 'src/app/utils/mathUtil';
+import { expScale } from '~/app/utils/mathUtil';
 
 type Timer = {
   interval: number;

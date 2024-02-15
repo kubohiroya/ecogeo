@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 import {
   Dialog,
   DialogActions,
@@ -6,11 +6,11 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
-  Typography,
-} from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { Close } from '@mui/icons-material';
-import { DOCUMENT_TITLE } from 'src/app/Constants';
+  Typography
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { Close } from "@mui/icons-material";
+import { DOCUMENT_TITLE } from "~/app/Constants";
 
 export const IdeGsmCitiesComponent = () => {
   useEffect(() => {

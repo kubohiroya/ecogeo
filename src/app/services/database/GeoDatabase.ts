@@ -1,18 +1,13 @@
-import Dexie from 'dexie';
-import * as uuid from 'uuid';
-import { GeoPointEntity } from 'src/app/models/geo/GeoPointEntity';
-import { GeoRegionEntity } from 'src/app/models/geo/GeoRegionEntity';
-import { GeoRouteSegmentEntity } from 'src/app/models/geo/GeoRouteSegmentEntity';
-import { GeoRouteSegmentSource } from 'src/app/models/geo/GeoRouteSegmentSource';
-import {
-  getTilesMortonNumbersForAllZoomsMap,
-  MAX_ZOOM_LEVEL,
-} from 'src/app/utils/mortonNumberUtil';
-import { TABLE_DB_NAME } from 'src/app/Constants';
-import {
-  GeoDatabaseTableType,
-  GeoDatabaseTableTypes,
-} from 'src/app/models/GeoDatabaseTableType';
+import Dexie from "dexie";
+import * as uuid from "uuid";
+import { GeoPointEntity } from "~/app/models/geo/GeoPointEntity";
+import { GeoRegionEntity } from "~/app/models/geo/GeoRegionEntity";
+import { GeoRouteSegmentEntity } from "~/app/models/geo/GeoRouteSegmentEntity";
+import { GeoRouteSegmentSource } from "~/app/models/geo/GeoRouteSegmentSource";
+import { getTilesMortonNumbersForAllZoomsMap, MAX_ZOOM_LEVEL } from "~/app/utils/mortonNumberUtil";
+import { TABLE_DB_NAME } from "~/app/Constants";
+import { GeoDatabaseTableType, GeoDatabaseTableTypes } from "~/app/models/GeoDatabaseTableType";
+import { GeoJsonEntity } from "~/app/services/database/GeoJsonEntity";
 
 const zoomLevels = 'z0, z1, z2, z3, z4, z5, z6, z7, z8, z9, z10';
 const zoomLevelsExt = 'z0_, z1_, z2_, z3_, z4_, z5_, z6_, z7_, z8_, z9_, z10_';
@@ -23,6 +18,9 @@ export class GeoDatabase extends Dexie {
   public regions2: Dexie.Table<GeoRegionEntity, number>;
   public points: Dexie.Table<GeoPointEntity, number>;
   public routeSegments: Dexie.Table<GeoRouteSegmentEntity, number>;
+  public gadm0: Dexie.Table<GeoJsonEntity, number>;
+  public gadm1: Dexie.Table<GeoJsonEntity, number>;
+  public gadm2: Dexie.Table<GeoJsonEntity, number>;
 
   public constructor(name: string) {
     super(name);
@@ -46,6 +44,17 @@ export class GeoDatabase extends Dexie {
         zoomLevels +
         ',' +
         zoomLevelsExt,
+      gadm0: '++id, name, &gid_0, ' + zoomLevels + ',' + zoomLevelsExt,
+      gadm1:
+        '++id, name, resourceIdRef, &[gid_0+gid_1], ' +
+        zoomLevels +
+        ',' +
+        zoomLevelsExt,
+      gadm2:
+        '++id, resourceIdRef, name, &[gid_0+gid_1+gid_2], ' +
+        zoomLevels +
+        ',' +
+        zoomLevelsExt,
     });
 
     this.countries = this.table('countries');
@@ -53,6 +62,9 @@ export class GeoDatabase extends Dexie {
     this.regions2 = this.table('regions2');
     this.points = this.table('points');
     this.routeSegments = this.table('routeSegments');
+    this.gadm0 = this.table('gadm0');
+    this.gadm1 = this.table('gadm1');
+    this.gadm2 = this.table('gadm2');
   }
 
   public static fileNameOf(type: GeoDatabaseTableType, uuid: string) {
@@ -81,33 +93,35 @@ export class GeoDatabase extends Dexie {
           ? [this.countries, this.regions1]
           : [this.regions1, this.regions2];
 
-    return Promise.all(
-      targetTables.map(async (db) => {
-        const promises: Promise<GeoRegionEntity[]>[] = [];
-        for (let z = zoom; z >= 0; z--) {
-          if (mortonNumbers[zoom].length === 1) {
-            promises.push(
-              db.where(`z${zoom}`).anyOf(mortonNumbers[zoom][0]).toArray(),
-            );
-            if (mortonNumbers[zoom][0].length === 1) {
-              break;
+    return (
+      await Promise.all(
+        targetTables.map(async (db) => {
+          const promises: Promise<GeoRegionEntity[]>[] = [];
+          for (let z = zoom; z >= 0; z--) {
+            if (mortonNumbers[zoom].length === 1) {
+              promises.push(
+                db.where(`z${zoom}`).anyOf(mortonNumbers[zoom][0]).toArray(),
+              );
+              if (mortonNumbers[zoom][0].length === 1) {
+                break;
+              }
+            } else {
+              promises.push(
+                db
+                  .where(`z${zoom}`)
+                  .anyOf(
+                    mortonNumbers[zoom].length === 2
+                      ? mortonNumbers[zoom][0].concat(mortonNumbers[zoom][1])
+                      : mortonNumbers[zoom][0],
+                  )
+                  .toArray(),
+              );
             }
-          } else {
-            promises.push(
-              db
-                .where(`z${zoom}`)
-                .anyOf(
-                  mortonNumbers[zoom].length === 2
-                    ? mortonNumbers[zoom][0].concat(mortonNumbers[zoom][1])
-                    : mortonNumbers[zoom][0],
-                )
-                .toArray(),
-            );
           }
-        }
-        return Promise.all(promises);
-      }),
-    );
+          return (await Promise.all(promises)).flat(1);
+        }),
+      )
+    ).flat(1);
   }
 
   async findAllGeoPoints(mortonNumbers: number[][][], zoom: number) {
@@ -134,7 +148,7 @@ export class GeoDatabase extends Dexie {
         );
       }
     }
-    return Promise.all(promises);
+    return (await Promise.all(promises)).flat(1);
   }
 
   async findAllGeoLineStrings(mortonNumbers: number[][][], zoom: number) {
@@ -161,7 +175,7 @@ export class GeoDatabase extends Dexie {
         );
       }
     }
-    return Promise.all(promises);
+    return (await Promise.all(promises)).flat(1);
   }
 
   async storeGISRouteSegment(

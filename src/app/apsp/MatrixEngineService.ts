@@ -1,12 +1,9 @@
-import { GPUMatrixEngine } from 'src/app/apsp/GPUMatrixEngine';
-import { CPUMatrixEngine } from 'src/app/apsp/CPUMatrixEngine';
-import { Edge } from 'src/app/models/Graph';
-import { City } from 'src/app/models/City';
-import { AbstractMatrixEngine } from 'src/app/apsp/MatrixEngine';
-import {
-  MatrixEngineKeyTypes,
-  matrixEngineType,
-} from 'src/app/models/MatrixEngineKeyTypes';
+import { GPUMatrixEngine } from "~/app/apsp/GPUMatrixEngine";
+import { CPUMatrixEngine } from "~/app/apsp/CPUMatrixEngine";
+import { Edge } from "~/app/models/Graph";
+import { City } from "~/app/models/City";
+import { AbstractMatrixEngine } from "~/app/apsp/MatrixEngine";
+import { MatrixEngineKeyTypes, matrixEngineType } from "~/app/models/MatrixEngineKeyTypes";
 
 export const createMatrixEngine = (numLocations: number, numEdges: number) =>
   matrixEngineType === MatrixEngineKeyTypes.CPUMatrixEngine

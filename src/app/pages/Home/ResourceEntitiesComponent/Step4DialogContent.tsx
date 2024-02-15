@@ -1,5 +1,5 @@
-import { LoadingProgress } from 'src/app/services/file/LoadingProgress';
-import { FetchStatus } from 'src/app/services/file/FetchFiles';
+import { LoadingProgress } from '~/app/services/file/LoadingProgress';
+import { FetchStatus } from '~/app/services/file/FetchFiles';
 import {
   Alert,
   Badge,
@@ -8,9 +8,14 @@ import {
   CircularProgress,
   Stack,
 } from '@mui/material';
-import { FileLoadingStatusTypes } from 'src/app/services/file/FileLoadingStatusType';
+import { FileLoadingStatusTypes } from '~/app/services/file/FileLoadingStatusType';
 import { LinearProgressWithLabel } from 'src/components/LinearProgressWithLabel/LinearProgressWithLabel';
-import { Done, Download, ReportProblem } from '@mui/icons-material';
+import {
+  Done,
+  Download,
+  DownloadDone,
+  ReportProblem,
+} from '@mui/icons-material';
 import React from 'react';
 
 export function Step4DialogContent(props: {
@@ -39,10 +44,32 @@ export function Step4DialogContent(props: {
         props.downloadSummaryStatus.type === FileLoadingStatusTypes.loading &&
         props.downloadSummaryStatus.progress < 100 && (
           <>
-            <CircularProgress variant="indeterminate" />
+            <Box
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                margin: '8px',
+              }}
+            >
+              <CircularProgress variant="indeterminate" />
+            </Box>
             <Alert severity="info">downloading files...</Alert>
           </>
         )}
+      {props.downloadSummaryStatus.progress === 100 && (
+        <>
+          <Box
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              margin: '8px',
+            }}
+          >
+            <DownloadDone />
+          </Box>
+          <Alert severity="success">download completed.</Alert>
+        </>
+      )}
 
       {props.urlList &&
         props.urlList.length >= 1 &&

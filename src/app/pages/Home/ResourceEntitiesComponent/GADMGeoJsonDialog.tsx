@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useEffect, useState } from 'react';
+import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -13,12 +13,12 @@ import {
   Step,
   StepButton,
   Stepper,
-  Typography,
-} from '@mui/material';
-import { Close } from '@mui/icons-material';
-import { Link, useNavigate } from 'react-router-dom';
-import { DOCUMENT_TITLE } from 'src/app/Constants';
-import { useAtom, useAtomValue } from 'jotai';
+  Typography
+} from "@mui/material";
+import { Close } from "@mui/icons-material";
+import { Link, useNavigate } from "react-router-dom";
+import { DOCUMENT_TITLE } from "~/app/Constants";
+import { useAtom, useAtomValue } from "jotai";
 import {
   downloadStatusAtom,
   downloadSummaryStatusAtom,
@@ -26,20 +26,20 @@ import {
   numSelectedAtom,
   selectedCheckboxMatrixAtom,
   urlListAtom,
-  urlListToStringAtom,
-} from './GADMGeoJsonServiceAtoms';
+  urlListToStringAtom
+} from "./GADMGeoJsonServiceAtoms";
 
-import { useDownloadGADMJsonFiles } from './useDownloadGADMJsonFiles';
-import { Step2DialogContent } from './Step2DialogContent';
-import { Step1DialogContent } from './Step1DialogContent';
-import { Step6DialogContent } from './Step6DialogContent';
-import { Step5DialogContent } from './Step5DialogContent';
-import { Step3DialogContent } from './Step3DialogContent';
-import { downloadGeoJsonIndexFile } from './GADMGeoJsonIndexService';
-import { GADMGeoJsonCountryMetadata } from '../../../models/GADMGeoJsonCountryMetadata';
-import { StepStatus, StepStatuses } from './StepStatuses';
-import { Step4DialogContent } from './Step4DialogContent';
-import { ResourceTypes } from 'src/app/models/ResourceType';
+import { useDownloadGADMJsonFiles } from "./useDownloadGADMJsonFiles";
+import { Step2DialogContent } from "./Step2DialogContent";
+import { Step1DialogContent } from "./Step1DialogContent";
+import { Step6DialogContent } from "./Step6DialogContent";
+import { Step5DialogContent } from "./Step5DialogContent";
+import { Step3DialogContent } from "./Step3DialogContent";
+import { downloadGeoJsonIndexFile } from "./GADMGeoJsonIndexService";
+import { GADMGeoJsonCountryMetadata } from "../../../models/GADMGeoJsonCountryMetadata";
+import { StepStatus, StepStatuses } from "./StepStatuses";
+import { Step4DialogContent } from "./Step4DialogContent";
+import { ResourceTypes } from "~/app/models/ResourceType";
 
 type Step = {
   label: string;
@@ -206,7 +206,11 @@ export const GADMGeoJsonDialog = () => {
   const steps: Step[] = [
     {
       label: 'Step 1: Read and accept the GADM license',
-      contents: <Step1DialogContent {...{ handleClick: handleClickNext(0) }} />,
+      contents: (
+        <Step1DialogContent
+          {...{ handleClick: handleClickNext(0), stepStatus }}
+        />
+      ),
       onEnter: async () => {},
       onLeave: async () => {},
     },

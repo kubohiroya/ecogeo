@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { AbstractMatrixEngine } from 'src/app/apsp/MatrixEngine';
-import { createMatrixEngine } from 'src/app/apsp/MatrixEngineService';
+import { AbstractMatrixEngine } from '~/app/apsp/MatrixEngine';
+import { createMatrixEngine } from '~/app/apsp/MatrixEngineService';
 
 export function useMatrixEngine(numLocations: number, numEdges: number) {
   const [matrixEngine, setMatrixEngine] = useState<AbstractMatrixEngine>(

@@ -1,6 +1,6 @@
-import { SessionState } from 'src/app/models/SessionState';
-import { UIState } from 'src/app/models/UIState';
-import { useUndoRedo } from 'src/app/hooks/useUndoRedo';
+import { SessionState } from '~/app/models/SessionState';
+import { UIState } from '~/app/models/UIState';
+import { useUndoRedo } from '~/app/hooks/useUndoRedo';
 import { useCallback } from 'react';
 import useHotkeys from '@reecelucas/react-use-hotkeys';
 import { SessionStateAtom } from './SimLoader';

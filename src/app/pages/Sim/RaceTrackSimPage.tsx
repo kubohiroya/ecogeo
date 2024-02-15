@@ -1,12 +1,12 @@
-import React from 'react';
-import { SimLoaderResult } from './SimLoader';
-import { useLoaderData } from 'react-router-dom';
-import { SimComponent } from './SimComponent';
-import { BackgroundCanvas } from './BackgroundCanvas';
-import { SessionState } from 'src/app/models/SessionState';
-import { UIState } from 'src/app/models/UIState';
-import { AppMatrices } from 'src/app/models/AppMatrices';
-import { ProjectType } from 'src/app/models/ProjectType';
+import React from "react";
+import { SimLoaderResult } from "./SimLoader";
+import { useLoaderData } from "react-router-dom";
+import { SimComponent } from "./SimComponent";
+import { BackgroundCanvas } from "./BackgroundCanvas";
+import { SessionState } from "~/app/models/SessionState";
+import { UIState } from "~/app/models/UIState";
+import { AppMatrices } from "~/app/models/AppMatrices";
+import { ProjectType } from "~/app/models/ProjectType";
 
 export const RaceTrackSimPage = () => {
   const { uuid, x, y, zoom, type } = useLoaderData() as SimLoaderResult;

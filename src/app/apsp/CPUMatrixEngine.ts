@@ -1,9 +1,9 @@
-import { City } from 'src/app/models/City';
-import { Edge } from 'src/app/models/Graph';
-import { AbstractMatrixEngine } from './MatrixEngine';
-import { create2DArray } from 'src/app/utils/arrayUtil';
-import { calculateDistanceByIds } from 'src/app/apsp/calculateDistanceByLocations';
-import { computeShortestPaths } from 'src/app/apsp/floydWarshall';
+import { City } from "~/app/models/City";
+import { Edge } from "~/app/models/Graph";
+import { AbstractMatrixEngine } from "./MatrixEngine";
+import { create2DArray } from "~/app/utils/arrayUtil";
+import { calculateDistanceByIds } from "~/app/apsp/calculateDistanceByLocations";
+import { computeShortestPaths } from "~/app/apsp/floydWarshall";
 
 export function createAdjacencyMatrix(locations: City[], edges: Edge[]) {
   const matrix = create2DArray(locations.length, (i, j) =>

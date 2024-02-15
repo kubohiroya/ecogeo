@@ -1,7 +1,7 @@
-import { GridItemTypes } from 'src/app/models/GridItemType';
+import { GridItemTypes } from "~/app/models/GridItemType";
 
-import { FloatingPanelItem } from 'src/app/models/FloatingPanelItem';
-import { LayoutDefault } from '../LayoutDefault';
+import { FloatingPanelItem } from "~/app/models/FloatingPanelItem";
+import { LayoutDefault } from "../LayoutDefault";
 
 export function BackgroundPanel(prop?: LayoutDefault): FloatingPanelItem {
   return {

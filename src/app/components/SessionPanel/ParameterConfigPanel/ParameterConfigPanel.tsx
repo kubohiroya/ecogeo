@@ -1,19 +1,14 @@
-import styled from '@emotion/styled';
-import LabelSlider from 'src/components/LabelSlider/LabelSlider';
-import React, {
-  forwardRef,
-  SyntheticEvent,
-  useCallback,
-  useImperativeHandle,
-} from 'react';
-import { Domain, Factory, Favorite, LocalShipping } from '@mui/icons-material';
-import { DEFAULT_PARAMS_BY_CASE } from 'src/app/models/DefaultParamByCase';
-import { ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { useUndoRedo } from 'src/app/hooks/useUndoRedo';
-import { SessionState } from 'src/app/models/SessionState';
-import { ProjectType } from 'src/app/models/ProjectType';
-import { ParameterSet } from 'src/app/models/ParameterSet';
-import { sessionStateAtom } from 'src/app/pages/Sim/SimLoader';
+import styled from "@emotion/styled";
+import LabelSlider from "src/components/LabelSlider/LabelSlider";
+import React, { forwardRef, SyntheticEvent, useCallback, useImperativeHandle } from "react";
+import { Domain, Factory, Favorite, LocalShipping } from "@mui/icons-material";
+import { DEFAULT_PARAMS_BY_CASE } from "~/app/models/DefaultParamByCase";
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { useUndoRedo } from "~/app/hooks/useUndoRedo";
+import { SessionState } from "~/app/models/SessionState";
+import { ProjectType } from "~/app/models/ProjectType";
+import { ParameterSet } from "~/app/models/ParameterSet";
+import { sessionStateAtom } from "~/app/pages/Sim/SimLoader";
 
 /* eslint-disable-next-line */
 export interface ParameterConfigPanelProps {

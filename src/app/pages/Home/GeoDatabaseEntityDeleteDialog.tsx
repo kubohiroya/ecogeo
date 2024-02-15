@@ -1,21 +1,11 @@
-import { Link, useLoaderData, useNavigate } from 'react-router-dom';
-import React, { useCallback } from 'react';
-import {
-  GeoDatabaseTable,
-  getCurrentDatabaseTableType,
-} from 'src/app/services/database/GeoDatabaseTable';
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Typography,
-} from '@mui/material';
-import { createProjectLink } from 'src/createProjectLink';
-import dexie from 'dexie';
-import { GeoDatabaseTableTypes } from 'src/app/models/GeoDatabaseTableType';
-import { GeoDatabase } from 'src/app/services/database/GeoDatabase';
+import { Link, useLoaderData, useNavigate } from "react-router-dom";
+import React, { useCallback } from "react";
+import { GeoDatabaseTable, getCurrentDatabaseTableType } from "~/app/services/database/GeoDatabaseTable";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
+import { createProjectLink } from "src/createProjectLink";
+import dexie from "dexie";
+import { GeoDatabaseTableTypes } from "~/app/models/GeoDatabaseTableType";
+import { GeoDatabase } from "~/app/services/database/GeoDatabase";
 
 type DeleteDatabaseItemDialogProps = {
   tableType: string;

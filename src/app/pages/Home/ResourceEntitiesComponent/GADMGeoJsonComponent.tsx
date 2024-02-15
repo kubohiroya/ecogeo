@@ -1,7 +1,7 @@
 //import { ResourceEntity, ResourceItems } from '../../models/ResourceEntity';
-import { GADMGeoJsonResourceChip } from './GADMGeoJsonResourceChip';
-import { ResourceEntity } from 'src/app/models/ResourceEntity';
-import { ResourceItem } from 'src/app/models/ResourceItem';
+import { GADMGeoJsonResourceChip } from "./GADMGeoJsonResourceChip";
+import { ResourceEntity } from "~/app/models/ResourceEntity";
+import { ResourceItem } from "~/app/models/ResourceItem";
 
 export type GADMGGeoJsonComponentProps = {
   resource: ResourceEntity;

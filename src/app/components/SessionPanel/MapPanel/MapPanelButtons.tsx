@@ -1,19 +1,12 @@
-import styled from '@emotion/styled';
-import { Box, SvgIcon } from '@mui/material';
-import {
-  AddRoad,
-  DomainAdd,
-  FitScreen,
-  Redo,
-  RemoveRoad,
-  Undo,
-} from '@mui/icons-material';
-import React from 'react';
-import { AutoLayoutButton } from './AutoLayoutButton';
-import { LayerSwitchButton } from './LayerSwitchButton';
-import { MapPanelButtonsState } from './MapPanelButtonsState';
-import { OverlayControlButton } from './OverlayControlButton';
-import { ParameterSet } from 'src/app/models/ParameterSet'; /* eslint-disable-next-line */
+import styled from "@emotion/styled";
+import { Box, SvgIcon } from "@mui/material";
+import { AddRoad, DomainAdd, FitScreen, Redo, RemoveRoad, Undo } from "@mui/icons-material";
+import React from "react";
+import { AutoLayoutButton } from "./AutoLayoutButton";
+import { LayerSwitchButton } from "./LayerSwitchButton";
+import { MapPanelButtonsState } from "./MapPanelButtonsState";
+import { OverlayControlButton } from "./OverlayControlButton";
+import { ParameterSet } from "~/app/models/ParameterSet"; /* eslint-disable-next-line */
 
 /* eslint-disable-next-line */
 export interface MapPanelButtonsProps {

@@ -8,22 +8,16 @@ import {
   TableHead,
   TableRow,
   Tooltip,
-  Typography,
-} from '@mui/material';
-import React, { memo, useMemo } from 'react';
-import { useAtom } from 'jotai';
-import { loop } from 'src/app/utils/arrayUtil';
-import styled from '@emotion/styled';
-import {
-  Domain,
-  Flag,
-  LocationCity,
-  Villa,
-  VillaOutlined,
-} from '@mui/icons-material';
-import { GADMGeoJsonCountryMetadata } from 'src/app/models/GADMGeoJsonCountryMetadata';
-import { selectedCheckboxMatrixAtom } from './GADMGeoJsonServiceAtoms';
-import { createGADMCountryUrl, createGADMRegionUrl } from './CreateGADMUrl';
+  Typography
+} from "@mui/material";
+import React, { memo, useMemo } from "react";
+import { useAtom } from "jotai";
+import { loop } from "~/app/utils/arrayUtil";
+import styled from "@emotion/styled";
+import { Domain, Flag, LocationCity, Villa, VillaOutlined } from "@mui/icons-material";
+import { GADMGeoJsonCountryMetadata } from "~/app/models/GADMGeoJsonCountryMetadata";
+import { selectedCheckboxMatrixAtom } from "./GADMGeoJsonServiceAtoms";
+import { createGADMCountryUrl, createGADMRegionUrl } from "./CreateGADMUrl";
 
 interface GADMResourceSelectorProps {
   readonly countryMetadataList: GADMGeoJsonCountryMetadata[];

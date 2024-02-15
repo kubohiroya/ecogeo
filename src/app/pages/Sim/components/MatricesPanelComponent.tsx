@@ -1,9 +1,9 @@
-import { SessionState } from 'src/app/models/SessionState';
-import { AppMatrices } from 'src/app/models/AppMatrices';
-import { UIState } from 'src/app/models/UIState';
-import { AppPreference } from 'src/app/models/AppPreference';
-import MatrixSetPane from 'src/app/components/SessionPanel/MatrixSetPanel/MatrixSetPanel';
-import React from 'react';
+import { SessionState } from "~/app/models/SessionState";
+import { AppMatrices } from "~/app/models/AppMatrices";
+import { UIState } from "~/app/models/UIState";
+import { AppPreference } from "~/app/models/AppPreference";
+import MatrixSetPane from "~/app/components/SessionPanel/MatrixSetPanel/MatrixSetPanel";
+import React from "react";
 
 export const MatricesPanelComponent = ({
   sessionState,

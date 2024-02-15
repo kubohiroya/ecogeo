@@ -7,15 +7,15 @@ import {
   MenuItem,
   MenuList,
   Paper,
-  Popper,
-} from '@mui/material';
-import React, { useCallback, useRef } from 'react';
-import Menu from '@mui/icons-material/Menu';
-import { ContentCopy, Delete, Edit } from '@mui/icons-material';
-import { GeoDatabaseEntity } from 'src/app/models/GeoDatabaseEntity';
-import { useNavigate } from 'react-router-dom';
-import { ResourceEntity } from 'src/app/models/ResourceEntity';
-import { GeoDatabaseTableType } from 'src/app/models/GeoDatabaseTableType';
+  Popper
+} from "@mui/material";
+import React, { useCallback, useRef } from "react";
+import Menu from "@mui/icons-material/Menu";
+import { ContentCopy, Delete, Edit } from "@mui/icons-material";
+import { GeoDatabaseEntity } from "~/app/models/GeoDatabaseEntity";
+import { useNavigate } from "react-router-dom";
+import { ResourceEntity } from "~/app/models/ResourceEntity";
+import { GeoDatabaseTableType } from "~/app/models/GeoDatabaseTableType";
 
 interface DatabaseItemMenuProps {
   tableType: GeoDatabaseTableType;

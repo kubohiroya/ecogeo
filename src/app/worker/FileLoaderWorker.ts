@@ -1,19 +1,15 @@
 /// <reference lib="webworker" />
 
-import { LoaderProgressResponse } from 'src/app/services/file/FileLoaderResponse';
-import { FileLoaderRequest } from 'src/app/services/file/FileLoaderRequest';
-import { FileLoaderRequestType } from 'src/app/services/file/FileLoaderRequestType';
-import { FileLoaderResponseType } from 'src/app/services/file/FileLoaderResponseType';
-import {
-  CsvLoaders,
-  IdeGsmCsvLoaders,
-  loadCsvFile,
-} from 'src/app/services/file/IdeGsmCsvLoaders';
-import { GeoPointEntity } from 'src/app/models/geo/GeoPointEntity';
-import { storeGeoRegions } from 'src/app/services/file/GeoJsonLoaders';
-import { unzipFileToStream } from 'src/app/services/file/UnzipFileToStream';
-import { GeoDatabase } from 'src/app/services/database/GeoDatabase';
-import { convertFileListToFileArray } from 'src/app/utils/fileListUtil';
+import { LoaderProgressResponse } from "~/app/services/file/FileLoaderResponse";
+import { FileLoaderRequest } from "~/app/services/file/FileLoaderRequest";
+import { FileLoaderRequestType } from "~/app/services/file/FileLoaderRequestType";
+import { FileLoaderResponseType } from "~/app/services/file/FileLoaderResponseType";
+import { CsvLoaders, IdeGsmCsvLoaders, loadCsvFile } from "~/app/services/idegsm/IdeGsmCsvLoaders";
+import { GeoPointEntity } from "~/app/models/geo/GeoPointEntity";
+import { storeAsGeoJsons, storeAsGeoRegions } from "~/app/services/file/GeoJsonLoaders";
+import { unzipFileToStream } from "~/app/services/file/UnzipFileToStream";
+import { GeoDatabase } from "~/app/services/database/GeoDatabase";
+import { convertFileListToFileArray } from "~/app/utils/fileListUtil";
 
 let workerBusy: boolean = false;
 
@@ -111,7 +107,37 @@ export const loadFileList = async (
         );
       })
       .map(async (file) => {
-        return storeGeoRegions({
+        return storeAsGeoRegions({
+          db,
+          stream: (await unzipFileToStream(file)).stream,
+          fileName: file.name,
+          fileSize: file.size,
+          startedCallback,
+          progressCallback,
+          errorCallback,
+          cancelCallback,
+          finishedCallback,
+        });
+      }),
+  )
+    .catch((error) => {
+      console.error(error);
+    })
+    .then(() => {
+      // allDoneCallback();
+    });
+
+  await Promise.all(
+    files
+      .filter((file) => {
+        const filename = file.name.toLowerCase();
+        return (
+          !filename.startsWith('gadm') &&
+          (filename.endsWith('.json') || filename.endsWith('.json.zip'))
+        );
+      })
+      .map(async (file) => {
+        return storeAsGeoJsons({
           db,
           stream: (await unzipFileToStream(file)).stream,
           fileName: file.name,

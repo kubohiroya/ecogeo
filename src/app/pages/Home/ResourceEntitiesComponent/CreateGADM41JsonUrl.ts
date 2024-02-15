@@ -1,7 +1,7 @@
-import { proxyUrl } from 'src/app/utils/ProxyUrl';
-import { ResourceItem } from 'src/app/models/ResourceItem';
+import { proxyUrl } from "~/app/utils/ProxyUrl";
+import { ResourceItem } from "~/app/models/ResourceItem";
 
-import countries from './GADMCountries.json';
+import countries from "./GADMCountries.json";
 
 export const createGADM41JsonUrl = (
   countryCode: string,

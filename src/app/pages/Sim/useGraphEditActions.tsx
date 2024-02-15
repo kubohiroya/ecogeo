@@ -1,18 +1,18 @@
-import { SessionState } from 'src/app/models/SessionState';
-import { UIState } from 'src/app/models/UIState';
-import { AppMatrices } from 'src/app/models/AppMatrices';
-import { City } from 'src/app/models/City';
-import { Edge } from 'src/app/models/Graph';
+import { SessionState } from '~/app/models/SessionState';
+import { UIState } from '~/app/models/UIState';
+import { AppMatrices } from '~/app/models/AppMatrices';
+import { City } from '~/app/models/City';
+import { Edge } from '~/app/models/Graph';
 import { useCallback, useState } from 'react';
 import {
   removeSubGraph,
   updateAddedSubGraph,
   updateRandomSubGraph,
-} from 'src/app/components/SessionPanel/MapPanel/GraphHandlers';
-import { isInfinity } from 'src/app/utils/mathUtil';
-import { calculateDistanceByLocations } from 'src/app/apsp/calculateDistanceByLocations';
-import { isSpherical } from 'src/app/models/IsSpherical';
-import { arrayXOR, convertIdToIndex } from 'src/app/utils/arrayUtil';
+} from '~/app/components/SessionPanel/MapPanel/GraphHandlers';
+import { isInfinity } from '~/app/utils/mathUtil';
+import { calculateDistanceByLocations } from '~/app/apsp/calculateDistanceByLocations';
+import { isSpherical } from '~/app/models/IsSpherical';
+import { arrayXOR, convertIdToIndex } from '~/app/utils/arrayUtil';
 
 export const useGraphEditActions = ({
   sessionState,

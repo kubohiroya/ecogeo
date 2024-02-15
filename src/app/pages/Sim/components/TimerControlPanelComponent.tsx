@@ -1,8 +1,8 @@
-import { AppSimulation } from 'src/app/models/AppSimulation';
-import TimeControlPanel from 'src/app/components/SessionPanel/TimeControPanel/TimeControlPanel';
+import { AppSimulation } from '~/app/models/AppSimulation';
+import TimeControlPanel from '~/app/components/SessionPanel/TimeControPanel/TimeControlPanel';
 import React from 'react';
 import { useAtomValue } from 'jotai';
-import { timerAtom } from 'src/app/hooks/timerAtom';
+import { timerAtom } from '~/app/hooks/timerAtom';
 
 export const TimerControlPanelComponent = ({
   simulation,

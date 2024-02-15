@@ -1,15 +1,15 @@
-import React, { useEffect } from 'react';
-import { sessionStateAtom, SimLoaderResult } from './SimLoader';
-import { useLoaderData } from 'react-router-dom';
-import { SimComponent } from './SimComponent';
-import { BackgroundCanvas } from './BackgroundCanvas';
-import { SessionState } from 'src/app/models/SessionState';
-import { UIState } from 'src/app/models/UIState';
-import { AppMatrices } from 'src/app/models/AppMatrices';
-import { ProjectType, ProjectTypes } from '../../models/ProjectType';
-import { useAtom } from 'jotai';
-import { DEFAULT_PARAMS_BY_CASE } from 'src/app/models/DefaultParamByCase';
-import { updateAddedSubGraph } from 'src/app/components/SessionPanel/MapPanel/GraphHandlers';
+import React, { useEffect } from "react";
+import { sessionStateAtom, SimLoaderResult } from "./SimLoader";
+import { useLoaderData } from "react-router-dom";
+import { SimComponent } from "./SimComponent";
+import { BackgroundCanvas } from "./BackgroundCanvas";
+import { SessionState } from "~/app/models/SessionState";
+import { UIState } from "~/app/models/UIState";
+import { AppMatrices } from "~/app/models/AppMatrices";
+import { ProjectType, ProjectTypes } from "../../models/ProjectType";
+import { useAtom } from "jotai";
+import { DEFAULT_PARAMS_BY_CASE } from "~/app/models/DefaultParamByCase";
+import { updateAddedSubGraph } from "~/app/components/SessionPanel/MapPanel/GraphHandlers";
 
 export const GraphSimPage = () => {
   const { uuid, x, y, zoom, type } = useLoaderData() as SimLoaderResult;

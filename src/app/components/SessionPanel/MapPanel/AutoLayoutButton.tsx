@@ -1,15 +1,9 @@
-import {
-  Backdrop,
-  Box,
-  CircularProgress,
-  Slider,
-  Typography,
-} from '@mui/material';
-import React, { useState } from 'react';
-import styled from '@emotion/styled';
-import { Animation } from '@mui/icons-material';
-import { BACKDROP_TIMEOUT_MILLI_SEC } from 'src/app/components/SessionPanel/MapPanel/Constatns';
-import { OverlayControlButton } from 'src/app/components/SessionPanel/MapPanel/OverlayControlButton';
+import { Backdrop, Box, CircularProgress, Slider, Typography } from "@mui/material";
+import React, { useState } from "react";
+import styled from "@emotion/styled";
+import { Animation } from "@mui/icons-material";
+import { BACKDROP_TIMEOUT_MILLI_SEC } from "~/app/components/SessionPanel/MapPanel/Constatns";
+import { OverlayControlButton } from "~/app/components/SessionPanel/MapPanel/OverlayControlButton";
 
 interface AutoLayoutButtonProps {
   autoLayoutStarted: boolean;

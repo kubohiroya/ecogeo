@@ -1,31 +1,10 @@
-import React, {
-  ChangeEventHandler,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  LinearProgress,
-  Typography,
-} from '@mui/material';
-import { FileLoaderRequestType } from 'src/app/services/file/FileLoaderRequestType';
-import {
-  FileLoaderResponse,
-  LoaderProgressResponse,
-} from 'src/app/services/file/FileLoaderResponse';
-import {
-  FileLoadingStatusType,
-  FileLoadingStatusTypes,
-} from 'src/app/services/file/FileLoadingStatusType';
-import { FileLoaderResponseType } from 'src/app/services/file/FileLoaderResponseType';
-import styled from '@emotion/styled';
+import React, { ChangeEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Box, Button, Dialog, DialogContent, DialogTitle, LinearProgress, Typography } from "@mui/material";
+import { FileLoaderRequestType } from "~/app/services/file/FileLoaderRequestType";
+import { FileLoaderResponse, LoaderProgressResponse } from "~/app/services/file/FileLoaderResponse";
+import { FileLoadingStatusType, FileLoadingStatusTypes } from "~/app/services/file/FileLoadingStatusType";
+import { FileLoaderResponseType } from "~/app/services/file/FileLoaderResponseType";
+import styled from "@emotion/styled";
 
 const DropTarget = styled.div`
   border: 1px dashed gray;

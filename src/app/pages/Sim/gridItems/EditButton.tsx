@@ -1,8 +1,8 @@
-import { GridItemTypes } from 'src/app/models/GridItemType';
-import { Edit } from '@mui/icons-material';
-import React from 'react';
-import { FloatingButtonItem } from 'src/app/models/FloatingButtonItem';
-import { LayoutDefault } from '../LayoutDefault';
+import { GridItemTypes } from "~/app/models/GridItemType";
+import { Edit } from "@mui/icons-material";
+import React from "react";
+import { FloatingButtonItem } from "~/app/models/FloatingButtonItem";
+import { LayoutDefault } from "../LayoutDefault";
 
 export function EditButton(props: LayoutDefault): FloatingButtonItem {
   return {

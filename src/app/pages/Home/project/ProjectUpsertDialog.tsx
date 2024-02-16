@@ -71,8 +71,6 @@ export const ProjectUpsertDialog = () => {
       uuid={uuid}
       tableType={GeoDatabaseTableTypes.projects}
       type={type}
-      name={name}
-      description={description}
       onSubmit={onSubmit}
     >
       <DialogContent>

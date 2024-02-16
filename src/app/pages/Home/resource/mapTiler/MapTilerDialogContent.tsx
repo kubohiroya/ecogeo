@@ -4,36 +4,20 @@ import {
   TextField,
   Tooltip,
 } from '@mui/material';
-import React, { ReactNode, useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
 import { DOCUMENT_TITLE } from '~/app/Constants';
-import { GeoDatabaseTableType } from '~/app/models/GeoDatabaseTableType';
 
 type MapTilerDialogProps = {
-  uuid: string | undefined;
-  tableType: GeoDatabaseTableType;
-  type: string;
   name: string | undefined;
   description: string | undefined;
-  onSubmit: (values: {
-    uuid: string | undefined;
-    type: string;
-    formData: FormData;
-  }) => Promise<void>;
-  children?: ReactNode;
 };
 
 export const MapTilerDialogContent = (props: MapTilerDialogProps) => {
-  const navigate = useNavigate();
+  const { name, description } = props;
 
-  const { uuid, name, description, onSubmit } = props;
   useEffect(() => {
     document.title = DOCUMENT_TITLE + ' - MapTiler API Key Configuration';
   }, []);
-
-  const onCancel = useCallback(() => {
-    navigate('/resources', { replace: true });
-  }, [navigate]);
 
   return (
     <DialogContentText>

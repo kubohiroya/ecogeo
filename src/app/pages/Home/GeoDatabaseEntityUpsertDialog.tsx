@@ -22,8 +22,6 @@ type UpsertDatabaseEntityDialogProps = {
   uuid: string | undefined;
   tableType: GeoDatabaseTableType;
   type: string;
-  name: string | undefined;
-  description: string | undefined;
   onSubmit: (values: {
     uuid: string | undefined;
     type: string;

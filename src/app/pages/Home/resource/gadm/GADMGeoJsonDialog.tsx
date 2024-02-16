@@ -47,7 +47,6 @@ type Step = {
   onLeave: () => Promise<void>;
 };
 
-const NUM_STEPS = 5;
 const LEVEL_MAX = 3;
 
 function createInitialCheckboxMatrix(

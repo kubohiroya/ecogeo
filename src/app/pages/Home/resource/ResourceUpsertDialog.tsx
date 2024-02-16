@@ -48,8 +48,6 @@ export const ResourceUpsertDialog = () => {
       uuid={uuid}
       tableType={GeoDatabaseTableTypes.resources}
       type={type}
-      name={name}
-      description={description}
       onSubmit={onSubmit}
     >
       <DialogContent>

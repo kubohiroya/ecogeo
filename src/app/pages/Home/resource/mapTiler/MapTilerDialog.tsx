@@ -48,18 +48,9 @@ export const MapTilerDialog = () => {
       uuid={uuid}
       tableType={GeoDatabaseTableTypes.resources}
       type={type}
-      name={name}
-      description={description}
       onSubmit={onSubmit}
     >
-      <MapTilerDialogContent
-        uuid={uuid}
-        tableType={GeoDatabaseTableTypes.resources}
-        type={type}
-        name={name}
-        description={description}
-        onSubmit={onSubmit}
-      />
+      <MapTilerDialogContent name={name} description={description} />
     </GeoDatabaseEntityUpsertDialog>
   );
 };

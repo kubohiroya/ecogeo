@@ -1,28 +1,25 @@
-import React, { ReactNode, useEffect, useState } from "react";
-import { PanoramaFishEye, Public, Share } from "@mui/icons-material";
+import React, { useEffect, useState } from 'react';
 import {
   IconButton,
   Paper,
-  SpeedDial,
-  SpeedDialAction,
-  SpeedDialIcon,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
-  TableRow
-} from "@mui/material";
-import { Link, useLoaderData, useNavigate } from "react-router-dom";
-import { GeoDatabaseEntityMenu } from "../GeoDatabaseEntityMenu";
+  TableRow,
+} from '@mui/material';
+import { Link, useLoaderData, useNavigate } from 'react-router-dom';
+import { GeoDatabaseEntityMenu } from '../GeoDatabaseEntityMenu';
 
-import { createProjectLink } from "src/createProjectLink";
-import { ProjectTypes } from "~/app/models/ProjectType";
-import { GeoDatabaseTable } from "~/app/services/database/GeoDatabaseTable";
-import { useDocumentTitle } from "../useDocumentTitle";
-import { ProjectEntity } from "~/app/models/ProjectEntity";
-import { ProjectEntitiesLoader } from "./ProjectEntitiesLoader";
-import { GeoDatabaseTableTypes } from "~/app/models/GeoDatabaseTableType";
+import { createProjectLink } from 'src/createProjectLink';
+import { GeoDatabaseTable } from '~/app/services/database/GeoDatabaseTable';
+import { useDocumentTitle } from '../useDocumentTitle';
+import { ProjectEntity } from '~/app/models/ProjectEntity';
+import { ProjectEntitiesLoader } from './ProjectEntitiesLoader';
+import { GeoDatabaseTableTypes } from '~/app/models/GeoDatabaseTableType';
+import { ProjectTypeIcons } from '~/app/pages/Home/project/ProjectTypeIcons';
+import { ProjectTypeSpeedDial } from '~/app/pages/Home/project/ProjectTypeSpeedDial';
 
 export const ProjectEntitiesComponent = () => {
   const initialProjectEntities: ProjectEntity[] =
@@ -55,36 +52,6 @@ export const ProjectEntitiesComponent = () => {
   }, [navigate, projects?.length]);
 
   useDocumentTitle();
-
-  const typeToIcon: Record<string, ReactNode> = {
-    RealWorld: <Public />,
-    Graph: <Share />,
-    Racetrack: <PanoramaFishEye />,
-  };
-
-  const speedDialActions = [
-    {
-      icon: typeToIcon[ProjectTypes.Racetrack],
-      name: ProjectTypes.Racetrack,
-      onClick: () => {
-        return navigate(`/projects/create/${ProjectTypes.Racetrack}`);
-      },
-    },
-    {
-      icon: typeToIcon[ProjectTypes.Graph],
-      name: ProjectTypes.Graph,
-      onClick: () => {
-        return navigate(`/projects/create/${ProjectTypes.Graph}`);
-      },
-    },
-    {
-      icon: typeToIcon[ProjectTypes.RealWorld],
-      name: ProjectTypes.RealWorld,
-      onClick: () => {
-        return navigate(`/projects/create/${ProjectTypes.RealWorld}`);
-      },
-    },
-  ];
 
   /*
   const headCells: readonly HeadCell<GeoDatabaseEntity>[] = [
@@ -123,7 +90,7 @@ export const ProjectEntitiesComponent = () => {
             <TableCell></TableCell>
             <TableCell>name</TableCell>
             <TableCell>description</TableCell>
-            <TableCell>time</TableCell>
+            <TableCell>last updated</TableCell>
             <TableCell></TableCell>
           </TableRow>
         </TableHead>
@@ -133,7 +100,7 @@ export const ProjectEntitiesComponent = () => {
               <TableCell>
                 <Link to={createProjectLink(project)} target="_blank">
                   <IconButton color={'primary'} size={'large'}>
-                    {typeToIcon[project.type]}
+                    {ProjectTypeIcons[project.type]}
                   </IconButton>
                 </Link>
               </TableCell>
@@ -150,8 +117,7 @@ export const ProjectEntitiesComponent = () => {
                 <pre>{project.description}</pre>
               </TableCell>
               <TableCell>
-                <div>Created: {new Date(project.createdAt).toISOString()}</div>
-                <div>Updated: {new Date(project.updatedAt).toISOString()}</div>
+                <div>{new Date(project.updatedAt).toISOString()}</div>
               </TableCell>
               <TableCell>
                 <GeoDatabaseEntityMenu
@@ -164,22 +130,7 @@ export const ProjectEntitiesComponent = () => {
         </TableBody>
       </Table>
 
-      <SpeedDial
-        style={{ position: 'fixed', bottom: '20px', right: '20px' }}
-        direction="up"
-        ariaLabel="Create new project"
-        icon={<SpeedDialIcon />}
-      >
-        {speedDialActions.map((action) => (
-          <SpeedDialAction
-            key={action.name}
-            icon={action.icon}
-            tooltipTitle={action.name}
-            tooltipOpen
-            onClick={action.onClick}
-          />
-        ))}
-      </SpeedDial>
+      <ProjectTypeSpeedDial />
     </TableContainer>
   );
 };

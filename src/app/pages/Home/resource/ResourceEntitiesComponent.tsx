@@ -1,11 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Flag, LocationCity, Route } from "@mui/icons-material";
+import React, { useEffect, useState } from 'react';
 import {
   IconButton,
   Paper,
-  SpeedDial,
-  SpeedDialAction,
-  SpeedDialIcon,
   Table,
   TableBody,
   TableCell,
@@ -13,20 +9,20 @@ import {
   TableHead,
   TableRow,
   Tooltip,
-  Typography
-} from "@mui/material";
-import { useLoaderData, useNavigate } from "react-router-dom";
-import { GeoDatabaseEntityMenu } from "../GeoDatabaseEntityMenu";
-import { ResourceTypes } from "~/app/models/ResourceType";
-import "dexie-observable";
-import { ResourceEntity } from "~/app/models/ResourceEntity";
-import { GADMGeoJsonComponent } from "./GADMGeoJsonComponent";
-import { useDocumentTitle } from "../useDocumentTitle";
-import { GeoDatabaseTableTypes } from "~/app/models/GeoDatabaseTableType";
-import { GeoDatabaseTable } from "~/app/services/database/GeoDatabaseTable";
-import { ResourceEntitiesLoader } from "./ResourceEntitiesLoader";
-import { Cell } from "../Styles";
-import { MapSvgIcon } from "~/components/SvgIcon/MapSvgIcon";
+  Typography,
+} from '@mui/material';
+import { useLoaderData, useNavigate } from 'react-router-dom';
+import { GeoDatabaseEntityMenu } from '../GeoDatabaseEntityMenu';
+import 'dexie-observable';
+import { ResourceEntity } from '~/app/models/ResourceEntity';
+import { GADMGeoJsonComponent } from './gadm/GADMGeoJsonComponent';
+import { useDocumentTitle } from '../useDocumentTitle';
+import { GeoDatabaseTableTypes } from '~/app/models/GeoDatabaseTableType';
+import { GeoDatabaseTable } from '~/app/services/database/GeoDatabaseTable';
+import { ResourceEntitiesLoader } from './ResourceEntitiesLoader';
+import { Cell } from '../Styles';
+import { resourceTypeIcons } from '~/app/pages/Home/resource/ResourceTypeIcons';
+import { ResourceTypeSpeedDial } from '~/app/pages/Home/resource/ResourceTypeSpeedDial';
 
 export const ResourceEntitiesComponent = () => {
   const { resources: initialResources } = useLoaderData() as {
@@ -65,43 +61,6 @@ export const ResourceEntitiesComponent = () => {
 
   useDocumentTitle();
 
-  const speedDialActions = [
-    {
-      icon: <Flag />,
-      name: 'GADM GeoJSON',
-      onClick: () => {
-        return navigate(`/resources/create/gadm`);
-      },
-    },
-    {
-      icon: <MapSvgIcon />,
-      name: 'GeoJSON',
-      onClick: () => {
-        return navigate(`/resources/create/geojson`);
-      },
-    },
-    {
-      icon: <LocationCity />,
-      name: 'IDE-GSM Cities',
-      onClick: () => {
-        return navigate(`/resources/create/cities`);
-      },
-    },
-    {
-      icon: <Route />,
-      name: 'IDE-GSM Routes',
-      onClick: () => {
-        return navigate(`/resources/create/routes`);
-      },
-    },
-  ];
-
-  const typeToIcon = {
-    [ResourceTypes.gadmShapes]: <Flag />,
-    [ResourceTypes.idegsmCities]: <LocationCity />,
-    [ResourceTypes.idegsmRoutes]: <Route />,
-  };
-
   return (
     <TableContainer
       component={Paper}
@@ -114,7 +73,7 @@ export const ResourceEntitiesComponent = () => {
             <TableCell>name</TableCell>
             <TableCell>description</TableCell>
             <TableCell>contents</TableCell>
-            <TableCell>time</TableCell>
+            <TableCell>last updated</TableCell>
             <TableCell></TableCell>
           </TableRow>
         </TableHead>
@@ -123,7 +82,7 @@ export const ResourceEntitiesComponent = () => {
             <TableRow key={resource.uuid}>
               <TableCell>
                 <IconButton color={'primary'} size={'large'} onClick={() => {}}>
-                  {typeToIcon[resource.type]}
+                  {resourceTypeIcons[resource.type]}
                 </IconButton>
               </TableCell>
               <TableCell>
@@ -143,7 +102,7 @@ export const ResourceEntitiesComponent = () => {
                 )}
               </Cell>
               <TableCell>
-                <div>Updated: {new Date(resource.updatedAt).toISOString()}</div>
+                <div>{new Date(resource.updatedAt).toISOString()}</div>
               </TableCell>
               <TableCell>
                 <GeoDatabaseEntityMenu
@@ -155,21 +114,7 @@ export const ResourceEntitiesComponent = () => {
           ))}
         </TableBody>
       </Table>
-      <SpeedDial
-        style={{ position: 'fixed', bottom: '20px', right: '20px' }}
-        direction="up"
-        ariaLabel="Create new resource"
-        icon={<SpeedDialIcon />}
-      >
-        {speedDialActions.map((action) => (
-          <SpeedDialAction
-            key={action.name}
-            icon={action.icon}
-            tooltipTitle={action.name}
-            onClick={action.onClick}
-          />
-        ))}
-      </SpeedDial>
+      <ResourceTypeSpeedDial />
     </TableContainer>
   );
 };

@@ -37,7 +37,6 @@ export class WorkerPool<T extends WorkerTaskRequest, R> {
       if (index !== -1) {
         this.pool[index].currentTaskId = null;
         const result = event.data as unknown as R;
-        console.log(event);
         this.onResult(result);
         this.executeNextTask();
       }

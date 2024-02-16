@@ -1,11 +1,21 @@
-import { Link, useLoaderData, useNavigate } from "react-router-dom";
-import React, { useCallback } from "react";
-import { GeoDatabaseTable, getCurrentDatabaseTableType } from "~/app/services/database/GeoDatabaseTable";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
-import { createProjectLink } from "src/createProjectLink";
-import dexie from "dexie";
-import { GeoDatabaseTableTypes } from "~/app/models/GeoDatabaseTableType";
-import { GeoDatabase } from "~/app/services/database/GeoDatabase";
+import { Link, useLoaderData, useNavigate } from 'react-router-dom';
+import React, { useCallback } from 'react';
+import {
+  GeoDatabaseTable,
+  getCurrentDatabaseTableType,
+} from '~/app/services/database/GeoDatabaseTable';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Typography,
+} from '@mui/material';
+import { createProjectLink } from 'src/createProjectLink';
+import dexie from 'dexie';
+import { GeoDatabaseTableTypes } from '~/app/models/GeoDatabaseTableType';
+import { GeoDatabase } from '~/app/services/database/GeoDatabase';
 
 type DeleteDatabaseItemDialogProps = {
   tableType: string;
@@ -63,11 +73,11 @@ export const GeoDatabaseEntityDeleteDialog = ({
         <Link to={createProjectLink({ uuid, type })}>{name}</Link>
       </DialogContent>
       <DialogActions>
-        <Button variant={'contained'} autoFocus onClick={handleCancel}>
-          Cancel
-        </Button>
         <Button variant={'outlined'} onClick={handleDelete}>
           Delete
+        </Button>
+        <Button variant={'contained'} autoFocus onClick={handleCancel}>
+          Cancel
         </Button>
       </DialogActions>
     </Dialog>

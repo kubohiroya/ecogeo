@@ -1,67 +1,42 @@
-import { PolygonLayer, PolygonLayerProps } from "@deck.gl/layers/typed";
-import GL from "@luma.gl/constants";
-import { Buffer } from "@luma.gl/webgl";
+import { PolygonLayerProps, SolidPolygonLayer } from '@deck.gl/layers/typed';
 
 export function createPolygonsLayer(
   gl: WebGLRenderingContext,
   positions: ArrayBuffer,
-  polygonMetadata: ArrayBuffer,
   polygonIndices: ArrayBuffer,
   pathIndices: ArrayBuffer,
-  positionIndices: ArrayBuffer,
-): PolygonLayer {
-  console.log(positions, polygonIndices, pathIndices, polygonMetadata);
-  const positionsBuffer = new Buffer(gl, positions);
-  const polygonMetadataBuffer = new Buffer(gl, polygonMetadata);
-  const pathIndicesBuffer = new Buffer(gl, pathIndices);
-  const polygonIndicesBuffer = new Buffer(gl, polygonIndices);
-  const positionIndicesBuffer = new Buffer(gl, positionIndices);
+  lineWidths: ArrayBuffer,
+  lineColors: ArrayBuffer,
+  fillColors: ArrayBuffer,
+): SolidPolygonLayer {
+  const positionsArray = new Float32Array(positions);
+  const polygonIndicesArray = new Uint32Array(polygonIndices);
+  const pathIndicesArray = new Uint32Array(pathIndices);
+  const lineWidthsArray = new Float32Array(lineWidths);
+  const lineColorsArray = new Uint32Array(lineColors);
+  const fillColorsArray = new Uint32Array(fillColors);
 
-  const length = pathIndices.byteLength / 4;
-  console.log(length);
+  console.log({ positionsArray, polygonIndicesArray, fillColorsArray });
 
-  return new PolygonLayer<PolygonLayerProps>({
+  return new SolidPolygonLayer<PolygonLayerProps>({
     id: 'polygon-layer',
     positionFormat: 'XY',
-    //length,
-    _normalize: false,
-    //startIndices: polygonIndicesBuffer,
-    data: {
-      length,
-      attributes: {
-        startIndices: polygonIndicesBuffer,
-        getPolygon: { buffer: positionsBuffer, size: 2, type: GL.FLOAT },
-        /*
-        getLineWidth: {
-          buffer: polygonMetadataBuffer,
-          type: GL.FLOAT,
-          size: 1,
-          offset: 0,
-          stride: 12,
-        },
-        getLineColor: {
-          buffer: polygonMetadataBuffer,
-          type: GL.UNSIGNED_BYTE,
-          size: 4,
-          offset: 4,
-          stride: 12,
-        },
-        getFillColor: {
-          buffer: polygonMetadataBuffer,
-          type: GL.UNSIGNED_BYTE,
-          size: 4,
-          offset: 8,
-          stride: 12,
-        },
-        gtPolygon: {
-          value: positionsBuffer,
-          size: 2,
-          type: GL.FLOAT,
-          normalized: true,
-          //instanceDivisor: 1,
-        },
-         */
-      },
+    _normalize: true, // TODO: false,
+    getFillColor: (object, { index, data, target }) => {
+      const color = fillColorsArray[index];
+      return [
+        color & 0xff,
+        (color >> 8) & 0xff,
+        (color >> 16) & 0xff,
+        (color >> 24) & 0xff,
+      ];
     },
+    data: {
+      length: polygonIndicesArray.length,
+      startIndices: polygonIndicesArray,
+      attributes: {
+        getPolygon: { value: positionsArray, size: 2 }, //{ buffer: positionsBuffer, size: 2, type: GL.FLOAT },
+      },
+    } as any,
   });
 }

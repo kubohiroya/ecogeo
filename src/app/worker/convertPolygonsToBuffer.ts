@@ -1,4 +1,4 @@
-import { Color } from "@deck.gl/core/typed";
+import { Color } from '@deck.gl/core/typed';
 
 export type PolygonSource = {
   strokeWidth: number; // 4
@@ -9,11 +9,11 @@ export type PolygonSource = {
 
 export type PolygonBuffer = {
   positions: ArrayBuffer;
-  polygonMetadata: ArrayBuffer;
-
   polygonIndices: ArrayBuffer;
   pathIndices: ArrayBuffer;
-  positionIndices: ArrayBuffer;
+  lineWidths: ArrayBuffer;
+  lineColors: ArrayBuffer;
+  fillColors: ArrayBuffer;
 };
 
 export const vertexItemSize = 4 * 2; // Float32 x 2
@@ -43,52 +43,55 @@ export function convertPolygonsToBuffer(
     sources.length * indexItemSize,
   ); // Uint32 x 1
   const pathIndices: ArrayBuffer = new ArrayBuffer(totalPaths * indexItemSize); // Uint32 x 1
-  const positionIndices: ArrayBuffer = new ArrayBuffer(
-    totalPositions * indexItemSize,
-  ); // Uint32 x 1
-  const polygonMetadata: ArrayBuffer = new ArrayBuffer(
-    sources.length * polygonMetadataItemSize,
-  ); // Float32 x 1 + Uint8 x 4 + Uint8 x 4
+  const positionsIndices: ArrayBuffer = new ArrayBuffer(totalPositions * 4 * 2); // Float32 x 2
 
+  const lineWidths: ArrayBuffer = new ArrayBuffer(sources.length * 4); // Float32 x 1
+  const lineColors: ArrayBuffer = new ArrayBuffer(sources.length * 4); // Uint8 x 4
+  const fillColors: ArrayBuffer = new ArrayBuffer(sources.length * 4); // Uint8x 4
+
+  const positionsView = new Float32Array(positions);
   const polygonIndicesView = new Uint32Array(polygonIndices);
   const pathIndicesView = new Uint32Array(pathIndices);
-  const positionIndicesView = new Uint32Array(positionIndices);
-  const positionsView = new Float32Array(positions);
-  const polygonMetadataView = new DataView(polygonMetadata);
+  const lineWidthsView = new Float32Array(lineWidths);
+  const lineColorsView = new Uint8Array(lineColors);
+  const fillColorsView = new Uint8Array(fillColors);
 
   let pathIndex = 0;
   let positionIndex = 0;
 
   sources.forEach((source, sourceIndex: number) => {
+    polygonIndicesView[sourceIndex] = positionIndex;
     source.coordinates.forEach((polygon) => {
-      polygonIndicesView[sourceIndex] = positionIndex / 2;
       polygon.forEach((ring, ringIndex) => {
-        pathIndicesView[pathIndex++] = positionIndex / 2;
-        ring.forEach(([x, y]) => {
-          positionIndicesView[positionIndex] = positionIndex / 2;
-          positionsView[positionIndex++] = x;
-          positionsView[positionIndex++] = y;
-        });
+        if (ringIndex == 0) {
+          pathIndicesView[pathIndex++] = positionIndex;
+          ring.forEach(([x, y]) => {
+            positionsView[positionIndex++] = x;
+            positionsView[positionIndex++] = y;
+          });
+        } else {
+          console.log('ringIndex=' + ringIndex + ' is not 0, skipping...');
+        }
       });
     });
 
-    let baseIndex = sourceIndex * 12;
-    polygonMetadataView.setFloat32((baseIndex += 4), source.strokeWidth, true);
-    polygonMetadataView.setUint8(baseIndex++, source.strokeColor[0]);
-    polygonMetadataView.setUint8(baseIndex++, source.strokeColor[1]);
-    polygonMetadataView.setUint8(baseIndex++, source.strokeColor[2]);
-    polygonMetadataView.setUint8(baseIndex++, source.strokeColor[3] ?? 255);
-    polygonMetadataView.setUint8(baseIndex++, source.fillColor[0]);
-    polygonMetadataView.setUint8(baseIndex++, source.fillColor[1]);
-    polygonMetadataView.setUint8(baseIndex++, source.fillColor[2]);
-    polygonMetadataView.setUint8(baseIndex++, source.fillColor[3] ?? 255);
+    lineWidthsView[sourceIndex] = source.strokeWidth;
+    lineColorsView[sourceIndex * 4 + 0] = source.strokeColor[0];
+    lineColorsView[sourceIndex * 4 + 1] = source.strokeColor[1];
+    lineColorsView[sourceIndex * 4 + 2] = source.strokeColor[2];
+    lineColorsView[sourceIndex * 4 + 3] = source.strokeColor[3] ?? 255;
+    fillColorsView[sourceIndex * 4 + 0] = source.fillColor[0];
+    fillColorsView[sourceIndex * 4 + 1] = source.fillColor[1];
+    fillColorsView[sourceIndex * 4 + 2] = source.fillColor[2];
+    fillColorsView[sourceIndex * 4 + 3] = source.fillColor[3] ?? 255;
   });
 
   return {
     positions,
     polygonIndices,
     pathIndices,
-    positionIndices,
-    polygonMetadata,
+    lineWidths,
+    lineColors,
+    fillColors,
   };
 }

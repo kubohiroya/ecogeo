@@ -1,15 +1,18 @@
-import React, { useEffect } from "react";
-import { Box, Button, Typography } from "@mui/material";
-import styled from "@emotion/styled";
-import { Outlet, useNavigate } from "react-router-dom";
-import { DOCUMENT_TITLE } from "../../Constants";
-import { FileUploadPrompt } from "./FileUploadPrompt";
-import { GeoDatabaseTableType, GeoDatabaseTableTypes } from "~/app/models/GeoDatabaseTableType";
-import { FileDropComponent } from "~/app/components/FileDropComponent/FileDropComponent";
+import React, { useEffect } from 'react';
+import { Box, Button, Typography } from '@mui/material';
+import styled from '@emotion/styled';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { DOCUMENT_TITLE } from '../../Constants';
+import { FileUploadPrompt } from './FileUploadPrompt';
+import {
+  GeoDatabaseTableType,
+  GeoDatabaseTableTypes,
+} from '~/app/models/GeoDatabaseTableType';
+import { FileDropComponent } from '~/app/components/FileDropComponent/FileDropComponent';
 
 const ModelSelectorBox = styled.div`
   display: flex;
-  gap: 40px;
+  gap: 30px;
   margin-bottom: 5px;
   justify-content: center;
   align-items: center;
@@ -82,7 +85,7 @@ export const GeoDatabaseEntityCreateModeSelector = (
 
         <FileDropComponent
           type={props.type}
-          acceptableSuffixes={['.json', '.csv', '.csv.zip']}
+          acceptableSuffixes={['.json', '.json.zip', '.csv', '.csv.zip']}
           handleFiles={(fileList: FileList) => {
             console.log('handleFiles', fileList);
           }}

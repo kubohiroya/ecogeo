@@ -2,22 +2,20 @@ import { Alert, Box, Button } from '@mui/material';
 import { InlineIcon } from 'src/components/InlineIcon/InlineIcon';
 import { Launch } from '@mui/icons-material';
 import React from 'react';
-import {
-  StepStatus,
-  StepStatuses,
-} from '~/app/pages/Home/ResourceEntitiesComponent/StepStatuses';
+import { StepStatus, StepStatuses } from './StepStatuses';
 
 export function Step1DialogContent(props: {
-  stepStatus: StepStatus[];
+  stepStatus: (StepStatus | null)[];
   handleClick: () => void;
 }) {
   return (
     <>
       <Alert severity="info">
-        The data are freely available for academic use and other non-commercial
-        use. Redistribution, or commercial use is not allowed without prior
-        permission. See the <a href="https://gadm.org/license.html">license</a>{' '}
-        for more details.
+        GADM provides maps and spatial data for all countries and their
+        sub-divisions. The data are freely available for academic use and other
+        non-commercial use. Redistribution, or commercial use is not allowed
+        without prior permission. See the{' '}
+        <a href="https://gadm.org/license.html">license</a> for more details.
       </Alert>
 
       <Box

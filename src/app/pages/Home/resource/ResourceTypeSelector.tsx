@@ -1,18 +1,24 @@
-import { GeoDatabaseEntityCreateModeSelector } from "../../Home/GeoDatabaseEntityCreateModeSelector";
-import { Close, Flag, LocationCity, Route } from "@mui/icons-material";
-import React, { useState } from "react";
-import { Dialog, IconButton } from "@mui/material";
-import { Link } from "react-router-dom";
-import { GeoDatabaseTableTypes } from "~/app/models/GeoDatabaseTableType";
-import { MapSvgIcon } from "~/components/SvgIcon/MapSvgIcon";
+import { GeoDatabaseEntityCreateModeSelector } from '../../Home/GeoDatabaseEntityCreateModeSelector';
+import { Close, Flag, LocationCity, Place, Route } from '@mui/icons-material';
+import React, { useState } from 'react';
+import { Dialog, IconButton } from '@mui/material';
+import { Link } from 'react-router-dom';
+import { GeoDatabaseTableTypes } from '~/app/models/GeoDatabaseTableType';
+import { MapSvgIcon } from '~/components/SvgIcon/MapSvgIcon';
 
-export function NewResourceEntitySelector() {
+export function ResourceTypeSelector() {
   const [open, setOpen] = useState(true);
   return (
     <Dialog open={open} hideBackdrop={false} onClick={() => setOpen(false)}>
       <GeoDatabaseEntityCreateModeSelector
         type={GeoDatabaseTableTypes.resources}
         items={[
+          {
+            icon: <Place fontSize="large" />,
+            name: 'MapTiler Cloud API Key',
+            url: `/resources/create/mapTiler`,
+            tooltip: 'MapTiler Cloud API Key',
+          },
           {
             icon: <Flag fontSize="large" />,
             name: 'GADM GeoJSON',

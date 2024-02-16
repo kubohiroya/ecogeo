@@ -1,23 +1,33 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import DeckGL from "@deck.gl/react/typed";
-import { Map as ReactMap } from "react-map-gl/maplibre";
-import { MapView, PickingInfo } from "@deck.gl/core/typed";
-import { getBounds } from "~/app/utils/mapUtil";
-import { getTilesMortonNumbersForAllZooms, MAX_ZOOM_LEVEL, modifyMortonNumbers } from "~/app/utils/mortonNumberUtil";
-import { deepEqual } from "@deck.gl/core/src/utils/deep-equal";
-import { WorkerPool } from "~/app/worker/WorkerPool";
-import GeoQueryWorker from "../../../../worker/GeoQueryWorker?worker";
-import { CircularProgress } from "@mui/material";
-import { useLoaderData, useNavigate } from "react-router-dom";
-import { QueryRequest } from "~/app/models/QueryRequest";
-import { GeoRequestPayload } from "~/app/models/GeoRequestPayload";
-import { SimLoaderResult } from "~/app/pages/Sim/SimLoader";
-import { ViewStateChangeParameters } from "@deck.gl/core/typed/controllers/controller";
-import { ProjectTypes } from "~/app/models/ProjectType";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import DeckGL from '@deck.gl/react/typed';
+import { Map as ReactMap } from 'react-map-gl/maplibre';
+import { MapView, PickingInfo } from '@deck.gl/core/typed';
+import { getBounds } from '~/app/utils/mapUtil';
+import {
+  getTilesMortonNumbersForAllZooms,
+  MAX_ZOOM_LEVEL,
+  modifyMortonNumbers,
+} from '~/app/utils/mortonNumberUtil';
+import { deepEqual } from '@deck.gl/core/src/utils/deep-equal';
+import { WorkerPool } from '~/app/worker/WorkerPool';
+import GeoQueryWorker from '../../../../worker/GeoQueryWorker?worker';
+import { CircularProgress } from '@mui/material';
+import { useLoaderData, useNavigate } from 'react-router-dom';
+import { QueryRequest } from '~/app/models/QueryRequest';
+import { GeoRequestPayload } from '~/app/models/GeoRequestPayload';
+import { SimLoaderResult } from '~/app/pages/Sim/SimLoader';
+import { ViewStateChangeParameters } from '@deck.gl/core/typed/controllers/controller';
+import { ProjectTypes } from '~/app/models/ProjectType';
 
-import { createLayers } from "~/app/components/SessionPanel/MapPanel/deckgl/createLayers";
-import { throttleDebounce } from "~/app/utils/throttleDebounce";
-import { GeoResponseTransferable } from "~/app/worker/GeoResponseTransferable";
+import { createLayers } from '~/app/components/SessionPanel/MapPanel/deckgl/createLayers';
+import { throttleDebounce } from '~/app/utils/throttleDebounce';
+import { GeoResponseTransferable } from '~/app/worker/GeoResponseTransferable';
 
 const MAP_TILER_API_KEY = import.meta.env.VITE_MAP_TILER_API_KEY;
 
@@ -146,20 +156,22 @@ export const MapComponent = (props: MapComponentProps) => {
     const linesBuffer = geoResponse[1];
     const lineIndices = geoResponse[2];
     const positions = geoResponse[3];
-    const polygonMetadata = geoResponse[4];
-    const polygonIndices = geoResponse[5];
-    const pathIndices = geoResponse[6];
-    const positionIndices = geoResponse[7];
+    const polygonIndices = geoResponse[4];
+    const pathIndices = geoResponse[5];
+    const lineWidths = geoResponse[6];
+    const lineColors = geoResponse[7];
+    const fillColors = geoResponse[8];
 
     console.log({
       circlesBuffer,
       linesBuffer,
       lineIndices,
       positions,
-      polygonMetadata,
       polygonIndices,
       pathIndices,
-      positionIndices,
+      lineWidths,
+      lineColors,
+      fillColors,
     });
 
     return createLayers(
@@ -168,10 +180,11 @@ export const MapComponent = (props: MapComponentProps) => {
       linesBuffer,
       lineIndices,
       positions,
-      polygonMetadata,
       polygonIndices,
       pathIndices,
-      positionIndices,
+      lineWidths,
+      lineColors,
+      fillColors,
     );
   }, [gl, geoResponse]);
 
@@ -196,7 +209,7 @@ export const MapComponent = (props: MapComponentProps) => {
     [data.uuid, navigate],
   );
 
-  const [currentTaskId, setCurrentTaskId] = useState<number>(-1);
+  const currentTaskId = useRef<number>(-1);
 
   useEffect(() => {
     const worker = new WorkerPool<
@@ -238,10 +251,11 @@ export const MapComponent = (props: MapComponentProps) => {
 
     setMortonNumbers(newMortonNumbers[MAX_ZOOM_LEVEL - 1]);
 
-    if (currentTaskId !== -1) worker.terminateTask(currentTaskId);
+    if (currentTaskId.current !== -1)
+      worker.terminateTask(currentTaskId.current);
 
-    const newTaskId = currentTaskId + 1;
-    setCurrentTaskId(newTaskId);
+    const newTaskId = currentTaskId.current + 1;
+    currentTaskId.current = newTaskId;
     worker.executeTask({
       type: 'dexie',
       id: newTaskId,
@@ -256,11 +270,10 @@ export const MapComponent = (props: MapComponentProps) => {
     props.width,
     props.height,
     props.resourceUuid,
-    viewState.longitude,
-    viewState.latitude,
-    viewState.zoom,
+    data.x,
+    data.y,
+    data.zoom,
     mortonNumbers,
-    currentTaskId,
   ]);
 
   // ツールチップの表示
@@ -311,7 +324,7 @@ export const MapComponent = (props: MapComponentProps) => {
     [],
   );
 
-  if (!worker || currentTaskId === -1) {
+  if (!worker || currentTaskId.current === -1) {
     // mortonNumbers.length === 0 || polygons.length === 0 || points.length === 0;
     return <CircularProgress variant="indeterminate" />;
   }

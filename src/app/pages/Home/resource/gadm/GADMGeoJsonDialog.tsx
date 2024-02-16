@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useEffect, useState } from "react";
+import React, { ReactNode, useCallback, useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -13,33 +13,32 @@ import {
   Step,
   StepButton,
   Stepper,
-  Typography
-} from "@mui/material";
-import { Close } from "@mui/icons-material";
-import { Link, useNavigate } from "react-router-dom";
-import { DOCUMENT_TITLE } from "~/app/Constants";
-import { useAtom, useAtomValue } from "jotai";
+  Typography,
+} from '@mui/material';
+import { Close } from '@mui/icons-material';
+import { Link, useNavigate } from 'react-router-dom';
+import { DOCUMENT_TITLE } from '~/app/Constants';
+import { useAtom, useAtomValue } from 'jotai';
 import {
   downloadStatusAtom,
   downloadSummaryStatusAtom,
   geoJsonCountryMetadataListAtom,
-  numSelectedAtom,
-  selectedCheckboxMatrixAtom,
-  urlListAtom,
-  urlListToStringAtom
-} from "./GADMGeoJsonServiceAtoms";
+} from './GADMGeoJsonDialogAtoms';
 
-import { useDownloadGADMJsonFiles } from "./useDownloadGADMJsonFiles";
-import { Step2DialogContent } from "./Step2DialogContent";
-import { Step1DialogContent } from "./Step1DialogContent";
-import { Step6DialogContent } from "./Step6DialogContent";
-import { Step5DialogContent } from "./Step5DialogContent";
-import { Step3DialogContent } from "./Step3DialogContent";
-import { downloadGeoJsonIndexFile } from "./GADMGeoJsonIndexService";
-import { GADMGeoJsonCountryMetadata } from "../../../models/GADMGeoJsonCountryMetadata";
-import { StepStatus, StepStatuses } from "./StepStatuses";
-import { Step4DialogContent } from "./Step4DialogContent";
-import { ResourceTypes } from "~/app/models/ResourceType";
+import { useDownloadGADMJsonFiles } from './useDownloadGADMJsonFiles';
+import { Step2DialogContent } from './Step2DialogContent';
+import { Step1DialogContent } from './Step1DialogContent';
+import { Step6DialogContent } from './Step6DialogContent';
+import { Step5DialogContent } from './Step5DialogContent';
+import { Step3DialogContent } from './Step3DialogContent';
+import {
+  createGADM41GeoJsonUrlList,
+  downloadGeoJsonIndexFile,
+} from './GADMGeoJsonIndexService';
+import { GADMGeoJsonCountryMetadata } from '~/app/models/GADMGeoJsonCountryMetadata';
+import { StepStatus, StepStatuses } from './StepStatuses';
+import { Step4DialogContent } from './Step4DialogContent';
+import { ResourceTypes } from '~/app/models/ResourceType';
 
 type Step = {
   label: string;
@@ -49,32 +48,53 @@ type Step = {
 };
 
 const NUM_STEPS = 5;
+const LEVEL_MAX = 3;
+
+function createInitialCheckboxMatrix(
+  levelMax: number,
+  countryMetadataList: GADMGeoJsonCountryMetadata[],
+) {
+  return [
+    new Array<boolean>(levelMax + 1).fill(false),
+    ...countryMetadataList.map((item, dataIndex) => {
+      return new Array<boolean>(Math.min(levelMax + 1, item.maxLevel + 2)).fill(
+        false,
+      );
+    }),
+  ];
+}
 
 export const GADMGeoJsonDialog = () => {
   const [uuid, setUuid] = useState<string>('');
-  const [stepIndex, setStepIndex] = React.useState(0);
-  const [stepStatus, setStepStatus] = React.useState<StepStatus[]>(
-    new Array<StepStatus>(NUM_STEPS),
-  );
-  const [selectedCheckboxMatrix, setSelectedCheckboxMatrix] = useAtom(
-    selectedCheckboxMatrixAtom,
-  );
-
-  const urlList = useAtomValue(urlListAtom);
-  const urlListToString = useAtomValue(urlListToStringAtom);
-
+  const [stepIndex, setStepIndex] = React.useState(1); // 0
+  const [stepStatus, setStepStatus] = React.useState<(StepStatus | null)[]>([
+    StepStatuses.done,
+    StepStatuses.display,
+    null,
+    null,
+    null,
+  ]); // new Array<StepStatus>(NUM_STEPS),
   const [countryMetadataList, setCountryMetadataList] = useAtom(
     geoJsonCountryMetadataListAtom,
   );
-  const numSelected = useAtomValue(numSelectedAtom);
+
+  const [checkboxMatrix, setCheckboxMatrix] = useState<boolean[][]>(
+    createInitialCheckboxMatrix(LEVEL_MAX, countryMetadataList),
+  );
+
+  useEffect(() => {
+    setCheckboxMatrix(
+      createInitialCheckboxMatrix(LEVEL_MAX, countryMetadataList),
+    );
+  }, [countryMetadataList]);
+
+  const [urlList, setUrlList] = useState<string[]>([]);
 
   const downloadStatus = useAtomValue(downloadStatusAtom);
 
   const downloadSummaryStatus = useAtomValue(downloadSummaryStatusAtom);
 
   const [, setSimplifyLevel] = useState(3);
-
-  const LEVEL_MAX = 4;
 
   const { downloadGADMGeoJsonFiles } = useDownloadGADMJsonFiles();
 
@@ -173,23 +193,25 @@ export const GADMGeoJsonDialog = () => {
       await downloadGeoJsonIndexFile();
     setCountryMetadataList(countryMetadataList);
 
-    setSelectedCheckboxMatrix((draft) => {
-      draft[0] = new Array<boolean>(LEVEL_MAX + 2).fill(false);
-      countryMetadataList.forEach((item, dataIndex) => {
-        draft[dataIndex + 1] = new Array<boolean>(item.maxLevel + 2);
-        draft[dataIndex + 1].fill(false);
-      });
-      return draft;
-    });
-
     updateStepStatus(1);
 
     handleClickNext(1);
-  }, []);
+  }, [setCountryMetadataList]);
 
-  const selectDownloadingFiles = useCallback(() => {
-    updateStepStatus(2);
-  }, []);
+  const updateUrlList = useCallback(
+    (newCheckboxMatrix: boolean[][]) => {
+      setCheckboxMatrix(newCheckboxMatrix);
+      const newUrlList = createGADM41GeoJsonUrlList(
+        countryMetadataList,
+        newCheckboxMatrix,
+        false,
+      );
+      console.log('updateUrlList', newUrlList);
+      setUrlList(newUrlList);
+      updateStepStatus(2);
+    },
+    [countryMetadataList, setCheckboxMatrix, setUrlList],
+  );
 
   const onFinishLoadingGeoJsonFiles = useCallback(() => {
     updateStepStatus(3);
@@ -225,15 +247,15 @@ export const GADMGeoJsonDialog = () => {
       onLeave: async () => {},
     },
     {
-      label: 'Step 3: Select countries/levels to download',
+      label: 'Step 3: Select countries/levels to be downloaded',
       contents: (
         <Step3DialogContent
           {...{
-            countryMetadataList,
             LEVEL_MAX,
-            numSelected,
-            urlListToString,
-            onChange: selectDownloadingFiles,
+            countryMetadataList,
+            checkboxMatrix,
+            onChange: updateUrlList,
+            urlList,
           }}
         />
       ),
@@ -241,16 +263,21 @@ export const GADMGeoJsonDialog = () => {
       onLeave: async () => {},
     },
     {
-      label: 'Step 4: Download files',
+      label: 'Step 4: Download the countries/levels files',
       contents: (
         <Step4DialogContent
-          {...{ urlList, downloadSummaryStatus, downloadStatus }}
+          {...{
+            urlList,
+            downloadSummaryStatus,
+            downloadStatus,
+          }}
         />
       ),
       onEnter: async () => {
         const uuid = await downloadGADMGeoJsonFiles(
           countryMetadataList,
-          selectedCheckboxMatrix,
+          checkboxMatrix,
+          urlList,
           onFinishLoadingGeoJsonFiles,
         );
         setUuid(uuid);
@@ -268,9 +295,8 @@ export const GADMGeoJsonDialog = () => {
       contents: <Step6DialogContent />,
       onEnter: async () => {},
       onLeave: async () => {
-        // return navigate('/resources', { replace: true });
         return navigate(
-          `/resources/update/${ResourceTypes.gadmShapes}/${uuid}`,
+          `/resources/update/${ResourceTypes.gadmGeoJson}/${uuid}`,
         );
       },
     },
@@ -279,7 +305,7 @@ export const GADMGeoJsonDialog = () => {
   return (
     <Dialog open={true} maxWidth="xl">
       <DialogTitle>
-        <Typography>Setup the GADM maps</Typography>
+        <Typography>Create a new resource from the GADM maps</Typography>
         <Stepper
           activeStep={stepIndex}
           style={{ marginLeft: '48px', marginRight: '48px', marginTop: '16px' }}

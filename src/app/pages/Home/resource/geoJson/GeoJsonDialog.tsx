@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import {
   Dialog,
   DialogActions,
@@ -5,27 +6,26 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
-  Typography
-} from "@mui/material";
-import React, { useEffect } from "react";
-import { Close } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
-import { DOCUMENT_TITLE } from "~/app/Constants";
+  Typography,
+} from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { Close } from '@mui/icons-material';
+import { DOCUMENT_TITLE } from '~/app/Constants';
 
-export const IdeGsmRoutesComponent = () => {
+export const GeoJsonDialog = () => {
   useEffect(() => {
-    document.title = DOCUMENT_TITLE + ' - IDE GSM Routes';
+    document.title = DOCUMENT_TITLE + ' - IDE GSM Cities';
   }, []);
 
   const navigate = useNavigate();
   return (
     <Dialog open={true} maxWidth="xl">
       <DialogTitle>
-        <Typography>IDE GSM Routes</Typography>
+        <Typography>GeoJSON file</Typography>
       </DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Please upload your local routes.csv files.
+          Please upload your local GeoJSON json files.
         </DialogContentText>
       </DialogContent>
       <DialogActions sx={{ margin: '10px' }}>

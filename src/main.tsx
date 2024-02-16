@@ -1,28 +1,27 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import React, { StrictMode } from "react";
+import React, { StrictMode } from 'react';
 
-import { createHashRouter, RouterProvider } from "react-router-dom";
-import { createRoot } from "react-dom/client";
-import { SimLoader } from "~/app/pages/Sim/SimLoader";
-import { SimPage } from "~/app/pages/Sim/SimPage";
-import { HomePage } from "~/app/pages/Home/HomePage";
-import { GeoDatabaseTableComponent } from "~/app/pages/Home/GeoDatabaseTableComponent";
-import { ResourceEntitiesComponent } from "~/app/pages/Home/ResourceEntitiesComponent/ResourceEntitiesComponent";
-import { ProjectEntitiesComponent } from "~/app/pages/Home/ProjectEntitiesComponent/ProjectEntitiesComponent";
-import { ResourceEntitiesLoader } from "~/app/pages/Home/ResourceEntitiesComponent/ResourceEntitiesLoader";
-import { NewResourceEntitySelector } from "~/app/pages/Home/ResourceEntitiesComponent/NewResourceEntitySelector";
-import { GADMGeoJsonDialog } from "~/app/pages/Home/ResourceEntitiesComponent/GADMGeoJsonDialog";
-import { IdeGsmCitiesComponent } from "~/app/pages/Home/ResourceEntitiesComponent/IdeGsmCitiesComponent";
-import { IdeGsmRoutesComponent } from "~/app/pages/Home/ResourceEntitiesComponent/IdeGsmRoutesComponent";
-import { GeoDatabaseEntityDeleteDialog } from "~/app/pages/Home/GeoDatabaseEntityDeleteDialog";
-import { databaseItemLoader } from "~/app/pages/Home/databaseItemLoader";
-import { ResourceUpsertDialog } from "~/app/pages/Home/ResourceUpsertDialog";
-import { ProjectEntitiesLoader } from "~/app/pages/Home/ProjectEntitiesComponent/ProjectEntitiesLoader";
-import { NewProjectEntitySelector } from "~/app/pages/Home/ProjectEntitiesComponent/NewProjectEntitySelector";
-import { ProjectUpsertDialog } from "~/app/pages/Home/ProjectUpsertDialog";
-import { GeoDatabaseTableTypes } from "~/app/models/GeoDatabaseTableType";
-import { GeoJsonComponent } from "~/app/pages/Home/ResourceEntitiesComponent/GeoJsonComponent";
+import { createHashRouter, RouterProvider } from 'react-router-dom';
+import { createRoot } from 'react-dom/client';
+import { SimLoader } from '~/app/pages/Sim/SimLoader';
+import { SimPage } from '~/app/pages/Sim/SimPage';
+import { HomePage } from '~/app/pages/Home/HomePage';
+import { GeoDatabaseTableComponent } from '~/app/pages/Home/GeoDatabaseTableComponent';
+import { ResourceEntitiesComponent } from '~/app/pages/Home/resource/ResourceEntitiesComponent';
+import { ProjectEntitiesComponent } from '~/app/pages/Home/project/ProjectEntitiesComponent';
+import { ResourceEntitiesLoader } from '~/app/pages/Home/resource/ResourceEntitiesLoader';
+import { ResourceTypeSelector } from '~/app/pages/Home/resource/ResourceTypeSelector';
+import { GADMGeoJsonDialog } from '~/app/pages/Home/resource/gadm/GADMGeoJsonDialog';
+import { IdeGsmCitiesDialog } from '~/app/pages/Home/resource/ideGsmCities/IdeGsmCitiesDialog';
+import { IdeGsmRoutesDialog } from '~/app/pages/Home/resource/ideGsmRoutes/IdeGsmRoutesDialog';
+import { GeoDatabaseEntityDeleteDialog } from '~/app/pages/Home/GeoDatabaseEntityDeleteDialog';
+import { databaseItemLoader } from '~/app/pages/Home/databaseItemLoader';
+import { ProjectEntitiesLoader } from '~/app/pages/Home/project/ProjectEntitiesLoader';
+import { ProjectTypeSelector } from '~/app/pages/Home/project/ProjectTypeSelector';
+import { GeoDatabaseTableTypes } from '~/app/models/GeoDatabaseTableType';
+import { GeoJsonDialog } from '~/app/pages/Home/resource/geoJson/GeoJsonDialog';
+import { MapTilerDialog } from '~/app/pages/Home/resource/mapTiler/MapTilerDialog';
+import { ResourceUpsertDialog } from '~/app/pages/Home/resource/ResourceUpsertDialog';
+import { ProjectUpsertDialog } from '~/app/pages/Home/project/ProjectUpsertDialog';
 
 console.log('built: 2024-02-14 19:39');
 const router = createHashRouter([
@@ -45,7 +44,11 @@ const router = createHashRouter([
         children: [
           {
             path: '/resources/new',
-            element: <NewResourceEntitySelector />,
+            element: <ResourceTypeSelector />,
+          },
+          {
+            path: '/resources/create/mapTiler',
+            element: <MapTilerDialog />,
           },
           {
             path: '/resources/create/gadm',
@@ -53,15 +56,15 @@ const router = createHashRouter([
           },
           {
             path: '/resources/create/geojson',
-            element: <GeoJsonComponent />,
+            element: <GeoJsonDialog />,
           },
           {
             path: '/resources/create/cities',
-            element: <IdeGsmCitiesComponent />,
+            element: <IdeGsmCitiesDialog />,
           },
           {
             path: '/resources/create/routes',
-            element: <IdeGsmRoutesComponent />,
+            element: <IdeGsmRoutesDialog />,
           },
 
           {
@@ -95,7 +98,7 @@ const router = createHashRouter([
         children: [
           {
             path: '/projects/new',
-            element: <NewProjectEntitySelector />,
+            element: <ProjectTypeSelector />,
           },
           {
             path: `/projects/delete/:type/:uuid`,

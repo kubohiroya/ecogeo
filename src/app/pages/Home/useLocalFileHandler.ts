@@ -4,10 +4,10 @@ import { convertFileListToFileArray } from '~/app/utils/fileListUtil';
 import { GeoDatabaseTableTypes } from '~/app/models/GeoDatabaseTableType';
 import { ResourceTypes } from '~/app/models/ResourceType';
 import { GeoDatabase } from '~/app/services/database/GeoDatabase';
-import { storeGeoRegions } from '~/app/services/file/GeoJsonLoaders';
+import { storeGadmGeoJsons } from '~/app/services/file/GeoJsonLoaders';
 import { LoaderProgressResponse } from '~/app/services/file/FileLoaderResponse';
 import { GeoDatabaseTable } from '~/app/services/database/GeoDatabaseTable';
-import { convertFileNameToResourceItem } from '~/app/pages/Home/ResourceEntitiesComponent/CreateGADM41JsonUrl';
+import { convertFileNameToResourceItem } from '~/app/pages/Home/resource/gadm/CreateGADM41JsonUrl';
 import JSZip from 'jszip';
 
 function uint8ArrayToReadableStream(uint8Array: Uint8Array) {
@@ -65,15 +65,26 @@ export const useLocalFileHandler = () => {
 
     const files = convertFileListToFileArray(fileList);
 
-    function isGADMFile(file: File): boolean {
+    function isGadmGeoJsonFile(file: File): boolean {
       return (
         file.name.startsWith('gadm') &&
         (file.name.endsWith('json') || file.name.endsWith('json.zip'))
       );
     }
 
-    function isGADMFiles(files: File[]) {
-      return files.every((file) => isGADMFile(file));
+    function isGenericGeoJsonFile(file: File): boolean {
+      return (
+        !file.name.startsWith('gadm') &&
+        (file.name.endsWith('json') || file.name.endsWith('json.zip'))
+      );
+    }
+
+    function isGadmGeoJsonFiles(files: File[]) {
+      return files.every((file) => isGadmGeoJsonFile(file));
+    }
+
+    function isGenericGeoJsonFiles(files: File[]) {
+      return files.every((file) => isGenericGeoJsonFile(file));
     }
 
     function isCityFile(file: File): boolean {
@@ -98,13 +109,15 @@ export const useLocalFileHandler = () => {
       return files.every((file) => isRouteFile(file));
     }
 
-    const [tableType, resourceType] = isGADMFiles(files)
-      ? [GeoDatabaseTableTypes.resources, ResourceTypes.gadmShapes]
-      : isCityFiles(files)
-        ? [GeoDatabaseTableTypes.resources, ResourceTypes.idegsmCities]
-        : isRouteFiles(files)
-          ? [GeoDatabaseTableTypes.resources, ResourceTypes.idegsmRoutes]
-          : [null, null];
+    const [tableType, resourceType] = isGadmGeoJsonFiles(files)
+      ? [GeoDatabaseTableTypes.resources, ResourceTypes.gadmGeoJson]
+      : isGenericGeoJsonFiles(files)
+        ? [GeoDatabaseTableTypes.resources, ResourceTypes.genericGeoJson]
+        : isCityFiles(files)
+          ? [GeoDatabaseTableTypes.resources, ResourceTypes.idegsmCities]
+          : isRouteFiles(files)
+            ? [GeoDatabaseTableTypes.resources, ResourceTypes.idegsmRoutes]
+            : [null, null];
 
     if (tableType === null || resourceType === null) {
       const fileNames = files.map((file) => file.name).join(', ');
@@ -119,7 +132,7 @@ export const useLocalFileHandler = () => {
       uuid,
       name: 'GADM GeoJSON',
       description: 'import from local',
-      type: ResourceTypes.gadmShapes,
+      type: ResourceTypes.gadmGeoJson,
       items,
       createdAt: Date.now(),
       updatedAt: Date.now(),
@@ -131,7 +144,7 @@ export const useLocalFileHandler = () => {
     );
 
     switch (resourceType) {
-      case ResourceTypes.gadmShapes:
+      case ResourceTypes.gadmGeoJson:
         for (let i = 0; i < fileList.length; i++) {
           const zipMode = fileList[i].name.endsWith('zip');
           const stream = zipMode
@@ -140,7 +153,7 @@ export const useLocalFileHandler = () => {
               )
             : fileList[i].stream();
 
-          await storeGeoRegions({
+          await storeGadmGeoJsons({
             db,
             stream,
             fileName: fileList[i].name,
@@ -154,8 +167,10 @@ export const useLocalFileHandler = () => {
           });
         }
         return navigate(
-          `/resources/update/${ResourceTypes.gadmShapes}/${uuid}`,
+          `/resources/update/${ResourceTypes.gadmGeoJson}/${uuid}`,
         );
+      default:
+        throw new Error('unimplemented resource type');
     }
   };
 

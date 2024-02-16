@@ -1,12 +1,12 @@
-import { createGADM41JsonUrl } from "./CreateGADM41JsonUrl";
-import { createGADM41IndexUrl } from "./CreateGADM41IndexUrl";
-import { GADMGeoJsonCountryMetadata } from "~/app/models/GADMGeoJsonCountryMetadata";
-import { smartDownloadAsUint8Array } from "~/app/utils/zipUtil";
+import { createGADM41JsonUrl } from './CreateGADM41JsonUrl';
+import { createGADMIndexUrl } from './CreateGADMIndexUrl';
+import { GADMGeoJsonCountryMetadata } from '~/app/models/GADMGeoJsonCountryMetadata';
+import { smartDownloadAsUint8Array } from '~/app/utils/zipUtil';
 
 export const downloadGeoJsonIndexFile = async (): Promise<
   GADMGeoJsonCountryMetadata[]
 > => {
-  const arrayBuffer = await smartDownloadAsUint8Array(createGADM41IndexUrl());
+  const arrayBuffer = await smartDownloadAsUint8Array(createGADMIndexUrl());
   //const contents = JSON.parse(body);
   const regex = /<option value="([^"]+)_(.+?)_(\d+)">(.+?)<\/option>/g;
 
@@ -28,14 +28,18 @@ export const downloadGeoJsonIndexFile = async (): Promise<
 
 export function createGADM41GeoJsonUrlList(
   countries: GADMGeoJsonCountryMetadata[],
-  selection: boolean[][],
+  checkboxMatrix: boolean[][],
   proxyAccessMode: boolean,
 ) {
   const urlList: string[] = [];
-  for (let index = 0; index < countries.length; index++) {
-    const country = countries[index];
+  for (let countryIndex = 0; countryIndex < countries.length; countryIndex++) {
+    const country = countries[countryIndex];
     for (let level = 0; level <= country.maxLevel; level++) {
-      if (selection[index] && selection[index][level]) {
+      if (
+        countryIndex + 1 < checkboxMatrix.length &&
+        level + 1 < checkboxMatrix[countryIndex + 1].length &&
+        checkboxMatrix[countryIndex + 1][level + 1]
+      ) {
         urlList.push(
           createGADM41JsonUrl(country.countryCode, level, proxyAccessMode),
         );

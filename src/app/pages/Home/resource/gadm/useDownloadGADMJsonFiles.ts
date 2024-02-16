@@ -2,12 +2,12 @@ import { useAtom } from 'jotai/index';
 import {
   downloadStatusAtom,
   downloadSummaryStatusAtom,
-} from './GADMGeoJsonServiceAtoms';
+} from './GADMGeoJsonDialogAtoms';
 import { GADMGeoJsonCountryMetadata } from '~/app/models/GADMGeoJsonCountryMetadata';
 import { v4 as uuid_v4 } from 'uuid';
 import { GeoDatabaseTable } from '~/app/services/database/GeoDatabaseTable';
 import { fetchFiles, FetchStatus } from '~/app/services/file/FetchFiles';
-import { storeGeoRegions } from '~/app/services/file/GeoJsonLoaders';
+import { storeGadmGeoJsons } from '~/app/services/file/GeoJsonLoaders';
 import { LoaderProgressResponse } from '~/app/services/file/FileLoaderResponse';
 import { LoadingProgress } from '~/app/services/file/LoadingProgress';
 import { FileLoadingStatusTypes } from '~/app/services/file/FileLoadingStatusType';
@@ -24,6 +24,7 @@ export function useDownloadGADMJsonFiles() {
   async function downloadGADMGeoJsonFiles(
     countryMetadataList: GADMGeoJsonCountryMetadata[],
     selectedCheckboxMatrix: boolean[][],
+    urlList: string[],
     onFinish: () => void,
   ): Promise<string> {
     const downloadingItems = findDownloadingItems(
@@ -37,7 +38,7 @@ export function useDownloadGADMJsonFiles() {
       uuid,
       name: 'GADM GeoJSON',
       description: '',
-      type: ResourceTypes.gadmShapes,
+      type: ResourceTypes.gadmGeoJson,
       items: downloadingItems,
       createdAt: Date.now(),
       updatedAt: Date.now(),
@@ -50,7 +51,7 @@ export function useDownloadGADMJsonFiles() {
 
     requestIdleCallback(async () => {
       await fetchFiles({
-        urlList: downloadingItems.map((item) => item.url),
+        urlList,
         onStatusChange: (url: string, urlStatus: { status: FetchStatus }) => {
           setDownloadStatus(
             (draft: Record<string, { status: FetchStatus }>) => {
@@ -87,7 +88,7 @@ export function useDownloadGADMJsonFiles() {
               controller.close();
             },
           });
-          await storeGeoRegions({
+          await storeGadmGeoJsons({
             db,
             stream,
             fileName: url,
@@ -98,6 +99,7 @@ export function useDownloadGADMJsonFiles() {
             startedCallback(fileName: string): void {},
             finishedCallback(fileName: string): void {},
           });
+          console.log('store: ' + uuid + ' ' + url);
         },
       });
       onFinish();

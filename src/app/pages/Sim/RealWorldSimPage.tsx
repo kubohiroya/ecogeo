@@ -1,18 +1,18 @@
-import React from "react";
-import "react-grid-layout/css/styles.css";
-import "react-resizable/css/styles.css";
-import { MapComponent } from "../../components/SessionPanel/MapPanel/deckgl/MapComponent";
-import { useLoaderData } from "react-router-dom";
-import { useWindowDimensions } from "~/app/hooks/useWindowDimenstions";
-import { MapCopyright } from "src/components/MapCopyright/MapCopyright";
-import { SessionState } from "~/app/models/SessionState";
-import { SimComponent } from "./SimComponent";
-import { UIState } from "~/app/models/UIState";
-import { AppMatrices } from "~/app/models/AppMatrices";
-import { ProjectType } from "~/app/models/ProjectType";
-import { SimLoaderResult } from "./SimLoader";
+import React from 'react';
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
+import { MapComponent } from '../../components/SessionPanel/MapPanel/deckgl/MapComponent';
+import { useLoaderData } from 'react-router-dom';
+import { useWindowDimensions } from '~/app/hooks/useWindowDimenstions';
+import { MapCopyright } from 'src/components/MapCopyright/MapCopyright';
+import { SessionState } from '~/app/models/SessionState';
+import { SimComponent } from './SimComponent';
+import { UIState } from '~/app/models/UIState';
+import { AppMatrices } from '~/app/models/AppMatrices';
+import { ProjectType } from '~/app/models/ProjectType';
+import { SimLoaderResult } from './SimLoader';
 
-const UUID_FOR_TESTING_RESOURCE = ['e73fdedf-a873-4b58-b4e6-43de11feea4f'];
+const UUID_FOR_TESTING_RESOURCE = ['67f0aa1b-8f51-492d-8490-411e84d634fe'];
 
 export const RealWorldSimPage = () => {
   const { uuid, zoom, y, x, type } = useLoaderData() as SimLoaderResult;

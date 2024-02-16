@@ -5,18 +5,18 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
-  FormControl,
-  TextField,
   useMediaQuery,
-  useTheme
-} from "@mui/material";
-import * as React from "react";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { GeoDatabaseTableType, GeoDatabaseTableTypes } from "~/app/models/GeoDatabaseTableType";
-import { DOCUMENT_TITLE } from "~/app/Constants";
+  useTheme,
+} from '@mui/material';
+import * as React from 'react';
+import { ReactNode, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  GeoDatabaseTableType,
+  GeoDatabaseTableTypes,
+} from '~/app/models/GeoDatabaseTableType';
+import { DOCUMENT_TITLE } from '~/app/Constants';
 
 type UpsertDatabaseEntityDialogProps = {
   uuid: string | undefined;
@@ -27,18 +27,17 @@ type UpsertDatabaseEntityDialogProps = {
   onSubmit: (values: {
     uuid: string | undefined;
     type: string;
-    name: string;
-    description: string;
+    formData: FormData;
   }) => Promise<void>;
+  children?: ReactNode;
 };
 
 export const GeoDatabaseEntityUpsertDialog = ({
   uuid,
   tableType,
   type,
-  name,
-  description,
   onSubmit,
+  children,
 }: UpsertDatabaseEntityDialogProps) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -74,14 +73,10 @@ export const GeoDatabaseEntityUpsertDialog = ({
         onSubmit: async (event: React.FormEvent<HTMLFormElement>) => {
           event.preventDefault();
           const formData = new FormData(event.currentTarget);
-          const formJson = Object.fromEntries((formData as any).entries());
-          const name = formJson.name;
-          const description = formJson.description;
           await onSubmit({
             uuid,
             type,
-            name,
-            description,
+            formData,
           });
           goHome();
         },
@@ -92,31 +87,7 @@ export const GeoDatabaseEntityUpsertDialog = ({
         {tableType === GeoDatabaseTableTypes.projects ? 'project' : 'resource'}
       </DialogTitle>
       <DialogContent>
-        <DialogContentText>
-          Please enter the name and description of the project.
-        </DialogContentText>
-        <FormControl style={{ display: 'flex' }}>
-          <TextField
-            name="name"
-            autoComplete="off"
-            defaultValue={name}
-            label="Name"
-            autoFocus
-            required
-            fullWidth
-            margin="dense"
-          />
-          <TextField
-            autoComplete="off"
-            name={'description'}
-            defaultValue={description}
-            label="Description"
-            multiline={true}
-            rows={8}
-            fullWidth
-            margin="dense"
-          />
-        </FormControl>
+        {children}
         <DialogActions>
           <Box
             css={css`

@@ -1,19 +1,27 @@
-import { GeoRegionEntity } from "~/app//models/geo/GeoRegionEntity";
-import { JSONParser } from "@streamparser/json-whatwg";
-import { FileLoaderResponseType } from "./FileLoaderResponseType";
-import { LoaderProgressResponse } from "./FileLoaderResponse";
-import { getTileMortonNumbers, MAX_ZOOM_LEVEL, SpecialMortonNumbers } from "../../utils/mortonNumberUtil";
-import { DexieError, Table } from "dexie";
-import { getPolygonsBounds } from "../../utils/mapUtil";
-import { combinedValueMap, Coordinate, simplifyPolygons } from "../../utils/simplify";
-import { GeoDatabase } from "~/app/services/database/GeoDatabase";
-import { GeoJsonEntity } from "~/app/services/database/GeoJsonEntity";
+import { GeoRegionEntity } from '~/app//models/geo/GeoRegionEntity';
+import { JSONParser } from '@streamparser/json-whatwg';
+import { FileLoaderResponseType } from './FileLoaderResponseType';
+import { LoaderProgressResponse } from './FileLoaderResponse';
+import {
+  getTileMortonNumbers,
+  MAX_ZOOM_LEVEL,
+  SpecialMortonNumbers,
+} from '../../utils/mortonNumberUtil';
+import { DexieError, Table } from 'dexie';
+import { getPolygonsBounds } from '../../utils/mapUtil';
+import {
+  combinedValueMap,
+  Coordinate,
+  simplifyPolygons,
+} from '../../utils/simplify';
+import { GeoDatabase } from '~/app/services/database/GeoDatabase';
+import { GeoJsonEntity } from '~/app/services/database/GeoJsonEntity';
 
-import { geojsonToBinary } from "@loaders.gl/gis";
+import { geojsonToBinary } from '@loaders.gl/gis';
 
 const SIMPLIFY_TOLERANCE = 0.05;
-const STORE_AS_GEO_REGIONS = false;
-const STORE_AS_GEO_JSONS = true;
+const STORE_AS_GEO_REGIONS = true;
+const STORE_AS_GEO_JSONS = false;
 
 type Feature = {
   properties: {
@@ -29,7 +37,7 @@ type Feature = {
   };
 };
 
-export const storeGeoRegions = async ({
+export const storeGadmGeoJsons = async ({
   db,
   stream,
   fileName,

@@ -3,8 +3,9 @@ export type GeoResponseTransferable = [
   linesBuffer: ArrayBuffer,
   lineIndices: ArrayBuffer,
   positions: ArrayBuffer,
-  polygonMetadata: ArrayBuffer,
   polygonIndices: ArrayBuffer,
   pathIndices: ArrayBuffer,
-  positionIndices: ArrayBuffer,
+  lineWidths: ArrayBuffer,
+  lineColors: ArrayBuffer,
+  fillColors: ArrayBuffer,
 ];

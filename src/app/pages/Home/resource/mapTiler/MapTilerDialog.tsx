@@ -1,10 +1,11 @@
 import { useLoaderData } from 'react-router-dom';
-import { GeoDatabaseEntityUpsertDialog } from './GeoDatabaseEntityUpsertDialog';
 import { GeoDatabaseTable } from '~/app/services/database/GeoDatabaseTable';
 import { GeoDatabaseTableTypes } from '~/app/models/GeoDatabaseTableType';
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
+import { GeoDatabaseEntityUpsertDialog } from '~/app/pages/Home/GeoDatabaseEntityUpsertDialog';
+import { MapTilerDialogContent } from '~/app/pages/Home/resource/mapTiler/MapTilerDialogContent';
 
-export const ResourceUpsertDialog = () => {
+export const MapTilerDialog = () => {
   const { uuid, type, name, description } = useLoaderData() as {
     uuid: string | undefined;
     type: string;
@@ -16,12 +17,18 @@ export const ResourceUpsertDialog = () => {
     async (values: {
       uuid: string | undefined;
       type: string;
-      name: string;
-      description: string;
+      formData: FormData;
     }) => {
+      const formJson = Object.fromEntries(
+        (values.formData as any).entries(),
+      ) as {
+        name: string;
+        description: string;
+      };
+
       if (!uuid) {
         await GeoDatabaseTable.createResource({
-          ...values,
+          ...formJson,
           type,
           items: [],
           version: 1,
@@ -29,7 +36,7 @@ export const ResourceUpsertDialog = () => {
         });
       } else {
         await GeoDatabaseTable.updateResource(uuid, {
-          ...values,
+          ...formJson,
         });
       }
     },
@@ -44,6 +51,15 @@ export const ResourceUpsertDialog = () => {
       name={name}
       description={description}
       onSubmit={onSubmit}
-    />
+    >
+      <MapTilerDialogContent
+        uuid={uuid}
+        tableType={GeoDatabaseTableTypes.resources}
+        type={type}
+        name={name}
+        description={description}
+        onSubmit={onSubmit}
+      />
+    </GeoDatabaseEntityUpsertDialog>
   );
 };

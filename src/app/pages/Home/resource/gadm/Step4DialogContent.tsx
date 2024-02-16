@@ -71,62 +71,57 @@ export function Step4DialogContent(props: {
         </>
       )}
 
-      {props.urlList &&
-        props.urlList.length >= 1 &&
-        props.downloadSummaryStatus && (
-          <LinearProgressWithLabel
-            variant={'determinate'}
-            loaded={props.downloadSummaryStatus.loaded}
-            total={props.downloadSummaryStatus.total}
-            value={props.downloadSummaryStatus.progress}
-          />
-        )}
+      {props.urlList.length >= 1 && props.downloadSummaryStatus && (
+        <LinearProgressWithLabel
+          variant={'determinate'}
+          loaded={props.downloadSummaryStatus.loaded}
+          total={props.downloadSummaryStatus.total}
+          value={props.downloadSummaryStatus.progress}
+        />
+      )}
 
       <Box style={{ margin: '20px' }}>
         <Stack direction="column" spacing={2}>
-          {props.urlList &&
-            props.urlList.map((url, index) => {
-              const urlStatus = props.downloadStatus[url];
-              if (!urlStatus) {
-                return (
+          {props.urlList.map((url, index) => {
+            const urlStatus = props.downloadStatus[url];
+            if (!urlStatus) {
+              return (
+                <Chip
+                  key={index}
+                  label={url}
+                  variant="outlined"
+                  deleteIcon={<Download />}
+                />
+              );
+            } else if (urlStatus.status === FetchStatus.loading) {
+              return <Chip key={index} label={url} deleteIcon={<Download />} />;
+            } else if (urlStatus.status === FetchStatus.success) {
+              return (
+                <Chip
+                  color="primary"
+                  key={index}
+                  label={url}
+                  deleteIcon={<Done />}
+                />
+              );
+            } else if (urlStatus.status === FetchStatus.error) {
+              return (
+                <Badge
+                  key={index}
+                  badgeContent={urlStatus.retry}
+                  color="warning"
+                >
                   <Chip
-                    key={index}
+                    color={'warning'}
                     label={url}
-                    variant="outlined"
-                    deleteIcon={<Download />}
+                    deleteIcon={<ReportProblem />}
                   />
-                );
-              } else if (urlStatus.status === FetchStatus.loading) {
-                return (
-                  <Chip key={index} label={url} deleteIcon={<Download />} />
-                );
-              } else if (urlStatus.status === FetchStatus.success) {
-                return (
-                  <Chip
-                    color="primary"
-                    key={index}
-                    label={url}
-                    deleteIcon={<Done />}
-                  />
-                );
-              } else if (urlStatus.status === FetchStatus.error) {
-                return (
-                  <Badge
-                    key={index}
-                    badgeContent={urlStatus.retry}
-                    color="warning"
-                  >
-                    <Chip
-                      color={'warning'}
-                      label={url}
-                      deleteIcon={<ReportProblem />}
-                    />
-                  </Badge>
-                );
-              } else {
-                return <></>;
-              }
-            })}
+                </Badge>
+              );
+            } else {
+              return <></>;
+            }
+          })}
         </Stack>
       </Box>
     </>

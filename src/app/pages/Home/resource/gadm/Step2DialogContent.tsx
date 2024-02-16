@@ -2,10 +2,11 @@ import { Alert, Box, Button } from '@mui/material';
 import React from 'react';
 import { StepStatus, StepStatuses } from './StepStatuses';
 import { Download } from '@mui/icons-material';
+import { LoadingButton } from '@mui/lab';
 
 export function Step2DialogContent(props: {
   handleClick: () => Promise<void>;
-  stepStatus: StepStatus[];
+  stepStatus: (StepStatus | null)[];
 }) {
   return (
     <>
@@ -30,11 +31,23 @@ export function Step2DialogContent(props: {
             disabled={props.stepStatus[1] !== StepStatuses.display}
             endIcon={<Download />}
           >
-            Download the Index
+            Download the index file
           </Button>
+        ) : props.stepStatus[1] === StepStatuses.processing ? (
+          <LoadingButton
+            style={{ width: '250px' }}
+            size="large"
+            variant="outlined"
+            disabled={true}
+            loading
+            endIcon={<Download />}
+            loadingPosition="end"
+          >
+            Downloading
+          </LoadingButton>
         ) : (
           <Button size="large" variant="outlined" disabled={true}>
-            finished, go next!
+            Download completed, go next!
           </Button>
         )}
       </Box>

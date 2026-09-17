@@ -34,6 +34,10 @@ export default defineConfig({
 
   resolve: {
     alias: {
+      // The tsconfig paths plugin does not reach the worker bundling pass, so
+      // '~' is declared here as well; a worker importing '~/...' fails to
+      // resolve otherwise.
+      '~': fileURLToPath(new URL('./src', import.meta.url)),
       '@': fileURLToPath(new URL('./src', import.meta.url)),
       src: '/src',
     },

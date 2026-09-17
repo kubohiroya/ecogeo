@@ -4,19 +4,63 @@ import { GeoDatabaseTableTypes } from '~/app/models/GeoDatabaseTableType';
 import React, { useCallback } from 'react';
 import { DialogContent, FormControl, TextField } from '@mui/material';
 import { GeoDatabaseEntityUpsertDialog } from '~/app/pages/Home/GeoDatabaseEntityUpsertDialog';
+import { ResourceType, ResourceTypes } from '~/app/models/ResourceType';
+import { ProjectType } from '~/app/models/ProjectType';
+import { MapTileDialogContent } from '~/app/pages/Home/resource/mapTile/MapTileDialogContent';
+
+const GeoDatabaseEntityDialogContent = ({
+  type,
+  name,
+  description,
+}: {
+  type: string;
+  name: string | undefined;
+  description: string | undefined;
+}) => {
+  return (
+    <>
+      Please enter the name and description of this {type}.
+      <FormControl style={{ display: 'flex' }}>
+        <TextField
+          name="name"
+          autoComplete="off"
+          defaultValue={name}
+          label="Name"
+          autoFocus
+          required
+          fullWidth
+          margin="dense"
+        />
+        <TextField
+          autoComplete="off"
+          name={'description'}
+          defaultValue={description}
+          label="Description"
+          multiline={true}
+          rows={8}
+          fullWidth
+          margin="dense"
+        />
+      </FormControl>
+    </>
+  );
+};
 
 export const ResourceUpsertDialog = () => {
-  const { uuid, type, name, description } = useLoaderData() as {
-    uuid: string | undefined;
-    type: string;
-    name: string | undefined;
-    description: string | undefined;
-  };
+  const { uuid, type, name, description, mapName, apiKey } =
+    useLoaderData() as {
+      uuid: string | undefined;
+      type: ProjectType | ResourceType;
+      name: string | undefined;
+      description: string | undefined;
+      mapName: string | undefined;
+      apiKey: string | undefined;
+    };
 
   const onSubmit = useCallback(
     async (values: {
       uuid: string | undefined;
-      type: string;
+      type: ProjectType | ResourceType;
       formData: FormData;
     }) => {
       const formJson = Object.fromEntries(
@@ -29,7 +73,7 @@ export const ResourceUpsertDialog = () => {
       if (!uuid) {
         await GeoDatabaseTable.createResource({
           ...formJson,
-          type,
+          type: type as ResourceType,
           items: [],
           version: 1,
           createdAt: Date.now(),
@@ -51,29 +95,15 @@ export const ResourceUpsertDialog = () => {
       onSubmit={onSubmit}
     >
       <DialogContent>
-        Please enter the name and description of the project.
-        <FormControl style={{ display: 'flex' }}>
-          <TextField
-            name="name"
-            autoComplete="off"
-            defaultValue={name}
-            label="Name"
-            autoFocus
-            required
-            fullWidth
-            margin="dense"
+        {type === ResourceTypes.gadmGeoJson && (
+          <GeoDatabaseEntityDialogContent
+            type={'resource'}
+            {...{ name, description }}
           />
-          <TextField
-            autoComplete="off"
-            name={'description'}
-            defaultValue={description}
-            label="Description"
-            multiline={true}
-            rows={8}
-            fullWidth
-            margin="dense"
-          />
-        </FormControl>
+        )}
+        {type === ResourceTypes.mapTiles && (
+          <MapTileDialogContent {...{ name, description, mapName, apiKey }} />
+        )}
       </DialogContent>
     </GeoDatabaseEntityUpsertDialog>
   );

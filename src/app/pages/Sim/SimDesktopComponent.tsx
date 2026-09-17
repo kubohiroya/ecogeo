@@ -476,7 +476,7 @@ export const SimDesktopComponent = (props: SimDesktopComponentProps) => {
         />
       ),
       InfoPanel: <InfoPanelComponent />,
-      LayersPanel: <LayersPanelComponent />,
+      LayersPanel: <LayersPanelComponent uuid={uuid} />,
       MatricesPanel: (
         <MatricesPanelComponent
           {...{

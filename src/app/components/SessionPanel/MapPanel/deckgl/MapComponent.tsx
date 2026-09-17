@@ -28,8 +28,12 @@ import { ProjectTypes } from '~/app/models/ProjectType';
 import { createLayers } from '~/app/components/SessionPanel/MapPanel/deckgl/createLayers';
 import { throttleDebounce } from '~/app/utils/throttleDebounce';
 import { GeoResponseTransferable } from '~/app/worker/GeoResponseTransferable';
+import { MapTileResourceEntity } from '~/app/models/ResourceEntity';
+import { GeoDatabase } from '~/app/services/database/GeoDatabase';
+import { GeoDatabaseTableTypes } from '~/app/models/GeoDatabaseTableType';
+import { ResourceTypes } from '~/app/models/ResourceType';
 
-const MAP_TILER_API_KEY = import.meta.env.VITE_MAP_TILER_API_KEY;
+// const MAP_TILER_API_KEY = import.meta.env.VITE_MAP_TILER_API_KEY;
 
 /*
 type PointSrc = {
@@ -79,12 +83,9 @@ const routes: RouteSegment[] = routesSrc.map((src) => ({
 export interface MapComponentProps {
   uuid: string;
   style?: React.CSSProperties;
-  map: string;
   width: number;
   height: number;
   children?: React.ReactNode;
-
-  resourceUuid: string[];
 }
 
 type ViewStateType = {
@@ -260,7 +261,7 @@ export const MapComponent = (props: MapComponentProps) => {
       type: 'dexie',
       id: newTaskId,
       payload: {
-        uuid: props.resourceUuid,
+        uuid: data.uuid,
         mortonNumbers: modifyMortonNumbers(newMortonNumbers),
         zoom: Math.floor(viewState.zoom!),
       },
@@ -269,7 +270,6 @@ export const MapComponent = (props: MapComponentProps) => {
     worker,
     props.width,
     props.height,
-    props.resourceUuid,
     data.x,
     data.y,
     data.zoom,
@@ -312,7 +312,7 @@ export const MapComponent = (props: MapComponentProps) => {
 
   useEffect(() => {
     updateURLThrottledDebounced(viewState);
-  }, [viewState]);
+  }, [updateURLThrottledDebounced, viewState]);
 
   const onViewStateChange = useCallback(
     (evt: ViewStateChangeParameters & { viewId: string }) => {
@@ -324,9 +324,45 @@ export const MapComponent = (props: MapComponentProps) => {
     [],
   );
 
-  if (!worker || currentTaskId.current === -1) {
+  const [mapTileResourceEntity, setMapTileResourceEntity] = useState<
+    MapTileResourceEntity | undefined
+  >(undefined);
+
+  function updateMapTileResourceEntity() {
+    GeoDatabase.openWithUUID(GeoDatabaseTableTypes.projects, props.uuid).then(
+      (database) => {
+        database.resources
+          .where('type')
+          .equals(ResourceTypes.mapTiles)
+          .last()
+          .then((resource) => {
+            setMapTileResourceEntity(resource as MapTileResourceEntity);
+          });
+      },
+    );
+  }
+
+  useEffect(() => {
+    updateMapTileResourceEntity();
+  }, [props.uuid, mapTileResourceEntity]);
+
+  useEffect(() => {
+    GeoDatabase.openWithUUID(GeoDatabaseTableTypes.projects, data.uuid).then(
+      (db) =>
+        db.on('changes', (changes) => {
+          updateMapTileResourceEntity();
+        }),
+    );
+  }, []);
+
+  if (!worker || currentTaskId.current === -1 || !mapTileResourceEntity) {
     // mortonNumbers.length === 0 || polygons.length === 0 || points.length === 0;
-    return <CircularProgress variant="indeterminate" />;
+    return (
+      <CircularProgress
+        variant="indeterminate"
+        style={{ position: 'absolute', left: '3.9px', top: '0.5px' }}
+      />
+    );
   }
 
   return (
@@ -341,7 +377,7 @@ export const MapComponent = (props: MapComponentProps) => {
       onViewStateChange={onViewStateChange}
     >
       <ReactMap
-        mapStyle={`https://api.maptiler.com/maps/${props.map}/style.json?key=${MAP_TILER_API_KEY}`}
+        mapStyle={`https://api.maptiler.com/maps/${mapTileResourceEntity.mapName ?? 'openstreetmap'}/style.json?key=${mapTileResourceEntity.apiKey ?? ''}`}
       />
       {renderTooltip()}
       {props.children}

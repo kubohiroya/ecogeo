@@ -18,9 +18,10 @@ import {
 } from '~/app/worker/convertPolygonsToBuffer';
 import { createIDtoPoint2DMap } from '~/app/worker/createIDtoPoint2DMap';
 import { GeoResponseTransferable } from '~/app/worker/GeoResponseTransferable';
+import { ResourceTypes } from '~/app/models/ResourceType';
 
 export async function convertMortonNumbersToTransferables(
-  uuidArray: string[],
+  uuid: string,
   mortonNumbers: number[][][],
   zoom: number,
 ): Promise<GeoResponseTransferable> {
@@ -28,18 +29,23 @@ export async function convertMortonNumbersToTransferables(
   const routeSegments: GeoRouteSegmentEntity[][] = [];
   const regions: GeoRegionEntity[][] = [];
 
-  await Promise.all(
-    uuidArray.map(async (uuid: string) => {
-      const db: GeoDatabase = await GeoDatabase.openWithUUID(
-        GeoDatabaseTableTypes.resources,
-        uuid,
-      );
+  const resources = await (
+    await GeoDatabase.openWithUUID(GeoDatabaseTableTypes.projects, uuid)
+  ).resources.toArray();
 
-      points.push(await db.findAllGeoPoints(mortonNumbers, zoom));
-      routeSegments.push(await db.findAllGeoLineStrings(mortonNumbers, zoom));
-      regions.push(await db.findAllGeoRegions(mortonNumbers, zoom));
-    }),
-  );
+  const resourceUuidArray = resources.map((resource) => resource.uuid);
+
+  resourceUuidArray.map(async (resourceUuid) => {
+    const db = await GeoDatabase.openWithUUID(
+      GeoDatabaseTableTypes.resources,
+      resourceUuid,
+    );
+
+    points.push(await db.findAllGeoPoints(mortonNumbers, zoom));
+    routeSegments.push(await db.findAllGeoLineStrings(mortonNumbers, zoom));
+    regions.push(await db.findAllGeoRegions(mortonNumbers, zoom));
+  });
+
   const circlesData = points.flat(1).map(
     (p) =>
       ({

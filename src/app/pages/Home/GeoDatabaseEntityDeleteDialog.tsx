@@ -5,6 +5,7 @@ import {
   getCurrentDatabaseTableType,
 } from '~/app/services/database/GeoDatabaseTable';
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -16,6 +17,11 @@ import { createProjectLink } from 'src/createProjectLink';
 import dexie from 'dexie';
 import { GeoDatabaseTableTypes } from '~/app/models/GeoDatabaseTableType';
 import { GeoDatabase } from '~/app/services/database/GeoDatabase';
+import { InlineIcon } from '~/components/InlineIcon/InlineIcon';
+import { TypeIcons } from '~/app/pages/Home/resource/TypeIcons';
+import { ProjectType } from '~/app/models/ProjectType';
+import { ResourceType } from '~/app/models/ResourceType';
+import { Delete } from '@mui/icons-material';
 
 type DeleteDatabaseItemDialogProps = {
   tableType: string;
@@ -25,7 +31,7 @@ export const GeoDatabaseEntityDeleteDialog = ({
 }: DeleteDatabaseItemDialogProps) => {
   const { uuid, type, name } = useLoaderData() as {
     uuid: string;
-    type: string;
+    type: ProjectType | ResourceType;
     name: string | undefined;
     description: string | undefined;
   };
@@ -61,7 +67,7 @@ export const GeoDatabaseEntityDeleteDialog = ({
   return (
     <Dialog open={true}>
       <DialogTitle>
-        Delete
+        {TypeIcons[type]} Delete
         {tableType === GeoDatabaseTableTypes.projects
           ? ' project'
           : ' resource'}
@@ -73,7 +79,11 @@ export const GeoDatabaseEntityDeleteDialog = ({
         <Link to={createProjectLink({ uuid, type })}>{name}</Link>
       </DialogContent>
       <DialogActions>
-        <Button variant={'outlined'} onClick={handleDelete}>
+        <Button
+          variant={'outlined'}
+          onClick={handleDelete}
+          endIcon={<Delete />}
+        >
           Delete
         </Button>
         <Button variant={'contained'} autoFocus onClick={handleCancel}>

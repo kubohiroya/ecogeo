@@ -1,18 +1,27 @@
-import Dexie from "dexie";
-import * as uuid from "uuid";
-import { GeoPointEntity } from "~/app/models/geo/GeoPointEntity";
-import { GeoRegionEntity } from "~/app/models/geo/GeoRegionEntity";
-import { GeoRouteSegmentEntity } from "~/app/models/geo/GeoRouteSegmentEntity";
-import { GeoRouteSegmentSource } from "~/app/models/geo/GeoRouteSegmentSource";
-import { getTilesMortonNumbersForAllZoomsMap, MAX_ZOOM_LEVEL } from "~/app/utils/mortonNumberUtil";
-import { TABLE_DB_NAME } from "~/app/Constants";
-import { GeoDatabaseTableType, GeoDatabaseTableTypes } from "~/app/models/GeoDatabaseTableType";
-import { GeoJsonEntity } from "~/app/services/database/GeoJsonEntity";
+import Dexie from 'dexie';
+import * as uuid from 'uuid';
+import { GeoPointEntity } from '~/app/models/geo/GeoPointEntity';
+import { GeoRegionEntity } from '~/app/models/geo/GeoRegionEntity';
+import { GeoRouteSegmentEntity } from '~/app/models/geo/GeoRouteSegmentEntity';
+import { GeoRouteSegmentSource } from '~/app/models/geo/GeoRouteSegmentSource';
+import {
+  getTilesMortonNumbersForAllZoomsMap,
+  MAX_ZOOM_LEVEL,
+} from '~/app/utils/mortonNumberUtil';
+import { TABLE_DB_NAME } from '~/app/Constants';
+import {
+  GeoDatabaseTableType,
+  GeoDatabaseTableTypes,
+} from '~/app/models/GeoDatabaseTableType';
+import { GeoJsonEntity } from '~/app/services/database/GeoJsonEntity';
+import { ResourceEntity } from '~/app/models/ResourceEntity';
 
 const zoomLevels = 'z0, z1, z2, z3, z4, z5, z6, z7, z8, z9, z10';
 const zoomLevelsExt = 'z0_, z1_, z2_, z3_, z4_, z5_, z6_, z7_, z8_, z9_, z10_';
 
 export class GeoDatabase extends Dexie {
+  public resources: Dexie.Table<ResourceEntity, number>;
+
   public countries: Dexie.Table<GeoRegionEntity, number>;
   public regions1: Dexie.Table<GeoRegionEntity, number>;
   public regions2: Dexie.Table<GeoRegionEntity, number>;
@@ -25,6 +34,8 @@ export class GeoDatabase extends Dexie {
   public constructor(name: string) {
     super(name);
     this.version(8).stores({
+      resources: '++id, uuid, type',
+
       countries: '++id, name, &gid_0, ' + zoomLevels + ',' + zoomLevelsExt,
       regions1:
         '++id, name, resourceIdRef, &[gid_0+gid_1], ' +
@@ -57,6 +68,7 @@ export class GeoDatabase extends Dexie {
         zoomLevelsExt,
     });
 
+    this.resources = this.table('resources');
     this.countries = this.table('countries');
     this.regions1 = this.table('regions1');
     this.regions2 = this.table('regions2');

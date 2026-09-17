@@ -1,12 +1,16 @@
-import Dexie from "dexie";
-import { v4 as uuid_v4 } from "uuid";
-import { GeoDatabase } from "./GeoDatabase";
-import { ResourceType } from "~/app/models/ResourceType";
-import { ProjectEntity } from "~/app/models/ProjectEntity";
-import { ResourceEntity } from "~/app/models/ResourceEntity";
-import { TABLE_DB_NAME } from "~/app/Constants";
-import { GeoDatabaseTableType, GeoDatabaseTableTypes } from "~/app/models/GeoDatabaseTableType";
-import { ResourceItem } from "~/app/models/ResourceItem";
+import Dexie from 'dexie';
+import { v4 as uuid_v4 } from 'uuid';
+import { GeoDatabase } from './GeoDatabase';
+import { ResourceType } from '~/app/models/ResourceType';
+import { ProjectEntity } from '~/app/models/ProjectEntity';
+import { ResourceEntity } from '~/app/models/ResourceEntity';
+import { TABLE_DB_NAME } from '~/app/Constants';
+import {
+  GeoDatabaseTableType,
+  GeoDatabaseTableTypes,
+} from '~/app/models/GeoDatabaseTableType';
+import { ResourceItem } from '~/app/models/ResourceItem';
+import { ProjectType } from '~/app/models/ProjectType';
 
 export class GeoDatabaseTable extends Dexie {
   private static singleton: GeoDatabaseTable;
@@ -91,7 +95,7 @@ export class GeoDatabaseTable extends Dexie {
   }
 
   static async createProject(source: {
-    type: string;
+    type: ProjectType;
     name: string;
     description: string;
     viewportCenter: [number, number, number]; //[zoom, latitude, longitude]

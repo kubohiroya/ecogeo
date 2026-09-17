@@ -18,8 +18,8 @@ import { useDocumentTitle } from '../useDocumentTitle';
 import { ProjectEntity } from '~/app/models/ProjectEntity';
 import { ProjectEntitiesLoader } from './ProjectEntitiesLoader';
 import { GeoDatabaseTableTypes } from '~/app/models/GeoDatabaseTableType';
-import { ProjectTypeIcons } from '~/app/pages/Home/project/ProjectTypeIcons';
 import { ProjectTypeSpeedDial } from '~/app/pages/Home/project/ProjectTypeSpeedDial';
+import { TypeIcons } from '~/app/pages/Home/resource/TypeIcons';
 
 export const ProjectEntitiesComponent = () => {
   const initialProjectEntities: ProjectEntity[] =
@@ -100,7 +100,7 @@ export const ProjectEntitiesComponent = () => {
               <TableCell>
                 <Link to={createProjectLink(project)} target="_blank">
                   <IconButton color={'primary'} size={'large'}>
-                    {ProjectTypeIcons[project.type]}
+                    {TypeIcons[project.type]}
                   </IconButton>
                 </Link>
               </TableCell>

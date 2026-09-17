@@ -61,13 +61,7 @@ export const RealWorldSimPage = () => {
           zoom: number;
         }) => void;
       }) => (
-        <MapComponent
-          uuid={uuid}
-          resourceUuid={UUID_FOR_TESTING_RESOURCE}
-          map="openstreetmap"
-          width={width}
-          height={height}
-        >
+        <MapComponent uuid={uuid} width={width} height={height}>
           <MapCopyright />
         </MapComponent>
       )}

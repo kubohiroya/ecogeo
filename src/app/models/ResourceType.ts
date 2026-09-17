@@ -3,6 +3,7 @@ export const ResourceTypes = {
   genericGeoJson: 'genericGeoJsonFiles',
   idegsmCities: 'idegsmCities',
   idegsmRoutes: 'idegsmRoutes',
-  mapTiler: 'MapTiler',
-};
+  mapTiles: 'MapTiles',
+} as const;
+
 export type ResourceType = (typeof ResourceTypes)[keyof typeof ResourceTypes];

@@ -19,7 +19,7 @@ import { ProjectEntitiesLoader } from '~/app/pages/Home/project/ProjectEntitiesL
 import { ProjectTypeSelector } from '~/app/pages/Home/project/ProjectTypeSelector';
 import { GeoDatabaseTableTypes } from '~/app/models/GeoDatabaseTableType';
 import { GeoJsonDialog } from '~/app/pages/Home/resource/geoJson/GeoJsonDialog';
-import { MapTilerDialog } from '~/app/pages/Home/resource/mapTiler/MapTilerDialog';
+import { MapTileDialog } from '~/app/pages/Home/resource/mapTile/MapTileDialog';
 import { ResourceUpsertDialog } from '~/app/pages/Home/resource/ResourceUpsertDialog';
 import { ProjectUpsertDialog } from '~/app/pages/Home/project/ProjectUpsertDialog';
 
@@ -47,8 +47,8 @@ const router = createHashRouter([
             element: <ResourceTypeSelector />,
           },
           {
-            path: '/resources/create/mapTiler',
-            element: <MapTilerDialog />,
+            path: '/resources/create/mapTile',
+            element: <MapTileDialog />,
           },
           {
             path: '/resources/create/gadm',

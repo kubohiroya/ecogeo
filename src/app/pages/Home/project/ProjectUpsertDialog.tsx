@@ -6,11 +6,13 @@ import { INITIAL_VIEW_STATE } from '~/app/Constants';
 import { GeoDatabaseTableTypes } from '~/app/models/GeoDatabaseTableType';
 import { DialogContent, FormControl, TextField } from '@mui/material';
 import { GeoDatabaseEntityUpsertDialog } from '~/app/pages/Home/GeoDatabaseEntityUpsertDialog';
+import { ProjectType, ProjectTypes } from '~/app/models/ProjectType';
+import { ResourceType } from '~/app/models/ResourceType';
 
 export const ProjectUpsertDialog = () => {
   const { uuid, type, name, description } = useLoaderData() as {
     uuid: string | undefined;
-    type: string;
+    type: ProjectType | ResourceType;
     name: string | undefined;
     description: string | undefined;
   };
@@ -31,7 +33,7 @@ export const ProjectUpsertDialog = () => {
   const onSubmit = useCallback(
     async (values: {
       uuid: string | undefined;
-      type: string;
+      type: ProjectType | ResourceType;
       formData: FormData;
     }) => {
       const formJson = Object.fromEntries(
@@ -45,14 +47,16 @@ export const ProjectUpsertDialog = () => {
 
       if (!uuid) {
         const viewportCenter: [number, number, number] =
-          type === 'RealWorld' ? [zoom, latitude, longitude] : [1, 0, 0];
+          type === ProjectTypes.RealWorld
+            ? [zoom, latitude, longitude]
+            : [1, 0, 0];
 
         //const name = formJson.name;
         //const description = formJson.description;
 
         await GeoDatabaseTable.createProject({
           ...formJson,
-          type,
+          type: type as ProjectType,
           viewportCenter,
           version: 1,
           createdAt: Date.now(),

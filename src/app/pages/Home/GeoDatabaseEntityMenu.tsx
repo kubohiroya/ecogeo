@@ -7,15 +7,15 @@ import {
   MenuItem,
   MenuList,
   Paper,
-  Popper
-} from "@mui/material";
-import React, { useCallback, useRef } from "react";
-import Menu from "@mui/icons-material/Menu";
-import { ContentCopy, Delete, Edit } from "@mui/icons-material";
-import { GeoDatabaseEntity } from "~/app/models/GeoDatabaseEntity";
-import { useNavigate } from "react-router-dom";
-import { ResourceEntity } from "~/app/models/ResourceEntity";
-import { GeoDatabaseTableType } from "~/app/models/GeoDatabaseTableType";
+  Popper,
+} from '@mui/material';
+import React, { useCallback, useRef } from 'react';
+import Menu from '@mui/icons-material/Menu';
+import { ContentCopy, Delete, Edit } from '@mui/icons-material';
+import { GeoDatabaseEntity } from '~/app/models/GeoDatabaseEntity';
+import { useNavigate } from 'react-router-dom';
+import { ResourceEntity } from '~/app/models/ResourceEntity';
+import { GeoDatabaseTableType } from '~/app/models/GeoDatabaseTableType';
 
 interface DatabaseItemMenuProps {
   tableType: GeoDatabaseTableType;
@@ -40,7 +40,7 @@ export const GeoDatabaseEntityMenu = ({
     [],
   );
 
-  const handleEdit = useCallback(() => {
+  const handleUpdate = useCallback(() => {
     navigate(`/${tableType}/update/${item.type}/${item.uuid}`);
   }, [item.type, item.uuid, navigate, tableType]);
 
@@ -78,11 +78,11 @@ export const GeoDatabaseEntityMenu = ({
                   id="composition-menu"
                   aria-labelledby="composition-button"
                 >
-                  <MenuItem onClick={handleEdit}>
+                  <MenuItem onClick={handleUpdate}>
                     <ListItemIcon>
                       <Edit />
                     </ListItemIcon>
-                    <ListItemText>Edit</ListItemText>
+                    <ListItemText>Update</ListItemText>
                   </MenuItem>
                   <MenuItem onClick={handleMenuClose} disabled>
                     <ListItemIcon>

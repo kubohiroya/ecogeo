@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import React from 'react';
-import { Flag, LocationCity, Place, Route } from '@mui/icons-material';
+import { Flag, Map, LocationCity, Route } from '@mui/icons-material';
 import { MapSvgIcon } from '~/components/SvgIcon/MapSvgIcon';
 import { SpeedDial, SpeedDialAction, SpeedDialIcon } from '@mui/material';
 
@@ -9,10 +9,10 @@ export const ResourceTypeSpeedDial = () => {
 
   const speedDialActions = [
     {
-      icon: <Place />,
-      name: 'MapTiler Cloud API Key',
+      icon: <Map />,
+      name: 'MapTile',
       onClick: () => {
-        return navigate(`/resources/create/mapTiler`);
+        return navigate(`/resources/create/mapTile`);
       },
     },
     {

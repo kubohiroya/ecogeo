@@ -17,14 +17,19 @@ import {
   GeoDatabaseTableTypes,
 } from '~/app/models/GeoDatabaseTableType';
 import { DOCUMENT_TITLE } from '~/app/Constants';
+import { ProjectType } from '~/app/models/ProjectType';
+import { ResourceType } from '~/app/models/ResourceType';
+import { TypeIcons } from '~/app/pages/Home/resource/TypeIcons';
+import { InlineIcon } from '~/components/InlineIcon/InlineIcon';
+import { Add, Edit } from '@mui/icons-material';
 
 type UpsertDatabaseEntityDialogProps = {
   uuid: string | undefined;
   tableType: GeoDatabaseTableType;
-  type: string;
+  type: ProjectType | ResourceType;
   onSubmit: (values: {
     uuid: string | undefined;
-    type: string;
+    type: ProjectType | ResourceType;
     formData: FormData;
   }) => Promise<void>;
   children?: ReactNode;
@@ -81,7 +86,8 @@ export const GeoDatabaseEntityUpsertDialog = ({
       }}
     >
       <DialogTitle>
-        {uuid ? 'Edit' : 'Create New'}{' '}
+        <InlineIcon>{TypeIcons[type]}</InlineIcon>
+        {uuid ? 'Update' : 'Create new'}{' '}
         {tableType === GeoDatabaseTableTypes.projects ? 'project' : 'resource'}
       </DialogTitle>
       <DialogContent>
@@ -99,7 +105,11 @@ export const GeoDatabaseEntityUpsertDialog = ({
               Cancel
             </Button>
 
-            <Button variant={'contained'} type="submit">
+            <Button
+              variant={'contained'}
+              type="submit"
+              endIcon={uuid ? <Edit /> : <Add />}
+            >
               {uuid ? 'Update' : 'Create'}
             </Button>
           </Box>

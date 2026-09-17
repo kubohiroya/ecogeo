@@ -5,7 +5,7 @@ export function ResourceEntitiesLoader(request: any) {
   return GeoDatabaseTable.getSingleton()
     .resources.where('type')
     .anyOf([
-      ResourceTypes.mapTiler,
+      ResourceTypes.mapTiles,
       ResourceTypes.gadmGeoJson,
       ResourceTypes.idegsmCities,
       ResourceTypes.idegsmRoutes,

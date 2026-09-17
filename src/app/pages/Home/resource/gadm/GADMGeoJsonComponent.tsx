@@ -1,9 +1,9 @@
 import { GADMGeoJsonResourceChip } from './GADMGeoJsonResourceChip';
-import { ResourceEntity } from '~/app/models/ResourceEntity';
+import { GADMGeoJsonResourceEntity } from '~/app/models/ResourceEntity';
 import { ResourceItem } from '~/app/models/ResourceItem';
 
 export type GADMGGeoJsonComponentProps = {
-  resource: ResourceEntity;
+  resource: GADMGeoJsonResourceEntity;
 };
 export const GADMGeoJsonComponent = (props: GADMGGeoJsonComponentProps) => {
   const resourceItemsMap: Map<string, ResourceItem[]> = new Map();

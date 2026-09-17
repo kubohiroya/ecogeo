@@ -1,5 +1,5 @@
 import { GeoDatabaseEntityCreateModeSelector } from '../../Home/GeoDatabaseEntityCreateModeSelector';
-import { Close, Flag, LocationCity, Place, Route } from '@mui/icons-material';
+import { Close, Flag, Key, LocationCity, Route } from '@mui/icons-material';
 import React, { useState } from 'react';
 import { Dialog, IconButton } from '@mui/material';
 import { Link } from 'react-router-dom';
@@ -14,10 +14,10 @@ export function ResourceTypeSelector() {
         type={GeoDatabaseTableTypes.resources}
         items={[
           {
-            icon: <Place fontSize="large" />,
-            name: 'MapTiler Cloud API Key',
-            url: `/resources/create/mapTiler`,
-            tooltip: 'MapTiler Cloud API Key',
+            icon: <Key fontSize="large" />,
+            name: 'MapTile',
+            url: `/resources/create/mapTile`,
+            tooltip: 'MapTile',
           },
           {
             icon: <Flag fontSize="large" />,

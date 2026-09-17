@@ -1,6 +1,13 @@
-import { Box, Checkbox, SvgIconProps, Typography } from '@mui/material';
+import {
+  Box,
+  Checkbox,
+  FormControlLabel,
+  Radio,
+  SvgIconProps,
+  Typography,
+} from '@mui/material';
 import { TreeItem, treeItemClasses, TreeItemProps } from '@mui/x-tree-view';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 
 declare module 'react' {
@@ -19,6 +26,8 @@ type StyledTreeItemProps = TreeItemProps & {
   labelInfo?: string;
   labelText: string;
   level: number;
+  value?: string;
+  type?: 'checkbox' | 'radio';
 };
 
 const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
@@ -60,12 +69,14 @@ export const StyledTreeItem = React.forwardRef(function StyledTreeItem(
   const {
     bgColor,
     color,
-    level: number = 1,
+    level,
     labelIcon: LabelIcon,
     labelInfo,
     labelText,
+    value,
     colorForDarkMode,
     bgColorForDarkMode,
+    type,
     ...other
   } = props;
 
@@ -88,17 +99,57 @@ export const StyledTreeItem = React.forwardRef(function StyledTreeItem(
             pr: 0,
           }}
         >
-          <Checkbox onClick={(e) => e.stopPropagation()} />
-          <Box component={LabelIcon} color="inherit" sx={{ mr: 0.1 }} />
-          <Typography
-            variant="body2"
-            sx={{ fontWeight: 'inherit', flexGrow: 1 }}
-          >
-            {labelText}
-          </Typography>
-          <Typography variant="caption" color="inherit">
-            {labelInfo}
-          </Typography>
+          {type === 'radio' && (
+            <FormControlLabel
+              value={value}
+              control={<Radio />}
+              label={
+                <Box style={{ display: 'flex', flexDirection: 'row' }}>
+                  <Box component={LabelIcon} color="inherit" sx={{ mr: 0.1 }} />
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: 'inherit', flexGrow: 1 }}
+                  >
+                    {labelText}
+                  </Typography>
+                  <Typography variant="caption" color="inherit">
+                    {labelInfo}
+                  </Typography>
+                </Box>
+              }
+            />
+          )}
+          {type === 'checkbox' && (
+            <FormControlLabel
+              value={value}
+              control={<Checkbox />}
+              label={
+                <Box style={{ display: 'flex', flexDirection: 'row' }}>
+                  <Box component={LabelIcon} color="inherit" sx={{ mr: 0.1 }} />
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: 'inherit', flexGrow: 1 }}
+                  >
+                    {labelText}
+                  </Typography>
+                  <Typography variant="caption" color="inherit">
+                    {labelInfo}
+                  </Typography>
+                </Box>
+              }
+            />
+          )}
+          {type !== 'checkbox' && type !== 'radio' && (
+            <Box style={{ display: 'flex', flexDirection: 'row' }}>
+              <Box component={LabelIcon} color="inherit" sx={{ mr: 0.1 }} />
+              <Typography variant="body2" sx={{ fontWeight: 'inherit' }}>
+                {labelText}
+              </Typography>
+              <Typography variant="caption" color="inherit">
+                {labelInfo}
+              </Typography>
+            </Box>
+          )}
         </Box>
       }
       style={styleProps}

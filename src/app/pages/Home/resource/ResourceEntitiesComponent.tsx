@@ -14,15 +14,19 @@ import {
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { GeoDatabaseEntityMenu } from '../GeoDatabaseEntityMenu';
 import 'dexie-observable';
-import { ResourceEntity } from '~/app/models/ResourceEntity';
+import {
+  GADMGeoJsonResourceEntity,
+  ResourceEntity,
+} from '~/app/models/ResourceEntity';
 import { GADMGeoJsonComponent } from './gadm/GADMGeoJsonComponent';
 import { useDocumentTitle } from '../useDocumentTitle';
 import { GeoDatabaseTableTypes } from '~/app/models/GeoDatabaseTableType';
 import { GeoDatabaseTable } from '~/app/services/database/GeoDatabaseTable';
 import { ResourceEntitiesLoader } from './ResourceEntitiesLoader';
 import { Cell } from '../Styles';
-import { resourceTypeIcons } from '~/app/pages/Home/resource/ResourceTypeIcons';
+import { TypeIcons } from '~/app/pages/Home/resource/TypeIcons';
 import { ResourceTypeSpeedDial } from '~/app/pages/Home/resource/ResourceTypeSpeedDial';
+import { ResourceTypes } from '~/app/models/ResourceType';
 
 export const ResourceEntitiesComponent = () => {
   const { resources: initialResources } = useLoaderData() as {
@@ -82,7 +86,7 @@ export const ResourceEntitiesComponent = () => {
             <TableRow key={resource.uuid}>
               <TableCell>
                 <IconButton color={'primary'} size={'large'} onClick={() => {}}>
-                  {resourceTypeIcons[resource.type]}
+                  {TypeIcons[resource.type]}
                 </IconButton>
               </TableCell>
               <TableCell>
@@ -92,10 +96,10 @@ export const ResourceEntitiesComponent = () => {
               </TableCell>
               <TableCell>{resource.description}</TableCell>
               <Cell>
-                {resource.type === 'gadmShapes' ? (
+                {resource.type === ResourceTypes.gadmGeoJson ? (
                   <GADMGeoJsonComponent
                     key={resourceIndex}
-                    resource={resource}
+                    resource={resource as GADMGeoJsonResourceEntity}
                   />
                 ) : (
                   <></>
